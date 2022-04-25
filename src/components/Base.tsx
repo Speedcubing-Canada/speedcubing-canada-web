@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import {
   Box,
   Paper,
@@ -21,6 +22,10 @@ export const Base = () => {
   const { pathname } = useLocation();
 
   const currentRoute = pathname === "/" ? "/home" : pathname;
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [currentRoute]);
 
   return (
     <Box minHeight="100vh" display="flex" flexDirection="column">

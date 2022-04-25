@@ -6,7 +6,7 @@ export const About = () => {
   const { t } = useTranslation();
 
   return (
-    <Container>
+    <Container maxWidth="md">
       <Box marginY="4rem">
         <Typography component="h1" variant="h3" fontWeight="bold" gutterBottom>
           {t("about.title")}
@@ -75,6 +75,7 @@ export const About = () => {
             to="https://www.worldcubeassociation.org/competitions?region=Canada"
             component={Link}
             variant="contained"
+            size="large"
           >
             {t("comps.cta")}
           </Button>

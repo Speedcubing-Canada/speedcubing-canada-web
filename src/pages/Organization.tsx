@@ -29,7 +29,7 @@ export const Organization = () => {
   const { t } = useTranslation();
 
   return (
-    <Container>
+    <Container maxWidth="md">
       <Box marginY="4rem">
         <Typography component="h1" variant="h3" fontWeight="bold" gutterBottom>
           {t("organization.title")}
@@ -78,7 +78,11 @@ export const Organization = () => {
             }
           >
             {DOCUMENTS[documentType].map(({ name, id }) => (
-              <ListItemButton key={id}>
+              <ListItemButton
+                key={id}
+                component={Link}
+                to={`/documents/${id}.pdf`}
+              >
                 <ListItemIcon>
                   <Download />
                 </ListItemIcon>

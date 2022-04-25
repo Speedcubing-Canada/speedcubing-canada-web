@@ -52,23 +52,21 @@ export const resources = {
         corporate: "Corporate documents",
       },
       faq: {
-        title: "When is the next WCA competition in my area?",
-        // Is Speedcubing Canada affiliated with the World Cube Association?
-        // Speedcubing Canada operates independently of the World Cube Association, with a separate Board of Directors. Speedcubing Canada is recognized as Canada’s official WCA regional organization.
+        title: "Frequently Asked Questions",
         "when-is-the-next-wca-competition-in-my-area": {
           q: "When is the next WCA competition in my area?",
           a: "You can find <wcaComps>a list of all upcoming competitions in Canada</wcaComps> on the World Cube Association website. Check back regularly and follow Speedcubing Canada on social media to be the first to know when competitions are announced!",
         },
         "im-going-to-my-first-wca-competition-what-do-i-need-to-know": {
-          q: "",
-          a: "We are so excited for you to experience your first competition! Please familiarize yourself with the <regs>WCA Regulations</reg> before the competition. You may also find this <tutorial>WCA Competitor Tutorial on YouTube</tutorial> helpful.",
+          q: "I’m going to my first WCA competition! What do I need to know?",
+          a: "We are so excited for you to experience your first competition! Please familiarize yourself with the <regs>WCA Regulations</regs> before the competition. You may also find this <tutorial>WCA Competitor Tutorial on YouTube</tutorial> helpful.",
         },
         "who-are-the-wca-delegates-in-my-area": {
-          q: "",
+          q: "Who are the WCA Delegates in my area?",
           a: "You can find a list of all <delegates>WCA Delegates</delegates> on the World Cube Association website.",
         },
         "how-can-i-organize-a-wca-competition": {
-          q: "",
+          q: "How can I organize a WCA competition?",
           a:
             "Organizing a WCA competition requires several hours of volunteer work. Notably, organizers are responsible for securing a suitable venue for the competition. If you are interested in organizing a WCA competition, please get in touch with a <delegates>WCA Delegate</delegates> in your region." +
             "Read the <orgGuidelines>WCA Competition Organizer Guidelines</orgGuidelines> for more information.",
@@ -80,9 +78,11 @@ export const resources = {
         "why-the-change-from-canadiancubing-to-speedcubing-canada": {
           q: "Why the change from canadianCUBING to Speedcubing Canada?",
           a:
-            "After many years of running canadianCUBING as a grassroots community organization, the need emerged for a regional speedcubing organization that is officially registered as a not-for-profit, in order to meet the growing needs of the speedcubing community in Canada. Due to busy schedules and other factors, the canadianCUBING team was not structured in a way that enabled the organization to register as a not-for-profit. As a result, Speedcubing Canada was established as a not-for-profit organization and Canada’s new speedcubing organization in 2021, with a new Board of Directors." +
+            "After many years of running canadianCUBING as a grassroots community organization, the need emerged for a regional speedcubing organization that is officially registered as a not-for-profit, in order to meet the growing needs of the speedcubing community in Canada. Due to busy schedules and other factors, the canadianCUBING team was not structured in a way that enabled the organization to register as a not-for-profit. As a result, Speedcubing Canada was established as a not-for-profit organization and Canada’s new speedcubing organization in 2021, with a new Board of Directors.\n\n" +
             "The speedcubing community in Canada owes so much of its growth to canadianCUBING, and we are thankful to the many volunteers who invested into the community through canadianCUBING over many years. We are looking forward to the future of speedcubing in Canada!",
         },
+        // Is Speedcubing Canada affiliated with the World Cube Association?
+        // Speedcubing Canada operates independently of the World Cube Association, with a separate Board of Directors. Speedcubing Canada is recognized as Canada’s official WCA regional organization.
       },
     },
   },
