@@ -20,7 +20,7 @@ i18n.use(initReactI18next).init({
 
 const theme = createTheme({
   typography: {
-    fontFamily: "Montserrat, Arial, Helvetica, sans-serif",
+    fontFamily: "'Montserrat', 'Arial', 'Helvetica', sans-serif",
     body1: {
       whiteSpace: "pre-wrap",
     },
