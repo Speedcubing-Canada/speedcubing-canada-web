@@ -37,10 +37,15 @@ export const resources = {
         body: "Find all upcoming competitions in Canada on the World Cube Association website.",
         cta: "See All",
       },
+      organization: {
+        title: "Organization",
+      },
       directors: {
         title: "Directors",
+        boardMember: "Board Member",
       },
       documents: {
+        title: "Documents",
         byLaws: "By-laws",
         minutes: "Meeting minutes",
         policies: "Policies",

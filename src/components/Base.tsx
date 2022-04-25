@@ -23,15 +23,12 @@ export const Base = () => {
   const currentRoute = pathname === "/" ? "/home" : pathname;
 
   return (
-    <Box
-      minHeight="100vh"
-      display="flex"
-      flexDirection="column"
-      justifyContent="center"
-      alignItems="center"
-    >
+    <Box minHeight="100vh" display="flex" flexDirection="column">
       <Outlet />
-      <Paper sx={{ position: "sticky", bottom: 0 }} elevation={2}>
+      <Paper
+        sx={{ position: "sticky", bottom: 0, left: 0, right: 0, zIndex: 1100 }}
+        elevation={2}
+      >
         <BottomNavigation showLabels value={currentRoute}>
           {ROUTES.map((r) => {
             const Icon = ICONS[r];
