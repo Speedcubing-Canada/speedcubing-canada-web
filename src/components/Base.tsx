@@ -23,36 +23,34 @@ export const Base = () => {
   const currentRoute = pathname === "/" ? "/home" : pathname;
 
   return (
-    <>
-      <Box
-        minHeight="100vh"
-        display="flex"
-        flexDirection="column"
-        justifyContent="center"
-        alignItems="center"
-      >
-        <Outlet />
-        <Paper sx={{ position: "sticky" }} elevation={2}>
-          <BottomNavigation showLabels value={currentRoute}>
-            {ROUTES.map((r) => {
-              const Icon = ICONS[r];
-              const route = `/${r}`;
+    <Box
+      minHeight="100vh"
+      display="flex"
+      flexDirection="column"
+      justifyContent="center"
+      alignItems="center"
+    >
+      <Outlet />
+      <Paper sx={{ position: "sticky", bottom: 0 }} elevation={2}>
+        <BottomNavigation showLabels value={currentRoute}>
+          {ROUTES.map((r) => {
+            const Icon = ICONS[r];
+            const route = `/${r}`;
 
-              return (
-                <BottomNavigationAction
-                  key={r}
-                  label={t(`routes.${r}`)}
-                  icon={<Icon />}
-                  to={route}
-                  value={route}
-                  component={Link}
-                />
-              );
-            })}
-            =
-          </BottomNavigation>
-        </Paper>
-      </Box>
-    </>
+            return (
+              <BottomNavigationAction
+                key={r}
+                label={t(`routes.${r}`)}
+                icon={<Icon />}
+                to={route}
+                value={route}
+                component={Link}
+              />
+            );
+          })}
+          =
+        </BottomNavigation>
+      </Paper>
+    </Box>
   );
 };
