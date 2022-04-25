@@ -1,38 +1,50 @@
-import { ReactComponent as Icon } from "./icon.svg";
-import { ReactComponent as Twitter } from "./twitter.svg";
-import { ReactComponent as Facebook } from "./facebook.svg";
-import { ReactComponent as Instagram } from "./instagram.svg";
-import "./App.css";
+import i18n from "i18next";
+import { initReactI18next } from "react-i18next";
+import { createTheme, ThemeProvider } from "@mui/material/styles";
+import { red } from "@mui/material/colors";
+import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
+import { Base } from "./components/Base";
+import { DEFAULT_LOCALE, resources } from "./locale";
+import { Home } from "./pages/Home";
+import { About } from "./pages/About";
+import { Organization } from "./pages/Organization";
+import { FAQ } from "./pages/FAQ";
+
+i18n.use(initReactI18next).init({
+  resources,
+  lng: DEFAULT_LOCALE,
+  interpolation: {
+    escapeValue: false,
+  },
+});
+
+const theme = createTheme({
+  typography: {
+    fontFamily: "Montserrat, Arial, Helvetica, sans-serif",
+    body1: {
+      whiteSpace: "pre-wrap",
+    },
+  },
+  palette: {
+    primary: red,
+  },
+});
 
 const App = () => (
-  <div className="main-container">
-    <Icon width={50} height={50} />
-    <h1>Speedcubing Canada</h1>
-    <h3>More from us soon</h3>
-    <div className="social-links">
-      <a
-        href="https://twitter.com/SpeedcubingCAN"
-        title="twitter"
-        rel="noopener noreferrer"
-      >
-        <Twitter width={25} height={25} />
-      </a>
-      <a
-        href="https://www.facebook.com/speedcubingcan"
-        title="facebook"
-        rel="noopener noreferrer"
-      >
-        <Facebook width={25} height={25} />
-      </a>
-      <a
-        href="https://www.instagram.com/speedcubingcanada/"
-        title="instagram"
-        rel="noopener noreferrer"
-      >
-        <Instagram width={25} height={25} />
-      </a>
-    </div>
-  </div>
+  <ThemeProvider theme={theme}>
+    <BrowserRouter>
+      <Routes>
+        <Route element={<Base />}>
+          <Route index element={<Home />} />
+          <Route path="home" element={<Home />} />
+          <Route path="about" element={<About />} />
+          <Route path="organization" element={<Organization />} />
+          <Route path="faq" element={<FAQ />} />
+          <Route path="*" element={<Navigate to="/home" replace />} />
+        </Route>
+      </Routes>
+    </BrowserRouter>
+  </ThemeProvider>
 );
 
 export default App;
