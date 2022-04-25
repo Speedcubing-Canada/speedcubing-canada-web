@@ -68,7 +68,7 @@ export const resources = {
         "how-can-i-organize-a-wca-competition": {
           q: "How can I organize a WCA competition?",
           a:
-            "Organizing a WCA competition requires several hours of volunteer work. Notably, organizers are responsible for securing a suitable venue for the competition. If you are interested in organizing a WCA competition, please get in touch with a <delegates>WCA Delegate</delegates> in your region." +
+            "Organizing a WCA competition requires several hours of volunteer work. Notably, organizers are responsible for securing a suitable venue for the competition. If you are interested in organizing a WCA competition, please get in touch with a <delegates>WCA Delegate</delegates> in your region.\n\n" +
             "Read the <orgGuidelines>WCA Competition Organizer Guidelines</orgGuidelines> for more information.",
         },
         "how-can-i-volunteer-with-speedcubing-canada": {
