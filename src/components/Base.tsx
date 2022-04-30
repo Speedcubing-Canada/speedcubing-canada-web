@@ -17,15 +17,20 @@ const ICONS = {
   faq: QuestionAnswer,
 } as const;
 
+const ROUTE_NAME_TO_ROUTE = {
+  home: "/",
+  about: "/about",
+  organization: "/organization",
+  faq: "/faq",
+} as const;
+
 export const Base = () => {
   const { t } = useTranslation();
   const { pathname } = useLocation();
 
-  const currentRoute = pathname === "/" ? "/home" : pathname;
-
   useEffect(() => {
     window.scrollTo(0, 0);
-  }, [currentRoute]);
+  }, [pathname]);
 
   return (
     <Box minHeight="100vh" display="flex" flexDirection="column">
@@ -34,10 +39,10 @@ export const Base = () => {
         sx={{ position: "sticky", bottom: 0, left: 0, right: 0, zIndex: 1100 }}
         elevation={2}
       >
-        <BottomNavigation showLabels value={currentRoute}>
+        <BottomNavigation showLabels value={pathname}>
           {ROUTES.map((r) => {
             const Icon = ICONS[r];
-            const route = `/${r}`;
+            const route = ROUTE_NAME_TO_ROUTE[r];
 
             return (
               <BottomNavigationAction
