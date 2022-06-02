@@ -10,8 +10,13 @@ export const DOCUMENTS = {
     { name: "By-laws", id: "by-laws" },
     { name: "By-laws (v1.0)", id: "by-laws-v1.0" },
     { name: "By-laws (v1.1)", id: "by-laws-v1.1" },
+    { name: "By-laws (v1.2)", id: "by-laws-v1.2" },
   ],
   minutes: [
+    {
+      name: "Directors' Meeting May 25, 2022",
+      id: "directors-meeting-may-25-2022",
+    },
     {
       name: "First Members' Meeting May 7, 2022",
       id: "first-members-meeting-may-7-2022",
