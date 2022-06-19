@@ -17,8 +17,8 @@ export const resources = {
         title: "About",
         body:
           "Speedcubing Canada exists to promote and support the speedcubing community in Canada. Speedcubing is the act of solving twisty puzzles, such as the Rubik's Cube, as quickly as possible.\n\n" +
-          "Globally, official speedcubing competitions are governed by the <wca>World Cube Association</wca> (WCA). Since the WCA was founded in 2004, over 100,000 individuals from more than 140 countries have competed in official WCA competitions, including over 4,700 competitors representing the country of Canada. Almost 200 official WCA competitions have been held in Canada across seven provinces.\n\n" +
-          "Speedcubing Canada contributes to the WCA’s mission to “have more competitions in more countries with more people and more fun, under fair and equal conditions” by running more competitions in Canada that are fun, fair and equitable. Speedcubing Canada also works to promote speedcubing in Canada by raising awareness of our local speedcubing communities and continuing to run competitions in Canada and bringing them to more provinces and territories.\n\n" +
+          "Globally, official speedcubing competitions are governed by the <wca>World Cube Association</wca> (WCA). Speedcubing Canada is Canada’s official <regionalOrg>WCA regional organization</regionalOrg>. Since the WCA was founded in 2004, over 100,000 individuals from more than 140 countries have competed in official WCA competitions, including over 4,700 competitors representing the country of Canada. Almost 200 official WCA competitions have been held in Canada across seven provinces.\n\n" +
+          "Speedcubing Canada contributes to the WCA’s mission to “have more competitions in more countries with more people and more fun, under fair and equal conditions” by running more competitions in Canada that are fun, fair and equitable. Speedcubing Canada also works to promote speedcubing in Canada by raising awareness for the sport and the speedcubing community.\n\n" +
           "The speedcubing community is a positive and friendly environment for people of all ages, including youth, students, adults and families. All speedcubing activities globally are run by volunteers. The speedcubing community provides opportunities for competitors (known as “speedcubers”) and other members to engage in a positive, competitive community, build interpersonal and leadership skills, and achieve personal success by setting official national, continental and world records.",
       },
       history: {
@@ -81,8 +81,10 @@ export const resources = {
             "After many years of running canadianCUBING as a grassroots community organization, the need emerged for a regional speedcubing organization that is officially registered as a not-for-profit, in order to meet the growing needs of the speedcubing community in Canada. Due to busy schedules and other factors, the canadianCUBING team was not structured in a way that enabled the organization to register as a not-for-profit. As a result, Speedcubing Canada was established as a not-for-profit organization and Canada’s new speedcubing organization in 2021, with a new Board of Directors.\n\n" +
             "The speedcubing community in Canada owes so much of its growth to canadianCUBING, and we are thankful to the many volunteers who invested into the community through canadianCUBING over many years. We are looking forward to the future of speedcubing in Canada!",
         },
-        // Is Speedcubing Canada affiliated with the World Cube Association?
-        // Speedcubing Canada operates independently of the World Cube Association, with a separate Board of Directors. Speedcubing Canada is recognized as Canada’s official WCA regional organization.
+        "affiliated-with-the-wca": {
+          q: "Is Speedcubing Canada affiliated with the World Cube Association?",
+          a: "Speedcubing Canada operates independently of the World Cube Association, with a separate Board of Directors. Speedcubing Canada is recognized as Canada’s official <regionalOrg>WCA regional organization</regionalOrg>.",
+        },
       },
     },
   },
