@@ -15,6 +15,9 @@ export const About = () => {
           <Trans
             components={{
               wca: <Link to="https://www.worldcubeassociation.org/" />,
+              regionalOrg: (
+                <Link to="https://www.worldcubeassociation.org/organizations" />
+              ),
             }}
           >
             {t("about.body")}

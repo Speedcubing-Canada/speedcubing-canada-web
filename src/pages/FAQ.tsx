@@ -8,6 +8,7 @@ const QUESTIONS = [
   "who-are-the-wca-delegates-in-my-area",
   "how-can-i-organize-a-wca-competition",
   "how-can-i-volunteer-with-speedcubing-canada",
+  "affiliated-with-the-wca",
   "why-the-change-from-canadiancubing-to-speedcubing-canada",
 ] as const;
 
@@ -31,6 +32,11 @@ const INTERPOLATE = {
     ),
   },
   "how-can-i-volunteer-with-speedcubing-canada": {},
+  "affiliated-with-the-wca": {
+    regionalOrg: (
+      <Link to="https://www.worldcubeassociation.org/organizations" />
+    ),
+  },
   "why-the-change-from-canadiancubing-to-speedcubing-canada": {},
 } as const;
 
