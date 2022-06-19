@@ -1,6 +1,6 @@
 import { Instagram, FacebookOutlined, Twitter } from "@mui/icons-material";
-import { Container, Box, Typography } from "@mui/material";
-import { useTranslation } from "react-i18next";
+import { Box, useTheme } from "@mui/material";
+import { makeStyles } from "@mui/styles";
 import { Link } from "../components/Link";
 
 const SOCIAL_LINKS = [
@@ -17,34 +17,45 @@ const SOCIAL_LINKS = [
   { name: "Twitter", to: "https://twitter.com/SpeedcubingCAN", Icon: Twitter },
 ] as const;
 
+const GAP = 12;
+const GAP_PX = `${GAP}px`;
+
 export const Home = () => {
-  const { t } = useTranslation();
+  const theme = useTheme();
+
+  const useStyles = makeStyles({
+    logo: {
+      maxWidth: "50vw",
+      marginBottom: 2 * GAP,
+      [theme.breakpoints.down("sm")]: {
+        maxWidth: "75vw",
+      },
+    },
+  });
+
+  const classes = useStyles();
 
   return (
-    <Box flex={1} display="flex" flexDirection="column" justifyContent="center">
-      <Container maxWidth="md">
-        <Typography
-          component="h1"
-          variant="h3"
-          fontWeight="bold"
-          textAlign="center"
-          gutterBottom
-        >
-          {t("main.sc")}
-        </Typography>
-        <Box
-          display="flex"
-          flexDirection="row"
-          justifyContent="center"
-          gap="12px"
-        >
-          {SOCIAL_LINKS.map(({ Icon, to, name }) => (
-            <Link key={name} to={to} aria-label={name}>
-              <Icon fontSize="large" htmlColor="black" />
-            </Link>
-          ))}
-        </Box>
-      </Container>
+    <Box
+      flex={1}
+      display="flex"
+      flexDirection="column"
+      justifyContent="center"
+      alignItems="center"
+    >
+      <img src="/logo.svg" alt="Speedcubing Canada" className={classes.logo} />
+      <Box
+        display="flex"
+        flexDirection="row"
+        justifyContent="center"
+        gap={GAP_PX}
+      >
+        {SOCIAL_LINKS.map(({ Icon, to, name }) => (
+          <Link key={name} to={to} aria-label={name}>
+            <Icon fontSize="large" htmlColor="black" />
+          </Link>
+        ))}
+      </Box>
     </Box>
   );
 };
