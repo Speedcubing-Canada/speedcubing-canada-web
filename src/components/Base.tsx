@@ -33,8 +33,10 @@ export const Base = () => {
   }, [pathname]);
 
   return (
-    <Box minHeight="100vh" display="flex" flexDirection="column">
-      <Outlet />
+    <Box minHeight="100vh" flex={1} display="flex" flexDirection="column">
+      <Box display="flex" flex={1}>
+        <Outlet />
+      </Box>
       <Paper
         sx={{ position: "sticky", bottom: 0, left: 0, right: 0, zIndex: 1100 }}
         elevation={2}
