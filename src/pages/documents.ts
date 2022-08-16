@@ -14,6 +14,10 @@ export const DOCUMENTS = {
   ],
   minutes: [
     {
+      name: "Directors' Meeting August 12, 2022",
+      id: "directors-meeting-aug-12-2022",
+    },
+    {
       name: "Directors' Meeting May 25, 2022",
       id: "directors-meeting-may-25-2022",
     },
@@ -36,8 +40,20 @@ export const DOCUMENTS = {
       id: "reimbursement-policy",
     },
     {
+      name: "Speedcubing Canada Supported Events Policy",
+      id: "supported-events-policy",
+    },
+    {
       name: "Speedcubing Canada Reimbursement Policy (v1.0)",
       id: "reimbursement-policy-v1.0",
+    },
+    {
+      name: "Speedcubing Canada Reimbursement Policy (v1.1)",
+      id: "reimbursement-policy-v1.1",
+    },
+    {
+      name: "Speedcubing Canada Supported Events Policy (v1.0)",
+      id: "supported-events-policy-v1.0",
     },
   ],
   corporate: [
