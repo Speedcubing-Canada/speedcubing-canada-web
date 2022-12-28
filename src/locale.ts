@@ -1,4 +1,4 @@
-export const LOCALES = { en: "en" } as const;
+export const LOCALES = { en: "en", fr:"fr" } as const;
 export const DEFAULT_LOCALE = LOCALES.en;
 
 export const resources = {
@@ -84,6 +84,92 @@ export const resources = {
         "affiliated-with-the-wca": {
           q: "Is Speedcubing Canada affiliated with the World Cube Association?",
           a: "Speedcubing Canada operates independently of the World Cube Association, with a separate Board of Directors. Speedcubing Canada is recognized as Canada’s official <regionalOrg>WCA regional organization</regionalOrg>.",
+        },
+      },
+    },
+  },
+  [LOCALES.fr]: {
+    translation: {
+      main: {
+        sc: "Speedcubing Canada",
+      },
+      routes: {
+        home: "Acceuil",
+        about: "A propos",
+        organization: "Organisation",
+        faq: "FAQ",
+      },
+      about: {
+        title: "A propos",
+        body:
+          "Speedcubing Canada existe pour promouvoir et aider la communauté du speedcubing au Canada. Le speedcubing consiste à résoudre des casse-tête rotatifs, comme le Rubik's Cube, le plus rapidement possible.\n\n" +
+          "À l'échelle mondiale, les compétitions officielles de speedcubing sont régies par la <wca>World Cube Association</wca> (WCA). Speedcubing Canada est <regionalOrg>l'organisation régionale officielle de la WCA </regionalOrg>au Canada. Depuis la fondation de la WCA en 2004, plus de 100 000 personnes de plus de 140 pays ont participé aux compétitions officielles de la WCA, dont plus de 4 700 compétiteurs représentant le Canada. Près de 200 compétitions officielles de la WCA ont été organisées au Canada dans sept provinces.\n\n" +
+          "Speedcubing Canada contribue à la mission de la WCA qui est \"d'avoir plus de compétitions dans plus de pays avec plus de personnes et d'amusement, dans des conditions égales et équitables\" en organisant plus de compétitions au Canada qui sont amusantes, justes et équitables. Speedcubing Canada travaille également à la promotion du speedcubing au Canada en sensibilisant le public à ce sport et à la communauté du speedcubing.\n\n" +
+          "La communauté du speedcubing est un environnement positif et amical pour les personnes de tout âge, y compris les plus jeunes, les étudiants, les adultes et les familles. Toutes les activités de speedcubing dans le monde sont gérées par des bénévoles. La communauté du speedcubing offre aux compétiteurs (appelés \" speedcubeurs \") et aux autres membres la possibilité de s'engager dans une communauté positive et compétitive, de développer des compétences interpersonnelles et de leadership, et d'atteindre la réussite personnelle en établissant des records officiels nationaux, continentaux et mondiaux.",
+      },
+      history: {
+        title: "Historique",
+        body1:
+          "Le Canada a joué un rôle important dans l'histoire du speedcubing en accueillant l'un des premiers championnats mondiaux, le <wc2003>World Rubik's Games Championship 2003</wc2003>, qui s'est tenu au Centre des Sciences de l'Ontario à Toronto, en Ontario.\n\n",
+        quote:
+          "\"En 2003, Ron [van Bruchem] a réussi à entrer en contact avec Dan Gosbee pour organiser un championnat du monde de speedcubing à Toronto, au Canada. L'équipe a réussi à trouver des sponsors et à obtenir une large couverture médiatique pour l'événement. Avec 89 concurrents au total aux côtés d'une équipe en charge d'aider au bon déroulement de la compétition, le Championnat du monde des jeux de Rubik 2003 (WC2003) a eu lieu et a été un succès majeur, marquant une étape incroyable depuis le WC1982 [la première grande compétition de speedcubing au monde].\" (<wca>World Cube Association</wca>)",
+        body2:
+          "\nSuite au succès des Championnats du Monde 2003 et de plusieurs compétitions ultérieures, la World Cube Association a été fondée en 2004.\n\n" +
+          "Les compétitions de speedcubing sont revenues au Canada avec le <canadianOpen>Canadian Open 2007</canadianOpen>. À peu près à la même époque, canadianCUBING a été créé et est devenu la première organisation régionale de la WCA au Canada. Grâce au travail acharné de bénévoles dévoués, canadianCUBING a mené la croissance du speedcubing au Canada pendant de nombreuses années, organisant des compétitions à travers le pays, notamment à Vancouver, Calgary, Toronto, Ottawa, Montréal, Halifax et plus encore.\n\n" +
+          "En 2021, Speedcubing Canada a été créé en tant qu'organisme à but non lucratif et nouvelle organisation de speedcubing au Canada, signalant une nouvelle croissance pour le speedcubing au Canada. Notamment, Speedcubing Canada a servi à accueillir le premier championnat nord-américain Rubik's WCA à Toronto, en Ontario, en juillet 2022.",
+      },
+      comps: {
+        title: "Compétitions",
+        body: "Trouvez toutes les compétitions à venir au Canada sur le site Web de la World Cube Association.",
+        cta: "Voir tout",
+      },
+      organization: {
+        title: "Organisation",
+      },
+      directors: {
+        title: "Directeurs",
+        boardMember: "Membre du bureau",
+      },
+      documents: {
+        title: "Documents",
+        byLaws: "Règlement intérieur",
+        minutes: "Compte rendu de réunion",
+        policies: "Politiques",
+        corporate: "Documents administratifs",
+      },
+      faq: {
+        title: "Foire Aux Questions",
+        "when-is-the-next-wca-competition-in-my-area": {
+          q: "Quand aura lieu la prochaine compétition de la WCA dans ma région ?",
+          a: "Vous pouvez trouver <wcaComps>une liste de toutes les compétitions à venir au Canada</wcaComps> sur le site Web de la World Cube Association. Consultez-le régulièrement et suivez Speedcubing Canada sur les réseaux sociaux pour être les premiers à être informés de l'annonce des compétitions !",
+        },
+        "im-going-to-my-first-wca-competition-what-do-i-need-to-know": {
+          q: "Je vais participer à ma première compétition de la WCA ! Que dois-je savoir ?",
+          a: "Nous sommes très enthousiastes à l'idée que vous viviez votre première compétition ! Veuillez vous familiariser avec le <regs>Règlement de la WCA</regs> avant la compétition. Vous pouvez également trouver ce <tutorial>Tutoriel pour les compétiteurs de la WCA sur YouTube</tutorial> utile.",
+        },
+        "who-are-the-wca-delegates-in-my-area": {
+          q: "Qui sont les délégués de la WCA dans ma région ?",
+          a: "Vous pouvez trouver une liste de tous les <delegates>Délégués de la WCA</delegates> sur le site de la World Cube Association.",
+        },
+        "how-can-i-organize-a-wca-competition": {
+          q: "Comment puis-je organiser une compétition de la WCA ?",
+          a:
+            "L'organisation d'une compétition de la WCA nécessite de nombreuses heures de travail bénévole. Notamment, les organisateurs sont responsables de trouver un lieu approprié pour la compétition. Si vous êtes intéressé à organiser une compétition de la WCA, veuillez contacter un <délégué>Délégué WCA</delegates> dans votre région.\n\n" +
+            "Lisez les <orgGuidelines>Lignes directrices pour les organisateurs de compétitions de la WCA</orgGuidelines> pour plus d'informations.",
+        },
+        "how-can-i-volunteer-with-speedcubing-canada": {
+          q: "Comment puis-je devenir bénévole pour Speedcubing Canada ?",
+          a: "Nous sommes toujours à la recherche de bénévoles pour aider au bon déroulement de nos compétitions ! Pour être bénévole lors d'une compétition, contactez l'organisateur ou le délégué WCA. Alternativement, vous pouvez remplir un formulaire de candidature \"staff\" pour une compétition s'il y en a un de disponible.",
+        },
+        "why-the-change-from-canadiancubing-to-speedcubing-canada": {
+          q: "Pourquoi le changement de canadianCUBING à Speedcubing Canada ?",
+          a:
+            "Après de nombreuses années de fonctionnement de canadianCUBING en tant qu'organisation communautaire de proximité, le besoin est apparu d'une organisation régionale de speedcubing officiellement enregistrée en tant qu'organisme à but non lucratif, afin de répondre aux besoins croissants de la communauté du speedcubing au Canada. En raison d'un emploi du temps chargé et d'autres facteurs, l'équipe de canadianCUBING n'était pas structurée de manière à permettre à l'organisation de s'enregistrer en tant qu'organisme à but non lucratif. Par conséquent, Speedcubing Canada a été établi en tant qu'organisation à but non lucratif et nouvelle organisation de speedcubing au Canada en 2021, avec un nouveau conseil d'administration.\n\n" +
+            "La communauté du speedcubing au Canada doit une grande partie de sa croissance à canadianCUBING, et nous sommes reconnaissants aux nombreux bénévoles qui ont investi dans la communauté à travers canadianCUBING pendant de nombreuses années. Nous nous réjouissons de l'avenir du speedcubing au Canada !",
+        },
+        "affiliated-with-the-wca": {
+          q: "Speedcubing Canada est-elle affiliée à la World Cube Association ?",
+          a: "Speedcubing Canada fonctionne indépendamment de la World Cube Association, avec un conseil d'administration distinct. Speedcubing Canada est reconnue comme l'organisation régionale officielle du Canada par la <regionalOrg>WCA</regionalOrg>.",
         },
       },
     },
