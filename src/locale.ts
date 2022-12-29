@@ -1,4 +1,4 @@
-export const LOCALES = { en: "en", fr:"fr" } as const;
+export const LOCALES = { en: "en", fr: "fr" } as const;
 export const DEFAULT_LOCALE = LOCALES.en;
 
 export const resources = {
@@ -154,7 +154,7 @@ export const resources = {
         "how-can-i-organize-a-wca-competition": {
           q: "Comment puis-je organiser une compétition de la WCA ?",
           a:
-            "L'organisation d'une compétition de la WCA nécessite de nombreuses heures de travail bénévole. Notamment, les organisateurs sont responsables de trouver un lieu approprié pour la compétition. Si vous êtes intéressé à organiser une compétition de la WCA, veuillez contacter un <délégué>Délégué WCA</delegates> dans votre région.\n\n" +
+            "L'organisation d'une compétition de la WCA nécessite de nombreuses heures de travail bénévole. Notamment, les organisateurs sont responsables de trouver un lieu approprié pour la compétition. Si vous êtes intéressé à organiser une compétition de la WCA, veuillez contacter un <delegates>Délégué WCA</delegates> dans votre région.\n\n" +
             "Lisez les <orgGuidelines>Lignes directrices pour les organisateurs de compétitions de la WCA</orgGuidelines> pour plus d'informations.",
         },
         "how-can-i-volunteer-with-speedcubing-canada": {
