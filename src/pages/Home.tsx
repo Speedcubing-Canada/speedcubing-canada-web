@@ -1,7 +1,13 @@
+import { Link as RouterLink, useParams } from "react-router-dom";
 import { Instagram, FacebookOutlined, Twitter } from "@mui/icons-material";
-import { Box, useTheme } from "@mui/material";
+import { Box, Typography, useTheme } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import { Link } from "../components/Link";
+import {
+  getLocaleOrFallback,
+  INVERTED_LOCALES,
+  LOCALE_TO_LANGUAGE,
+} from "../locale";
 
 const SOCIAL_LINKS = [
   {
@@ -22,6 +28,10 @@ const GAP_PX = `${GAP}px`;
 
 export const Home = () => {
   const theme = useTheme();
+  const params = useParams();
+  const locale = getLocaleOrFallback(params.locale as string);
+
+  const inverseLocale = INVERTED_LOCALES[locale];
 
   const useStyles = makeStyles({
     logo: {
@@ -30,6 +40,14 @@ export const Home = () => {
       [theme.breakpoints.down("sm")]: {
         maxWidth: "75vw",
       },
+    },
+    noTextDecoration: {
+      textDecoration: "none",
+    },
+    verticalLine: {
+      width: "3px",
+      height: "35px",
+      background: "black",
     },
   });
 
@@ -55,6 +73,20 @@ export const Home = () => {
             <Icon fontSize="large" htmlColor="black" />
           </Link>
         ))}
+        <div className={classes.verticalLine} />
+        <RouterLink
+          to={`/${inverseLocale}`}
+          className={classes.noTextDecoration}
+        >
+          <abbr
+            title={LOCALE_TO_LANGUAGE[inverseLocale]}
+            className={classes.noTextDecoration}
+          >
+            <Typography fontSize="24px" fontWeight="bold" color="black">
+              {inverseLocale.toUpperCase()}
+            </Typography>
+          </abbr>
+        </RouterLink>
       </Box>
     </Box>
   );
