@@ -30,6 +30,7 @@ const ROUTE_NAME_TO_ROUTE = {
 export const Base = () => {
   const { t } = useTranslation();
   const { pathname } = useLocation();
+  const pathWithoutLocale = pathname.split("/").at(-1);
   const params = useParams();
   const locale = getLocaleOrFallback(params.locale as string);
 
@@ -40,7 +41,7 @@ export const Base = () => {
 
   useEffect(() => {
     window.scrollTo(0, 0);
-  }, [pathname]);
+  }, [pathWithoutLocale]);
 
   return (
     <Box minHeight="100vh" flex={1} display="flex" flexDirection="column">
@@ -51,17 +52,18 @@ export const Base = () => {
         sx={{ position: "sticky", bottom: 0, left: 0, right: 0, zIndex: 1100 }}
         elevation={2}
       >
-        <BottomNavigation showLabels value={pathname}>
+        <BottomNavigation showLabels value={pathWithoutLocale}>
           {ROUTES.map((r) => {
             const Icon = ICONS[r];
-            const route = `${locale}/${ROUTE_NAME_TO_ROUTE[r]}`;
+            const route = ROUTE_NAME_TO_ROUTE[r];
+            const routeWithLocale = `${locale}/${route}`;
 
             return (
               <BottomNavigationAction
                 key={r}
                 label={t(`routes.${r}`)}
                 icon={<Icon />}
-                to={route}
+                to={routeWithLocale}
                 value={route}
                 component={Link}
               />
