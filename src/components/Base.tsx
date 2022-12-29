@@ -1,4 +1,6 @@
 import { useEffect } from "react";
+import i18n from "i18next";
+import { useTranslation } from "react-i18next";
 import {
   Box,
   Paper,
@@ -6,10 +8,11 @@ import {
   BottomNavigationAction,
 } from "@mui/material";
 import { Home, Info, CorporateFare, QuestionAnswer } from "@mui/icons-material";
-import { Link, Outlet, useLocation } from "react-router-dom";
-import { useTranslation } from "react-i18next";
+import { Link, Outlet, useLocation, useParams } from "react-router-dom";
+import { getLocaleOrFallback, SAVED_LOCALE } from "../locale";
 
 const ROUTES = ["home", "about", "organization", "faq"] as const;
+
 const ICONS = {
   home: Home,
   about: Info,
@@ -18,15 +21,22 @@ const ICONS = {
 } as const;
 
 const ROUTE_NAME_TO_ROUTE = {
-  home: "/",
-  about: "/about",
-  organization: "/organization",
-  faq: "/faq",
+  home: "",
+  about: "about",
+  organization: "organization",
+  faq: "faq",
 } as const;
 
 export const Base = () => {
   const { t } = useTranslation();
   const { pathname } = useLocation();
+  const params = useParams();
+  const locale = getLocaleOrFallback(params.locale as string);
+
+  useEffect(() => {
+    localStorage.setItem(SAVED_LOCALE, locale);
+    i18n.changeLanguage(locale);
+  }, [locale]);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -44,7 +54,7 @@ export const Base = () => {
         <BottomNavigation showLabels value={pathname}>
           {ROUTES.map((r) => {
             const Icon = ICONS[r];
-            const route = ROUTE_NAME_TO_ROUTE[r];
+            const route = `${locale}/${ROUTE_NAME_TO_ROUTE[r]}`;
 
             return (
               <BottomNavigationAction
@@ -57,7 +67,6 @@ export const Base = () => {
               />
             );
           })}
-          =
         </BottomNavigation>
       </Paper>
     </Box>
