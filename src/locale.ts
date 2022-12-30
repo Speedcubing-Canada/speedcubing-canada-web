@@ -94,13 +94,13 @@ export const resources = {
         sc: "Speedcubing Canada",
       },
       routes: {
-        home: "Acceuil",
-        about: "A propos",
+        home: "Accueil",
+        about: "À propos",
         organization: "Organisation",
         faq: "FAQ",
       },
       about: {
-        title: "A propos",
+        title: "À propos",
         body:
           "Speedcubing Canada existe pour promouvoir et aider la communauté du speedcubing au Canada. Le speedcubing consiste à résoudre des casse-tête rotatifs, comme le Rubik's Cube, le plus rapidement possible.\n\n" +
           "À l'échelle mondiale, les compétitions officielles de speedcubing sont régies par la <wca>World Cube Association</wca> (WCA). Speedcubing Canada est <regionalOrg>l'organisation régionale officielle de la WCA </regionalOrg>au Canada. Depuis la fondation de la WCA en 2004, plus de 100 000 personnes de plus de 140 pays ont participé aux compétitions officielles de la WCA, dont plus de 4 700 compétiteurs représentant le Canada. Près de 200 compétitions officielles de la WCA ont été organisées au Canada dans sept provinces.\n\n" +
