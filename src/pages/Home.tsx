@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { Link as RouterLink, useParams } from "react-router-dom";
 import {
   Instagram,
@@ -17,27 +18,28 @@ import { LINKS } from "./links";
 
 const SOCIAL_LINKS = [
   {
-    name: "Mailing list", // TODO: localization
+    nameKey: "main.mailingList",
     to: LINKS.MAILING_LIST,
     Icon: Email,
   },
   {
-    name: "Instagram",
+    nameKey: "main.instagram",
     to: LINKS.INSTAGRAM,
     Icon: Instagram,
   },
   {
-    name: "Facebook",
+    nameKey: "main.facebook",
     to: LINKS.FACEBOOK,
     Icon: FacebookOutlined,
   },
-  { name: "Twitter", to: LINKS.TWITTER, Icon: Twitter },
+  { nameKey: "main.twitter", to: LINKS.TWITTER, Icon: Twitter },
 ] as const;
 
 const GAP = 12;
 const GAP_PX = `${GAP}px`;
 
 export const Home = () => {
+  const { t } = useTranslation();
   const theme = useTheme();
   const params = useParams();
   const locale = getLocaleOrFallback(params.locale as string);
@@ -79,9 +81,9 @@ export const Home = () => {
         justifyContent="center"
         gap={GAP_PX}
       >
-        {SOCIAL_LINKS.map(({ Icon, to, name }) => (
-          <Link key={name} to={to} aria-label={name}>
-            <Icon fontSize="large" htmlColor="black" />
+        {SOCIAL_LINKS.map(({ Icon, to, nameKey }) => (
+          <Link key={nameKey} to={to}>
+            <Icon fontSize="large" htmlColor="black" titleAccess={t(nameKey)} />
           </Link>
         ))}
         <div className={classes.verticalLine} />

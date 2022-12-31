@@ -17,6 +17,10 @@ export const resources = {
     translation: {
       main: {
         sc: "Speedcubing Canada",
+        mailingList: "Mailing list",
+        facebook: "Facebook",
+        instagram: "Instagram",
+        twitter: "Twitter",
       },
       routes: {
         home: "Home",
@@ -103,6 +107,10 @@ export const resources = {
     translation: {
       main: {
         sc: "Speedcubing Canada",
+        mailingList: "Mailing list", // TODO: in French
+        facebook: "Facebook",
+        instagram: "Instagram",
+        twitter: "Twitter",
       },
       routes: {
         home: "Accueil",
