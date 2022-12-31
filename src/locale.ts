@@ -17,6 +17,10 @@ export const resources = {
     translation: {
       main: {
         sc: "Speedcubing Canada",
+        mailingList: "Mailing list",
+        facebook: "Facebook",
+        instagram: "Instagram",
+        twitter: "Twitter",
       },
       routes: {
         home: "Home",
@@ -66,7 +70,7 @@ export const resources = {
         title: "Frequently Asked Questions",
         "when-is-the-next-wca-competition-in-my-area": {
           q: "When is the next WCA competition in my area?",
-          a: "You can find <wcaComps>a list of all upcoming competitions in Canada</wcaComps> on the World Cube Association website. Check back regularly and follow Speedcubing Canada on social media to be the first to know when competitions are announced!",
+          a: "You can find <wcaComps>a list of all upcoming competitions in Canada</wcaComps> on the World Cube Association website. Follow Speedcubing Canada on social media and <mailingList>join our mailing list</mailingList> to be the first to know when competitions are announced!",
         },
         "im-going-to-my-first-wca-competition-what-do-i-need-to-know": {
           q: "I’m going to my first WCA competition! What do I need to know?",
@@ -103,6 +107,10 @@ export const resources = {
     translation: {
       main: {
         sc: "Speedcubing Canada",
+        mailingList: "Liste de diffusion",
+        facebook: "Facebook",
+        instagram: "Instagram",
+        twitter: "Twitter",
       },
       routes: {
         home: "Accueil",
@@ -152,7 +160,7 @@ export const resources = {
         title: "Foire Aux Questions",
         "when-is-the-next-wca-competition-in-my-area": {
           q: "Quand aura lieu la prochaine compétition de la WCA dans ma région ?",
-          a: "Vous pouvez trouver <wcaComps>une liste de toutes les compétitions à venir au Canada</wcaComps> sur le site Web de la World Cube Association. Consultez-le régulièrement et suivez Speedcubing Canada sur les réseaux sociaux pour être les premiers à être informés de l'annonce des compétitions !",
+          a: "Vous pouvez trouver <wcaComps>une liste de toutes les compétitions à venir au Canada</wcaComps> sur le site Web de la World Cube Association. Suivez Speedcubing Canada sur les réseaux sociaux et <mailingList>inscrivez-vous sur notre liste de diffusion</mailingList> pour être les premiers à être informés de l'annonce des compétitions !",
         },
         "im-going-to-my-first-wca-competition-what-do-i-need-to-know": {
           q: "Je vais participer à ma première compétition de la WCA ! Que dois-je savoir ?",

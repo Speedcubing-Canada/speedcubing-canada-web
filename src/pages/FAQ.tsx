@@ -1,6 +1,7 @@
 import { Box, Container, Typography } from "@mui/material";
 import { useTranslation, Trans } from "react-i18next";
 import { Link } from "../components/Link";
+import { LINKS } from "./links";
 
 const QUESTIONS = [
   "when-is-the-next-wca-competition-in-my-area",
@@ -14,28 +15,23 @@ const QUESTIONS = [
 
 const INTERPOLATE = {
   "when-is-the-next-wca-competition-in-my-area": {
-    wcaComps: (
-      <Link to="https://www.worldcubeassociation.org/competitions?region=Canada" />
-    ),
+    wcaComps: <Link to={LINKS.WCA.COMPS_CANADA} />,
+    mailingList: <Link to={LINKS.MAILING_LIST} />,
   },
   "im-going-to-my-first-wca-competition-what-do-i-need-to-know": {
-    regs: <Link to="https://www.worldcubeassociation.org/regulations/" />,
-    tutorial: <Link to="https://www.youtube.com/watch?v=dPL3eV-A0ww" />,
+    regs: <Link to={LINKS.WCA.REGS} />,
+    tutorial: <Link to={LINKS.NEW_COMPETITOR_TUTORIAL} />,
   },
   "who-are-the-wca-delegates-in-my-area": {
-    delegates: <Link to="https://www.worldcubeassociation.org/delegates" />,
+    delegates: <Link to={LINKS.WCA.DELEGATES} />,
   },
   "how-can-i-organize-a-wca-competition": {
-    delegates: <Link to="https://www.worldcubeassociation.org/delegates" />,
-    orgGuidelines: (
-      <Link to="https://www.worldcubeassociation.org/organizer-guidelines" />
-    ),
+    delegates: <Link to={LINKS.WCA.DELEGATES} />,
+    orgGuidelines: <Link to={LINKS.WCA.ORGANIZER_GUIDELINES} />,
   },
   "how-can-i-volunteer-with-speedcubing-canada": {},
   "affiliated-with-the-wca": {
-    regionalOrg: (
-      <Link to="https://www.worldcubeassociation.org/organizations" />
-    ),
+    regionalOrg: <Link to={LINKS.WCA.REGIONAL_ORGS} />,
   },
   "why-the-change-from-canadiancubing-to-speedcubing-canada": {},
 } as const;
