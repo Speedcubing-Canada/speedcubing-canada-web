@@ -107,7 +107,7 @@ export const resources = {
     translation: {
       main: {
         sc: "Speedcubing Canada",
-        mailingList: "Mailing list", // TODO: in French
+        mailingList: "Liste de diffusion",
         facebook: "Facebook",
         instagram: "Instagram",
         twitter: "Twitter",
@@ -160,7 +160,7 @@ export const resources = {
         title: "Foire Aux Questions",
         "when-is-the-next-wca-competition-in-my-area": {
           q: "Quand aura lieu la prochaine compétition de la WCA dans ma région ?",
-          a: "Vous pouvez trouver <wcaComps>une liste de toutes les compétitions à venir au Canada</wcaComps> sur le site Web de la World Cube Association. Consultez-le régulièrement et suivez Speedcubing Canada sur les réseaux sociaux pour être les premiers à être informés de l'annonce des compétitions !", // TODO: Update to match English
+          a: "Vous pouvez trouver <wcaComps>une liste de toutes les compétitions à venir au Canada</wcaComps> sur le site Web de la World Cube Association. Suivez Speedcubing Canada sur les réseaux sociaux et <mailingList>inscrivez-vous sur notre liste de diffusion</mailingList> pour être les premiers à être informés de l'annonce des compétitions !",
         },
         "im-going-to-my-first-wca-competition-what-do-i-need-to-know": {
           q: "Je vais participer à ma première compétition de la WCA ! Que dois-je savoir ?",
