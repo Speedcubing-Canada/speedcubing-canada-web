@@ -66,7 +66,7 @@ export const resources = {
         title: "Frequently Asked Questions",
         "when-is-the-next-wca-competition-in-my-area": {
           q: "When is the next WCA competition in my area?",
-          a: "You can find <wcaComps>a list of all upcoming competitions in Canada</wcaComps> on the World Cube Association website. Check back regularly and follow Speedcubing Canada on social media to be the first to know when competitions are announced!",
+          a: "You can find <wcaComps>a list of all upcoming competitions in Canada</wcaComps> on the World Cube Association website. Follow Speedcubing Canada on social media and <mailingList>join our mailing list</mailingList> to be the first to know when competitions are announced!", // TODO: French version
         },
         "im-going-to-my-first-wca-competition-what-do-i-need-to-know": {
           q: "I’m going to my first WCA competition! What do I need to know?",

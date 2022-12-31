@@ -1,5 +1,10 @@
 import { Link as RouterLink, useParams } from "react-router-dom";
-import { Instagram, FacebookOutlined, Twitter } from "@mui/icons-material";
+import {
+  Instagram,
+  FacebookOutlined,
+  Twitter,
+  Email,
+} from "@mui/icons-material";
 import { Box, Typography, useTheme } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import { Link } from "../components/Link";
@@ -8,19 +13,25 @@ import {
   INVERTED_LOCALES,
   LOCALE_TO_LANGUAGE,
 } from "../locale";
+import { LINKS } from "./links";
 
 const SOCIAL_LINKS = [
   {
+    name: "Mailing list", // TODO: localization
+    to: LINKS.MAILING_LIST,
+    Icon: Email,
+  },
+  {
     name: "Instagram",
-    to: "https://www.instagram.com/speedcubingcanada/",
+    to: LINKS.INSTAGRAM,
     Icon: Instagram,
   },
   {
     name: "Facebook",
-    to: "https://www.facebook.com/speedcubingcan",
+    to: LINKS.FACEBOOK,
     Icon: FacebookOutlined,
   },
-  { name: "Twitter", to: "https://twitter.com/SpeedcubingCAN", Icon: Twitter },
+  { name: "Twitter", to: LINKS.TWITTER, Icon: Twitter },
 ] as const;
 
 const GAP = 12;
