@@ -6,7 +6,7 @@ export const LINKS = {
   WCA: {
     HOME: "https://www.worldcubeassociation.org",
     COMPS_CANADA:
-      "https://www.worldcubeassociation.org/competitions?region=Canada",
+      "https://www.worldcubeassociation.org/competitions?region=Canada&show_registration_status=on",
     REGS: "https://www.worldcubeassociation.org/regulations",
     DELEGATES: "https://www.worldcubeassociation.org/delegates",
     ORGANIZER_GUIDELINES:
