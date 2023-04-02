@@ -80,12 +80,6 @@ export const resources = {
           q: "Who are the WCA Delegates in my area?",
           a: "You can find a list of all <delegates>WCA Delegates</delegates> on the World Cube Association website.",
         },
-        "how-can-i-organize-a-wca-competition": {
-          q: "How can I organize a WCA competition?",
-          a:
-            "Organizing a WCA competition requires several hours of volunteer work. Notably, organizers are responsible for securing a suitable venue for the competition. If you are interested in organizing a WCA competition, please get in touch with a <delegates>WCA Delegate</delegates> in your region.\n\n" +
-            "Read the <orgGuidelines>WCA Competition Organizer Guidelines</orgGuidelines> for more information.",
-        },
         "how-can-i-volunteer-with-speedcubing-canada": {
           q: "How can I volunteer with Speedcubing Canada?",
           a: "We are always looking for volunteers to help our competitions run smoothly! To volunteer at a competition, contact the organizer or WCA Delegate. Alternatively, you can fill out a “staff” application form for a competition if there is one available.",
@@ -169,12 +163,6 @@ export const resources = {
         "who-are-the-wca-delegates-in-my-area": {
           q: "Qui sont les délégués de la WCA dans ma région ?",
           a: "Vous pouvez trouver une liste de tous les <delegates>Délégués de la WCA</delegates> sur le site de la World Cube Association.",
-        },
-        "how-can-i-organize-a-wca-competition": {
-          q: "Comment puis-je organiser une compétition de la WCA ?",
-          a:
-            "L'organisation d'une compétition de la WCA nécessite de nombreuses heures de travail bénévole. Notamment, les organisateurs sont responsables de trouver un lieu approprié pour la compétition. Si vous êtes intéressé à organiser une compétition de la WCA, veuillez contacter un <delegates>Délégué WCA</delegates> dans votre région.\n\n" +
-            "Lisez les <orgGuidelines>Lignes directrices pour les organisateurs de compétitions de la WCA</orgGuidelines> pour plus d'informations.",
         },
         "how-can-i-volunteer-with-speedcubing-canada": {
           q: "Comment puis-je devenir bénévole pour Speedcubing Canada ?",
