@@ -9,8 +9,6 @@ export const LINKS = {
       "https://www.worldcubeassociation.org/competitions?region=Canada&show_registration_status=on",
     REGS: "https://www.worldcubeassociation.org/regulations",
     DELEGATES: "https://www.worldcubeassociation.org/delegates",
-    ORGANIZER_GUIDELINES:
-      "https://www.worldcubeassociation.org/organizer-guidelines",
     REGIONAL_ORGS: "https://www.worldcubeassociation.org/organizations",
     WC2003: "https://www.worldcubeassociation.org/competitions/WC2003",
     CO2007:
