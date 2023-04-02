@@ -74,7 +74,7 @@ export const resources = {
         },
         "im-going-to-my-first-wca-competition-what-do-i-need-to-know": {
           q: "I’m going to my first WCA competition! What do I need to know?",
-          a: "We are so excited for you to experience your first competition! Please familiarize yourself with the <regs>WCA Regulations</regs> before the competition. You may also find this <tutorial>WCA Competitor Tutorial on YouTube</tutorial> helpful.",
+          a: "We are so excited for you to experience your first competition! Please familiarize yourself with the <regs>WCA Regulations</regs> before the competition. We also have two videos that we recommend watching before the competition: <firstComp>What to expect at your first competition</firstComp> and <compBasics>The basics of an official WCA competition</compBasics>.",
         },
         "who-are-the-wca-delegates-in-my-area": {
           q: "Who are the WCA Delegates in my area?",
@@ -158,7 +158,7 @@ export const resources = {
         },
         "im-going-to-my-first-wca-competition-what-do-i-need-to-know": {
           q: "Je vais participer à ma première compétition de la WCA ! Que dois-je savoir ?",
-          a: "Nous sommes très enthousiastes à l'idée que vous viviez votre première compétition ! Veuillez vous familiariser avec le <regs>Règlement de la WCA</regs> avant la compétition. Vous pouvez également trouver ce <tutorial>Tutoriel pour les compétiteurs de la WCA sur YouTube</tutorial> utile.",
+          a: "Nous sommes très enthousiastes à l'idée de vous voir participer à votre première compétition ! Familiarisez-vous avec le <regs>règlement de la WCA</regs> avant la compétition. Nous avons également deux vidéos que nous recommandons de regarder avant la compétition : <firstComp>À quoi s'attendre lors de votre première compétition</firstComp> et <compBasics>Les bases d'une compétition officielle de la WCA</compBasics>.",
         },
         "who-are-the-wca-delegates-in-my-area": {
           q: "Qui sont les délégués de la WCA dans ma région ?",

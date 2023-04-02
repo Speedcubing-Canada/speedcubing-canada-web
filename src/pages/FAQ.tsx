@@ -19,7 +19,8 @@ const INTERPOLATE = {
   },
   "im-going-to-my-first-wca-competition-what-do-i-need-to-know": {
     regs: <Link to={LINKS.WCA.REGS} />,
-    tutorial: <Link to={LINKS.NEW_COMPETITOR_TUTORIAL} />,
+    firstComp: <Link to={LINKS.FIRST_COMP} />,
+    compBasics: <Link to={LINKS.COMP_BASICS} />,
   },
   "who-are-the-wca-delegates-in-my-area": {
     delegates: <Link to={LINKS.WCA.DELEGATES} />,

@@ -16,5 +16,6 @@ export const LINKS = {
     CO2007:
       "https://www.worldcubeassociation.org/competitions/CanadianOpen2007",
   },
-  NEW_COMPETITOR_TUTORIAL: "https://www.youtube.com/watch?v=dPL3eV-A0ww",
+  FIRST_COMP: "https://youtu.be/xK2ycvTfgUY",
+  COMP_BASICS: "https://youtu.be/vz1V0Gv0qX0",
 } as const;
