@@ -7,7 +7,6 @@ const QUESTIONS = [
   "when-is-the-next-wca-competition-in-my-area",
   "im-going-to-my-first-wca-competition-what-do-i-need-to-know",
   "who-are-the-wca-delegates-in-my-area",
-  "how-can-i-organize-a-wca-competition",
   "how-can-i-volunteer-with-speedcubing-canada",
   "affiliated-with-the-wca",
   "why-the-change-from-canadiancubing-to-speedcubing-canada",
@@ -20,14 +19,11 @@ const INTERPOLATE = {
   },
   "im-going-to-my-first-wca-competition-what-do-i-need-to-know": {
     regs: <Link to={LINKS.WCA.REGS} />,
-    tutorial: <Link to={LINKS.NEW_COMPETITOR_TUTORIAL} />,
+    firstComp: <Link to={LINKS.FIRST_COMP} />,
+    compBasics: <Link to={LINKS.COMP_BASICS} />,
   },
   "who-are-the-wca-delegates-in-my-area": {
     delegates: <Link to={LINKS.WCA.DELEGATES} />,
-  },
-  "how-can-i-organize-a-wca-competition": {
-    delegates: <Link to={LINKS.WCA.DELEGATES} />,
-    orgGuidelines: <Link to={LINKS.WCA.ORGANIZER_GUIDELINES} />,
   },
   "how-can-i-volunteer-with-speedcubing-canada": {},
   "affiliated-with-the-wca": {
