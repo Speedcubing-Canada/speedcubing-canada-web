@@ -11,8 +11,13 @@ export const DOCUMENTS = {
     { name: "By-laws (v1.0)", id: "by-laws-v1.0" },
     { name: "By-laws (v1.1)", id: "by-laws-v1.1" },
     { name: "By-laws (v1.2)", id: "by-laws-v1.2" },
+    { name: "By-laws (v1.3)", id: "by-laws-v1.3" },
   ],
   minutes: [
+    {
+      name: "Directors' Meeting April 19, 2023",
+      id: "directors-meeting-apr-19-2023",
+    },
     {
       name: "Annual Members' Meeting January 29, 2023",
       id: "annual-members-meeting-jan-29-2023",
