@@ -16,7 +16,9 @@ services:
       - frontend
       - backend
     depends_on:
-      - db
+      db:
+        condition: service_healthy
+
 
   db:
     container_name: mysql-db
