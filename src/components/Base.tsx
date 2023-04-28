@@ -7,17 +7,19 @@ import {
   BottomNavigation,
   BottomNavigationAction,
 } from "@mui/material";
-import { Home, Info, CorporateFare, QuestionAnswer } from "@mui/icons-material";
+import { Home, Info, CorporateFare, QuestionAnswer, AccountCircle, Leaderboard } from "@mui/icons-material";
 import { Link, Outlet, useLocation, useParams } from "react-router-dom";
 import { getLocaleOrFallback, SAVED_LOCALE } from "../locale";
 
-const ROUTES = ["home", "about", "organization", "faq"] as const;
+const ROUTES = ["home", "about", "organization", "faq","rankings", "account"] as const;
 
 const ICONS = {
   home: Home,
   about: Info,
   organization: CorporateFare,
   faq: QuestionAnswer,
+  account: AccountCircle,
+  rankings: Leaderboard,
 } as const;
 
 const ROUTE_NAME_TO_ROUTE = {
@@ -25,6 +27,8 @@ const ROUTE_NAME_TO_ROUTE = {
   about: "about",
   organization: "organization",
   faq: "faq",
+  rankings: "rankings",
+  account: "account",
 } as const;
 
 export const Base = () => {

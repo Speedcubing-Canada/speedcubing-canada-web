@@ -27,6 +27,8 @@ export const resources = {
         about: "About",
         organization: "Organization",
         faq: "FAQ",
+        account: "Account",
+        rankings: "Rankings",
       },
       about: {
         title: "About",
@@ -111,6 +113,8 @@ export const resources = {
         about: "À propos",
         organization: "Organisation",
         faq: "FAQ",
+        account: "Compte",
+        rankings: "Classement",
       },
       about: {
         title: "À propos",
