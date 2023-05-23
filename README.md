@@ -6,6 +6,10 @@ First, please move into the `app` directory.
 
 In the project directory, you can run:
 
+### `docker-compose up`
+
+Runs de app and a development mysql database and an nginx server. The app is available at [http://localhost/](http://localhost/).
+
 ### `npm start`
 
 Runs the app in the development mode.\
