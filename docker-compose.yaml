@@ -8,10 +8,15 @@ services:
       target: development
     volumes:
       - ./app/src:/app/src
+    env_file: ./.env
     ports:
-      - 2003:2003
-    secrets:
-      - mysql-password
+      - $NODE_LOCAL_PORT:$NODE_DOCKER_PORT
+    environment:
+      - DB_HOST=db
+      - DB_USER=$MYSQLDB_USER
+      - DB_PASSWORD=$MYSQLDB_ROOT_PASSWORD
+      - DB_NAME=$MYSQLDB_DATABASE
+      - DB_PORT=$MYSQLDB_DOCKER_PORT
     networks:
       - frontend
       - backend
@@ -25,20 +30,21 @@ services:
     image: mysql:8.0
     command: --default-authentication-plugin=mysql_native_password
     restart: always
+    env_file: ./.env
     healthcheck:
       test:
         [
           "CMD-SHELL",
-          'mysqladmin ping -h 127.0.0.1 --password="$$(cat /run/secrets/mysql-password)" --silent',
+          'mysqladmin ping -h 127.0.0.1 --password="$MYSQLDB_ROOT_PASSWORD" --silent',
         ]
       interval: 3s
       retries: 5
       start_period: 30s
-    secrets:
-      - mysql-password
     environment:
-      MYSQL_DATABASE: scc-web
-      MYSQL_ROOT_PASSWORD_FILE: /run/secrets/mysql-password
+      - MYSQL_ROOT_PASSWORD=$MYSQLDB_ROOT_PASSWORD
+      - MYSQL_DATABASE=$MYSQLDB_DATABASE
+    ports:
+      - $MYSQLDB_LOCAL_PORT:$MYSQLDB_DOCKER_PORT
     volumes:
       - mysql-data:/var/lib/mysql
     networks:
@@ -60,10 +66,6 @@ services:
 networks:
   frontend:
   backend:
-
-secrets:
-  mysql-password:
-    file: mysql_password.txt
 
 volumes:
   mysql-data:
