@@ -1,5 +1,8 @@
 export const User = (sequelize:any, Sequelize:any) => {
     const User = sequelize.define("user", {
+      id: {
+        type: Sequelize.STRING
+      },
       wcaid: {
         type: Sequelize.STRING
       },
