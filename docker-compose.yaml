@@ -7,16 +7,16 @@ services:
       context: .
       target: development
     volumes:
-      - ./app/src:/app/src
+      - ./app:/app
     env_file: ./.env
     ports:
-      - $NODE_LOCAL_PORT:$NODE_DOCKER_PORT
+      - ${NODE_LOCAL_PORT}:${NODE_DOCKER_PORT}
     environment:
       - DB_HOST=db
-      - DB_USER=$MYSQLDB_USER
-      - DB_PASSWORD=$MYSQLDB_ROOT_PASSWORD
-      - DB_NAME=$MYSQLDB_DATABASE
-      - DB_PORT=$MYSQLDB_DOCKER_PORT
+      - DB_USER=${MYSQLDB_USER}
+      - DB_PASSWORD=${MYSQLDB_ROOT_PASSWORD}
+      - DB_NAME=${MYSQLDB_DATABASE}
+      - DB_PORT=${MYSQLDB_DOCKER_PORT}
     networks:
       - frontend
       - backend
@@ -41,10 +41,10 @@ services:
       retries: 5
       start_period: 30s
     environment:
-      - MYSQL_ROOT_PASSWORD=$MYSQLDB_ROOT_PASSWORD
-      - MYSQL_DATABASE=$MYSQLDB_DATABASE
+      - MYSQL_ROOT_PASSWORD=${MYSQLDB_ROOT_PASSWORD}
+      - MYSQL_DATABASE=${MYSQLDB_DATABASE}
     ports:
-      - $MYSQLDB_LOCAL_PORT:$MYSQLDB_DOCKER_PORT
+      - ${MYSQLDB_LOCAL_PORT}:${MYSQLDB_DOCKER_PORT}
     volumes:
       - mysql-data:/var/lib/mysql
     networks:

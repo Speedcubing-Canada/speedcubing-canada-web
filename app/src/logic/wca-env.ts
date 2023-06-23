@@ -6,6 +6,10 @@ export const WCA_ORIGIN = PRODUCTION
   ? 'https://www.worldcubeassociation.org'
   : 'https://staging.worldcubeassociation.org';
 
-export const WCA_OAUTH_CLIENT_ID = PRODUCTION
-  ? 'Vl63_0nuaxjlnaGVmS2XUkpHxfrwz1i78vI3iXu72Gs'
+export const WCA_OAUTH_CLIENT_ID : string = PRODUCTION
+  ? process.env.WCA_OAUTH_CLIENT_ID ?? 'example-application-id' //to handle the undefined case
   : 'example-application-id';
+
+export const WCA_OAUTH_CLIENT_SECRET : string = PRODUCTION
+  ? process.env.WCA_OAUTH_CLIENT_SECRET ?? 'example-application-secret' //to handle the undefined case
+  : 'example-application-secret';

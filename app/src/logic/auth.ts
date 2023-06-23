@@ -1,4 +1,4 @@
-import { WCA_ORIGIN, WCA_OAUTH_CLIENT_ID } from './wca-env';
+import { WCA_ORIGIN, WCA_OAUTH_CLIENT_ID, WCA_OAUTH_CLIENT_SECRET } from './wca-env';
 
 /**
  * Checks the URL hash for presence of OAuth access token
@@ -18,7 +18,9 @@ export const getOauthTokenIfAny = () => {
 export const signIn = () => {
   const params = new URLSearchParams({
     client_id: WCA_OAUTH_CLIENT_ID,
-    response_type: 'token',
+    client_secret: WCA_OAUTH_CLIENT_SECRET,
+    response_type: 'code',
+    grant_type: 'authorization_code',
     redirect_uri: oauthRedirectUri(),
     scope: 'public dob',
   });
