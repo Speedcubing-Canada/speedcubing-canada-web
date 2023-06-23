@@ -12,6 +12,7 @@ export const DOCUMENTS = {
     { name: "By-laws (v1.1)", id: "by-laws-v1.1" },
     { name: "By-laws (v1.2)", id: "by-laws-v1.2" },
     { name: "By-laws (v1.3)", id: "by-laws-v1.3" },
+    { name: "By-laws (v1.4)", id: "by-laws-v1.4" },
   ],
   minutes: [
     {
