@@ -11,6 +11,7 @@ import { Organization } from "./pages/Organization";
 import { FAQ } from "./pages/FAQ";
 import { Rankings } from "./pages/Rankings";
 import { Account } from "./pages/Account";
+import { WcaCallback } from "./pages/WcaCallback";
 
 
 i18n.use(initReactI18next).init({
@@ -48,8 +49,9 @@ const App = () => {
               <Route path="faq" element={<FAQ />} />
               <Route path="rankings" element={<Rankings />} />
               <Route path="account" element={<Account />} />
+              <Route path="wca-callback" element={<WcaCallback />} />
             </Route>
-            {["about", "organization", "faq", "rankins", "account"].map((route) => (
+            {["about", "organization", "faq", "rankings", "account","wca_callback"].map((route) => (
               <Route
                 key={route}
                 path={route}
