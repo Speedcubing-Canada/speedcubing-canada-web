@@ -1,3 +1,5 @@
 .fuse_hidden*
 .env
 .idea
+*.pyc
+venv

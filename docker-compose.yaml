@@ -2,21 +2,15 @@ version: '3.8'
 
 services:
   app:
-    container_name: app-dev
+    container_name: frontend-dev
     build:
       context: .
       target: development
     volumes:
-      - ./app:/app
+      - ./frontend:/frontend
     env_file: ./.env
     ports:
       - ${NODE_LOCAL_PORT}:${NODE_DOCKER_PORT}
-    environment:
-      - DB_HOST=db
-      - DB_USER=${MYSQLDB_USER}
-      - DB_PASSWORD=${MYSQLDB_ROOT_PASSWORD}
-      - DB_NAME=${MYSQLDB_DATABASE}
-      - DB_PORT=${MYSQLDB_DOCKER_PORT}
     networks:
       - frontend
       - backend
@@ -24,6 +18,25 @@ services:
       db:
         condition: service_healthy
 
+  flask:
+    build:
+      context: backend
+      target: builder
+    restart: always
+    env_file: ./.env
+    environment:
+      - DB_HOST=db
+      - DB_USER=${MYSQLDB_USER}
+      - DB_PASSWORD=${MYSQLDB_ROOT_PASSWORD}
+      - DB_NAME=${MYSQLDB_DATABASE}
+      - DB_PORT=${MYSQLDB_DOCKER_PORT}
+    networks:
+      - backnet
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - ${FLASK_LOCAL_PORT}:${FLASK_DOCKER_PORT}
 
   db:
     container_name: mysql-db
