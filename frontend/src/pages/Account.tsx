@@ -3,7 +3,7 @@ import {
     Container,
 } from "@mui/material";
 import Button from '@mui/material/Button';
-import { signIn } from '../logic/auth';
+import { signIn } from '../components/Api';
 
 export const Account = () => {
     const { t } = useTranslation();
