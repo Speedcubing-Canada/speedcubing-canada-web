@@ -11,7 +11,7 @@ import google.cloud.logging
 from backend.lib.secrets import get_secret
 
 if os.path.exists('.env.dev'):
-  load_dotenv('.env.dev')
+  load_dotenv('.env')
 
 if os.environ.get('ENV') == 'PROD':
   client = google.cloud.logging.Client()
@@ -47,7 +47,7 @@ oauth.register(
     authorize_url=wca_host + '/oauth/authorize',
     authorize_params=None,
     api_base_url=wca_host + '/api/v0/',
-    client_kwargs={'scope': 'public email'},
+    client_kwargs={'scope': 'public email dob'},
 )
 
 from backend.handlers.admin import bp as admin_bp
