@@ -47,6 +47,7 @@ oauth.register(
     authorize_url=wca_host + '/oauth/authorize',
     authorize_params=None,
     api_base_url=wca_host + '/api/v0/',
+    token_endpoint_auth_method='client_secret_post',
     client_kwargs={'scope': 'public email dob'},
 )
 

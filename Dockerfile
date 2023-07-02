@@ -1,7 +1,7 @@
 FROM node:14-alpine AS development
 ENV NODE_ENV development
 
-WORKDIR /app
+WORKDIR /frontend
 COPY package*.json ./
 RUN npm install
 

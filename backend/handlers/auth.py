@@ -4,6 +4,7 @@ import os
 from flask import Blueprint, url_for, redirect, request, session
 from google.cloud import ndb
 
+from backend.lib.secrets import get_secret
 from backend.models.user import User, Roles
 from backend.models.wca.person import Person
 from backend.models.wca.rank import RankSingle, RankAverage
@@ -86,8 +87,8 @@ def create_bp(oauth):
       user.last_login = datetime.datetime.now()
 
       user.put()
-
-      return redirect(session.pop('referrer', None) or '/')
+      address = get_secret('FLASK_ADDRESS')
+      return redirect(address or '/')
 
   @bp.route('/logout')
   def logout():
