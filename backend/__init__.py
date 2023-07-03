@@ -6,6 +6,7 @@ import sys
 from authlib.integrations.flask_client import OAuth
 from dotenv import load_dotenv
 from flask import Flask, redirect, request
+from flask_cors import CORS, cross_origin
 import google.cloud.logging
 
 from backend.lib.secrets import get_secret
@@ -28,6 +29,7 @@ elif os.environ.get('ENV') == 'DEV' and 'gunicorn' in sys.argv[0]:
 app = Flask(__name__)
 app.secret_key = get_secret('SESSION_SECRET_KEY')
 app.permanent_session_lifetime = datetime.timedelta(days=7)
+CORS(app, supports_credentials=True)
 
 @app.before_request
 def before_request():

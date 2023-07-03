@@ -7,3 +7,4 @@ google-cloud-ndb
 google-cloud-recaptcha-enterprise
 google-cloud-secret-manager
 absl-py
+flask-cors

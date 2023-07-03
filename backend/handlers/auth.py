@@ -88,7 +88,7 @@ def create_bp(oauth):
 
       user.put()
       address = get_secret('FLASK_ADDRESS')
-      return redirect(address or '/')
+      return redirect(address+'/account' or '/')
 
   @bp.route('/logout')
   def logout():

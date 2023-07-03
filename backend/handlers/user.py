@@ -1,6 +1,6 @@
 import datetime
 
-from flask import Blueprint, render_template, redirect, request
+from flask import Blueprint, render_template, redirect, request, jsonify
 from google.cloud import ndb
 
 from backend.lib import auth
@@ -23,6 +23,22 @@ def RewriteRanks(wca_person):
 
 def error(msg):
   return render_template('error.html', c=Common(), error=msg)
+
+@bp.route('/me')
+def me():
+  with client.context():
+    me = auth.user()
+    if not me:
+      return jsonify({"error": "Unauthorized"}), 401
+    return jsonify({
+        "id": me.key.id(),
+        "name": me.name,
+        "roles": me.roles,
+        "city": me.city,
+        "province": me.province.id() if me.province else None,
+        "wca_person": me.wca_person.id() if me.wca_person else None
+    })
+
 
 @bp.route('/edit', methods=['GET', 'POST'])
 @bp.route('/edit/<user_id>', methods=['GET', 'POST'])
