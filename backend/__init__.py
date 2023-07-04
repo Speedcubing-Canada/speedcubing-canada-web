@@ -12,31 +12,39 @@ import google.cloud.logging
 from backend.lib.secrets import get_secret
 
 if os.path.exists('.env.dev'):
-  load_dotenv('.env')
+    load_dotenv('.env')
 
 if os.environ.get('ENV') == 'PROD':
-  client = google.cloud.logging.Client()
-  client.setup_logging()
+    client = google.cloud.logging.Client()
+    client.setup_logging()
 elif os.environ.get('ENV') == 'DEV' and 'gunicorn' in sys.argv[0]:
-  logger = logging.getLogger()
-  logger.setLevel(logging.DEBUG)
-  handler = logging.StreamHandler(sys.stdout)
-  formatter = logging.Formatter('[%(asctime)s] [%(levelname)s] %(message)s')
-  handler.setFormatter(formatter)
-  logger.addHandler(handler)
-
+    logger = logging.getLogger()
+    logger.setLevel(logging.DEBUG)
+    handler = logging.StreamHandler(sys.stdout)
+    formatter = logging.Formatter('[%(asctime)s] [%(levelname)s] %(message)s')
+    handler.setFormatter(formatter)
+    logger.addHandler(handler)
 
 app = Flask(__name__)
 app.secret_key = get_secret('SESSION_SECRET_KEY')
 app.permanent_session_lifetime = datetime.timedelta(days=7)
+address = get_secret('FLASK_ADDRESS')
 CORS(app, supports_credentials=True)
+
 
 @app.before_request
 def before_request():
-  if os.environ.get('ENV') == 'PROD' and not request.is_secure:
-    url = request.url.replace('http://', 'https://', 1)
-    code = 301
-    return redirect(url, code=code)
+    is_changed = False
+    if request.url.endswith('/'):
+        url = request.url[:-1]
+        is_changed = True
+    if os.environ.get('ENV') == 'PROD' and not request.is_secure:
+        url = request.url.replace('http://', 'https://', 1)
+        is_changed = True
+    if is_changed:
+        code = 301
+        return redirect(url, code=code)
+
 
 wca_host = os.environ.get('WCA_HOST')
 oauth = OAuth(app)

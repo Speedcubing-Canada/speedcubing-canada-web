@@ -1,5 +1,5 @@
-import {useEffect, useState} from "react";
-import {User} from "./Types";
+import React, {useEffect, useState} from "react";
+import {ProfileEditData, User} from "./Types";
 import httpClient from "../httpClient";
 
 export const PRODUCTION =
@@ -19,7 +19,7 @@ export const GetUser = () => {
     useEffect(() => {
     (async () => {
       try {
-        const resp = await httpClient.get(API_BASE_URL + "/me");
+        const resp = await httpClient.get(API_BASE_URL + "/user_info");
         setUser(resp.data);
       } catch (error) {
         console.log("Not authenticated");

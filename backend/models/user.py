@@ -41,13 +41,10 @@ class User(ndb.Model):
     wca_person = ndb.KeyProperty(kind=Person)
     name = ndb.StringProperty()
     email = ndb.StringProperty()
+    dob = ndb.DateProperty()
     roles = ndb.StringProperty(repeated=True)
 
-    city = ndb.StringProperty()
     province = ndb.KeyProperty(kind=Province)
-
-    latitude = ndb.IntegerProperty()
-    longitude = ndb.IntegerProperty()
 
     last_login = ndb.DateTimeProperty()
 

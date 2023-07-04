@@ -56,6 +56,11 @@ def create_bp(oauth):
       else:
         del user.email
 
+      if 'dob' in wca_info:
+        user.dob = datetime.datetime.strptime(wca_info['dob'], '%Y-%m-%d').date()
+      else:
+        del user.dob
+
       user.roles = [role for role in user.roles if role not in Roles.DelegateRoles()]
       if 'delegate_status' in wca_info:
         if wca_info['delegate_status'] == 'senior_delegate':
