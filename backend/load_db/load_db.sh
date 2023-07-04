@@ -2,7 +2,7 @@ set -e
 
 export PYTHONPATH=$(pwd)
 
-if [ "$CUBINGUSA_ENV" != "COMPUTE_ENGINE" ]
+if [ "$SCC_ENV" != "COMPUTE_ENGINE" ]
 then
   echo "Emulating datastore."
   $(gcloud beta emulators datastore env-init)

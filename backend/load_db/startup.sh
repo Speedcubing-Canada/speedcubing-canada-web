@@ -6,4 +6,4 @@
 source env/bin/activate
 pip3 install -r requirements.txt
 
-CUBINGUSA_ENV=COMPUTE_ENGINE ./app/load_db/load_db.sh
+SCC_ENV=COMPUTE_ENGINE ./app/load_db/load_db.sh

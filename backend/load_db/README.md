@@ -4,7 +4,7 @@ Downloading the WCA database uses enough memory that it's difficult to do from A
 
 ## Creating a new VM
 
-You can create a new VM at https://console.cloud.google.com/compute/instancesAdd?project=staging-cubingusa-org.  Most of the settings can use the defaults.
+You can create a new VM at https://console.cloud.google.com/compute/instancesAdd?project=<your-project>.  Most of the settings can use the defaults.
 
 * **Machine configuration**: We're currently using e2-medium.
 * **Identity and API access**: Use the Compute Engine default service account.
@@ -13,9 +13,9 @@ You can create a new VM at https://console.cloud.google.com/compute/instancesAdd
 
 ```sh
 apt upgrade
-cd cubingusa
+cd speedcubing-canada
 git pull
-app/load_db/startup.sh
+backend/load_db/startup.sh
 ```
 
 Next, SSH into the instance and follow the instructions in `vm_setup.sh`.
