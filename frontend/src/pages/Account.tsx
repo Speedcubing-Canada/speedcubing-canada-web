@@ -32,7 +32,7 @@ export const Account = () => {
         {label: 'Saskatchewan', id: 'sk'},
         {label: 'Yukon', id: 'yt'},
         {label: 'N/A', id: 'na'},
-    ];
+    ];// TODO: have translations for provinces
 
     const user = GetUser();//TODO: display something else while loading
     let default_province = {label: 'N/A', id: 'na'};
@@ -137,7 +137,7 @@ export const Account = () => {
                             component="span"
 
                             onClick={signIn}>
-                            Sign in with the WCA
+                            {t("account.signin")}
                         </Button>
                     </Box>
                 </div>

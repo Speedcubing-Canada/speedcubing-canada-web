@@ -102,6 +102,7 @@ export const resources = {
         hi: "Hi, ",
         policy: "Province determine your eligibility for Regional Championships. You may only represent a province where you live at least 50% of the year. We reserve the right to ask for proof of residency. If you are not a Canadian resident, or you would prefer not to list your home province, please select \"N/A\".",
         save: "Save",
+        signin: "Sign in with the WCA",
         signout: "Sign Out",
         welcome: "Welcome to Speedcubing Canada account page. \n\n" +
             "To access it, please sign in with your WCA account.",
@@ -196,6 +197,20 @@ export const resources = {
           a: "Speedcubing Canada fonctionne indépendamment de la World Cube Association, avec un conseil d'administration distinct. Speedcubing Canada est reconnue comme l'organisation régionale officielle du Canada par la <regionalOrg>WCA</regionalOrg>.",
         },
       },
+      account: {
+        title: "Compte",
+        hi: "Salut, ",
+        policy: "Votre province détermine votre admissibilité aux championnats régionaux. Vous ne pouvez représenter qu'une province où vous résidez au moins 50 % de l'année. Nous nous réservons le droit de demander une preuve de résidence. Si vous n'êtes pas résident canadien ou si vous préférez ne pas indiquer votre province de résidence, veuillez sélectionner \"N/A\".",
+        save: "Sauvegarder",
+        signin : "Se connecter avec la WCA",
+        signout: "Déconnexion",
+        welcome: "Bienvenue sur la page du compte de Speedcubing Canada. \n" +
+            "Pour y accéder, veuillez vous connecter avec votre compte WCA.",
+      },
+      rankings: {
+          title: "Rankings",
+          soon: "Rankings Coming Soon",
+      }
     },
   },
 };
