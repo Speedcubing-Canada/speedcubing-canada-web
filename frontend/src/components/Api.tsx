@@ -1,5 +1,5 @@
-import React, {useEffect, useState} from "react";
-import {ProfileEditData, User} from "./Types";
+import {useEffect, useState} from "react";
+import {User} from "./Types";
 import httpClient from "../httpClient";
 
 export const PRODUCTION =

@@ -97,6 +97,19 @@ export const resources = {
           a: "Speedcubing Canada operates independently of the World Cube Association, with a separate Board of Directors. Speedcubing Canada is recognized as Canada’s official <regionalOrg>WCA regional organization</regionalOrg>.",
         },
       },
+      account: {
+        title: "Account",
+        hi: "Hi, ",
+        policy: "Province determine your eligibility for Regional Championships. You may only represent a province where you live at least 50% of the year. We reserve the right to ask for proof of residency. If you are not a Canadian resident, or you would prefer not to list your home province, please select \"N/A\".",
+        save: "Save",
+        signout: "Sign Out",
+        welcome: "Welcome to Speedcubing Canada account page. \n\n" +
+            "To access it, please sign in with your WCA account.",
+      },
+      rankings: {
+          title: "Rankings",
+          soon: "Rankings Coming Soon",
+      }
     },
   },
   [LOCALES.fr]: {
