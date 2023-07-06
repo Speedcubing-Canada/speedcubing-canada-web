@@ -208,8 +208,8 @@ export const resources = {
             "Pour y accéder, veuillez vous connecter avec votre compte WCA.",
       },
       rankings: {
-          title: "Rankings",
-          soon: "Rankings Coming Soon",
+          title: "Classements",
+          soon: "Les classements arrivent",
       }
     },
   },
