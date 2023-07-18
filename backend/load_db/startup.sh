@@ -6,4 +6,4 @@
 source env/bin/activate
 pip3 install -r requirements.txt
 
-SCC_ENV=COMPUTE_ENGINE ./backend/load_db/load_db.sh
+SCC_ENV=COMPUTE_ENGINE ./load_db/load_db.sh
