@@ -5,7 +5,7 @@ from absl import app
 from absl import flags
 from google.cloud import ndb
 
-from backend.models.wca.export import get_latest_export
+from models.wca.export import get_latest_export
 
 FLAGS = flags.FLAGS
 

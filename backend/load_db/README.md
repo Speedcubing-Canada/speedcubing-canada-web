@@ -13,9 +13,9 @@ You can create a new VM at https://console.cloud.google.com/compute/instancesAdd
 
 ```sh
 apt upgrade
-cd speedcubing-canada
+cd speedcubing-canada/backend
 git pull
-backend/load_db/startup.sh
+load_db/startup.sh
 ```
 
 Next, SSH into the instance and follow the instructions in `vm_setup.sh`.

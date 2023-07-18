@@ -9,10 +9,10 @@ then
 fi
 
 echo "Deleting old exports"
-python3 backend/load_db/delete_old_exports.py \
+python3 load_db/delete_old_exports.py \
     --export_base=exports/
 
-SAVED_EXPORT=$(python3 backend/load_db/get_latest_export.py)
+SAVED_EXPORT=$(python3 load_db/get_latest_export.py)
 LATEST_EXPORT=$(curl https://www.worldcubeassociation.org/export/results \
 | grep TSV:.*WCA_export \
 | sed -s 's/.*\(WCA_export[0-9A-Za-z_]*\).tsv.zip.*/\1/')
@@ -36,7 +36,7 @@ then
   unzip $ZIP_FILE -d $EXPORT_DIR
   rm $ZIP_FILE
 
-  python3 backend/load_db/load_db.py \
+  python3 load_db/load_db.py \
       --old_export_id="$SAVED_EXPORT" \
       --new_export_id="$LATEST_EXPORT" \
       --export_base=exports/

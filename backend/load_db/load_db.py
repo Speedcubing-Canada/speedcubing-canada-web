@@ -5,19 +5,19 @@ from absl import flags
 from absl import logging
 from google.cloud import ndb
 
-from backend.load_db.update_champions import UpdateChampions
-from backend.models.user import User
-from backend.models.wca.competition import Competition
-from backend.models.wca.continent import Continent
-from backend.models.wca.country import Country
-from backend.models.wca.event import Event
-from backend.models.wca.export import set_latest_export
-from backend.models.wca.format import Format
-from backend.models.wca.person import Person
-from backend.models.wca.rank import RankAverage
-from backend.models.wca.rank import RankSingle
-from backend.models.wca.result import Result
-from backend.models.wca.round import RoundType
+from load_db.update_champions import UpdateChampions
+from models.user import User
+from models.wca.competition import Competition
+from models.wca.continent import Continent
+from models.wca.country import Country
+from models.wca.event import Event
+from models.wca.export import set_latest_export
+from models.wca.format import Format
+from models.wca.person import Person
+from models.wca.rank import RankAverage
+from models.wca.rank import RankSingle
+from models.wca.result import Result
+from models.wca.round import RoundType
 
 
 FLAGS = flags.FLAGS
