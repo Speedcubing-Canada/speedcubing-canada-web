@@ -5,16 +5,16 @@ import os
 
 from google.cloud import ndb
 
-from models.champion import Champion
-from models.championship import Championship
-from models.eligibility import RegionalChampionshipEligibility
-from models.eligibility import ProvinceChampionshipEligibility
-from models.province import Province
-from models.user import User
-from models.wca.country import Country
-from models.wca.event import Event
-from models.wca.result import Result
-from models.wca.result import RoundType
+from backend.models.champion import Champion
+from backend.models.championship import Championship
+from backend.models.eligibility import RegionalChampionshipEligibility
+from backend.models.eligibility import ProvinceChampionshipEligibility
+from backend.models.province import Province
+from backend.models.user import User
+from backend.models.wca.country import Country
+from backend.models.wca.event import Event
+from backend.models.wca.result import Result
+from backend.models.wca.result import RoundType
 
 
 def ComputeEligibleCompetitors(championship, competition, results):
