@@ -9,12 +9,12 @@ class RankBase(BaseModel):
   person = ndb.KeyProperty(kind=Person)
   event = ndb.KeyProperty(kind=Event)
   best = ndb.IntegerProperty()
-  state = ndb.ComputedProperty(lambda self: self.GetState())
+  province = ndb.ComputedProperty(lambda self: self.GetProvince())
 
-  def GetState(self):
+  def GetProvince(self):
     if not self.person or not self.person.get():
       return None
-    return self.person.get().state
+    return self.person.get().province
 
   @staticmethod
   def GetId(row):
