@@ -11,6 +11,7 @@ fi
 echo "Deleting old exports"
 python3 backend/load_db/delete_old_exports.py \
     --export_base=exports/
+echo "Done deleting old exports"
 
 SAVED_EXPORT=$(python3 backend/load_db/get_latest_export.py)
 LATEST_EXPORT=$(curl https://www.worldcubeassociation.org/export/results \
