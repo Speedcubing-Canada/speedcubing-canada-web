@@ -102,8 +102,8 @@ def process_export(old_export_path, new_export_path):
     table_suffix = '/WCA_export_' + table + '.tsv'
     with client.context():
       old_rows = read_table(old_export_path + table_suffix, cls, False)
-      new_rows = read_table(new_export_path + table_suffix, cls, True)
       logging.info('Old: %d' % len(old_rows))
+      new_rows = read_table(new_export_path + table_suffix, cls, True)
       logging.info('New: %d' % len(new_rows))
       write_table(new_export_path + table_suffix, new_rows, cls)
 

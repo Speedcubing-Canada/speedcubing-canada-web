@@ -15,7 +15,7 @@ from backend.models.user import User
 bp = Blueprint('regional', __name__)
 client = ndb.Client()
 
-@bp.route('/regional')
+#@bp.route('/regional')
 def regional():
   with client.context():
     year = datetime.date.today().year
@@ -38,12 +38,12 @@ def regional():
                            championships=championships,
                            regions_missing_championships=regions_missing_championships)
 
-@bp.route('/regional/title_policy')
+#@bp.route('/regional/title_policy')
 def title_policy():
   with client.context():
     return render_template('regional_title.html', c=common.Common())
 
-@bp.route('/regional/eligibility/<region>/<year>')
+#@bp.route('/regional/eligibility/<region>/<year>')
 def regional_eligibility(region, year):
   with client.context():
     championship = Championship.get_by_id('%s_%d' % (region, int(year)))

@@ -32,7 +32,7 @@ source env/bin/activate
 pip3 install --upgrade pip
 pip3 install -r requirements.txt
 
-# Set up the production environment.
-echo SCC_ENV=COMPUTE_ENGINE >> /root/.bashrc
-echo WCA_HOST=https://staging.worldcubeassociation.org >> /root/.bashrc
-echo GOOGLE_CLOUD_PROJECT=scc-staging-391105 >> /root/.bashrc
+# Set up the staging environment.
+echo export SCC_ENV=COMPUTE_ENGINE >> /root/.bashrc
+echo export WCA_HOST=https://staging.worldcubeassociation.org >> /root/.bashrc
+echo export GOOGLE_CLOUD_PROJECT=scc-staging-391105 >> /root/.bashrc
