@@ -1,10 +1,7 @@
   import { Button, Box, Container, Typography } from "@mui/material";
   import { useTranslation, Trans } from "react-i18next";
   import { Link } from "../components/Link";
-  import { LINKS } from "./links";
   import { useParams } from "react-router-dom";
-  import { ConstructionOutlined, KeyTwoTone } from "@mui/icons-material";
-  import { compileFunction } from "vm";
   import { useState, useEffect } from "react";
 
   export const Series = () => {
@@ -61,13 +58,13 @@
             {t(CompetitionData.SeriesName)}
           </Typography>
           <Typography gutterBottom sx={{ maxWidth: "md", margin: "0 auto" }}>
-              {t("series.body1")}
-              {t("series.fee", { fee: CompetitionData.RegistrationFee })}
+              {t("competition.series")}
+              {t("competition.fee", { fee: CompetitionData.RegistrationFee })}
           </Typography>
           <Typography gutterBottom style={{ textAlign: "center" }}>
             {currentDate < registrationOpen
-            ? t("series.registration.before", { date: registrationOpen })
-            : t("series.registration.after", { date: registrationOpen })
+            ? t("competition.registration.before", { date: registrationOpen })
+            : t("competition.registration.after", { date: registrationOpen })
             }
           </Typography>
         </Box>
@@ -80,12 +77,12 @@
                 </Typography>
                 <Typography gutterBottom maxWidth="400px"> 
                 {/* 400px was picked somewhat arbitrarily based on what looked decent */}
-                  {t("series.date", {date: new Date(data[key].start_date).toLocaleString('en-US', {weekday: 'long', month: 'long', day: 'numeric', year: 'numeric'})})}
-                  {t("series.city", {city: data[key].city})}
-                  {t("series.venue", {venue: data[key].schedule.venues[0].name})}
-                  {t("series.address", {address: data[key].venue_address})}
+                  {t("competition.date", {date: new Date(data[key].start_date).toLocaleString('en-US', {weekday: 'long', month: 'long', day: 'numeric', year: 'numeric'})})}
+                  {t("competition.city", {city: data[key].city})}
+                  {t("competition.venue", {venue: data[key].schedule.venues[0].name})}
+                  {t("competition.address", {address: data[key].venue_address})}
                   <Button to={data[key].url} component={Link} variant="contained" size="large">
-                    {t("series.register")}
+                    {t("competition.register")}
                   </Button>
                 </Typography>
               </Box>
