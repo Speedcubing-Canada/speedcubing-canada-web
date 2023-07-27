@@ -102,7 +102,11 @@ export const resources = {
         registration: {
           before: "Registration opens: {{date}}",
           after: "Registration opened: {{date}}"
-        }
+        },
+        date: "<b>Date:</b> {{date}}\n",
+        city: "<b>City:</b> {{city}}\n",
+        venue: "<b>Venue:</b> {{venue}}\n",
+        address: "<b>Address</b> {{address}}"
       }
     },
   },
