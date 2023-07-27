@@ -72,13 +72,14 @@
           </Typography>
         </Box>
 
-        <Box display="flex" justifyContent="center">
+        <Box display="flex" justifyContent="center" flexWrap="wrap">
           {Object.keys(data).map((key) => (
               <Box margin="1rem" padding="1rem" key = {key}>
                 <Typography variant="h5" fontWeight="bold">
                 { data[key].name }  
                 </Typography>
-                <Typography gutterBottom>
+                <Typography gutterBottom maxWidth="400px"> 
+                {/* 400px was picked somewhat arbitrarily based on what looked decent */}
                   {t("series.date", {date: new Date(data[key].start_date).toLocaleString('en-US', {weekday: 'long', month: 'long', day: 'numeric', year: 'numeric'})})}
                   {t("series.city", {city: data[key].city})}
                   {t("series.venue", {venue: data[key].schedule.venues[0].name})}
