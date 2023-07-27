@@ -65,7 +65,7 @@ export const Competition = () => {
       <Box display="flex" justifyContent="center" flexWrap="wrap">
         <Box margin="1rem" padding="1rem">
           <Typography gutterBottom maxWidth="100%"> 
-            {t("competition.date", {date: new Date(competitionData.start_date).toLocaleString('en-US', {weekday: 'long', month: 'long', day: 'numeric', year: 'numeric'})})}
+            {t("competition.date", {date: new Date(competitionData.start_date + "T12:00:00.000Z").toLocaleString('en-US', {weekday: 'long', month: 'long', day: 'numeric', year: 'numeric'})})}
             {t("competition.city", {city: competitionData.city})}
             {t("competition.venue", {venue: venueData.schedule.venues[0].name})}
             {t("competition.address", {address: competitionData.venue_address})}

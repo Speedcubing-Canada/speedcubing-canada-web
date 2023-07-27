@@ -77,7 +77,7 @@
                 </Typography>
                 <Typography gutterBottom maxWidth="400px"> 
                 {/* 400px was picked somewhat arbitrarily based on what looked decent */}
-                  {t("competition.date", {date: new Date(data[key].start_date).toLocaleString('en-US', {weekday: 'long', month: 'long', day: 'numeric', year: 'numeric'})})}
+                  {t("competition.date", {date: new Date(data[key].start_date + "T12:00:00.000Z").toLocaleString('en-US', {weekday: 'long', month: 'long', day: 'numeric', year: 'numeric'})})}
                   {t("competition.city", {city: data[key].city})}
                   {t("competition.venue", {venue: data[key].schedule.venues[0].name})}
                   {t("competition.address", {address: data[key].venue_address})}
