@@ -3,7 +3,7 @@
   import { Link } from "../components/Link";
   import { LINKS } from "./links";
   import { useParams } from "react-router-dom";
-  import { ConstructionOutlined } from "@mui/icons-material";
+  import { ConstructionOutlined, KeyTwoTone } from "@mui/icons-material";
   import { compileFunction } from "vm";
   import { useState, useEffect } from "react";
 
@@ -26,11 +26,21 @@
       return data;
     }
 
+    const getVenueData = async (compId: string) => {
+      const response = await fetch (`https://www.worldcubeassociation.org/api/v0/competitions/${compId}/wcif/public`);
+      const data = await response.json();
+      return data
+    }
+
     useEffect(() => {
       const getData = async () => {
         const dataPromises = CompetitionData.CompIds.map((key) => getCompetitionData(key));
-        const allData = await Promise.all(dataPromises);
-        const infoDataObject = Object.fromEntries(CompetitionData.CompIds.map((key, index) => [key, allData[index]]));
+        const venueDataPromises = CompetitionData.CompIds.map((key) => getVenueData(key));
+
+        const [allData, allVenueData] = await Promise.all([Promise.all(dataPromises), Promise.all(venueDataPromises)]);
+
+        const infoDataObject = Object.fromEntries(CompetitionData.CompIds.map((key, index) => [key, {...allData[index], ...allVenueData[index] }]));
+
         setData(infoDataObject);
         setIsLoading(false);
       };
@@ -45,12 +55,12 @@
     const registrationOpen = new Date(data[CompetitionData.CompIds[0]].registration_open);
 
     return (
-      <Container maxWidth="md">
+      <Container maxWidth="xl" style={{ textAlign: "center" }}>
         <Box marginY="4rem">
-          <Typography component="h1" variant="h3" fontWeight="bold" gutterBottom style={{ textAlign: "center" }}>
+          <Typography component="h1" variant="h3" fontWeight="bold" gutterBottom>
             {t(CompetitionData.SeriesName)}
           </Typography>
-          <Typography gutterBottom style={{ textAlign: "center" }}>
+          <Typography gutterBottom sx={{ maxWidth: "md", margin: "0 auto" }}>
               {t("series.body1")}
               {t("series.fee", { fee: CompetitionData.RegistrationFee })}
           </Typography>
@@ -71,8 +81,11 @@
                 <Typography gutterBottom>
                   {t("series.date", {date: new Date(data[key].start_date).toLocaleString('en-US', {weekday: 'long', month: 'long', day: 'numeric', year: 'numeric'})})}
                   {t("series.city", {city: data[key].city})}
-                  {t("series.venue", {venue: data[key].venue_details})}
+                  {t("series.venue", {venue: data[key].schedule.venues[0].name})}
                   {t("series.address", {address: data[key].venue_address})}
+                  <Button to={data[key].url} component={Link} variant="contained" size="large">
+                    {t("series.register")}
+                  </Button>
                 </Typography>
               </Box>
           ))}

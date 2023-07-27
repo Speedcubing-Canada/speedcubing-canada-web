@@ -106,7 +106,8 @@ export const resources = {
         date: "<b>Date:</b> {{date}}\n",
         city: "<b>City:</b> {{city}}\n",
         venue: "<b>Venue:</b> {{venue}}\n",
-        address: "<b>Address</b> {{address}}"
+        address: "<b>Address</b> {{address}}\n",
+        register: "Register"
       }
     },
   },
