@@ -98,6 +98,7 @@ export const resources = {
       competition: {
         upcoming: "Upcoming Competitions",
         upcomingbody: "Here are some upcoming competitions organized by Speedcubing Canada!\n\n",
+        comp: "Check out this competition organized by Speedcubing Canada!",
         series: "Check out this upcoming series! As a reminder, competitors may only sign up for ONE of the competitions in a series. Read the competition pages carefully and ensure you register for the right competiton.",
         fee: "\n\nRegistration fee: ${{fee}} CAD",
         registration: {
@@ -107,7 +108,7 @@ export const resources = {
         date: "<b>Date:</b> {{date}}\n",
         city: "<b>City:</b> {{city}}\n",
         venue: "<b>Venue:</b> {{venue}}\n",
-        address: "<b>Address</b> {{address}}\n",
+        address: "<b>Address:</b> {{address}}\n\n",
         register: "Register",
         learnmore: "Learn more",
         showonly: "Show only competitions in: ",

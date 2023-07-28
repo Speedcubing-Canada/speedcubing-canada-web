@@ -73,18 +73,18 @@
           {Object.keys(data).map((key) => (
               <Box margin="1rem" padding="1rem" key = {key}>
                 <Typography variant="h5" fontWeight="bold">
-                { data[key].name }  
+                  { data[key].name }  
                 </Typography>
-                <Typography gutterBottom maxWidth="400px"> 
-                {/* 400px was picked somewhat arbitrarily based on what looked decent */}
-                  {t("competition.date", {date: new Date(data[key].start_date + "T12:00:00.000Z").toLocaleString('en-US', {weekday: 'long', month: 'long', day: 'numeric', year: 'numeric'})})}
-                  {t("competition.city", {city: data[key].city})}
-                  {t("competition.venue", {venue: data[key].schedule.venues[0].name})}
-                  {t("competition.address", {address: data[key].venue_address})}
-                  <Button to={data[key].url} component={Link} variant="contained" size="large">
-                    {t("competition.register")}
-                  </Button>
+                <Typography gutterBottom maxWidth="400px" dangerouslySetInnerHTML={{
+                  __html: `${t("competition.date", {date: new Date(data[key].start_date + "T12:00:00.000Z").toLocaleString('en-US', {weekday: 'long', month: 'long', day: 'numeric', year: 'numeric'})})}` +
+                  `${t("competition.city", {city: data[key].city})}` +
+                  `${t("competition.venue", {venue: data[key].schedule.venues[0].name})}` +
+                  `${t("competition.address", {address: data[key].venue_address})}`
+                }}>
                 </Typography>
+                <Button to={data[key].url} component={Link} variant="contained" size="large">
+                  {t("competition.register")}
+                </Button>
               </Box>
           ))}
         </Box>
