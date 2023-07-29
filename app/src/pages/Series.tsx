@@ -8,9 +8,6 @@
   export const Series = () => {
     const { t } = useTranslation();
     const { seriesid } = useParams ();
-    const CompetitionData = { 
-      RegistrationFee: 30
-    }; //TODO: eliminate this
     //TODO: find way to get reg fee and venue name, also make it use the entire width of the page
     
     const compIds = (seriesid!.split(" "));
@@ -49,8 +46,6 @@
       return <div>Loading...</div>
     }
 
-    console.log(data);
-
     const seriesName = data[compIds[0]].series.name;
     
     const currentDate = new Date();
@@ -64,7 +59,7 @@
           </Typography>
           <Typography gutterBottom sx={{ maxWidth: "md", margin: "0 auto" }}>
               {t("competition.series")}
-              {t("competition.fee", { fee: CompetitionData.RegistrationFee })}
+              {/* {t("competition.fee", { fee: CompetitionData.RegistrationFee })} */}
           </Typography>
           <Typography gutterBottom style={{ textAlign: "center" }}>
             {currentDate < registrationOpen

@@ -51,8 +51,7 @@ export const Competition = () => {
             {t(competitionData.name)}
           </Typography>
           <Typography gutterBottom sx={{ maxWidth: "md", margin: "0 auto" }}>
-              {t("competition.fee", { fee: "30" })}
-              {/* Dummy placeholder until reg fee data is accessable */}
+              {/* {t("competition.fee", { fee: "30" })} */}
           </Typography>
           <Typography gutterBottom style={{ textAlign: "center" }}>
             {currentDate < registrationOpen

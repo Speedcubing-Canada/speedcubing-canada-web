@@ -102,8 +102,8 @@ export const resources = {
         series: "Check out this upcoming series! As a reminder, competitors may only sign up for ONE of the competitions in a series. Read the competition pages carefully and ensure you register for the right competiton.",
         fee: "\n\nRegistration fee: ${{fee}} CAD",
         registration: {
-          before: "Registration opens: {{date}}",
-          after: "Registration opened: {{date}}"
+          before: "\nRegistration opens: {{date}}",
+          after: "\nRegistration opened: {{date}}"
         },
         date: "<b>Date:</b> {{date}}\n",
         city: "<b>City:</b> {{city}}\n",
