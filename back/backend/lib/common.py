@@ -2,11 +2,8 @@ import datetime
 import os
 
 from flask import request
-from google.cloud import ndb
 
-from backend.lib import auth
-from backend.lib import formatters
-from backend.lib import secrets
+from backend.lib import formatters, auth, secrets
 from backend.models.region import Region
 from backend.models.province import Province
 from backend.models.user import Roles

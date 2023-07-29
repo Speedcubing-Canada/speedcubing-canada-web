@@ -15,7 +15,7 @@ set -e
 # apt install git
 # git clone https://github.com/Speedcubing-Canada/speedcubing-canada-web speedcubing-canada
 #
-# Then cd into the Speedcubing-Canada directory and run this script (without sudo).
+# Then cd into the Speedcubing-Canada directory in the back folder and run this script (without sudo).
 # Finally, run backend/load_db/startup.sh to download the WCA database and
 # initialize the datastore.  The first run can take >1 hour; subsequent runs are
 # faster since they only need to load entities that have changed.
@@ -26,6 +26,7 @@ set -e
 apt install unzip python3-distutils python3-venv build-essential python3-dev libffi-dev libssl-dev python3-pip
 
 # Set up the virtualenv.
+cd back
 pip3 install virtualenv
 python3 -m venv env
 source env/bin/activate

@@ -1,8 +1,7 @@
 from flask import abort, Blueprint, redirect, render_template
 from google.cloud import ndb
 
-from backend.lib import auth
-from backend.lib import common
+from backend.lib import auth, common
 from backend.models.championship import Championship
 from backend.models.region import Region
 from backend.models.province import Province

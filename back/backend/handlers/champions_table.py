@@ -3,7 +3,6 @@ from google.cloud import ndb
 
 from backend.lib import common
 from backend.models.champion import Champion
-from backend.models.championship import Championship
 from backend.models.region import Region
 from backend.models.province import Province
 from backend.models.wca.event import Event

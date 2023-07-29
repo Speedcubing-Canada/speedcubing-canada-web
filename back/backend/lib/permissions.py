@@ -1,5 +1,3 @@
-import datetime
-
 from backend.models.user import Roles
 
 def CanEditLocation(user, editor):

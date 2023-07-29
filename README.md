@@ -2,11 +2,12 @@
 
 ## Frontend
 
-First, please move into the `app` directory.
+First, please move into the `frontend` directory.
 
 In the project directory, you can run:
 
 ### `docker-compose up`
+
 
 Runs de app and a development mysql database and an nginx server. The app is available at [http://localhost/](http://localhost/).
 
@@ -36,3 +37,11 @@ Your app is ready to be deployed!
 See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
 
 Currently, this step is handled automatically by an AWS build pipeline.
+
+## Deployment
+
+To deploy run the command:
+
+```sh
+gcloud app deploy frontend/app.yaml dispatch.yaml back/api.yaml 
+```

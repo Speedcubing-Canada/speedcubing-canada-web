@@ -1,13 +1,11 @@
 import datetime
 
-from flask import Blueprint, render_template, redirect, request, jsonify
+from flask import Blueprint, request, jsonify
 from google.cloud import ndb
 
-from backend.lib import auth
-from backend.lib import permissions
-from backend.lib.common import Common
+from backend.lib import permissions, auth
 from backend.models.province import Province
-from backend.models.user import User, Roles, UserLocationUpdate
+from backend.models.user import User, UserLocationUpdate
 from backend.models.wca.rank import RankAverage, RankSingle
 
 bp = Blueprint('user', __name__)

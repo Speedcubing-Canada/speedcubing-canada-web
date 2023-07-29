@@ -13,7 +13,7 @@ You can create a new VM at https://console.cloud.google.com/compute/instancesAdd
 
 ```sh
 apt upgrade
-cd speedcubing-canada
+cd speedcubing-canada/back
 git pull
 backend/load_db/startup.sh
 ```

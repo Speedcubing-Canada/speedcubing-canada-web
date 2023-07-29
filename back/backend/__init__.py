@@ -6,7 +6,7 @@ import sys
 from authlib.integrations.flask_client import OAuth
 from dotenv import load_dotenv
 from flask import Flask, redirect, request
-from flask_cors import CORS, cross_origin
+from flask_cors import CORS
 import google.cloud.logging
 
 from backend.lib.secrets import get_secret

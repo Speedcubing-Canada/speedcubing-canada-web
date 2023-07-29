@@ -9,7 +9,6 @@ from backend.models.champion import Champion
 from backend.models.championship import Championship
 from backend.models.eligibility import RegionalChampionshipEligibility
 from backend.models.eligibility import ProvinceChampionshipEligibility
-from backend.models.province import Province
 from backend.models.user import User
 from backend.models.wca.country import Country
 from backend.models.wca.event import Event
