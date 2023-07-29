@@ -21,13 +21,13 @@ const MenuProps = {
 };
 
 const regions = [
+  "Alberta", 
   "Atlantic Canada",
-  "Quebec",
-  "Ontario",
-  "Manitoba",
-  "Saskatchewan",
-  "Alberta",  
   "British Columbia",
+  "Manitoba",
+  "Ontario",
+  "Quebec",
+  "Saskatchewan",
   "Territories"
 ]
 
@@ -39,9 +39,9 @@ const atlantic = [
 ]
 
 const territories = [
-  "Northwestern Territories",
+  "Northwest Territories",
   "Nunavut",
-  "Yukon Territories"
+  "Yukon"
 ]
 
 export const Competitions = () => {
@@ -103,6 +103,7 @@ export const Competitions = () => {
         </Typography>
         <Typography gutterBottom  sx={{ maxWidth: "md", margin: "0 auto"}}>
           {t("competition.upcomingbody")}
+          <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px' }}>
           {t("competition.showonly")}
           <FormControl sx={{ minWidth: 200 }}>
             <InputLabel id="demo-multiple-checkbox-label">{t("competition.region")}</InputLabel>
@@ -124,6 +125,7 @@ export const Competitions = () => {
                 ))}
             </Select>
           </FormControl>
+          </Box>
         </Typography>
       </Box> 
 
