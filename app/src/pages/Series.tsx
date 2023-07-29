@@ -9,11 +9,11 @@
     const { t } = useTranslation();
     const { seriesid } = useParams ();
     const CompetitionData = { 
-      SeriesName: "Ajax 3x3x3",
-      CompIds: ["Ajax333Morning2023", "Ajax333Afternoon2023", "Ajax333Evening2023"],
       RegistrationFee: 30
-    }; 
+    }; //TODO: eliminate this
     //TODO: find way to get reg fee and venue name, also make it use the entire width of the page
+    
+    const compIds = (seriesid!.split(" "));
 
     const [data, setData] = useState<any>({});
     const [isLoading, setIsLoading] = useState(true);
@@ -32,12 +32,12 @@
 
     useEffect(() => {
       const getData = async () => {
-        const dataPromises = CompetitionData.CompIds.map((key) => getCompetitionData(key));
-        const venueDataPromises = CompetitionData.CompIds.map((key) => getVenueData(key));
+        const dataPromises = compIds.map((key) => getCompetitionData(key));
+        const venueDataPromises = compIds.map((key) => getVenueData(key));
 
         const [allData, allVenueData] = await Promise.all([Promise.all(dataPromises), Promise.all(venueDataPromises)]);
 
-        const infoDataObject = Object.fromEntries(CompetitionData.CompIds.map((key, index) => [key, {...allData[index], ...allVenueData[index] }]));
+        const infoDataObject = Object.fromEntries(compIds.map((key, index) => [key, {...allData[index], ...allVenueData[index] }]));
 
         setData(infoDataObject);
         setIsLoading(false);
@@ -49,14 +49,18 @@
       return <div>Loading...</div>
     }
 
+    console.log(data);
+
+    const seriesName = data[compIds[0]].series.name;
+    
     const currentDate = new Date();
-    const registrationOpen = new Date(data[CompetitionData.CompIds[0]].registration_open);
+    const registrationOpen = new Date(data[compIds[0]].registration_open);
 
     return (
       <Container maxWidth="xl" style={{ textAlign: "center" }}>
         <Box marginTop="4rem">
           <Typography component="h1" variant="h3" fontWeight="bold" gutterBottom>
-            {t(CompetitionData.SeriesName)}
+            {t(seriesName)}
           </Typography>
           <Typography gutterBottom sx={{ maxWidth: "md", margin: "0 auto" }}>
               {t("competition.series")}
