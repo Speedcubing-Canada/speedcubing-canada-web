@@ -16,13 +16,13 @@ export const Competition = () => {
   const [isLoading, setIsLoading] = useState(true);
 
   const getCompetitionData = async (compId: string) => {
-    const response = await fetch(`https://www.worldcubeassociation.org/api/v0/competitions/${compId}`);
+    const response = await fetch(LINKS.WCA.API.COMPETITION_INFO + compId);
     const data = await response.json();
     return data;
   }
 
   const getVenueData = async (compId: string) => {
-    const response = await fetch (`https://www.worldcubeassociation.org/api/v0/competitions/${compId}/wcif/public`);
+    const response = await fetch (LINKS.WCA.API.COMPETITION_INFO + compId + "/wcif/public");
     const data = await response.json();
     return data
   }

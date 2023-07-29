@@ -21,8 +21,7 @@ const MenuProps = {
 };
 
 const regions = [
-  "Newfoundland and Labrador",
-  "Maritimes",
+  "Atlantic Canada",
   "Quebec",
   "Ontario",
   "Manitoba",
@@ -32,6 +31,19 @@ const regions = [
   "Territories"
 ]
 
+const atlantic = [
+  "Nova Scotia",
+  "New Brunswick",
+  "Prince Edward Island",
+  "Newfoundland and Labrador"
+]
+
+const territories = [
+  "Northwestern Territories",
+  "Nunavut",
+  "Yukon Territories"
+]
+
 export const Competitions = () => {
   const { t } = useTranslation();
 
@@ -39,7 +51,7 @@ export const Competitions = () => {
   const [isLoading, setIsLoading] = useState(true);
 
   const getCompetitions = async () => {
-    const response = await fetch("https://www.worldcubeassociation.org/api/v0/competitions?country_iso2=CA")
+    const response = await fetch(LINKS.WCA.API.COMPETITION_LIST);
     const data = await response.json();
     return data;
   }
@@ -66,7 +78,13 @@ export const Competitions = () => {
 
   let showComps: any[] = [];
   Object.keys(data).forEach((key) => {
-    const province = data[key].city.split(", ")[1];
+    let province = data[key].city.split(", ")[1];
+    if (atlantic.includes(province)) {
+      province = "Atlantic";
+    } else if (territories.includes(province)) {
+      province = "Territories";
+    }
+    //TODO figure out how to do this for french translation
     console.log(province);
     if (selectedRegions.length == 0 || selectedRegions.includes(province)) {
       showComps.push(data[key]);

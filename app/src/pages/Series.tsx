@@ -3,6 +3,7 @@
   import { Link } from "../components/Link";
   import { useParams } from "react-router-dom";
   import { useState, useEffect } from "react";
+  import { LINKS } from "./links";
 
   export const Series = () => {
     const { t } = useTranslation();
@@ -18,13 +19,13 @@
     const [isLoading, setIsLoading] = useState(true);
 
     const getCompetitionData = async (compId: string) => {
-      const response = await fetch(`https://www.worldcubeassociation.org/api/v0/competitions/${compId}`);
+      const response = await fetch(LINKS.WCA.API.COMPETITION_INFO + compId);
       const data = await response.json();
       return data;
     }
 
     const getVenueData = async (compId: string) => {
-      const response = await fetch (`https://www.worldcubeassociation.org/api/v0/competitions/${compId}/wcif/public`);
+      const response = await fetch (LINKS.WCA.API.COMPETITION_INFO + compId + "/wcif/public");
       const data = await response.json();
       return data
     }
@@ -53,7 +54,7 @@
 
     return (
       <Container maxWidth="xl" style={{ textAlign: "center" }}>
-        <Box marginY="4rem">
+        <Box marginTop="4rem">
           <Typography component="h1" variant="h3" fontWeight="bold" gutterBottom>
             {t(CompetitionData.SeriesName)}
           </Typography>
@@ -69,7 +70,7 @@
           </Typography>
         </Box>
 
-        <Box display="flex" justifyContent="center" flexWrap="wrap">
+        <Box display="flex" justifyContent="center" flexWrap="wrap" marginTop="2rem">
           {Object.keys(data).map((key) => (
               <Box margin="1rem" padding="1rem" key = {key}>
                 <Typography variant="h5" fontWeight="bold">

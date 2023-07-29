@@ -13,7 +13,11 @@ export const LINKS = {
     WC2003: "https://www.worldcubeassociation.org/competitions/WC2003",
     CO2007:
       "https://www.worldcubeassociation.org/competitions/CanadianOpen2007",
+    API: {
+      COMPETITION_LIST: "https://www.worldcubeassociation.org/api/v0/competitions?country_iso2=CA",
+      COMPETITION_INFO: "https://www.worldcubeassociation.org/api/v0/competitions/"
+    },
   },
   FIRST_COMP: "https://youtu.be/xK2ycvTfgUY",
-  COMP_BASICS: "https://youtu.be/vz1V0Gv0qX0",
+  COMP_BASICS: "https://youtu.be/vz1V0Gv0qX0"
 } as const;
