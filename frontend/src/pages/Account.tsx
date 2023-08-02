@@ -7,35 +7,40 @@ import Button from '@mui/material/Button';
 import Grid from '@mui/material/Unstable_Grid2';
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
+import {DateField} from "@mui/x-date-pickers";
+import {AdapterDayjs} from '@mui/x-date-pickers/AdapterDayjs';
+import {LocalizationProvider} from '@mui/x-date-pickers/LocalizationProvider';
 import {API_BASE_URL, GetUser, signIn, signOut} from '../components/Api';
 import {useState} from "react";
 import {Province} from "../components/Types";
 import httpClient from "../httpClient";
+import dayjs from "dayjs";
 
 export const Account = () => {
     const {t} = useTranslation();
 
     const [province, setProvince] = useState<Province | null>(null);
+    const [dob, setDob] = useState<| null>(null);
 
     const provinces: Province[] = [
-        {label: 'Alberta', id: 'ab'},
-        {label: 'British Columbia', id: 'bc'},
-        {label: 'Manitoba', id: 'mb'},
-        {label: 'New Brunswick', id: 'nb'},
-        {label: 'Newfoundland and Labrador', id: 'nl'},
-        {label: 'Northwest Territories', id: 'nt'},
-        {label: 'Nova Scotia', id: 'ns'},
-        {label: 'Nunavut', id: 'nu'},
-        {label: 'Ontario', id: 'on'},
-        {label: 'Prince Edward Island', id: 'pe'},
-        {label: 'Quebec', id: 'qc'},
-        {label: 'Saskatchewan', id: 'sk'},
-        {label: 'Yukon', id: 'yt'},
-        {label: 'N/A', id: 'na'},
+        {label: 'Alberta', id: 'ab', region: 'Prairies'},
+        {label: 'British Columbia', id: 'bc', region: 'British Columbia'},
+        {label: 'Manitoba', id: 'mb', region: 'Prairies'},
+        {label: 'New Brunswick', id: 'nb', region: 'Atlantic'},
+        {label: 'Newfoundland and Labrador', id: 'nl', region: 'Atlantic'},
+        {label: 'Northwest Territories', id: 'nt', region: 'Territories'},
+        {label: 'Nova Scotia', id: 'ns', region: 'Atlantic'},
+        {label: 'Nunavut', id: 'nu', region: 'Territories'},
+        {label: 'Ontario', id: 'on', region: 'Ontario'},
+        {label: 'Prince Edward Island', id: 'pe', region: 'Atlantic'},
+        {label: 'Quebec', id: 'qc', region: 'Quebec'},
+        {label: 'Saskatchewan', id: 'sk', region: 'Prairies'},
+        {label: 'Yukon', id: 'yt', region: 'Territories'},
+        {label: 'N/A', id: 'na', region: 'N/A'},
     ];// TODO: have translations for provinces
 
     const user = GetUser();//TODO: display something else while loading
-    let default_province = {label: 'N/A', id: 'na'};
+    let default_province = {label: 'N/A', id: 'na', region: 'N/A'};
     if (user != null && user.province != null) {
         //set province in the combo box
         for (let i = 0; i < provinces.length; i++) {
@@ -43,6 +48,10 @@ export const Account = () => {
                 default_province = provinces[i];
             }
         }
+    }
+    let default_dob = dayjs('2022-01-01');
+    if (user != null && user.dob != null) {
+        default_dob = dayjs(user.dob);
     }
 
 
@@ -101,6 +110,23 @@ export const Account = () => {
                         <Typography variant="subtitle2" gutterBottom>
                             <Trans>{t("account.policy")} </Trans>
                         </Typography>
+                        <TextField
+                            disabled
+                            id="region"
+                            label="Region"
+                            value={province?.region || default_province.region}
+                            defaultValue={default_province.region}
+                            variant="outlined"
+                        />
+                        <LocalizationProvider dateAdapter={AdapterDayjs}>
+                            <DateField
+                                disabled
+                                label="Date of birth"
+                                value={dob || default_dob}
+                                defaultValue={default_dob}
+                                format="DD-MM-YYYY"
+                            />
+                        </LocalizationProvider>
                     </Box>
 
                     <Grid container spacing={2}>

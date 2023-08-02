@@ -5,7 +5,7 @@ export PYTHONPATH=$(pwd)
 if [ "$SCC_ENV" != "COMPUTE_ENGINE" ]
 then
   echo "Emulating datastore."
-  $(gcloud beta emulators datastore env-init)
+  #$(gcloud beta emulators datastore env-init)
 fi
 
 echo "Deleting old exports"

@@ -40,7 +40,7 @@ def user_info(user_id=-1):
             "id": user.key.id(),
             "name": user.name,
             "roles": user.roles,
-            "dob": user.dob,
+            "dob": user.dob.isoformat() if user.dob else None,
             "province": user.province.id() if user.province else None,
             "wca_person": user.wca_person.id() if user.wca_person else None
         })
