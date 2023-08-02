@@ -4,3 +4,4 @@
 *.pyc
 venv
 back/exports/WCA_export*
+back/venv

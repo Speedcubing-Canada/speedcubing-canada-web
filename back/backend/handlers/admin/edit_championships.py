@@ -13,7 +13,7 @@ bp = Blueprint('edit_championships', __name__)
 client = ndb.Client()
 
 
-@bp.route('/add_championship/<competition_id>/<championship_type>')
+#@bp.route('/add_championship/<competition_id>/<championship_type>')
 def add_championship(competition_id, championship_type):
     with client.context():
         me = auth.user()
@@ -43,7 +43,7 @@ def add_championship(competition_id, championship_type):
         return redirect('/admin/edit_championships')
 
 
-@bp.route('/delete_championship/<championship_id>')
+#@bp.route('/delete_championship/<championship_id>')
 def delete_championship(championship_id):
     with client.context():
         me = auth.user()
@@ -55,7 +55,7 @@ def delete_championship(championship_id):
         return redirect('/admin/edit_championships')
 
 
-@bp.route('/edit_championships')
+#@bp.route('/edit_championships')
 def edit_championships():
     with client.context():
         me = auth.user()

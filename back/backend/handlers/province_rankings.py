@@ -1,6 +1,7 @@
 from flask import Blueprint, jsonify
 from google.cloud import ndb
 
+from backend.lib import common
 from backend.models.province import Province
 from backend.models.wca.event import Event
 from backend.models.wca.rank import RankAverage
@@ -26,15 +27,17 @@ def province_rankings_table(event_id, province_id, use_average):
                     .order(ranking_class.best)
                     .fetch(100))
 
-        people = ndb.get_multi([ranking.person for ranking in rankings])
-        people_by_id = {person.key.id(): person for person in people}
-
-        return jsonify({
-            "rankings": rankings,
-            "people_by_id": people_by_id,
-        })
-        """return render_template('province_rankings_table.html',
-                           c=common.Common(),
-                           is_average=(use_average == '1'),
-                           rankings=rankings,
-                           people_by_id=people_by_id)"""
+        output = []
+        last_time = 0
+        rank = 0
+        for i in range(len(rankings)):
+            if rankings[i].best != last_time:
+                rank = i + 1
+                last_time = rankings[i].best
+            output.append({
+                "rank": rank,
+                "name": rankings[i].person.get().name,
+                "url": rankings[i].person.get().GetWCALink(),
+                "time": common.Common().formatters.FormatTime(rankings[i].best, rankings[i].event, use_average == '1')
+            })
+        return jsonify(output)

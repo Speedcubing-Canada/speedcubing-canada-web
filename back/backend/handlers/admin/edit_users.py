@@ -9,7 +9,7 @@ from backend.models.wca.person import Person
 bp = Blueprint('edit_users', __name__)
 client = ndb.Client()
 
-@bp.route('/edit_users')
+#@bp.route('/edit_users')
 def edit_users():
   with client.context():
     me = auth.user()
@@ -18,8 +18,8 @@ def edit_users():
     return render_template('admin/edit_users.html',
                            c=Common())
 
-@bp.route('/async/get_users/')
-@bp.route('/async/get_users/<filter_text>')
+#@bp.route('/async/get_users/')
+#@bp.route('/async/get_users/<filter_text>')
 def edit_users_table(filter_text=''):
   with client.context():
     me = auth.user()
