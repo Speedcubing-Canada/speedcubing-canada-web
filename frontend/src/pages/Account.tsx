@@ -15,9 +15,10 @@ import {AdapterDayjs} from '@mui/x-date-pickers/AdapterDayjs';
 import {LocalizationProvider} from '@mui/x-date-pickers/LocalizationProvider';
 import {API_BASE_URL, GetUser, signIn, signOut} from '../components/Api';
 import {useState} from "react";
-import {Province, ChipData} from "../components/Types";
+import {Province, ChipData, chipColor} from "../components/Types";
 import httpClient from "../httpClient";
 import dayjs from "dayjs";
+import {GetProvincesWithNA} from "../components/Provinces";
 
 export const Account = () => {
     const {t} = useTranslation();
@@ -25,25 +26,10 @@ export const Account = () => {
     const [province, setProvince] = useState<Province | null>(null);
     const [chipData, setChipData] = useState<readonly ChipData[]>([]);
 
-    const provinces: Province[] = [
-        {label: 'Alberta', id: 'ab', region: 'Prairies'},
-        {label: 'British Columbia', id: 'bc', region: 'British Columbia'},
-        {label: 'Manitoba', id: 'mb', region: 'Prairies'},
-        {label: 'New Brunswick', id: 'nb', region: 'Atlantic'},
-        {label: 'Newfoundland and Labrador', id: 'nl', region: 'Atlantic'},
-        {label: 'Northwest Territories', id: 'nt', region: 'Territories'},
-        {label: 'Nova Scotia', id: 'ns', region: 'Atlantic'},
-        {label: 'Nunavut', id: 'nu', region: 'Territories'},
-        {label: 'Ontario', id: 'on', region: 'Ontario'},
-        {label: 'Prince Edward Island', id: 'pe', region: 'Atlantic'},
-        {label: 'Quebec', id: 'qc', region: 'Quebec'},
-        {label: 'Saskatchewan', id: 'sk', region: 'Prairies'},
-        {label: 'Yukon', id: 'yt', region: 'Territories'},
-        {label: 'N/A', id: 'na', region: 'N/A'},
-    ];// TODO: have translations for provinces
+    const provinces: Province[] = GetProvincesWithNA();
 
     const user = GetUser();//TODO: display something else while loading
-    let default_province = {label: 'N/A', id: 'na', region: 'N/A'};
+    let default_province: Province = {label: 'N/A', id: 'na', region: 'N/A'};
     let default_dob = dayjs('2022-01-01');
     let default_WCAID = "";
     if (user != null) {
@@ -167,7 +153,7 @@ export const Account = () => {
                             component="ul"
                         >
                             {chipData.map((data) => {
-                                let color: "default" | "error" | "primary" | "secondary" | "info" | "success" | "warning" | undefined = "default";
+                                let color: chipColor | undefined = "default";
 
                                 if (data.label === 'GLOBAL_ADMIN') {
                                     color = "primary";

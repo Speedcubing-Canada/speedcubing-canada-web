@@ -4,39 +4,43 @@ import {
     Container, Typography,
 } from "@mui/material";
 import * as React from 'react';
-import LinearProgress from '@mui/material/LinearProgress';
+import TextField from "@mui/material/TextField";
+import Autocomplete from "@mui/material/Autocomplete";
+import Stack from '@mui/material/Stack';
+import Switch from '@mui/material/Switch';
+import {eventID, Province, useAverage} from "../components/Types";
+import {GetProvinces} from "../components/Provinces";
+import {useState} from "react";
+import {GetRanking} from "../components/Api";
 
 export const Rankings = () => {
     const {t} = useTranslation();
 
-    const [progress, setProgress] = React.useState(0);
-    const [buffer, setBuffer] = React.useState(10);
+    const provinces: Province[] = GetProvinces();
+    const [province, setProvince] = useState<Province | null>(provinces[0]);
+    const [eventId, setEventId] = useState<eventID>("333");
+    const [useAverage, setUseAverage] = useState(false);
 
-    const progressRef = React.useRef(() => {
-    });
-    React.useEffect(() => {
-        progressRef.current = () => {
-            if (progress > 100) {
-                setProgress(0);
-                setBuffer(10);
-            } else {
-                const diff = Math.random() * 10;
-                const diff2 = Math.random() * 10;
-                setProgress(progress + diff);
-                setBuffer(progress + diff + diff2);
+    const switchHandler = (event: { target: { checked: boolean | ((prevState: boolean) => boolean); }; }) => {
+        setUseAverage(event.target.checked);
+        console.log(ranking);
+    };
+
+    const ranking = GetRanking(eventId, province?.id, useAverage);
+
+    const handleProvinceChange = (event: any, newValue: React.SetStateAction<Province | null>) => {
+        setProvince(newValue);
+
+        if (province == null) {
+            // Handle the case when the province value is null.
+        } else {
+            // Do something with the ranking data (it will be updated automatically when the hook fetches new data).
+            console.log(ranking);
+            if (province.id === "qc") {
+                console.log("Vive le Québec libre!");
             }
-        };
-    });
-
-    React.useEffect(() => {
-        const timer = setInterval(() => {
-            progressRef.current();
-        }, 500);
-
-        return () => {
-            clearInterval(timer);
-        };
-    }, []);
+        }
+    };
 
 
     return (
@@ -58,9 +62,25 @@ export const Rankings = () => {
                     {t("rankings.soon")}
                 </Typography>
             </Box>
-            <Box sx={{width: '100%'}}>
-                <LinearProgress variant="buffer" value={progress} valueBuffer={buffer}/>
-            </Box>
+
+            <Autocomplete
+                disablePortal
+                id="combo-box-demo"
+                options={provinces}
+                sx={{width: 300}}
+                value={province}
+                onChange={handleProvinceChange}
+                renderInput={(params) => <TextField {...params} label="Province"/>}
+                isOptionEqualToValue={(option, value) => option.id === value.id}
+            />
+
+            <Stack direction="row" spacing={1} alignItems="center">
+                <Typography>Single</Typography>
+                <Switch checked={useAverage}
+                        onChange={switchHandler}
+                        color="primary"/>
+                <Typography>Average</Typography>
+            </Stack>
         </Container>
     );
 };

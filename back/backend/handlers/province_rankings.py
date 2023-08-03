@@ -10,6 +10,9 @@ from backend.models.wca.rank import RankSingle
 bp = Blueprint('province_rankings', __name__)
 client = ndb.Client()
 
+@bp.route('/test_rankings') # temporary
+def test_rankings():
+    return [{"name":"Sarah Strong","rank":1,"time":"9.18","url":"https://worldcubeassociation.org/persons/2007STRO01"},{"name":"Alexandre Ondet","rank":2,"time":"9.84","url":"https://worldcubeassociation.org/persons/2017ONDE01"}]
 
 @bp.route('/province_rankings/<event_id>/<province_id>/<use_average>')
 def province_rankings_table(event_id, province_id, use_average):
