@@ -1,5 +1,6 @@
 import {Trans, useTranslation} from "react-i18next";
 import {
+    AlertColor,
     Box,
     Container, Typography,
 } from "@mui/material";
@@ -11,6 +12,9 @@ import {DateField} from "@mui/x-date-pickers";
 import Chip from '@mui/material/Chip';
 import Paper from '@mui/material/Paper';
 import {styled} from '@mui/material/styles';
+import Alert from '@mui/material/Alert';
+import IconButton from '@mui/material/IconButton';
+import CloseIcon from '@mui/icons-material/Close';
 import {AdapterDayjs} from '@mui/x-date-pickers/AdapterDayjs';
 import {LocalizationProvider} from '@mui/x-date-pickers/LocalizationProvider';
 import {API_BASE_URL, GetUser, signIn, signOut} from '../components/Api';
@@ -25,6 +29,10 @@ export const Account = () => {
 
     const [province, setProvince] = useState<Province | null>(null);
     const [chipData, setChipData] = useState<readonly ChipData[]>([]);
+
+    const [alert, setAlert] = useState(false);
+    const [alertType, setAlertType] = useState<AlertColor>("error");
+    const [alertContent, setAlertContent] = useState('');
 
     const provinces: Province[] = GetProvincesWithNA();
 
@@ -66,6 +74,15 @@ export const Account = () => {
             const resp = await httpClient.post(API_BASE_URL + "/edit", {
                 province: province ? province.id : 'na',
             });
+            if (resp.data.success === true) {
+                setAlertContent(t("account.success"));
+                setAlertType("success");
+                setAlert(true);
+            } else {
+                setAlertContent(t("account.error"));
+                setAlertType("error");
+                setAlert(true);
+            }
         } catch (error: any) {
             if (error.response.status === 401) {
                 console.log("Invalid credentials" + error.response.status);
@@ -120,7 +137,7 @@ export const Account = () => {
                             disabled
                             id="region"
                             label="Region"
-                            defaultValue={default_province.region}
+                            value={province?.region || default_province.region}
                             variant="outlined"
                         />
                         <TextField
@@ -191,7 +208,24 @@ export const Account = () => {
                             </Button>
                         </Grid>
                     </Grid>
-
+                    {alert ?
+                        <Alert
+                            action={
+                                <IconButton
+                                    aria-label="close"
+                                    color="inherit"
+                                    size="small"
+                                    onClick={() => {
+                                        setAlert(false);
+                                    }}
+                                >
+                                    <CloseIcon fontSize="inherit"/>
+                                </IconButton>
+                            }
+                            variant="outlined" severity={alertType}>
+                            {alertContent}
+                        </Alert>
+                        : <></>}
 
                 </div>
             ) : (

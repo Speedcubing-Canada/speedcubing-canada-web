@@ -107,6 +107,8 @@ export const resources = {
         welcome: "Welcome to Speedcubing Canada account page. \n\n" +
             "To access it, please sign in with your WCA account.",
         roles: "Roles",
+        success: "Your account has been successfully updated.",
+        error: "There was an error updating your account.",
       },
       rankings: {
           title: "Rankings",
@@ -208,6 +210,8 @@ export const resources = {
         welcome: "Bienvenue sur la page du compte de Speedcubing Canada. \n" +
             "Pour y accéder, veuillez vous connecter avec votre compte WCA.",
         roles: "Rôles",
+        success: "Votre compte a été mis à jour avec succès.",
+        error: "Une erreur s'est produite lors de la mise à jour de votre compte.",
       },
       rankings: {
           title: "Classements",
