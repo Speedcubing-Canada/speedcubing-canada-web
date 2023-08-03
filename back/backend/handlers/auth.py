@@ -79,20 +79,18 @@ def create_bp(oauth):
       else:
         wca_id_user = None
       if wca_id_user:
-        if wca_id_user.city and not user.city:
-          user.city = wca_id_user.city
+        if wca_id_user.dob and not user.dob:
+          user.dob = wca_id_user.dob
         if wca_id_user.province and not user.province:
           user.province = wca_id_user.province
-        if wca_id_user.latitude and not user.latitude:
-          user.latitude = wca_id_user.latitude
-        if wca_id_user.longitude and not user.longitude:
-          user.longitude = wca_id_user.longitude
+        if wca_id_user.email and not user.email:
+          user.email = wca_id_user.email
         wca_id_user.key.delete()
 
       user.last_login = datetime.datetime.now()
 
       user.put()
-      address = get_secret('FLASK_ADDRESS')
+      address = get_secret('FRONT_ADDRESS')
       return redirect(address+'/account' or '/')
 
   @bp.route('/logout')

@@ -28,6 +28,7 @@ export const GetUser = () => {
     return user;
 }
 
+
 export const signOut = () => {
     window.location.assign(API_BASE_URL + "/logout");
 }

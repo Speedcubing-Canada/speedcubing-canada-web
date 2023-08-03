@@ -28,7 +28,7 @@ elif os.environ.get('ENV') == 'DEV' and 'gunicorn' in sys.argv[0]:
 app = Flask(__name__)
 app.secret_key = get_secret('SESSION_SECRET_KEY')
 app.permanent_session_lifetime = datetime.timedelta(days=7)
-address = get_secret('FLASK_ADDRESS')
+address = get_secret('FRONT_ADDRESS')
 CORS(app, supports_credentials=True)
 
 

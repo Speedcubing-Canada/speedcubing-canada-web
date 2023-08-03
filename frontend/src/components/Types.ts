@@ -16,3 +16,8 @@ export interface Province {
 export interface ProfileEditData {
     province: string;
 }
+
+export interface ChipData {
+  key: number;
+  label: string;
+}

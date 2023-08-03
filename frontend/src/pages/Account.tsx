@@ -8,11 +8,14 @@ import Grid from '@mui/material/Unstable_Grid2';
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
 import {DateField} from "@mui/x-date-pickers";
+import Chip from '@mui/material/Chip';
+import Paper from '@mui/material/Paper';
+import {styled} from '@mui/material/styles';
 import {AdapterDayjs} from '@mui/x-date-pickers/AdapterDayjs';
 import {LocalizationProvider} from '@mui/x-date-pickers/LocalizationProvider';
 import {API_BASE_URL, GetUser, signIn, signOut} from '../components/Api';
 import {useState} from "react";
-import {Province} from "../components/Types";
+import {Province, ChipData} from "../components/Types";
 import httpClient from "../httpClient";
 import dayjs from "dayjs";
 
@@ -20,7 +23,7 @@ export const Account = () => {
     const {t} = useTranslation();
 
     const [province, setProvince] = useState<Province | null>(null);
-    const [dob, setDob] = useState<| null>(null);
+    const [chipData, setChipData] = useState<readonly ChipData[]>([]);
 
     const provinces: Province[] = [
         {label: 'Alberta', id: 'ab', region: 'Prairies'},
@@ -41,18 +44,35 @@ export const Account = () => {
 
     const user = GetUser();//TODO: display something else while loading
     let default_province = {label: 'N/A', id: 'na', region: 'N/A'};
-    if (user != null && user.province != null) {
-        //set province in the combo box
-        for (let i = 0; i < provinces.length; i++) {
-            if (provinces[i].id === user.province) {
-                default_province = provinces[i];
+    let default_dob = dayjs('2022-01-01');
+    let default_WCAID = "";
+    if (user != null) {
+        if (user.province != null) {
+            //set province in the combo box
+            for (let i = 0; i < provinces.length; i++) {
+                if (provinces[i].id === user.province) {
+                    default_province = provinces[i];
+                }
             }
         }
+        if (user.dob != null) {
+            default_dob = dayjs(user.dob);
+        }
+        if (user.roles != null && user.roles.length > 0 && chipData.length === 0) {
+            let tmpChipData = [];
+            for (let i = 0; i < user.roles.length; i++) {
+                tmpChipData.push({key: i, label: user.roles[i]});
+            }
+            setChipData(tmpChipData);
+        }
+        if (user.wca_person != null) {
+            default_WCAID = user.wca_person;
+        }
     }
-    let default_dob = dayjs('2022-01-01');
-    if (user != null && user.dob != null) {
-        default_dob = dayjs(user.dob);
-    }
+
+    const ListItem = styled('li')(({theme}) => ({
+        margin: theme.spacing(0.5),
+    }));
 
 
     const handleSaveProfile = async () => {
@@ -114,19 +134,55 @@ export const Account = () => {
                             disabled
                             id="region"
                             label="Region"
-                            value={province?.region || default_province.region}
                             defaultValue={default_province.region}
+                            variant="outlined"
+                        />
+                        <TextField
+                            disabled
+                            id="wcaid"
+                            label="WCAID"
+                            defaultValue={default_WCAID}
                             variant="outlined"
                         />
                         <LocalizationProvider dateAdapter={AdapterDayjs}>
                             <DateField
                                 disabled
                                 label="Date of birth"
-                                value={dob || default_dob}
                                 defaultValue={default_dob}
                                 format="DD-MM-YYYY"
                             />
                         </LocalizationProvider>
+                        <Typography variant="subtitle2" gutterBottom>
+                            {t("account.roles")}
+                        </Typography>
+                        <Paper
+                            sx={{
+                                display: 'flex',
+                                justifyContent: 'center',
+                                flexWrap: 'wrap',
+                                listStyle: 'none',
+                                p: 0.5,
+                                m: 0,
+                            }}
+                            component="ul"
+                        >
+                            {chipData.map((data) => {
+                                let color: "default" | "error" | "primary" | "secondary" | "info" | "success" | "warning" | undefined = "default";
+
+                                if (data.label === 'GLOBAL_ADMIN') {
+                                    color = "primary";
+                                }
+
+                                return (
+                                    <ListItem key={data.key}>
+                                        <Chip
+                                            color={color}
+                                            label={data.label}
+                                        />
+                                    </ListItem>
+                                );
+                            })}
+                        </Paper>
                     </Box>
 
                     <Grid container spacing={2}>

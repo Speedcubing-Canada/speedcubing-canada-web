@@ -106,6 +106,7 @@ export const resources = {
         signout: "Sign Out",
         welcome: "Welcome to Speedcubing Canada account page. \n\n" +
             "To access it, please sign in with your WCA account.",
+        roles: "Roles",
       },
       rankings: {
           title: "Rankings",
@@ -206,6 +207,7 @@ export const resources = {
         signout: "Déconnexion",
         welcome: "Bienvenue sur la page du compte de Speedcubing Canada. \n" +
             "Pour y accéder, veuillez vous connecter avec votre compte WCA.",
+        roles: "Rôles",
       },
       rankings: {
           title: "Classements",
