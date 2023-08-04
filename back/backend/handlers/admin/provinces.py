@@ -42,7 +42,7 @@ def update_provinces():
     ONTARIO = MakeRegion('on', 'Ontario', 'Ontario', all_regions, futures)
     PRAIRIES = MakeRegion('pr', 'Prairies', 'Prairies', all_regions, futures)
     BRITISH_COLUMBIA = MakeRegion('bc', 'British Columbia', 'British Columbia', all_regions, futures)
-    TERRITORIES = MakeRegion('nw', 'Territories', 'Territories', all_regions, futures)
+    TERRITORIES = MakeRegion('te', 'Territories', 'Territories', all_regions, futures)
 
 
     for future in futures:

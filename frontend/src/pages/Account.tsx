@@ -38,7 +38,7 @@ export const Account = () => {
     const provinces: Province[] = GetProvincesWithNA();
 
     const [user, setUser] = useState<User | null>(null);
-    const [loading, setLoading] = useState(true)
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         (async () => {
@@ -52,7 +52,7 @@ export const Account = () => {
         })();
     }, []);
 
-    let default_province: Province = {label: 'N/A', id: 'na', region: 'N/A'};
+    let default_province: Province = {label: 'N/A', id: 'na', region: 'N/A', region_id: 'na'};
     let default_dob = dayjs('2022-01-01');
     let default_WCAID = "";
     if (user != null) {
@@ -149,6 +149,7 @@ export const Account = () => {
                                     }
                                 }}
                                 renderInput={(params) => <TextField {...params} label="Province"/>}
+                                getOptionLabel={(option) => t('provinces.'+option.id)}
                                 isOptionEqualToValue={(option, value) => option.id === value.id}
                             />
                             <Typography variant="subtitle2" gutterBottom>
@@ -157,8 +158,8 @@ export const Account = () => {
                             <TextField
                                 disabled
                                 id="region"
-                                label="Region"
-                                value={province?.region || default_province.region}
+                                label={t("account.region")}
+                                value={province ? t('regions.'+province?.region_id) : t('regions.'+default_province.region_id)}
                                 variant="outlined"
                             />
                             <TextField
@@ -171,7 +172,7 @@ export const Account = () => {
                             <LocalizationProvider dateAdapter={AdapterDayjs}>
                                 <DateField
                                     disabled
-                                    label="Date of birth"
+                                    label={t("account.dob")}
                                     defaultValue={default_dob}
                                     format="DD-MM-YYYY"
                                 />
