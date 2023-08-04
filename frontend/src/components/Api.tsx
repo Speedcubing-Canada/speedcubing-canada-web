@@ -12,22 +12,6 @@ export const signIn = () => {
     window.location.assign(API_BASE_URL + "/login");
 }
 
-export const GetUser = () => {
-    const [user, setUser] = useState<User | null>(null);
-
-    useEffect(() => {
-        (async () => {
-            try {
-                const resp = await httpClient.get(API_BASE_URL + "/user_info");
-                setUser(resp.data);
-            } catch (error) {
-                console.log("Not authenticated");
-            }
-        })();
-    }, []);
-    return user;
-}
-
 export const signOut = () => {
     window.location.assign(API_BASE_URL + "/logout");
 }
