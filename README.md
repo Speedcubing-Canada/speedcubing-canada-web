@@ -1,15 +1,21 @@
 # speedcubingcanada.org
 
+## Running the app locally
+In order to run the app locally, you will need three independant services running at the same time:
+ - The frontend
+ - The backend
+ - The datastore emulator
+
+The quickest way to get all three running is to use docker-compose for the frontend and backend, and the gcloud client for the datastore emulator.
+Right now, the python part is commented in the docker-compose file, so you can either uncomment it or run it locally (useful if you want to use a debugger for example).
 ## Frontend
-
-First, please move into the `frontend` directory.
-
-In the project directory, you can run:
+First option, in the project root directory, you can run:
 
 ### `docker-compose up`
+Runs de app and an nginx server. The app is available at [http://localhost/](http://localhost/).
 
-
-Runs de app and a development mysql database and an nginx server. The app is available at [http://localhost/](http://localhost/).
+Second option:
+Move into the `frontend` directory.
 
 ### `npm start`
 
@@ -38,10 +44,34 @@ See the section about [deployment](https://facebook.github.io/create-react-app/d
 
 Currently, this step is handled automatically by an AWS build pipeline.
 
+## Backend
+As mentioned above you can either use docker-compose or run the app locally.
+
+To run the app locally, you will need to move the `back` folder first and install the dependencies (I recommend using a virtual environment):
+
+```shell
+cd back
+pip install -r requirements.txt
+```
+
+Then you can run the flask app with:
+```shell
+gunicorn -b :8083 backend:app
+```
+If you use pycharm, you can also create a flask configuration and run it from there (keep in mind the target folder is `back/backend`.
+
+## Datastore emulator
+
+```shell
+gcloud beta emulators datastore start
+```
+
 ## Deployment
 
-To deploy run the command:
+To deploy run the command (make sure you built the frontend first):
 
 ```sh
 gcloud app deploy frontend/app.yaml dispatch.yaml back/api.yaml 
 ```
+
+You can also deploy the backend and frontend separately, but the first time make sure you either deploy everything at once or the app and then the dispatch and the api together, because the services need to be created first.
