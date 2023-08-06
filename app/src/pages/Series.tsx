@@ -23,7 +23,6 @@ export const Series = () => {
 
   const getVenueData = async (compId: string) => {
     const timestamp = new Date().getTime();
-    console.log(`/wcif/public?cacheBust=${timestamp}`)
     const response = await fetch (LINKS.WCA.API.COMPETITION_INFO + compId + "/wcif/public?cacheBust=${timestamp}");
     const data = await response.json();
     return data
@@ -97,7 +96,9 @@ export const Series = () => {
                 `${t("competition.city", {city: data[key].city})}` +
                 `${t("competition.venue", {venue: data[key].schedule.venues[0].name})}` +
                 `${t("competition.address", {address: data[key].venue_address})}` +
-                `${t("competition.registration.count", {num: competitorsApproved(data[key]).toString(), total: data[key].competitorLimit})}`
+                (currentDate > registrationOpen
+                  ? `${t("competition.registration.count", {num: competitorsApproved(data[key]).toString(), total: data[key].competitorLimit})}`
+                  : "\n")
               }}>
               </Typography>
               <Button to={data[key].url} component={Link} variant="contained" size="large">

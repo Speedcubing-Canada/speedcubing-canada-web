@@ -104,7 +104,7 @@ export const resources = {
         registration: {
           before: "\nRegistration opens: {{date}}",
           after: "\nRegistration opened: {{date}}",
-          count: "<b>Registration:</b> {{num}}/{{total}}\n\n"
+          count: "<b>Registration:</b> {{num}}/{{total}} spots filled\n\n"
         },
         date: "<b>Date:</b> {{date}}\n",
         city: "<b>City:</b> {{city}}\n",

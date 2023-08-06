@@ -20,8 +20,8 @@ export const Competition = () => {
   }
 
   const getVenueData = async (compId: string) => {
-    const timestamp = new Date().getTime();
-    const response = await fetch (LINKS.WCA.API.COMPETITION_INFO + compId + "/wcif/public?cacheBust=${timestamp}");
+    const timestamp = new Date().getTime(); 
+    const response = await fetch (LINKS.WCA.API.COMPETITION_INFO + compId + `/wcif/public?cacheBust=${timestamp}`);
     const data = await response.json();
     return data
   }
@@ -82,8 +82,10 @@ export const Competition = () => {
               `${t("competition.city", {city: competitionData.city})}` +
               `${t("competition.venue", {venue: venueData.schedule.venues[0].name})}` +
               `${t("competition.address", {address: competitionData.venue_address})}` +
-              `${t("competition.registration.count", {num: competitorsApproved(venueData).toString(), total: venueData.competitorLimit})}`
-            }}>
+              (currentDate > registrationOpen
+                ? `${t("competition.registration.count", {num: competitorsApproved(venueData).toString(), total: venueData.competitorLimit})}`
+                : "\n")
+              }}>
             </Typography>
             <Button to={competitionData.url} component={Link} variant="contained" size="large">
               {t("competition.register")}
