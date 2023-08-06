@@ -1,5 +1,5 @@
 import { Button, Box, Container, Typography, LinearProgress } from "@mui/material";
-import { useTranslation, Trans } from "react-i18next";
+import { useTranslation } from "react-i18next";
 import { Link } from "../components/Link";
 import { useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
@@ -22,9 +22,22 @@ export const Series = () => {
   }
 
   const getVenueData = async (compId: string) => {
-    const response = await fetch (LINKS.WCA.API.COMPETITION_INFO + compId + "/wcif/public");
+    const timestamp = new Date().getTime();
+    console.log(`/wcif/public?cacheBust=${timestamp}`)
+    const response = await fetch (LINKS.WCA.API.COMPETITION_INFO + compId + "/wcif/public?cacheBust=${timestamp}");
     const data = await response.json();
     return data
+  }
+
+  const competitorsApproved = (competition: any) => {
+    let approved = 0;
+    for (const competitor of competition.persons) {
+      if (competitor.registration && competitor.registration.status === "accepted") {
+        console.log(competitor);
+        approved++;
+      }
+    }
+    return approved;
   }
 
   useEffect(() => {
@@ -83,7 +96,8 @@ export const Series = () => {
                 __html: `${t("competition.date", {date: new Date(data[key].start_date + "T12:00:00.000Z").toLocaleString('en-US', {weekday: 'long', month: 'long', day: 'numeric', year: 'numeric'})})}` +
                 `${t("competition.city", {city: data[key].city})}` +
                 `${t("competition.venue", {venue: data[key].schedule.venues[0].name})}` +
-                `${t("competition.address", {address: data[key].venue_address})}`
+                `${t("competition.address", {address: data[key].venue_address})}` +
+                `${t("competition.registration.count", {num: competitorsApproved(data[key]).toString(), total: data[key].competitorLimit})}`
               }}>
               </Typography>
               <Button to={data[key].url} component={Link} variant="contained" size="large">

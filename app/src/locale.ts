@@ -103,12 +103,13 @@ export const resources = {
         fee: "\n\nRegistration fee: ${{fee}} CAD",
         registration: {
           before: "\nRegistration opens: {{date}}",
-          after: "\nRegistration opened: {{date}}"
+          after: "\nRegistration opened: {{date}}",
+          count: "<b>Registration:</b> {{num}}/{{total}}\n\n"
         },
         date: "<b>Date:</b> {{date}}\n",
         city: "<b>City:</b> {{city}}\n",
         venue: "<b>Venue:</b> {{venue}}\n",
-        address: "<b>Address:</b> {{address}}\n\n",
+        address: "<b>Address:</b> {{address}}\n",
         register: "Register",
         learnmore: "Learn more",
         showonly: "Show only competitions in: ",
