@@ -2,6 +2,8 @@ import { Button, Box, Container, Typography, SelectChangeEvent, OutlinedInput, M
 import { useTranslation } from "react-i18next";
 import { Link } from "../components/Link";
 import { LINKS } from "./links";
+import { Province } from "../components/Types";
+import { GetProvinces } from "../components/Provinces";
 import { useState, useEffect } from "react";
 import React from "react";
 
@@ -16,29 +18,7 @@ const MenuProps = {
   },
 };
 
-const regions = [
-  "Alberta", 
-  "Atlantic Canada",
-  "British Columbia",
-  "Manitoba",
-  "Ontario",
-  "Quebec",
-  "Saskatchewan",
-  "Territories"
-]
-
-const atlantic = [
-  "Nova Scotia",
-  "New Brunswick",
-  "Prince Edward Island",
-  "Newfoundland and Labrador"
-]
-
-const territories = [
-  "Northwest Territories",
-  "Nunavut",
-  "Yukon"
-]
+const provinces: Province[] = GetProvinces();
 
 export const Competitions = () => {
   const { t } = useTranslation();
@@ -75,16 +55,12 @@ export const Competitions = () => {
   let showComps: any[] = [];
   Object.keys(data).forEach((key) => {
     let province = data[key].city.split(", ")[1];
-    if (atlantic.includes(province)) {
-      province = "Atlantic";
-    } else if (territories.includes(province)) {
-      province = "Territories";
-    }
-    //TODO figure out how to do this for french translation
     if (selectedRegions.length === 0 || selectedRegions.includes(province)) {
       showComps.push(data[key]);
     }
   });
+
+  console.log(selectedRegions);
 
   return (
     <Container maxWidth="xl" style={{ textAlign: "center" }}>
@@ -97,21 +73,21 @@ export const Competitions = () => {
           <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px' }}>
             {t("competition.showonly")}
             <FormControl sx={{ minWidth: 200, textAlign: "left" }}>
-              <InputLabel id="multiple-checkbox-label">{t("competition.region")}</InputLabel>
+              <InputLabel id="multiple-checkbox-label">{t("competition.province")}</InputLabel>
               <Select
-                labelId="region-selection-label"
-                id="region-selection"
+                labelId="province-selection-label"
+                id="province-selection"
                 multiple
                 value={ selectedRegions }
                 onChange ={ handleChange }
-                input={<OutlinedInput label="Regions" />}
+                input={<OutlinedInput label="Provinces" />}
                 renderValue={(selected: any []) => selected.join(', ')}
                 MenuProps={MenuProps}
                 > 
-                  {regions.map((key) => (
-                    <MenuItem key={ key } value={ key }>
-                      <Checkbox checked={ selectedRegions.indexOf(key) > -1 } />
-                      <ListItemText primary={ key } />
+                  {provinces.map((province: Province) => (
+                    <MenuItem key={ province.id } value={ province.label }>
+                      <Checkbox checked={ selectedRegions.indexOf(province.label) > -1 } />
+                      <ListItemText primary={ province.label } />
                     </MenuItem>
                   ))}
               </Select>
