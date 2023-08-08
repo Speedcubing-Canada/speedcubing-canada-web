@@ -55,12 +55,26 @@ export const Competitions = () => {
   let showComps: any[] = [];
   Object.keys(data).forEach((key) => {
     let province = data[key].city.split(", ")[1];
-    if (selectedRegions.length === 0 || selectedRegions.includes(province)) {
+    if (selectedRegions.length === 0 ) {
       showComps.push(data[key]);
+    } else {
+      for (const provinceItem of provinces) {
+        if (provinceItem.label === province && selectedRegions.includes(provinceItem.region)) {
+          showComps.push(data[key]);
+        }
+      }
     }
   });
 
-  console.log(selectedRegions);
+  //Create a list of regions from provinces list
+  const dup: { [region: string]: boolean } = {};
+  const regions = [];
+  for (const province of provinces) {
+    if (!dup[province.region]) {
+      dup[province.region] = true;
+      regions.push(province.region);
+    }
+  }
 
   return (
     <Container maxWidth="xl" style={{ textAlign: "center" }}>
@@ -84,11 +98,11 @@ export const Competitions = () => {
                 renderValue={(selected: any []) => selected.join(', ')}
                 MenuProps={MenuProps}
                 > 
-                  {provinces.map((province: Province) => (
-                    <MenuItem key={ province.id } value={ province.label }>
-                      <Checkbox checked={ selectedRegions.indexOf(province.label) > -1 } />
-                      <ListItemText primary={ province.label } />
-                    </MenuItem>
+                  {regions.map((region: string) => (
+                    <MenuItem key={ region } value={ region }>
+                    <Checkbox checked={ selectedRegions.indexOf(region) > -1 } />
+                    <ListItemText primary={ region } />
+                  </MenuItem>
                   ))}
               </Select>
             </FormControl>
