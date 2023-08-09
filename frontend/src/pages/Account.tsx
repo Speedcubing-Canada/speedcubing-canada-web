@@ -237,22 +237,24 @@ export const Account = () => {
                             </Grid>
                         </Grid>
                         {alert ?
-                            <Alert
-                                action={
-                                    <IconButton
-                                        aria-label="close"
-                                        color="inherit"
-                                        size="small"
-                                        onClick={() => {
-                                            setAlert(false);
-                                        }}
-                                    >
-                                        <CloseIcon fontSize="inherit"/>
-                                    </IconButton>
-                                }
-                                variant="outlined" severity={alertType}>
-                                {alertContent}
-                            </Alert>
+                            <Box marginY="1rem">
+                                <Alert
+                                    action={
+                                        <IconButton
+                                            aria-label="close"
+                                            color="inherit"
+                                            size="small"
+                                            onClick={() => {
+                                                setAlert(false);
+                                            }}
+                                        >
+                                            <CloseIcon fontSize="inherit"/>
+                                        </IconButton>
+                                    }
+                                    variant="outlined" severity={alertType}>
+                                    {alertContent}
+                                </Alert>
+                            </Box>
                             : <></>}
 
                     </div>

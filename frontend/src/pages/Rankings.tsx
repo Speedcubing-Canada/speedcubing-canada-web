@@ -36,9 +36,9 @@ export const Rankings = () => {
         setProvince(newValue);
 
         if (province == null) {
-            // Handle the case when the province value is null.
+
         } else {
-            // Do something with the ranking data (it will be updated automatically when the hook fetches new data).
+
             console.log(ranking);
             if (province.id === "qc") {
                 console.log("Vive le Québec libre!");
@@ -51,31 +51,32 @@ export const Rankings = () => {
 
     useEffect(() => {
         setLoading(true);
-        let use_average_str = "0";
-        if (useAverage) {
-            use_average_str = "1";
-        }
+        let use_average_str = useAverage ? "1" : "0";
 
         (async () => {
             try {
-                if (eventId === null || province?.id === null || useAverage === null) {
+                if (eventId === null || province?.id === null || useAverage === null || province === undefined) {
                     return null;
                 }
 
-                //const resp = await httpClient.get(API_BASE_URL + "/province_rankings/" + eventId + "/" + province?.id + "/" + use_average_str);
-                const resp = await httpClient.get(API_BASE_URL + "/test_rankings");
+                const resp = await httpClient.get(API_BASE_URL + "/province_rankings/" + eventId + "/" + province?.id + "/" + use_average_str);
+                //const resp = await httpClient.get(API_BASE_URL + "/test_rankings");
 
                 setRanking(resp.data);
             } catch (error: any) {
-                if (error.response.status === 500) {
+                if (error?.code === "ERR_NETWORK") {
+                    console.log("Network error" + error);
+                } else if (error?.response.status === 500) {
                     console.log("Internal server error" + error.response.data);
-                } else if (error.response.status === 404) {
+                } else if (error?.response.status === 404) {
                     console.log("Not found" + error.response.data);
+                } else {
+                    console.log("Unknown error" + error);
                 }
             }
             setLoading(false);
         })();
-    }, []);
+    }, [eventId, province, useAverage]);
 
 
     return (
@@ -111,7 +112,7 @@ export const Rankings = () => {
             {loading ? <CircularProgress/>
                 : ranking != null ? (
                     <div>
-                        <Typography marginY="1rem">{t('rankings.rankfor')} {t("province_with_pronouns." + province?.id)}</Typography>
+                        {province != null ? (<Typography marginY="1rem">{t('rankings.rankfor')} {t("province_with_pronouns." + province?.id)}</Typography>) : null}
                         <RankList data={ranking}/>
                     </div>
 

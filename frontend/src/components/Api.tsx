@@ -5,7 +5,7 @@ import httpClient from "../httpClient";
 export const PRODUCTION =
     process.env.NODE_ENV === 'production';
 export const API_BASE_URL =
-    process.env.API_BASE_URL || "http://localhost:8083";
+    process.env.API_BASE_URL || "https://api.staging.speedcubingcanada.org";
 
 
 export const signIn = () => {
