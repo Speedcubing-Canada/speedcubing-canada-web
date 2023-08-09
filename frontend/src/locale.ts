@@ -164,7 +164,7 @@ export const resources = {
                 rank: "Rank",
                 name: "Name",
                 time: "Time",
-            }
+            },
         },
     },
     [LOCALES.fr]: {
@@ -265,6 +265,7 @@ export const resources = {
                 qc: "Québec",
                 sk: "Saskatchewan",
                 yt: "Yukon",
+                na: "N/A",
             },
             province_with_pronouns: {
                 ab: "l'Alberta",
@@ -317,7 +318,7 @@ export const resources = {
                 rank: "Rang",
                 name: "Nom",
                 time: "Temps",
-            }
+            },
         },
     },
 };
