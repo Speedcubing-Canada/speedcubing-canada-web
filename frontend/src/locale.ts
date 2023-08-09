@@ -159,6 +159,7 @@ export const resources = {
                 average: "Average",
                 rankfor: "Rankings for",
                 unavailable: "Ranking Unavailable",
+                choose: "Choose a province",
             },
             ranklist: {
                 rank: "Rank",
@@ -313,6 +314,7 @@ export const resources = {
                 average: "Moyenne",
                 rankfor: "Classement pour",
                 unavailable: "Classement indisponible",
+                choose: "Choisissez une province",
             },
             ranklist: {
                 rank: "Rang",

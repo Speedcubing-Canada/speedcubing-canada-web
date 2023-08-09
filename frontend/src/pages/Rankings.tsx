@@ -109,16 +109,24 @@ export const Rankings = () => {
                     <Typography>{t("rankings.average")}</Typography>
                 </Stack>
             </Stack>
-            {loading ? <CircularProgress/>
-                : ranking != null ? (
+            {loading ?
+                <Box marginY="1rem">
+                    <CircularProgress/>
+                </Box>
+                : (ranking != null && province != null) ? (
                     <div>
-                        {province != null ? (<Typography marginY="1rem">{t('rankings.rankfor')} {t("province_with_pronouns." + province?.id)}</Typography>) : null}
+                        <Typography
+                            marginY="1rem">{t('rankings.rankfor')} {t("province_with_pronouns." + province?.id)}</Typography>
                         <RankList data={ranking}/>
                     </div>
 
-                ) : (
+                ) : (province == null) ? (
                     <div>
-                        <Typography>{t("rankings.unavailable")}</Typography>
+                        <Typography marginY="1rem">{t("rankings.choose")}</Typography>
+                    </div>
+                ): (
+                    <div>
+                        <Typography marginY="1rem">{t("rankings.unavailable")}</Typography>
                     </div>
                 )}
         </Container>
