@@ -155,10 +155,15 @@ export const resources = {
             },
             rankings: {
                 title: "Rankings",
-                soon: "Rankings Coming Soon",
                 single: "Single",
                 average: "Average",
                 rankfor: "Rankings for",
+                unavailable: "Ranking Unavailable",
+            },
+            ranklist: {
+                rank: "Rank",
+                name: "Name",
+                time: "Time",
             }
         },
     },
@@ -303,10 +308,15 @@ export const resources = {
             },
             rankings: {
                 title: "Classements",
-                soon: "Les classements arrivent",
                 single: "Single",
                 average: "Moyenne",
                 rankfor: "Classement pour",
+                unavailable: "Classement indisponible",
+            },
+            ranklist: {
+                rank: "Rang",
+                name: "Nom",
+                time: "Temps",
             }
         },
     },

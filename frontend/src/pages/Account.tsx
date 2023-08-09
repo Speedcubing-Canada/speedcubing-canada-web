@@ -1,4 +1,5 @@
 import {Trans, useTranslation} from "react-i18next";
+import {useEffect, useState} from "react";
 import {
     AlertColor,
     Box,
@@ -16,13 +17,14 @@ import Alert from '@mui/material/Alert';
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
 import CircularProgress from '@mui/material/CircularProgress';
+import Stack from '@mui/material/Stack';
 import {AdapterDayjs} from '@mui/x-date-pickers/AdapterDayjs';
 import {LocalizationProvider} from '@mui/x-date-pickers/LocalizationProvider';
+import dayjs from "dayjs";
+
 import {API_BASE_URL, signIn, signOut} from '../components/Api';
-import {useEffect, useState} from "react";
 import {Province, ChipData, chipColor, User} from "../components/Types";
 import httpClient from "../httpClient";
-import dayjs from "dayjs";
 import {GetProvincesWithNA} from "../components/Provinces";
 
 export const Account = () => {
@@ -130,6 +132,7 @@ export const Account = () => {
                                 variant="h5"
                                 fontWeight="bold"
                                 gutterBottom
+                                marginY="1rem"
                             >
                                 {t("account.hi")}{user.name}!
                             </Typography>
@@ -149,34 +152,37 @@ export const Account = () => {
                                     }
                                 }}
                                 renderInput={(params) => <TextField {...params} label="Province"/>}
-                                getOptionLabel={(option) => t('provinces.'+option.id)}
+                                getOptionLabel={(option) => t('provinces.' + option.id)}
                                 isOptionEqualToValue={(option, value) => option.id === value.id}
                             />
                             <Typography variant="subtitle2" gutterBottom>
                                 <Trans>{t("account.policy")} </Trans>
                             </Typography>
-                            <TextField
-                                disabled
-                                id="region"
-                                label={t("account.region")}
-                                value={province ? t('regions.'+province?.region_id) : t('regions.'+default_province.region_id)}
-                                variant="outlined"
-                            />
-                            <TextField
-                                disabled
-                                id="wcaid"
-                                label="WCAID"
-                                defaultValue={default_WCAID}
-                                variant="outlined"
-                            />
-                            <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                <DateField
+
+                            <Stack direction="row" spacing={2} alignItems="center" marginY="1rem">
+                                <TextField
                                     disabled
-                                    label={t("account.dob")}
-                                    defaultValue={default_dob}
-                                    format="DD-MM-YYYY"
+                                    id="region"
+                                    label={t("account.region")}
+                                    value={province ? t('regions.' + province?.region_id) : t('regions.' + default_province.region_id)}
+                                    variant="outlined"
                                 />
-                            </LocalizationProvider>
+                                <TextField
+                                    disabled
+                                    id="wcaid"
+                                    label="WCAID"
+                                    defaultValue={default_WCAID}
+                                    variant="outlined"
+                                />
+                                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                    <DateField
+                                        disabled
+                                        label={t("account.dob")}
+                                        defaultValue={default_dob}
+                                        format="DD-MM-YYYY"
+                                    />
+                                </LocalizationProvider>
+                            </Stack>
                             <Typography variant="subtitle2" gutterBottom>
                                 {t("account.roles")}
                             </Typography>

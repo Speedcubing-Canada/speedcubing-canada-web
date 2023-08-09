@@ -12,7 +12,16 @@ client = ndb.Client()
 
 @bp.route('/test_rankings') # temporary
 def test_rankings():
-    return [{"name":"Sarah Strong","rank":1,"time":"9.18","url":"https://worldcubeassociation.org/persons/2007STRO01"},{"name":"Alexandre Ondet","rank":2,"time":"9.84","url":"https://worldcubeassociation.org/persons/2017ONDE01"}]
+
+    data=[{"name":"Sarah Strong","rank":1,"time":"9.18","url":"https://worldcubeassociation.org/persons/2007STRO01"},{"name":"Alexandre Ondet","rank":2,"time":"9.84","url":"https://worldcubeassociation.org/persons/2017ONDE01"}]
+    # Calculate the total count of results
+    total_results = len(data)
+
+    # Set the Content-Range header
+    headers = {
+        'Content-Range': f'items 0-{total_results - 1}/{total_results}'
+    }
+    return jsonify(data), 200, headers
 
 @bp.route('/province_rankings/<event_id>/<province_id>/<use_average>')
 def province_rankings_table(event_id, province_id, use_average):

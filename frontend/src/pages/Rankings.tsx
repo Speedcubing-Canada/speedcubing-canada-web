@@ -9,11 +9,13 @@ import Autocomplete from "@mui/material/Autocomplete";
 import Stack from '@mui/material/Stack';
 import Switch from '@mui/material/Switch';
 import CircularProgress from "@mui/material/CircularProgress";
+
 import {eventID, Province, provinceID, useAverage} from "../components/Types";
 import {GetProvinces} from "../components/Provinces";
 import {useEffect, useState} from "react";
 import {API_BASE_URL} from "../components/Api";
 import httpClient from "../httpClient";
+import {RankList} from "../components/RankList";
 
 
 export const Rankings = () => {
@@ -60,7 +62,7 @@ export const Rankings = () => {
                     return null;
                 }
 
-                //const resp = await httpClient.get(API_BASE_URL + "/province_rankings/" + eventId + "/" + provinceId + "/" + use_average_str);
+                //const resp = await httpClient.get(API_BASE_URL + "/province_rankings/" + eventId + "/" + province?.id + "/" + use_average_str);
                 const resp = await httpClient.get(API_BASE_URL + "/test_rankings");
 
                 setRanking(resp.data);
@@ -85,30 +87,38 @@ export const Rankings = () => {
                 </Typography>
             </Box>
 
-            <Autocomplete
-                disablePortal
-                id="combo-box-demo"
-                options={provinces}
-                sx={{width: 300}}
-                value={province}
-                onChange={handleProvinceChange}
-                renderInput={(params) => <TextField {...params} label="Province"/>}
-                getOptionLabel={(option) => t('provinces.'+option.id)}
-                isOptionEqualToValue={(option, value) => option.id === value.id}
-            />
+            <Stack direction="row" spacing={2} alignItems="center">
+                <Autocomplete
+                    disablePortal
+                    id="combo-box-demo"
+                    options={provinces}
+                    sx={{width: 300}}
+                    value={province}
+                    onChange={handleProvinceChange}
+                    renderInput={(params) => <TextField {...params} label="Province"/>}
+                    getOptionLabel={(option) => t('provinces.' + option.id)}
+                    isOptionEqualToValue={(option, value) => option.id === value.id}
+                />
 
-            <Stack direction="row" spacing={1} alignItems="center">
-                <Typography>{t("rankings.single")}</Typography>
-                <Switch checked={useAverage}
-                        onChange={switchHandler}
-                        color="primary"/>
-                <Typography>{t("rankings.average")}</Typography>
+                <Stack direction="row" spacing={1} alignItems="center">
+                    <Typography>{t("rankings.single")}</Typography>
+                    <Switch checked={useAverage}
+                            onChange={switchHandler}
+                            color="primary"/>
+                    <Typography>{t("rankings.average")}</Typography>
+                </Stack>
             </Stack>
             {loading ? <CircularProgress/>
                 : ranking != null ? (
-                    <div>{t('rankings.rankfor')} {t("province_with_pronouns." + province?.id)}</div>
+                    <div>
+                        <Typography marginY="1rem">{t('rankings.rankfor')} {t("province_with_pronouns." + province?.id)}</Typography>
+                        <RankList data={ranking}/>
+                    </div>
+
                 ) : (
-                    <div>Nothing to show</div>
+                    <div>
+                        <Typography>{t("rankings.unavailable")}</Typography>
+                    </div>
                 )}
         </Container>
     );
