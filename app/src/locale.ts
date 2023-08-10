@@ -113,7 +113,7 @@ export const resources = {
         register: "Register",
         learnmore: "Learn more",
         showonly: "Show only competitions in: ",
-        province: "Province"
+        region: "Region"
       }
     },
   },

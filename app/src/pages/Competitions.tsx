@@ -7,12 +7,13 @@ import { GetProvinces } from "../components/Provinces";
 import { useState, useEffect } from "react";
 import React from "react";
 
-const ITEM_HEIGHT = 48;
+const NUM_ITEMS = 6;
+const ITEM_HEIGHT = 56;
 const ITEM_PADDING_TOP = 8;
 const MenuProps = {
   PaperProps: {
     style: {
-      maxHeight: ITEM_HEIGHT * 10.5 + ITEM_PADDING_TOP,
+      maxHeight: ITEM_HEIGHT * NUM_ITEMS + ITEM_PADDING_TOP,
       width: 250,
     },
   },
@@ -24,7 +25,7 @@ export const Competitions = () => {
   const { t } = useTranslation();
 
   const [data, setData] = useState<any>({});
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(true); 
 
   const getCompetitions = async () => {
     const response = await fetch(LINKS.WCA.API.COMPETITION_LIST);
@@ -87,18 +88,18 @@ export const Competitions = () => {
           <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px' }}>
             {t("competition.showonly")}
             <FormControl sx={{ minWidth: 200, textAlign: "left" }}>
-              <InputLabel id="multiple-checkbox-label">{t("competition.province")}</InputLabel>
+              <InputLabel id="multiple-checkbox-label">{t("competition.region")}</InputLabel>
               <Select
                 labelId="province-selection-label"
                 id="province-selection"
                 multiple
                 value={ selectedRegions }
                 onChange ={ handleChange }
-                input={<OutlinedInput label="Provinces" />}
-                renderValue={(selected: any []) => selected.join(', ')}
+                input={<OutlinedInput label="Region" />}
+                renderValue={(selected: any []) => selected.sort().join(', ')}
                 MenuProps={MenuProps}
                 > 
-                  {regions.map((region: string) => (
+                  {regions.sort().map((region: string) => (
                     <MenuItem key={ region } value={ region }>
                     <Checkbox checked={ selectedRegions.indexOf(region) > -1 } />
                     <ListItemText primary={ region } />
