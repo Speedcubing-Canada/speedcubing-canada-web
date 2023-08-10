@@ -4,6 +4,8 @@ import { Link } from "../components/Link";
 import { LINKS } from "./links";
 import { Province } from "../components/Types";
 import { GetProvinces } from "../components/Provinces";
+import { useParams } from "react-router-dom";
+import { getLocaleOrFallback } from "../locale";
 import { useState, useEffect } from "react";
 import React from "react";
 
@@ -23,6 +25,8 @@ const provinces: Province[] = GetProvinces();
 
 export const Competitions = () => {
   const { t } = useTranslation();
+  const params = useParams();
+  const locale = getLocaleOrFallback(params.locale as string);
 
   const [data, setData] = useState<any>({});
   const [isLoading, setIsLoading] = useState(true); 
@@ -60,7 +64,7 @@ export const Competitions = () => {
       showComps.push(data[key]);
     } else {
       for (const provinceItem of provinces) {
-        if (provinceItem.label === province && selectedRegions.includes(provinceItem.region)) {
+        if (provinceItem.label === province && selectedRegions.includes(provinceItem.region_id)) {
           showComps.push(data[key]);
         }
       }
@@ -73,9 +77,11 @@ export const Competitions = () => {
   for (const province of provinces) {
     if (!dup[province.region]) {
       dup[province.region] = true;
-      regions.push(province.region);
+      regions.push(province.region_id);
     }
   }
+
+  console.log(selectedRegions); 
 
   return (
     <Container maxWidth="xl" style={{ textAlign: "center" }}>
@@ -89,20 +95,23 @@ export const Competitions = () => {
             {t("competition.showonly")}
             <FormControl sx={{ minWidth: 200, textAlign: "left" }}>
               <InputLabel id="multiple-checkbox-label">{t("competition.region")}</InputLabel>
-              <Select
-                labelId="province-selection-label"
-                id="province-selection"
-                multiple
-                value={ selectedRegions }
-                onChange ={ handleChange }
-                input={<OutlinedInput label="Region" />}
-                renderValue={(selected: any []) => selected.sort().join(', ')}
-                MenuProps={MenuProps}
-                > 
+                <Select
+                  labelId="province-selection-label"
+                  id="province-selection"
+                  multiple
+                  value={selectedRegions} 
+                  onChange={handleChange}
+                  input={<OutlinedInput label="Region" />}
+                  renderValue={(selected: any[]) => {
+                    const translatedRegions = selected.map(region => t(`regions.${region}`));
+                    return translatedRegions.sort().join(", ");
+                  }}
+                  MenuProps={MenuProps}
+                  >
                   {regions.sort().map((region: string) => (
                     <MenuItem key={ region } value={ region }>
                     <Checkbox checked={ selectedRegions.indexOf(region) > -1 } />
-                    <ListItemText primary={ region } />
+                    <ListItemText primary={ t(`regions.${region}`) } />
                   </MenuItem>
                   ))}
               </Select>
@@ -124,10 +133,9 @@ export const Competitions = () => {
                 {new Date(item.start_date + "T12:00:00.000Z").toLocaleString("en-US", {month: "long"})}
                 { " | " }
                 { item.city }
-              </Typography>
-              <Button to={`/en/competitions/${item.id}`} component={Link} variant="contained" size="large">
+              </Typography> 
+              <Button to={`/${locale}/competitions/${item.id}`} component={Link} variant="contained" size="large">
                 {t("competition.learnmore")}
-                {/* TODO Currently english is hardcoded into the url, update to support french as well */}
               </Button>
             </Box>
           ))}

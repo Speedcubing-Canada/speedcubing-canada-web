@@ -27,6 +27,7 @@ export const resources = {
         about: "About",
         organization: "Organization",
         faq: "FAQ",
+        competitions: "Competitions",
       },
       about: {
         title: "About",
@@ -104,7 +105,7 @@ export const resources = {
         registration: {
           before: "\nRegistration opens: {{date}}",
           after: "\nRegistration opened: {{date}}",
-          count: "<b>Registration:</b> {{num}}/{{total}} spots filled\n\n"
+          count: "<b>Registration:</b> {{num}}/{{total}} spots filled\n\n",
         },
         date: "<b>Date:</b> {{date}}\n",
         city: "<b>City:</b> {{city}}\n",
@@ -112,9 +113,18 @@ export const resources = {
         address: "<b>Address:</b> {{address}}\n",
         register: "Register",
         learnmore: "Learn more",
-        showonly: "Show only competitions in: ",
-        region: "Region"
-      }
+        showonly: "Only show competitions in: ",
+        region: "Region",
+      },
+      regions: {
+        at: "Atlantic",
+        bc: "British Columbia",
+        qc: "Quebec",
+        on: "Ontario",
+        pr: "Prairies",
+        te: "Territories",
+        na: "N/A",
+    },
     },
   },
   [LOCALES.fr]: {
@@ -131,6 +141,7 @@ export const resources = {
         about: "À propos",
         organization: "Organisation",
         faq: "FAQ",
+        competitions: "Compétitions",
       },
       about: {
         title: "À propos",
@@ -198,6 +209,15 @@ export const resources = {
           q: "Speedcubing Canada est-elle affiliée à la World Cube Association ?",
           a: "Speedcubing Canada fonctionne indépendamment de la World Cube Association, avec un conseil d'administration distinct. Speedcubing Canada est reconnue comme l'organisation régionale officielle du Canada par la <regionalOrg>WCA</regionalOrg>.",
         },
+      },
+      regions: {
+        at: "Atlantique",
+        bc: "Colombie-Britannique",
+        qc: "Québec",
+        on: "Ontario",
+        pr: "Prairies",
+        te: "Territoires",
+        na: "N/A",
       },
     },
   },
