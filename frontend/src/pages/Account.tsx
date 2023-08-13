@@ -67,7 +67,12 @@ export const Account = () => {
     const [user, setUser] = useState<User | null>(null);
     const [loading, setLoading] = useState(true);
 
-    const defaultProvince : Province = provinces.find(({ id }) => id === user?.province) || {label: 'N/A', id: 'na', region: 'N/A', region_id: 'na'}
+    const defaultProvince: Province = provinces.find(({id}) => id === user?.province) || {
+        label: 'N/A',
+        id: 'na',
+        region: 'N/A',
+        region_id: 'na'
+    }
     const defaultDOB = user?.dob ? dayjs(user.dob) : dayjs('2022-01-01');
     const defaultWCAID = user?.wca_person || "";
 
@@ -100,18 +105,14 @@ export const Account = () => {
     }, []);
 
     useEffect(() => {
-        if (user != null) {
-        if (user.roles != null && user.roles.length > 0) {
+        if (user && user.roles && user.roles.length > 0) {
             let tmpChipData = [];
             for (let i = 0; i < user.roles.length; i++) {
                 tmpChipData.push({key: i, label: user.roles[i]});
             }
             setChipData(tmpChipData);
         }
-    }
     }, [user]);
-
-
 
 
     const ListItem = styled('li')(({theme}) => ({
