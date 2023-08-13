@@ -11,9 +11,9 @@ export const AdminPage = () => {
     const {t} = useTranslation();
 
     return (
-        <div></div>/*<Admin dataProvider={dataProvider}>
-            <Resource name="test_rankings" list={RankList2}/>
+        <Admin dataProvider={dataProvider}>
+            <Resource name="/admin/get_users" list={ListGuesser}/>
 
-        </Admin>*/
+        </Admin>
     );
 }

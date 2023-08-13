@@ -1,5 +1,5 @@
 import {Trans, useTranslation} from "react-i18next";
-import {useEffect, useState} from "react";
+import {useEffect, useReducer, useState} from "react";
 import {
     AlertColor,
     Box,
@@ -23,9 +23,36 @@ import {LocalizationProvider} from '@mui/x-date-pickers/LocalizationProvider';
 import dayjs from "dayjs";
 
 import {API_BASE_URL, signIn, signOut} from '../components/Api';
-import {Province, ChipData, chipColor, User} from "../components/Types";
+import {Province, ChipData, chipColor, User, State, Action} from "../components/Types";
 import httpClient from "../httpClient";
-import {GetProvincesWithNA} from "../components/Provinces";
+import {getProvincesWithNA} from "../components/Provinces";
+
+
+const initialState: State = {
+    alert: false,
+    alertType: "error",
+    alertContent: ""
+};
+
+const reducer = (state: State, action: Action) => {
+    switch (action.type) {
+        case "SHOW_ALERT":
+            return {
+                ...state,
+                alert: true,
+                alertType: action.alertType,
+                alertContent: action.alertContent
+            };
+        case "HIDE_ALERT":
+            return {
+                ...state,
+                alert: false
+            };
+        default:
+            return state;
+    }
+};
+
 
 export const Account = () => {
     const {t} = useTranslation();
@@ -33,20 +60,38 @@ export const Account = () => {
     const [province, setProvince] = useState<Province | null>(null);
     const [chipData, setChipData] = useState<readonly ChipData[]>([]);
 
-    const [alert, setAlert] = useState(false);
-    const [alertType, setAlertType] = useState<AlertColor>("error");
-    const [alertContent, setAlertContent] = useState('');
+    const [state, dispatch] = useReducer(reducer, initialState);
 
-    const provinces: Province[] = GetProvincesWithNA();
+    const provinces: Province[] = getProvincesWithNA();
 
     const [user, setUser] = useState<User | null>(null);
     const [loading, setLoading] = useState(true);
+
+    const defaultProvince : Province = provinces.find(({ id }) => id === user?.province) || {label: 'N/A', id: 'na', region: 'N/A', region_id: 'na'}
+    const defaultDOB = user?.dob ? dayjs(user.dob) : dayjs('2022-01-01');
+    const defaultWCAID = user?.wca_person || "";
+
+
+    const showAlert = (alertType: AlertColor, alertContent: string) => {
+        dispatch({
+            type: "SHOW_ALERT",
+            alertType,
+            alertContent
+        });
+    };
+
+    const hideAlert = () => {
+        dispatch({
+            type: "HIDE_ALERT"
+        });
+    };
 
     useEffect(() => {
         (async () => {
             try {
                 const resp = await httpClient.get(API_BASE_URL + "/user_info");
                 setUser(resp.data);
+
             } catch (error) {
                 console.log("Not authenticated");
             }
@@ -54,21 +99,7 @@ export const Account = () => {
         })();
     }, []);
 
-    let default_province: Province = {label: 'N/A', id: 'na', region: 'N/A', region_id: 'na'};
-    let default_dob = dayjs('2022-01-01');
-    let default_WCAID = "";
     if (user != null) {
-        if (user.province != null) {
-            //set province in the combo box
-            for (let i = 0; i < provinces.length; i++) {
-                if (provinces[i].id === user.province) {
-                    default_province = provinces[i];
-                }
-            }
-        }
-        if (user.dob != null) {
-            default_dob = dayjs(user.dob);
-        }
         if (user.roles != null && user.roles.length > 0 && chipData.length === 0) {
             let tmpChipData = [];
             for (let i = 0; i < user.roles.length; i++) {
@@ -76,10 +107,8 @@ export const Account = () => {
             }
             setChipData(tmpChipData);
         }
-        if (user.wca_person != null) {
-            default_WCAID = user.wca_person;
-        }
     }
+
 
     const ListItem = styled('li')(({theme}) => ({
         margin: theme.spacing(0.5),
@@ -87,18 +116,15 @@ export const Account = () => {
 
 
     const handleSaveProfile = async () => {
+        hideAlert();
         try {
             const resp = await httpClient.post(API_BASE_URL + "/edit", {
                 province: province ? province.id : 'na',
             });
             if (resp.data.success === true) {
-                setAlertContent(t("account.success"));
-                setAlertType("success");
-                setAlert(true);
+                showAlert("success", t("account.success"));
             } else {
-                setAlertContent(t("account.error"));
-                setAlertType("error");
-                setAlert(true);
+                showAlert("error", t("account.error"));
             }
         } catch (error: any) {
             if (error.response.status === 401) {
@@ -142,12 +168,11 @@ export const Account = () => {
                                 id="combo-box-demo"
                                 options={provinces}
                                 sx={{width: 300}}
-                                value={province || default_province}
-                                defaultValue={default_province}
+                                value={province || defaultProvince}
+                                defaultValue={defaultProvince}
                                 onChange={(event, newValue) => {
                                     setProvince(newValue);
-                                    if (newValue == null) {
-                                    } else if (newValue.id === "qc") {
+                                    if (newValue?.id === "qc") {
                                         console.log("Vive le Québec libre!");
                                     }
                                 }}
@@ -164,21 +189,21 @@ export const Account = () => {
                                     disabled
                                     id="region"
                                     label={t("account.region")}
-                                    value={province ? t('regions.' + province?.region_id) : t('regions.' + default_province.region_id)}
+                                    value={province ? t('regions.' + province?.region_id) : t('regions.' + defaultProvince.region_id)}
                                     variant="outlined"
                                 />
                                 <TextField
                                     disabled
                                     id="wcaid"
                                     label="WCAID"
-                                    defaultValue={default_WCAID}
+                                    defaultValue={defaultWCAID}
                                     variant="outlined"
                                 />
                                 <LocalizationProvider dateAdapter={AdapterDayjs}>
                                     <DateField
                                         disabled
                                         label={t("account.dob")}
-                                        defaultValue={default_dob}
+                                        defaultValue={defaultDOB}
                                         format="DD-MM-YYYY"
                                     />
                                 </LocalizationProvider>
@@ -198,11 +223,7 @@ export const Account = () => {
                                 component="ul"
                             >
                                 {chipData.map((data) => {
-                                    let color: chipColor | undefined = "default";
-
-                                    if (data.label === 'GLOBAL_ADMIN') {
-                                        color = "primary";
-                                    }
+                                    const color: chipColor | undefined = data.label === 'GLOBAL_ADMIN' ? "primary" : "default"
 
                                     return (
                                         <ListItem key={data.key}>
@@ -236,7 +257,7 @@ export const Account = () => {
                                 </Button>
                             </Grid>
                         </Grid>
-                        {alert ?
+                        {state.alert && (
                             <Box marginY="1rem">
                                 <Alert
                                     action={
@@ -244,18 +265,18 @@ export const Account = () => {
                                             aria-label="close"
                                             color="inherit"
                                             size="small"
-                                            onClick={() => {
-                                                setAlert(false);
-                                            }}
+                                            onClick={hideAlert}
                                         >
                                             <CloseIcon fontSize="inherit"/>
                                         </IconButton>
                                     }
-                                    variant="outlined" severity={alertType}>
-                                    {alertContent}
+                                    variant="outlined"
+                                    severity={state.alertType}
+                                >
+                                    {state.alertContent}
                                 </Alert>
                             </Box>
-                            : <></>}
+                        )}
 
                     </div>
                 ) : (

@@ -1,11 +1,7 @@
-import {useEffect, useState} from "react";
-import {eventID, provinceID, useAverage, User} from "./Types";
-import httpClient from "../httpClient";
-
 export const PRODUCTION =
     process.env.NODE_ENV === 'production';
 export const API_BASE_URL =
-    process.env.API_BASE_URL || "https://api.staging.speedcubingcanada.org";
+    process.env.API_BASE_URL || "http://localhost:8083"; // doesn't seem to work, don't know why
 
 
 export const signIn = () => {

@@ -15,12 +15,12 @@ const provinces: Province[] = [
         {label: 'Saskatchewan', id: 'sk', region: 'Prairies', region_id: 'pr'},
         {label: 'Yukon', id: 'yt', region: 'Territories', region_id: 'te'},
 
-    ];// TODO: have translations for provinces
+    ];
 
-export const GetProvincesWithNA: () => Province[]= () => {
+export const getProvincesWithNA: () => Province[]= () => {
     return provinces.concat({label: 'N/A', id: 'na', region: 'N/A', region_id: 'na'});
 }
 
-export const GetProvinces = () => {
+export const getProvinces = () => {
     return provinces;
 }

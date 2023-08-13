@@ -12,7 +12,7 @@ Right now, the python part is commented in the docker-compose file, so you can e
 First option, in the project root directory, you can run:
 
 ### `docker-compose up`
-Runs de app and an nginx server. The app is available at [http://localhost/](http://localhost/).
+Runs the app and an nginx server. The app is available at [http://localhost/](http://localhost/).
 
 Second option:
 Move into the `frontend` directory.

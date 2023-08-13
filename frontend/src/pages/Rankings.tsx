@@ -11,17 +11,17 @@ import Switch from '@mui/material/Switch';
 import CircularProgress from "@mui/material/CircularProgress";
 
 import {eventID, Province, provinceID, useAverage} from "../components/Types";
-import {GetProvinces} from "../components/Provinces";
+import {getProvinces} from "../components/Provinces";
 import {useEffect, useState} from "react";
 import {API_BASE_URL} from "../components/Api";
 import httpClient from "../httpClient";
 import {RankList} from "../components/RankList";
 
+const provinces: Province[] = getProvinces();
 
 export const Rankings = () => {
     const {t} = useTranslation();
 
-    const provinces: Province[] = GetProvinces();
     const [province, setProvince] = useState<Province | null>(provinces[0]);
     const [eventId, setEventId] = useState<eventID>("333");
     const [useAverage, setUseAverage] = useState(false);
@@ -35,10 +35,7 @@ export const Rankings = () => {
     const handleProvinceChange = (event: any, newValue: React.SetStateAction<Province | null>) => {
         setProvince(newValue);
 
-        if (province == null) {
-
-        } else {
-
+        if (province != null) {
             console.log(ranking);
             if (province.id === "qc") {
                 console.log("Vive le Québec libre!");
@@ -59,8 +56,8 @@ export const Rankings = () => {
                     return null;
                 }
 
-                const resp = await httpClient.get(API_BASE_URL + "/province_rankings/" + eventId + "/" + province?.id + "/" + use_average_str);
-                //const resp = await httpClient.get(API_BASE_URL + "/test_rankings");
+                //const resp = await httpClient.get(API_BASE_URL + "/province_rankings/" + eventId + "/" + province?.id + "/" + use_average_str);
+                const resp = await httpClient.get(API_BASE_URL + "/test_rankings");
 
                 setRanking(resp.data);
             } catch (error: any) {
