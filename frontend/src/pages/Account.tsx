@@ -60,7 +60,7 @@ export const Account = () => {
     const [province, setProvince] = useState<Province | null>(null);
     const [chipData, setChipData] = useState<readonly ChipData[]>([]);
 
-    const [state, dispatch] = useReducer(reducer, initialState);
+    const [alertState, alertDispatch] = useReducer(reducer, initialState);
 
     const provinces: Province[] = getProvincesWithNA();
 
@@ -73,7 +73,7 @@ export const Account = () => {
 
 
     const showAlert = (alertType: AlertColor, alertContent: string) => {
-        dispatch({
+        alertDispatch({
             type: "SHOW_ALERT",
             alertType,
             alertContent
@@ -81,7 +81,7 @@ export const Account = () => {
     };
 
     const hideAlert = () => {
-        dispatch({
+        alertDispatch({
             type: "HIDE_ALERT"
         });
     };
@@ -99,8 +99,9 @@ export const Account = () => {
         })();
     }, []);
 
-    if (user != null) {
-        if (user.roles != null && user.roles.length > 0 && chipData.length === 0) {
+    useEffect(() => {
+        if (user != null) {
+        if (user.roles != null && user.roles.length > 0) {
             let tmpChipData = [];
             for (let i = 0; i < user.roles.length; i++) {
                 tmpChipData.push({key: i, label: user.roles[i]});
@@ -108,6 +109,9 @@ export const Account = () => {
             setChipData(tmpChipData);
         }
     }
+    }, [user]);
+
+
 
 
     const ListItem = styled('li')(({theme}) => ({
@@ -257,7 +261,7 @@ export const Account = () => {
                                 </Button>
                             </Grid>
                         </Grid>
-                        {state.alert && (
+                        {alertState.alert && (
                             <Box marginY="1rem">
                                 <Alert
                                     action={
@@ -271,9 +275,9 @@ export const Account = () => {
                                         </IconButton>
                                     }
                                     variant="outlined"
-                                    severity={state.alertType}
+                                    severity={alertState.alertType}
                                 >
-                                    {state.alertContent}
+                                    {alertState.alertContent}
                                 </Alert>
                             </Box>
                         )}
