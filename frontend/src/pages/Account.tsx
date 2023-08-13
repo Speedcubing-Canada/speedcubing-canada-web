@@ -229,7 +229,7 @@ export const Account = () => {
                                         <ListItem key={data.key}>
                                             <Chip
                                                 color={color}
-                                                label={data.label}
+                                                label={t("account.role." + data.label) || data.label}
                                             />
                                         </ListItem>
                                     );

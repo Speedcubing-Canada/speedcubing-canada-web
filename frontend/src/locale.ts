@@ -148,6 +148,14 @@ export const resources = {
                 welcome: "Welcome to Speedcubing Canada account page. \n\n" +
                     "To access it, please sign in with your WCA account.",
                 roles: "Roles",
+                role: {
+                    GLOBAL_ADMIN: "Global Admin",
+                    DIRECTOR: "Director",
+                    WEBMASTER: "Webmaster",
+                    SENIOR_DELEGATE: "Senior Delegate",
+                    DELEGATE: "Delegate",
+                    CANDIDATE_DELEGATE: "Junior Delegate",
+                },
                 success: "Your account has been successfully updated.",
                 error: "There was an error updating your account.",
                 dob: "Date of Birth",
@@ -303,6 +311,14 @@ export const resources = {
                 welcome: "Bienvenue sur la page du compte de Speedcubing Canada. \n" +
                     "Pour y accéder, veuillez vous connecter avec votre compte WCA.",
                 roles: "Rôles",
+                role: {
+                    GLOBAL_ADMIN: "Administrateur global",
+                    DIRECTOR: "Directeur",
+                    WEBMASTER: "Webmaster",
+                    SENIOR_DELEGATE: "Délégué senior",
+                    DELEGATE: "Délégué",
+                    CANDIDATE_DELEGATE: "Délégué junior",
+                },
                 success: "Votre compte a été mis à jour avec succès.",
                 error: "Une erreur s'est produite lors de la mise à jour de votre compte.",
                 dob: "Date de naissance",
