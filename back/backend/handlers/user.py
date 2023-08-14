@@ -36,14 +36,7 @@ def user_info(user_id=-1):
             return jsonify({"error": "Unrecognized user ID %s" % user_id}), 404
         if not permissions.CanViewUser(user, me):
             return jsonify({"error": "You're not authorized to view this user."}), 403
-        return jsonify({
-            "id": user.key.id(),
-            "name": user.name,
-            "roles": user.roles,
-            "dob": user.dob.isoformat() if user.dob else None,
-            "province": user.province.id() if user.province else None,
-            "wca_person": user.wca_person.id() if user.wca_person else None
-        })
+        return user.toJson()
 
 
 @bp.route('/edit', methods=['POST'])
