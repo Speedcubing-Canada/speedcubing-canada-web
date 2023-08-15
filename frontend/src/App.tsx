@@ -43,6 +43,9 @@ const App = () => {
         <ThemeProvider theme={theme}>
             <BrowserRouter>
                 <Routes>
+                    {/* Admin page without the navigation bar */}
+                    <Route path="/admin/*" element={<AdminPage/>}/>
+                    {/* Normal pages */}
                     <Route element={<Base/>}>
                         <Route path=":locale/">
                             <Route index element={<Home/>}/>
@@ -61,10 +64,6 @@ const App = () => {
                         ))}
                         <Route path="*" element={<Navigate to={locale} replace/>}/>
                     </Route>
-
-                    {/* Admin page without the navigation bar */}
-                    <Route path=":locale/admin/*" element={<AdminPage/>}/>
-
                 </Routes>
             </BrowserRouter>
 
