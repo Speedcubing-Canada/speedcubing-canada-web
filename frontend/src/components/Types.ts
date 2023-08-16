@@ -16,6 +16,11 @@ export interface Province {
     region_id: regionID;
 }
 
+export interface Role {
+    id: string;
+    name: string;
+}
+
 export interface ProfileEditData {
     province: string;
 }

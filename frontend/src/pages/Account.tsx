@@ -1,12 +1,7 @@
 import {Trans, useTranslation} from "react-i18next";
 import {useEffect, useReducer, useState} from "react";
-import {
-    AlertColor,
-    Box,
-    Container, Typography,
-} from "@mui/material";
+import {AlertColor, Box, Container, Typography,} from "@mui/material";
 import Button from '@mui/material/Button';
-import Grid from '@mui/material/Unstable_Grid2';
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
 import {DateField} from "@mui/x-date-pickers";
@@ -23,9 +18,10 @@ import {LocalizationProvider} from '@mui/x-date-pickers/LocalizationProvider';
 import dayjs from "dayjs";
 
 import {API_BASE_URL, signIn, signOut} from '../components/Api';
-import {Province, ChipData, chipColor, User, State, Action} from "../components/Types";
+import {Action, chipColor, ChipData, Province, State, User} from "../components/Types";
 import httpClient from "../httpClient";
 import {getProvincesWithNA} from "../components/Provinces";
+import {checkAdmin} from "./AdminPage";
 
 
 const initialState: State = {
@@ -147,6 +143,12 @@ export const Account = () => {
         signIn();
     }
 
+    const handleAdmin = () => {
+        window.location.assign('/admin');
+    }
+
+    const isAdmin = checkAdmin(user);
+
     return (
         <Container maxWidth="md">
             <Box marginY="4rem">
@@ -228,7 +230,8 @@ export const Account = () => {
                                 component="ul"
                             >
                                 {chipData.map((data) => {
-                                    const color: chipColor | undefined = data.label === 'GLOBAL_ADMIN' ? "primary" : "default"
+                                    const color: chipColor | undefined = data.label === 'GLOBAL_ADMIN'
+                                    || data.label === "DIRECTOR" || data.label === 'WEBMASTER' ? "primary" : "default"
 
                                     return (
                                         <ListItem key={data.key}>
@@ -242,26 +245,32 @@ export const Account = () => {
                             </Paper>
                         </Box>
 
-                        <Grid container spacing={2}>
-                            <Grid xs={10}>
+                        <Stack direction="row" spacing={2} alignItems="center" marginY="1rem" justifyContent="space-between">
+                            <Button
+                                variant="outlined"
+                                component="span"
+
+                                onClick={handleSaveProfile}>
+                                {t("account.save")}
+                            </Button>
+                            {isAdmin && (
                                 <Button
                                     variant="outlined"
                                     component="span"
-
-                                    onClick={handleSaveProfile}>
-                                    {t("account.save")}
+                                    onClick={handleAdmin}
+                                >
+                                    {t("account.admin")}
                                 </Button>
-                            </Grid>
-                            <Grid xs={2}>
-                                <Button
-                                    variant="outlined"
-                                    component="span"
+                            )
+                            }
+                            <Button
+                                variant="outlined"
+                                component="span"
 
-                                    onClick={signOut}>
-                                    {t("account.signout")}
-                                </Button>
-                            </Grid>
-                        </Grid>
+                                onClick={signOut}>
+                                {t("account.signout")}
+                            </Button>
+                        </Stack>
                         {alertState.alert && (
                             <Box marginY="1rem">
                                 <Alert

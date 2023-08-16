@@ -160,6 +160,7 @@ export const resources = {
                 error: "There was an error updating your account.",
                 dob: "Date of Birth",
                 region: "Region",
+                admin: "Admin Section",
             },
             rankings: {
                 title: "Rankings",
@@ -323,6 +324,7 @@ export const resources = {
                 error: "Une erreur s'est produite lors de la mise à jour de votre compte.",
                 dob: "Date de naissance",
                 region: "Région",
+                admin: "Section d'administration",
             },
             rankings: {
                 title: "Classements",

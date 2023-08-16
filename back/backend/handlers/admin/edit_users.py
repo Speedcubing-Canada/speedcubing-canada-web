@@ -1,4 +1,5 @@
-from typing import List
+from json import loads
+
 from flask import abort, Blueprint, render_template, jsonify, request
 from google.cloud import ndb
 
@@ -49,20 +50,31 @@ def get_users():
             sort_order = 'asc'
 
         # Filter
-        filter_text = request.args.get('filter_text', '')
+        filter_text = loads(request.args.get('filter', '')).get("q")
+        print(filter_text)
 
         # Query
-        if filter_text:
-            if sort_order == 'asc':
-                order_field = getattr(User, sort_field)
-            else:
-                order_field = -getattr(User, sort_field)
-            users_to_show = User.query(ndb.OR(User.name == filter_text,
-                                              User.wca_person == ndb.Key(Person, filter_text)),
-                                       order_by=[order_field]).fetch_page(per_page, start_cursor=cursor)
+        if sort_order == 'asc':
+            order_field = getattr(User, sort_field)
         else:
-            users_to_show, cursor, has_more = User.query(order_by=[User.name]).fetch_page(per_page, start_cursor=cursor)
+            order_field = -getattr(User, sort_field)
+        if filter_text:
+            text = filter_text.lower()
+            limit = text[:-1] + chr(ord(text[-1]) + 1)
+            users_to_show = User.query(
+                ndb.OR(
+                    ndb.AND(
+                        User.name_lower >= text,
+                        User.name_lower < limit,
+                    ),
+                    User.wca_person == ndb.Key(Person, filter_text)
+                )).order("name_lower", order_field).fetch(per_page)
+            has_more = False
+        else:
+            users_to_show, cursor, has_more = User.query(order_by=[order_field]).fetch_page(per_page,
+                                                                                            start_cursor=cursor)
 
+        print(users_to_show)
         # Calculate the total count of results
         total_results = len(users_to_show)
 

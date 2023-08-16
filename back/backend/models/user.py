@@ -39,6 +39,7 @@ class UserLocationUpdate(ndb.Model):
 class User(ndb.Model):
     wca_person = ndb.KeyProperty(kind=Person)
     name = ndb.StringProperty()
+    name_lower = ndb.ComputedProperty(lambda self: self.name.lower())
     email = ndb.StringProperty()
     dob = ndb.DateProperty()
     roles = ndb.StringProperty(repeated=True)
