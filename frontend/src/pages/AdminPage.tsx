@@ -1,13 +1,14 @@
-import {Admin, Resource, ShowGuesser} from "react-admin";
+import {Admin, Resource, AppBar, TitlePortal, Layout, LayoutProps} from "react-admin";
 import UserIcon from "@mui/icons-material/Group";
 import {useTranslation} from "react-i18next";
 import CircularProgress from "@mui/material/CircularProgress";
 import Alert from "@mui/material/Alert";
 import {
-    AlertColor,
     Box,
-    Container, Typography,
+    Container,
 } from "@mui/material";
+import HomeIcon from '@mui/icons-material/Home';
+import {IconButton} from '@mui/material';
 
 import {UserList} from "../components/UserList";
 import dataProvider from "../dataProvider";
@@ -25,6 +26,19 @@ export const checkAdmin = (user: User | null) => {
         || user?.roles.includes("WEBMASTER"));
 }
 
+const SettingsButton = () => (
+    <IconButton color="inherit" href="/">
+        <HomeIcon/>
+    </IconButton>
+);
+
+const MyAppBar = () => (
+    <AppBar>
+        <TitlePortal/>
+        <SettingsButton/>
+    </AppBar>
+);
+const MyLayout = (props: JSX.IntrinsicAttributes & LayoutProps) => <Layout {...props} appBar={MyAppBar} />;
 
 export const AdminPage = () => {
     const {t} = useTranslation();
@@ -56,7 +70,10 @@ export const AdminPage = () => {
                     </Box>
                 </Container>
                 : isAdmin ? (
-                        <Admin basename="/admin" dataProvider={dataProvider} dashboard={AdminDashboard}>
+                        <Admin basename="/admin"
+                               dataProvider={dataProvider}
+                               dashboard={AdminDashboard}
+                               layout={MyLayout}>
                             <Resource name="Users"
                                       list={UserList}
                                       show={UserShow}

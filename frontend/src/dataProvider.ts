@@ -90,8 +90,8 @@ const dataProvider: DataProvider = {
         })),
 
     update: (resource: any, params: { id: any; data: any; }) =>
-        httpClient(`${apiUrl}/${resource}/${params.id}`, {
-            method: 'PUT',
+        httpClient(`${apiUrl}/admin/edit/${params.id}`, {
+            method: 'POST',
             body: JSON.stringify(params.data),
         }).then(({json}) => ({data: json})),
 
