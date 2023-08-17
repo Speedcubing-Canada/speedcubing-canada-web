@@ -4,37 +4,25 @@ import {
     DateField,
     Show,
     SimpleShowLayout,
-    SingleFieldList,
-    TextField, useListContext, useRecordContext,
-    WithListContext,
-    WithRecord
+    TextField, useListContext, useRecordContext, useTranslate,
 } from 'react-admin';
-import {getRoles} from "./Roles";
-import {Province, Role} from "./Types";
-import {getProvincesWithNA} from "./Provinces";
 import {Link} from "@mui/material";
 import {WCA_PROFILE_URL} from "../pages/Organization";
-import LaunchIcon from "@mui/icons-material/Launch";
-
-const provinces: Province[] = getProvincesWithNA();
 
 
-const roles_list: Role[] = getRoles();
 export const UserRoleChip = () => {
+    const t = useTranslate();
     const {data} = useListContext();
-    const userRoles = data.map(roleId => {
-        const role = roles_list.find(role => role.id === roleId);
-        return role ? role.name : '';
-    });
-
     return (
         <div>
-            {userRoles.map((roleName, index) => (
-                <ChipField key={index} record={{name: roleName}} source="name"/>
-            ))}
+            {data.map((roleId, index) => {
+                const roleName = t('translation.account.role.' + roleId);
+                return <ChipField key={index} record={{name: roleName}} source="name"/>;
+            })}
         </div>
     );
 };
+
 
 const WcaProfileUrlField = ({source}: { source: string }) => {
     const record = useRecordContext();
@@ -46,26 +34,24 @@ const WcaProfileUrlField = ({source}: { source: string }) => {
 };
 
 
-export const ProvinceField = () => {
+export const ProvinceField = ({source}: { source: string }) => {
+    const t = useTranslate();
     const record = useRecordContext();
-    const province: Province = provinces.find(item => item.id === record.province) || {
-        label: 'N/A',
-        id: 'na',
-        region: 'N/A',
-        region_id: 'na'
-    };
-    return <ChipField record={province} source="label"/>;
+    const translatedLabel = t('translation.provinces.' + record[source]);
+
+    return <ChipField record={{label: translatedLabel}} source="label"/>;
 };
+
 export const UserShow = () => (
     <Show>
         <SimpleShowLayout>
             <TextField source="id"/>
             <TextField source="name"/>
-            <ProvinceField/>
+            <ProvinceField source="province"/>
             <ArrayField source="roles">
                 <UserRoleChip/>
             </ArrayField>
-            <DateField source="dob" label="Date of birth"/>
+            <DateField source="dob"/>
             <WcaProfileUrlField source="wca_person"/>
         </SimpleShowLayout>
     </Show>

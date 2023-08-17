@@ -1,3 +1,4 @@
+import {useEffect, useState} from "react";
 import {Admin, Resource, AppBar, TitlePortal, Layout, LayoutProps} from "react-admin";
 import UserIcon from "@mui/icons-material/Group";
 import {useTranslation} from "react-i18next";
@@ -12,13 +13,13 @@ import {IconButton} from '@mui/material';
 
 import {UserList} from "../components/UserList";
 import dataProvider from "../dataProvider";
-import {useEffect, useState} from "react";
 import httpClient from "../httpClient";
 import {API_BASE_URL} from "../components/Api";
 import {User} from "../components/Types";
 import {AdminDashboard} from "../components/AdminDashboard";
 import {UserEdit} from "../components/UserEdit";
 import {UserShow} from "../components/UserShow";
+import {i18nProvider} from "../i18nProvider";
 
 export const checkAdmin = (user: User | null) => {
     return !!(user?.roles.includes("GLOBAL_ADMIN")
@@ -38,7 +39,7 @@ const MyAppBar = () => (
         <SettingsButton/>
     </AppBar>
 );
-const MyLayout = (props: JSX.IntrinsicAttributes & LayoutProps) => <Layout {...props} appBar={MyAppBar} />;
+const MyLayout = (props: JSX.IntrinsicAttributes & LayoutProps) => <Layout {...props} appBar={MyAppBar}/>;
 
 export const AdminPage = () => {
     const {t} = useTranslation();
@@ -72,6 +73,7 @@ export const AdminPage = () => {
                 : isAdmin ? (
                         <Admin basename="/admin"
                                dataProvider={dataProvider}
+                               i18nProvider={i18nProvider}
                                dashboard={AdminDashboard}
                                layout={MyLayout}>
                             <Resource name="Users"

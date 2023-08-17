@@ -23,7 +23,6 @@ def get_users():
         cursor = request.args.get('cursor', None, type=str)
         if cursor:
             cursor = ndb.Cursor(urlsafe=cursor)
-            print(cursor)
         if page < 1:
             page = 1
         if per_page not in [10, 20, 30, 40, 50]:
@@ -32,14 +31,13 @@ def get_users():
         # Sort
         sort_field = request.args.get('sort_field', 'name')
         sort_order = request.args.get('sort_order', 'asc')
-        if sort_field not in ['name', 'wca_person', 'roles', 'province']:
+        if sort_field not in ['id', 'name', 'wca_person', 'roles', 'province']:
             sort_field = 'name'
-        if sort_order not in ['asc', 'desc']:
+        if sort_order.lower() not in ['asc', 'desc']:
             sort_order = 'asc'
 
         # Filter
         filter_text = loads(request.args.get('filter', '')).get("q")
-        print(filter_text)
 
         # Query
         if sort_order == 'asc':
@@ -61,15 +59,6 @@ def get_users():
         else:
             users_to_show, cursor, has_more = User.query(order_by=[order_field]).fetch_page(per_page,
                                                                                             start_cursor=cursor)
-        print(users_to_show)
-        # Calculate the total count of results
-        total_results = len(users_to_show)
-        print(total_results)
-
-        # Set the Content-Range header
-        headers = {
-            'Content-Range': f'items 0-{total_results - 1}/{total_results}'
-        }
         return jsonify({
             'data': [user.toJson() for user in users_to_show],
             'cursor': cursor.urlsafe().decode() if cursor else '',
@@ -98,4 +87,3 @@ def get_users_by_id():
         return jsonify(
             {'data': data}
         )
-
