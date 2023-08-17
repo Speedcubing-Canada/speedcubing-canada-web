@@ -57,7 +57,7 @@ const dataProvider: DataProvider = {
         return httpClient(url).then(({json}) => ({data: json}));
     },
 
-    getManyReference: (resource: any, params: {
+    getManyReference: (resource: any, params: {//not setup
         pagination: { page: any; perPage: any; };
         sort: { field: any; order: any; };
         filter: any;
@@ -81,7 +81,7 @@ const dataProvider: DataProvider = {
         ));
     },
 
-    create: (resource: any, params: { data: any; }) =>
+    create: (resource: any, params: { data: any; }) =>//not setup
         httpClient(`${apiUrl}/${resource}`, {
             method: 'POST',
             body: JSON.stringify(params.data),
@@ -90,12 +90,12 @@ const dataProvider: DataProvider = {
         })),
 
     update: (resource: any, params: { id: any; data: any; }) =>
-        httpClient(`${apiUrl}/admin/edit/${params.id}`, {
+        httpClient(`${apiUrl}/edit/${params.id}`, {
             method: 'POST',
             body: JSON.stringify(params.data),
         }).then(({json}) => ({data: json})),
 
-    updateMany: (resource: any, params: { ids: any; data: any; }) => {
+    updateMany: (resource: any, params: { ids: any; data: any; }) => { //not setup
         const query = {
             filter: JSON.stringify({id: params.ids}),
         };

@@ -122,19 +122,14 @@ export const Account = () => {
             const resp = await httpClient.post(API_BASE_URL + "/edit", {
                 province: province ? province.id : 'na',
             });
-            if (resp.data.success === true) {
+            console.log(resp);
+            if (resp.status === 200) {
                 showAlert("success", t("account.success"));
             } else {
                 showAlert("error", t("account.error"));
             }
         } catch (error: any) {
-            if (error.response.status === 401) {
-                console.log("Invalid credentials" + error.response.status);
-            } else if (error.response.status === 403) {
-                console.log("Forbidden" + error.response.status);
-            } else if (error.response.status === 404) {
-                console.log("Not found" + error.response.status);
-            }
+            console.log(error);
         }
     };
 
