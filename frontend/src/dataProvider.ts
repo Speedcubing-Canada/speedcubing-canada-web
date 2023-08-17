@@ -33,16 +33,22 @@ const dataProvider: DataProvider = {
         const {page, perPage} = params.pagination;
         const {field, order} = params.sort;
         const query = {
-            sort: JSON.stringify([field, order]),
-            range: JSON.stringify([(page - 1) * perPage, page * perPage - 1]),
+            sort_field: JSON.stringify(field),
+            sort_order: JSON.stringify(order),
+            page: JSON.stringify(page),
+            per_page: JSON.stringify(perPage),
             filter: JSON.stringify(params.filter),
+            cursor: page === 1 ? null : localStorage.getItem('cursor'),
         };
         const url = `${apiUrl}/admin/get_users?${stringify(query)}`;
 
-        return httpClient(url).then(({headers, json}) => (
-            Promise.resolve(convertResponseToDataProviderFormat(json))
-        ));
+        return httpClient(url)
+            .then(({headers, json}) => {
+                localStorage.setItem('cursor', json.cursor);
+                return convertResponseToDataProviderFormat(json);
+            });
     },
+
 
     getOne: (resource: any, params: { id: any; }) =>
         httpClient(`${apiUrl}/user_info/${params.id}`).then(({json}) => ({

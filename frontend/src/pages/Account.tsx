@@ -122,7 +122,6 @@ export const Account = () => {
             const resp = await httpClient.post(API_BASE_URL + "/edit", {
                 province: province ? province.id : 'na',
             });
-            console.log(resp);
             if (resp.status === 200) {
                 showAlert("success", t("account.success"));
             } else {

@@ -55,9 +55,9 @@ export type Action =
 
 export type eventID = "333" | "222" | "444" | "555" | "666" | "777" | "333bf" | "333fm" | "333oh" | "333ft" | "minx" | "pyram" | "skewb" | "sq1" | "clock" | "444bf" | "555bf" | "333mbf" | "333mbo" | "magic" | "mmagic";
 
-export type provinceID = "ab" | "bc" | "mb" | "nb" | "nl" | "ns" | "nt" | "nu" | "on" | "pe" | "qc" | "sk" | "yt" | "na" | "er";
+export type provinceID = "ab" | "bc" | "mb" | "nb" | "nl" | "ns" | "nt" | "nu" | "on" | "pe" | "qc" | "sk" | "yt" | "na";
 
-export type regionID = "at" | "qc" | "on" | "pr" | "bc" | "te" | "na" | "er";
+export type regionID = "at" | "qc" | "on" | "pr" | "bc" | "te" | "na";
 
 export type useAverage = "1" | "0";
 

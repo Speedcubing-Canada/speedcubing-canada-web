@@ -61,10 +61,10 @@ def get_users():
         else:
             users_to_show, cursor, has_more = User.query(order_by=[order_field]).fetch_page(per_page,
                                                                                             start_cursor=cursor)
-
         print(users_to_show)
         # Calculate the total count of results
         total_results = len(users_to_show)
+        print(total_results)
 
         # Set the Content-Range header
         headers = {

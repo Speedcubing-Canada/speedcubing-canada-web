@@ -6,7 +6,9 @@ export const AdminDashboard = () => {
     return (
         <Card>
             <CardHeader title="Welcome to the Admin Section" />
-            <CardContent>Please note that you can filter users using the start of their first name. If you want to use the family name, you must write the first name first. You may also use exact WCAID to filter.</CardContent>
+            <CardContent>Please note that you can filter users using the start of their first name. If you want to use the family name, you must write the first name first. You may also use exact WCAID to filter.
+            It's also important to know that you may move pages forward but not backwards. If you want to see a previous results, you need to go back to page one and then move forward again (or juste search the user).
+            </CardContent>
         </Card>
     );
 }

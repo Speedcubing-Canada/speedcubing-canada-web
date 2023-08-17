@@ -36,10 +36,10 @@ export const UserRoleChip = () => {
     );
 };
 
-const WcaProfileUrlField = ({ source }: { source: string }) => {
+const WcaProfileUrlField = ({source}: { source: string }) => {
     const record = useRecordContext();
     return record ? (
-        <Link href={WCA_PROFILE_URL + record[source]} sx={{ textDecoration: "none" }}>
+        <Link href={WCA_PROFILE_URL + record[source]} sx={{textDecoration: "none"}}>
             {record[source]}
         </Link>
     ) : null;
@@ -49,10 +49,10 @@ const WcaProfileUrlField = ({ source }: { source: string }) => {
 export const ProvinceField = () => {
     const record = useRecordContext();
     const province: Province = provinces.find(item => item.id === record.province) || {
-        label: 'Error',
-        id: 'er',
-        region: 'Error',
-        region_id: 'er'
+        label: 'N/A',
+        id: 'na',
+        region: 'N/A',
+        region_id: 'na'
     };
     return <ChipField record={province} source="label"/>;
 };
@@ -61,7 +61,7 @@ export const UserShow = () => (
         <SimpleShowLayout>
             <TextField source="id"/>
             <TextField source="name"/>
-            <ProvinceField />
+            <ProvinceField/>
             <ArrayField source="roles">
                 <UserRoleChip/>
             </ArrayField>
