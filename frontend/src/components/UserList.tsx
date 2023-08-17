@@ -1,5 +1,16 @@
 import {useMediaQuery, Theme} from "@mui/material";
-import {Datagrid, DateField, List, ReferenceInput, SimpleList, TextField, TextInput, EditButton} from 'react-admin';
+import {
+    Datagrid,
+    DateField,
+    List,
+    ReferenceInput,
+    SimpleList,
+    TextField,
+    TextInput,
+    EditButton,
+    ArrayField
+} from 'react-admin';
+import {ProvinceField, UserRoleChip} from "./UserShow";
 
 export const UserList = () => {
     const isSmall = useMediaQuery<Theme>((theme) => theme.breakpoints.down("sm"));
@@ -17,14 +28,15 @@ export const UserList = () => {
                     tertiaryText={(record) => record.province}
                 />
             ) : (
-                <Datagrid rowClick="edit">
+                <Datagrid rowClick="show">
                     <TextField source="id"/>
                     <TextField source="name"/>
-                    <TextField source="province"/>
-                    <TextField source="roles"/>
+                    <ProvinceField/>
+                    <ArrayField source="roles">
+                        <UserRoleChip/>
+                    </ArrayField>
                     <TextField source="wca_person"/>
-                    <DateField source="dob"/>
-                    <EditButton />
+                    <EditButton/>
                 </Datagrid>
             )}
         </List>

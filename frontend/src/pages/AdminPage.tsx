@@ -1,4 +1,4 @@
-import {Admin, Resource} from "react-admin";
+import {Admin, Resource, ShowGuesser} from "react-admin";
 import UserIcon from "@mui/icons-material/Group";
 import {useTranslation} from "react-i18next";
 import CircularProgress from "@mui/material/CircularProgress";
@@ -17,6 +17,7 @@ import {API_BASE_URL} from "../components/Api";
 import {User} from "../components/Types";
 import {AdminDashboard} from "../components/AdminDashboard";
 import {UserEdit} from "../components/UserEdit";
+import {UserShow} from "../components/UserShow";
 
 export const checkAdmin = (user: User | null) => {
     return !!(user?.roles.includes("GLOBAL_ADMIN")
@@ -58,6 +59,7 @@ export const AdminPage = () => {
                         <Admin basename="/admin" dataProvider={dataProvider} dashboard={AdminDashboard}>
                             <Resource name="Users"
                                       list={UserList}
+                                      show={UserShow}
                                       edit={UserEdit}
                                       icon={UserIcon}
                                       recordRepresentation="name"/>

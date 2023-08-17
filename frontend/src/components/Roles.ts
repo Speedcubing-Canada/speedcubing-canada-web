@@ -8,3 +8,7 @@ export const roles: Role[] = [
     { id: "DELEGATE", name: "Delegate" },
     { id: "CANDIDATE_DELEGATE", name: "Junior Delegate" },
 ]
+
+export const getRoles = () => {
+    return roles;
+}
