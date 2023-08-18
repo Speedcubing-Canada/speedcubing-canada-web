@@ -74,4 +74,10 @@ To deploy run the command (make sure you built the frontend first):
 gcloud app deploy frontend/app.yaml dispatch.yaml back/api.yaml 
 ```
 
-You can also deploy the backend and frontend separately, but the first time make sure you either deploy everything at once or the app and then the dispatch and the api together, because the services need to be created first.
+You can also deploy the backend and frontend separately, but the first time make sure you either deploy everything at once 
+or the app and then the dispatch and the api together, because the services need to be created first.
+If you are deploying in staging, make sure you include the following environment variable in the app.yaml file:
+
+```sh
+REACT_APP_API_BASE_URL: "https://api.staging.speedcubingcanada.org"
+```

@@ -1,7 +1,5 @@
-export const PRODUCTION =
-    process.env.NODE_ENV === 'production';
 export const API_BASE_URL =
-    process.env.API_BASE_URL || "http://localhost:8083"; // doesn't seem to work, don't know why
+    process.env.REACT_APP_API_BASE_URL || "https://api.speedcubingcanara.org";
 
 
 export const signIn = () => {

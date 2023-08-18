@@ -12,4 +12,4 @@ handlers:
     upload: build/index.html
 
 env_variables:
-  API_BASE_URL: "https://api.staging.speedcubingcanada.org"
+  REACT_APP_API_BASE_URL: "https://api.staging.speedcubingcanada.org"
