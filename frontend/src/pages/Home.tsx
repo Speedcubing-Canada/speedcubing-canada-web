@@ -39,7 +39,6 @@ const GAP = 12;
 const GAP_PX = `${GAP}px`;
 
 export const Home = () => {
-  console.log(process.env);
   const { t } = useTranslation();
   const theme = useTheme();
   const params = useParams();
