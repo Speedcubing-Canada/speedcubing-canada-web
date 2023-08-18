@@ -13,8 +13,6 @@ import {Rankings} from "./pages/Rankings";
 import {Account} from "./pages/Account";
 import {AdminPage} from "./pages/AdminPage";
 import * as React from "react";
-import simpleRestProvider from "ra-data-simple-rest";
-
 
 i18n.use(initReactI18next).init({
     resources,

@@ -1,9 +1,7 @@
 import {useMediaQuery, Theme} from "@mui/material";
 import {
     Datagrid,
-    DateField,
     List,
-    ReferenceInput,
     SimpleList,
     TextField,
     TextInput,

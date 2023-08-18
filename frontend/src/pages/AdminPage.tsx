@@ -42,7 +42,6 @@ const MyAppBar = () => (
 const MyLayout = (props: JSX.IntrinsicAttributes & LayoutProps) => <Layout {...props} appBar={MyAppBar}/>;
 
 export const AdminPage = () => {
-    const {t} = useTranslation();
 
     const [user, setUser] = useState<User | null>(null);
     const [loading, setLoading] = useState(true);

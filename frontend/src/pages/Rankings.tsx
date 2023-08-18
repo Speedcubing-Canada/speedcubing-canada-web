@@ -10,7 +10,7 @@ import Stack from '@mui/material/Stack';
 import Switch from '@mui/material/Switch';
 import CircularProgress from "@mui/material/CircularProgress";
 
-import {eventID, Province, provinceID, useAverage} from "../components/Types";
+import {eventID, Province} from "../components/Types";
 import {getProvinces} from "../components/Provinces";
 import {useEffect, useState} from "react";
 import {API_BASE_URL} from "../components/Api";
@@ -29,7 +29,6 @@ export const Rankings = () => {
 
     const switchHandler = (event: { target: { checked: boolean | ((prevState: boolean) => boolean); }; }) => {
         setUseAverage(event.target.checked);
-        console.log(ranking);
     };
 
     const handleProvinceChange = (event: any, newValue: React.SetStateAction<Province | null>) => {
@@ -56,19 +55,16 @@ export const Rankings = () => {
                     return null;
                 }
 
-                //const resp = await httpClient.get(API_BASE_URL + "/province_rankings/" + eventId + "/" + province?.id + "/" + use_average_str);
-                const resp = await httpClient.get(API_BASE_URL + "/test_rankings");
+                const resp = await httpClient.get(API_BASE_URL + "/province_rankings/" + eventId + "/" + province?.id + "/" + use_average_str);
+                //const resp = await httpClient.get(API_BASE_URL + "/test_rankings");
 
                 setRanking(resp.data);
             } catch (error: any) {
                 if (error?.code === "ERR_NETWORK") {
                     console.log("Network error" + error);
-                } else if (error?.response.status === 500) {
-                    console.log("Internal server error" + error.response.data);
-                } else if (error?.response.status === 404) {
-                    console.log("Not found" + error.response.data);
-                } else {
-                    console.log("Unknown error" + error);
+                }
+                else{
+                    console.log("Error" + error);
                 }
             }
             setLoading(false);

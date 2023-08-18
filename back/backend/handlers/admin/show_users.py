@@ -39,6 +39,7 @@ def get_users():
         # Filter
         filter_text = loads(request.args.get('filter', '')).get("q")
 
+        print(filter_text)
         # Query
         if sort_order == 'asc':
             order_field = getattr(User, sort_field)
