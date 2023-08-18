@@ -1,12 +1,15 @@
 import React from 'react';
-import {DataGrid, GridColDef} from '@mui/x-data-grid';
+import {DataGrid, GridColDef, frFR, enUS} from '@mui/x-data-grid';
 import {Link} from '@mui/material';
 import {Ranking} from "./Types";
 import {useTranslation} from "react-i18next";
+import {getLocaleOrFallback, SAVED_LOCALE} from "../locale";
 
 
 export const RankList: React.FC<{ data: Ranking[] }> = ({data}) => {
     const {t} = useTranslation();
+    const savedLocale = localStorage.getItem(SAVED_LOCALE) as string;
+    const locale = getLocaleOrFallback(savedLocale);
 
     const columns: GridColDef[] = [
         {field: 'rank', headerName: t('ranklist.rank'), width: 90},
@@ -33,7 +36,11 @@ export const RankList: React.FC<{ data: Ranking[] }> = ({data}) => {
 
     return (
         <div style={{height: 400, width: '100%'}}>
-            <DataGrid rows={rows} columns={columns}/>
+            <DataGrid rows={rows} columns={columns}
+                      localeText={locale === "fr" ?
+                          frFR.components.MuiDataGrid.defaultProps.localeText
+                          : enUS.components.MuiDataGrid.defaultProps.localeText
+                      }/>
         </div>
     );
 };

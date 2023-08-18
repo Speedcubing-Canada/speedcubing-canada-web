@@ -55,8 +55,8 @@ export const Rankings = () => {
                     return null;
                 }
 
-                const resp = await httpClient.get(API_BASE_URL + "/province_rankings/" + eventId + "/" + province?.id + "/" + use_average_str);
-                //const resp = await httpClient.get(API_BASE_URL + "/test_rankings");
+                //const resp = await httpClient.get(API_BASE_URL + "/province_rankings/" + eventId + "/" + province?.id + "/" + use_average_str);
+                const resp = await httpClient.get(API_BASE_URL + "/test_rankings");
 
                 setRanking(resp.data);
             } catch (error: any) {
