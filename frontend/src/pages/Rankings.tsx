@@ -13,7 +13,7 @@ import CircularProgress from "@mui/material/CircularProgress";
 import {eventID, Province} from "../components/Types";
 import {getProvinces} from "../components/Provinces";
 import {useEffect, useState} from "react";
-import {API_BASE_URL} from "../components/Api";
+import {API_BASE_URL, PRODUCTION} from "../components/Api";
 import httpClient from "../httpClient";
 import {RankList} from "../components/RankList";
 
@@ -55,15 +55,18 @@ export const Rankings = () => {
                     return null;
                 }
 
-                //const resp = await httpClient.get(API_BASE_URL + "/province_rankings/" + eventId + "/" + province?.id + "/" + use_average_str);
-                const resp = await httpClient.get(API_BASE_URL + "/test_rankings");
+                let resp;
+                if (!PRODUCTION) {
+                    resp = await httpClient.get(API_BASE_URL + "/test_rankings");//allows to not have the WCA DB locally
+                } else {
+                    resp = await httpClient.get(API_BASE_URL + "/province_rankings/" + eventId + "/" + province?.id + "/" + use_average_str);
+                }
 
                 setRanking(resp.data);
             } catch (error: any) {
                 if (error?.code === "ERR_NETWORK") {
                     console.log("Network error" + error);
-                }
-                else{
+                } else {
                     console.log("Error" + error);
                 }
             }
@@ -117,7 +120,7 @@ export const Rankings = () => {
                     <div>
                         <Typography marginY="1rem">{t("rankings.choose")}</Typography>
                     </div>
-                ): (
+                ) : (
                     <div>
                         <Typography marginY="1rem">{t("rankings.unavailable")}</Typography>
                     </div>
