@@ -68,16 +68,15 @@ gcloud beta emulators datastore start
 
 ## Deployment
 
-To deploy run the command (make sure you built the frontend first):
+To deploy the app use the script `deploy.sh` in the root directory. It will build the frontend and deploy the backend and frontend.
+Here are the options available (you must choose prod or staging at least):
 
 ```sh
-gcloud app deploy frontend/app.yaml dispatch.yaml back/api.yaml 
-```
-
-You can also deploy the backend and frontend separately, but the first time make sure you either deploy everything at once 
-or the app and then the dispatch and the api together, because the services need to be created first.
-If you are deploying in staging, make sure you include the following environment variable in the app.yaml file:
-
-```sh
-REACT_APP_API_BASE_URL: "https://api.staging.speedcubingcanada.org"
+./deploy.sh
+# Arguments:
+# -p: deploy to prod
+# -s: deploy to staging
+# -f: frontend only
+# -b: backend only
+# -v <app version>: On staging, the name of the app version to upload.
 ```

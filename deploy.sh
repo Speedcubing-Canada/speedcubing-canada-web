@@ -3,9 +3,9 @@
 # Arguments:
 # -p: deploy to prod
 # -s: deploy to staging
-# -v <app version>: On staging, the name of the app version to upload.
 # -f: frontend only
 # -b: backend only
+# -v <app version>: On staging, the name of the app version to upload.
 
 set -e
 
