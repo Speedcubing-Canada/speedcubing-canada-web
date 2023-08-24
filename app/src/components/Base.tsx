@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import i18n from "i18next";
 import { useTranslation } from "react-i18next";
 import {
@@ -6,8 +6,16 @@ import {
   Paper,
   BottomNavigation,
   BottomNavigationAction,
+  SwipeableDrawer,
+  List,
+  ListItemIcon,
+  ListItemButton,
+  ListItemText,
+  ListItem,
+  IconButton,
 } from "@mui/material";
 import { Home, Info, CorporateFare, QuestionAnswer } from "@mui/icons-material";
+import MenuIcon from '@mui/icons-material/Menu';
 import { Link, Outlet, useLocation, useParams } from "react-router-dom";
 import { getLocaleOrFallback, SAVED_LOCALE } from "../locale";
 
@@ -43,34 +51,81 @@ export const Base = () => {
     window.scrollTo(0, 0);
   }, [pathWithoutLocale]);
 
-  return (
-    <Box minHeight="100vh" flex={1} display="flex" flexDirection="column">
-      <Box display="flex" flex={1}>
-        <Outlet />
-      </Box>
-      <Paper
-        sx={{ position: "sticky", bottom: 0, left: 0, right: 0, zIndex: 1100 }}
-        elevation={2}
-      >
-        <BottomNavigation showLabels value={pathWithoutLocale}>
-          {ROUTES.map((r) => {
-            const Icon = ICONS[r];
-            const route = ROUTE_NAME_TO_ROUTE[r];
-            const routeWithLocale = `${locale}/${route}`;
+  const [width, setWidth] = React.useState(window.innerWidth);
+  const breakpoint = 700;
 
-            return (
-              <BottomNavigationAction
-                key={r}
-                label={t(`routes.${r}`)}
-                icon={<Icon />}
-                to={routeWithLocale}
-                value={route}
-                component={Link}
-              />
-            );
-          })}
-        </BottomNavigation>
-      </Paper>
-    </Box>
+  const [drawerState, setState] = useState(false);
+
+  useEffect(() => {
+    window.addEventListener("resize", () => setWidth(window.innerWidth));
+  } , []);
+
+  return (
+    ( width > breakpoint
+      ? <Box minHeight="100vh" flex={1} display="flex" flexDirection="column">
+          <Box display="flex" flex={1}>
+            <Outlet />
+          </Box>
+          <Paper
+            sx={{ position: "sticky", bottom: 0, left: 0, right: 0, zIndex: 1100 }}
+            elevation={2}
+          >
+            <BottomNavigation showLabels value={pathWithoutLocale}>
+              {ROUTES.map((r) => {
+                const Icon = ICONS[r];
+                const route = ROUTE_NAME_TO_ROUTE[r];
+                const routeWithLocale = `${locale}/${route}`;
+
+                return (
+                  <BottomNavigationAction
+                    key={r}
+                    label={t(`routes.${r}`)}
+                    icon={<Icon />}
+                    to={routeWithLocale}
+                    value={route}
+                    component={Link}
+                  />
+                );
+              })}
+            </BottomNavigation>
+          </Paper>
+        </Box>
+      : 
+      <Box display="flex"> 
+        <Box sx={{ position: "sticky", bottom: 0, left: 0, zIndex: 1000}}>
+          <IconButton onClick={() => setState(true)}>
+            <MenuIcon />
+          </IconButton>
+        </Box>
+        <SwipeableDrawer
+          open={drawerState}
+          anchor="left"
+          onOpen={() => setState(true)}
+          onClose={() => setState(false)}
+        >
+          <List>
+            {ROUTES.map((r) => {
+              const Icon = ICONS[r];
+              const route = ROUTE_NAME_TO_ROUTE[r];
+              const routeWithLocale = `${locale}/${route}`;
+
+              return (
+                <ListItem key={r} disablePadding>
+                  <ListItemButton component={Link} to={routeWithLocale} onClick={() => setState(false)}>
+                    <ListItemIcon>
+                      {<Icon />}
+                    </ListItemIcon>
+                    <ListItemText primary={t(`routes.${r}`)} />
+                  </ListItemButton>
+                </ListItem>
+              );
+            })}
+          </List>
+        </SwipeableDrawer>
+        <Box display="flex" flex={1}>
+          <Outlet />
+        </Box> 
+      </Box>
+    )
   );
 };
