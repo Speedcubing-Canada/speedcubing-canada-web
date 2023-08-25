@@ -64,3 +64,5 @@ export type useAverage = "1" | "0";
 export type chipColor = "default" | "error" | "primary" | "secondary" | "info" | "success" | "warning";
 
 export type roleID = "GLOBAL_ADMIN" | "DIRECTOR" | "WEBMASTER" | "SENIOR_DELEGATE" | "DELEGATE" | "CANDIDATE_DELEGATE" | null;
+
+export type IconSize = '1x' | '2x' | '3x' | '4x' | '5x'
