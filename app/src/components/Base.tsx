@@ -6,13 +6,13 @@ import {
   Paper,
   BottomNavigation,
   BottomNavigationAction,
-  SwipeableDrawer,
   List,
   ListItemIcon,
   ListItemButton,
   ListItemText,
   ListItem,
   IconButton,
+  Drawer,
 } from "@mui/material";
 import { Home, Info, CorporateFare, QuestionAnswer } from "@mui/icons-material";
 import MenuIcon from '@mui/icons-material/Menu';
@@ -54,7 +54,7 @@ export const Base = () => {
   const [width, setWidth] = React.useState(window.innerWidth);
   const breakpoint = 700;
 
-  const [drawerState, setState] = useState(false);
+  const [drawerState, setDrawerState] = useState(false);
 
   useEffect(() => {
     window.addEventListener("resize", () => setWidth(window.innerWidth));
@@ -91,17 +91,19 @@ export const Base = () => {
           </Paper>
         </Box>
       : 
-      <Box display="flex"> 
-        <Box sx={{ position: "sticky", bottom: 0, left: 0, zIndex: 1000}}>
-          <IconButton onClick={() => setState(true)}>
-            <MenuIcon />
+      <Box minHeight="90vh" flex={1} display="flex" flexDirection="column"> 
+        <Paper
+          sx={{ position: "sticky", top: 0, zIndex: 1000 }}
+          elevation={2}
+        >
+          <IconButton onClick={() => setDrawerState(true)}>
+            <MenuIcon sx={{ fontSize: 40, color: "black" }} />
           </IconButton>
-        </Box>
-        <SwipeableDrawer
+        </Paper>
+        <Drawer
           open={drawerState}
           anchor="left"
-          onOpen={() => setState(true)}
-          onClose={() => setState(false)}
+          onClose={() => setDrawerState(false)}
         >
           <List>
             {ROUTES.map((r) => {
@@ -111,7 +113,7 @@ export const Base = () => {
 
               return (
                 <ListItem key={r} disablePadding>
-                  <ListItemButton component={Link} to={routeWithLocale} onClick={() => setState(false)}>
+                  <ListItemButton component={Link} to={routeWithLocale} onClick={() => setDrawerState(false)}>
                     <ListItemIcon>
                       {<Icon />}
                     </ListItemIcon>
@@ -121,7 +123,7 @@ export const Base = () => {
               );
             })}
           </List>
-        </SwipeableDrawer>
+        </Drawer>
         <Box display="flex" flex={1}>
           <Outlet />
         </Box> 
