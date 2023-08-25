@@ -134,13 +134,13 @@ export const Rankings = () => {
                 </Stack>
             </Stack>
             {loading ?
-                <Box marginY="1rem">
+                <Box marginY="5rem" sx={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
                     <CircularProgress/>
                 </Box>
                 : (ranking != null && province != null) ? (
                     <div>
                         <Typography
-                            marginY="1rem">{t('rankings.rankfor')} {t("province_with_pronouns." + province?.id)} {t('rankings.in')} {t('events._'+eventId)}</Typography>
+                            marginY="1rem">{t('rankings.rankfor')} {t("province_with_pronouns." + province?.id)} {t('rankings.in')} {t('events._'+eventId)} {t('rankings.for')} {useAverage ? t("rankings.average") : t("rankings.single")}</Typography>
                         <RankList data={ranking}/>
                     </div>
 

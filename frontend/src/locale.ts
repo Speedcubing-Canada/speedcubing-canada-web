@@ -174,6 +174,7 @@ export const resources = {
                 unavailable: "Ranking Unavailable",
                 choose: "Choose a province",
                 in: "in",
+                for: "for",
             },
             ranklist: {
                 rank: "Rank",
@@ -379,6 +380,7 @@ export const resources = {
                 unavailable: "Classement indisponible",
                 choose: "Choisissez une province",
                 in: "au",
+                for: "en",
             },
             ranklist: {
                 rank: "Rang",

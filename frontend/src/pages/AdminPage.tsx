@@ -1,7 +1,6 @@
 import {useEffect, useState} from "react";
 import {Admin, Resource, AppBar, TitlePortal, Layout, LayoutProps} from "react-admin";
 import UserIcon from "@mui/icons-material/Group";
-import {useTranslation} from "react-i18next";
 import CircularProgress from "@mui/material/CircularProgress";
 import Alert from "@mui/material/Alert";
 import {
