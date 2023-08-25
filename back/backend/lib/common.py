@@ -78,44 +78,6 @@ class Common(object):
     def is_none(self, h):
         return h is None
 
-    def get_nav_items(self):
-        items = [('Home', '/'),
-                 ('Competitions', [
-                     ('Nationals', '/nationals'),
-                     ('Regional Championships', '/regional'),
-                 ]),
-                 ('Competitors', [
-                     ('Province Rankings', '/province_rankings'),
-                     ('WCA Competitor Tutorial',
-                      'https://www.worldcubeassociation.org/edudoc/competitor-tutorial/tutorial.pdf'),
-                 ]),
-                 ('Organizers', [
-                     ('CubingUSA Supported Competitions', '/supported'),
-                     ('WCA Organizer Guidelines', 'https://www.worldcubeassociation.org/organizer-guidelines'),
-                 ]),
-                 ('About', [
-                     ('About CubingUSA', '/about'),
-                     ('Who we are', '/about/who'),
-                     ('Donations', '/about/donations'),
-                     ('Contact Us', '/about/contact'),
-                     ('Logo', '/about/logo'),
-                     ('Public Documents', '/about/documents'),
-                 ]),
-                 ]
-        if self.user and self.user.HasAnyRole(Roles.AdminRoles()):
-            items += [('Admin', [
-                ('Edit Users', '/admin/edit_users'),
-                ('Edit Championships', '/admin/edit_championships'),
-            ])]
-        return items
-
-    def get_right_nav_items(self):
-        if self.user:
-            return [('My Settings', '/edit'),
-                    ('Log out', '/logout')]
-        else:
-            return [('Log in', '/login')]
-
     def is_prod(self):
         return os.environ['ENV'] == 'PROD'
 

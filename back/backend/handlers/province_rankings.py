@@ -10,18 +10,10 @@ from backend.models.wca.rank import RankSingle
 bp = Blueprint('province_rankings', __name__)
 client = ndb.Client()
 
-@bp.route('/test_rankings') # temporary
+@bp.route('/test_rankings')
 def test_rankings():
-
-    data=[{"name":"Sarah Strong","rank":1,"time":"9.18","url":"https://worldcubeassociation.org/persons/2007STRO01"},{"name":"Alexandre Ondet","rank":2,"time":"9.84","url":"https://worldcubeassociation.org/persons/2017ONDE01"}]
-    # Calculate the total count of results
-    total_results = len(data)
-
-    # Set the Content-Range header
-    headers = {
-        'Content-Range': f'items 0-{total_results - 1}/{total_results}'
-    }
-    return jsonify(data), 200, headers
+    data=[{"name":"Jonathan Esparaz","rank":1,"time":"5.52","url":"https://worldcubeassociation.org/persons/2013ESPA01"},{"name":"Wilson Alvis (\u9648\u667a\u80dc)","rank":2,"time":"7.10","url":"https://worldcubeassociation.org/persons/2011ALVI01"},{"name":"Sarah Strong","rank":3,"time":"9.18","url":"https://worldcubeassociation.org/persons/2007STRO01"},{"name":"Alexandre Ondet","rank":4,"time":"9.84","url":"https://worldcubeassociation.org/persons/2017ONDE01"},{"name":"Abdullah Gulab","rank":5,"time":"10.86","url":"https://worldcubeassociation.org/persons/2014GULA02"},{"name":"Nicholas McKee","rank":6,"time":"11.30","url":"https://worldcubeassociation.org/persons/2015MCKE02"},{"name":"Alyssa Esparaz","rank":7,"time":"16.11","url":"https://worldcubeassociation.org/persons/2014ESPA01"},{"name":"Daniel Daoust","rank":8,"time":"23.40","url":"https://worldcubeassociation.org/persons/2017DAOU01"}]
+    return jsonify(data)
 
 @bp.route('/province_rankings/<event_id>/<province_id>/<use_average>')
 def province_rankings_table(event_id, province_id, use_average):
