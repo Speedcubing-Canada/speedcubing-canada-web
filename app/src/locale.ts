@@ -98,7 +98,7 @@ export const resources = {
       },
       competition: {
         upcoming: "Upcoming Competitions",
-        upcomingbody: "Here are some upcoming competitions organized by Speedcubing Canada!\n\n",
+        upcomingbody: "Here are some upcoming competitions in Canada!\n\n",
         comp: "Check out this competition organized by Speedcubing Canada!",
         series: "Check out this upcoming series! As a reminder, competitors may only sign up for ONE of the competitions in a series. Read the competition pages carefully and ensure you register for the right competiton.",
         fee: "\n\nRegistration fee: ${{fee}} CAD",
@@ -212,7 +212,7 @@ export const resources = {
       },
       competition: {
         upcoming: "Concours à venir",
-        upcomingbody: "Voici les prochaines compétitions organisées par Speedcubing Canada !\n\n",
+        upcomingbody: "Voici quelques concours à venir au Canada !\n\n",
         comp: "Découvrez cette compétition organisée par Speedcubing Canada !",
         series: "Jetez un coup d'œil à cette série à venir ! Pour rappel, les concurrents ne peuvent s'inscrire qu'à UN seul des concours d'une série. Lisez attentivement les pages consacrées aux concours et assurez-vous de vous inscrire au bon concours.",
         fee: "\n\nFrais d'inscription :  ${{fee}} CAD",
