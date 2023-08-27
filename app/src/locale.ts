@@ -105,7 +105,8 @@ export const resources = {
         registration: {
           before: "\nRegistration opens on: {{date}}",
           after: "\nRegistration opened on: {{date}}",
-          closed: "\nRegistration closed on: {{date}}",
+          closes: "\nRegistration closes on: {{date}}",
+          closed: "\n Registration closed on: {{date}}",
           count: "<b>Registration:</b> {{num}}/{{total}} spots filled\n\n",
         },
         date: "<b>Date:</b> {{date}}\n",
@@ -219,8 +220,8 @@ export const resources = {
         fee: "\n\nFrais d'inscription :  ${{fee}} CAD",
         registration: {
           before: "\nOuverture des inscriptions : {{date}}",
-          after: "\nOuverture des inscriptions : {{date}}",
-          closed: "\nClôture des incriptions: {{date}}",
+          closes: "\nLes inscriptions sont closes le : {{date}}",
+          closed: "\n Les inscriptions sont closes le : {{date}}",
           count: "<b>Inscription:</b> {{num}}/{{total}} places occupées\n\n",
         },
         date: "<b>Date :</b> {{date}}\n",

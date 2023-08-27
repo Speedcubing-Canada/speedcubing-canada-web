@@ -71,10 +71,11 @@ export const Competition = () => {
           <Typography gutterBottom style={{ textAlign: "center" }}>
             {currentDate < registrationOpen
             ? t("competition.registration.before", { date: registrationOpen })
-            : ( currentDate > registrationClose 
-              ? t("competition.registration.closed", { date: registrationClose})
-              : t("competition.registration.after", { date: registrationOpen })
-              ) 
+            : t("competition.registration.after", { date: registrationOpen })
+            }
+            {currentDate < registrationClose 
+            ? t("competition.registration.closes", { date: registrationClose})
+            : t("competition.registration.closed", { date: registrationClose})
             }
           </Typography>
         </Box>
