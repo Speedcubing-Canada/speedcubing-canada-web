@@ -4,36 +4,38 @@ from backend.models.wca.base import BaseModel
 from backend.models.wca.event import Event
 from backend.models.wca.person import Person
 
+
 class RankBase(BaseModel):
-  person = ndb.KeyProperty(kind=Person)
-  event = ndb.KeyProperty(kind=Event)
-  best = ndb.IntegerProperty()
-  province = ndb.ComputedProperty(lambda self: self.GetProvince())
+    person = ndb.KeyProperty(kind=Person)
+    event = ndb.KeyProperty(kind=Event)
+    best = ndb.IntegerProperty()
+    province = ndb.ComputedProperty(lambda self: self.GetProvince())
 
-  def GetProvince(self):
-    if not self.person or not self.person.get():
-      return None
-    return self.person.get().province
+    def GetProvince(self):
+        if not self.person or not self.person.get():
+            return None
+        return self.person.get().province
 
-  @staticmethod
-  def GetId(row):
-    return '%s_%s' % (row['personId'], row['eventId'])
+    @staticmethod
+    def GetId(row):
+        return '%s_%s' % (row['personId'], row['eventId'])
 
-  def ParseFromDict(self, row):
-    self.person = ndb.Key(Person, row['personId'])
-    self.event = ndb.Key(Event, row['eventId'])
-    self.best = int(row['best'])
+    def ParseFromDict(self, row):
+        self.person = ndb.Key(Person, row['personId'])
+        self.event = ndb.Key(Event, row['eventId'])
+        self.best = int(row['best'])
 
-  @staticmethod
-  def ColumnsUsed():
-    return ['personId', 'eventId', 'best']
+    @staticmethod
+    def ColumnsUsed():
+        return ['personId', 'eventId', 'best']
 
-  def ObjectsToGet(self):
-    return [self.person]
+    def ObjectsToGet(self):
+        return [self.person]
 
 
 class RankAverage(RankBase):
-  pass
+    pass
+
 
 class RankSingle(RankBase):
-  pass
+    pass

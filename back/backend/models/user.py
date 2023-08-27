@@ -57,16 +57,16 @@ class User(ndb.Model):
             if role in roles:
                 return True
         return False
-    
+
     def toJson(self):
         return {
-                "id": self.key.id(),
-                "name": self.name,
-                "roles": self.roles,
-                "dob": self.dob.isoformat() if self.dob else None,
-                "province": self.province.id() if self.province else None,
-                "wca_person": self.wca_person.id() if self.wca_person else None
-            }
+            "id": self.key.id(),
+            "name": self.name,
+            "roles": self.roles,
+            "dob": self.dob.isoformat() if self.dob else None,
+            "province": self.province.id() if self.province else None,
+            "wca_person": self.wca_person.id() if self.wca_person else None
+        }
 
 
 UserLocationUpdate.updater = ndb.KeyProperty(kind=User)
