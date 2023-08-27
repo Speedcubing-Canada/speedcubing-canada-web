@@ -1,4 +1,4 @@
-import { Button, Box, Container, Typography, LinearProgress } from "@mui/material";
+import { Button, Box, Container, Typography, LinearProgress, Tooltip } from "@mui/material";
 import { useTranslation } from "react-i18next";
 import { Link } from "../components/Link";
 import { LINKS } from "./links";
@@ -57,6 +57,7 @@ export const Competition = () => {
 
   const currentDate = new Date();
   const registrationOpen = new Date(competitionData.registration_open);
+  const registrationClose = new Date(competitionData.registration_close);
 
   return (
       <Container maxWidth="xl" style={{ textAlign: "center" }}>
@@ -70,7 +71,10 @@ export const Competition = () => {
           <Typography gutterBottom style={{ textAlign: "center" }}>
             {currentDate < registrationOpen
             ? t("competition.registration.before", { date: registrationOpen })
-            : t("competition.registration.after", { date: registrationOpen })
+            : ( currentDate > registrationClose 
+              ? t("competition.registration.closed", { date: registrationClose})
+              : t("competition.registration.after", { date: registrationOpen })
+              ) 
             }
           </Typography>
         </Box>
