@@ -1,6 +1,6 @@
 import {Trans, useTranslation} from "react-i18next";
 import {useEffect, useReducer, useState} from "react";
-import {AlertColor, Box, Container, Typography,} from "@mui/material";
+import {AlertColor, Box, Container, Theme, Typography, useMediaQuery,} from "@mui/material";
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
@@ -52,6 +52,7 @@ const reducer = (state: State, action: Action) => {
 
 export const Account = () => {
     const {t} = useTranslation();
+    const isSmall = useMediaQuery<Theme>((theme) => theme.breakpoints.down("sm"));
 
     const [province, setProvince] = useState<Province | null>(null);
     const [chipData, setChipData] = useState<readonly ChipData[]>([]);
@@ -239,7 +240,7 @@ export const Account = () => {
                             </Paper>
                         </Box>
 
-                        <Stack direction="row" spacing={2} alignItems="center" marginY="1rem" justifyContent="space-between">
+                        <Stack direction={isSmall ? "column" : "row"} spacing={2} alignItems="center" marginY="1rem" justifyContent="space-between">
                             <Button
                                 variant="outlined"
                                 component="span"
