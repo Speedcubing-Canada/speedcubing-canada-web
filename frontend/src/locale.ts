@@ -200,6 +200,9 @@ export const resources = {
                 _444bf: "4x4x4 Blindfolded",
                 _555bf: "5x5x5 Blindfolded",
                 _333mbf: "3x3x3 Multi-Blind",
+            },
+            quebec: {
+                body: "If you are not redirected automatically, click the link below.",
             }
         },
         ...englishMessages,
@@ -407,6 +410,9 @@ export const resources = {
                 _444bf: "4x4x4 à l'aveugle",
                 _555bf: "5x5x5 à l'aveugle",
                 _333mbf: "3x3x3 Multi-Blind",
+            },
+            quebec: {
+                body: "Si vous n'êtes pas redirigés, cliquez sur le lien ci-dessous."
             }
         },
         ...frenchMessages,

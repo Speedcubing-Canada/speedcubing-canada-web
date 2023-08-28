@@ -4,6 +4,7 @@ import {
     Container, Theme, ToggleButton, ToggleButtonGroup, Typography, useMediaQuery,
 } from "@mui/material";
 import * as React from 'react';
+import {useEffect, useState} from "react";
 import TextField from "@mui/material/TextField";
 import Autocomplete from "@mui/material/Autocomplete";
 import Stack from '@mui/material/Stack';
@@ -12,7 +13,6 @@ import CircularProgress from "@mui/material/CircularProgress";
 
 import {eventID, Province} from "../components/Types";
 import {getProvinces} from "../components/Provinces";
-import {useEffect, useState} from "react";
 import {API_BASE_URL, PRODUCTION} from "../components/Api";
 import httpClient from "../httpClient";
 import {RankList} from "../components/RankList";

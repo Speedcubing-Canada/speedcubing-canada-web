@@ -13,6 +13,7 @@ import {Rankings} from "./pages/Rankings";
 import {Account} from "./pages/Account";
 import {AdminPage} from "./pages/AdminPage";
 import * as React from "react";
+import {Quebec} from "./pages/Quebec";
 
 i18n.use(initReactI18next).init({
     resources,
@@ -52,8 +53,9 @@ const App = () => {
                             <Route path="faq" element={<FAQ/>}/>
                             <Route path="rankings" element={<Rankings/>}/>
                             <Route path="account" element={<Account/>}/>
+                            <Route path="quebec" element={<Quebec/>}/>
                         </Route>
-                        {["about", "organization", "faq", "rankings", "account"].map((route) => (
+                        {["about", "organization", "faq", "rankings", "account","quebec"].map((route) => (
                             <Route
                                 key={route}
                                 path={route}
