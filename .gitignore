@@ -1,0 +1,7 @@
+.fuse_hidden*
+.env
+.idea
+*.pyc
+venv
+back/exports/WCA_export*
+back/venv
