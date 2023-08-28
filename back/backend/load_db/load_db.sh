@@ -42,3 +42,5 @@ then
       --new_export_id="$LATEST_EXPORT" \
       --export_base=exports/
 fi
+
+/usr/sbin/shutdown -h now

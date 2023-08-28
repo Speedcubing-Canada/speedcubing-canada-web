@@ -3,6 +3,7 @@ import os
 
 from absl import app
 from absl import flags
+from absl import logging
 from google.cloud import ndb
 
 from backend.models.wca.export import get_latest_export
@@ -23,6 +24,7 @@ def main(argv):
 
         for export in exports[:-5]:
             shutil.rmtree(os.path.join(FLAGS.export_base, export))
+            logging.info('Deleted %s', export)
 
 
 if __name__ == '__main__':
