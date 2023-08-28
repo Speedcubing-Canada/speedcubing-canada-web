@@ -64,7 +64,6 @@ def read_table(path, cls, apply_filter):
     out = {}
     try:
         with open(path) as csvfile:
-            print('Reading ' + path)
             reader = csv.DictReader(csvfile, dialect='excel-tab')
             for row in reader:
                 if filter_fn(row):
