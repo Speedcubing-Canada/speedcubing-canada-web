@@ -1,7 +1,7 @@
 import {useTranslation} from "react-i18next";
 import {
     Box,
-    Container, ToggleButton, ToggleButtonGroup, Typography,
+    Container, Theme, ToggleButton, ToggleButtonGroup, Typography, useMediaQuery,
 } from "@mui/material";
 import * as React from 'react';
 import TextField from "@mui/material/TextField";
@@ -27,6 +27,7 @@ const events: eventID[] = [
 
 export const Rankings = () => {
     const {t} = useTranslation();
+    const isSmall = useMediaQuery<Theme>((theme) => theme.breakpoints.down("sm"));
 
     const [province, setProvince] = useState<Province | null>(provinces[0]);
     const [eventId, setEventId] = useState<eventID>("333");
@@ -53,6 +54,12 @@ export const Rankings = () => {
             return;
         }
         setEventId(newEvent);
+    }
+    const handleEventChangeMobile = (event: any, newValue: React.SetStateAction<eventID | null>) => {
+        if (newValue === null) {
+            return;
+        }
+        setEventId(newValue as eventID);
     }
 
 
@@ -98,19 +105,35 @@ export const Rankings = () => {
             </Box>
 
             <Stack direction="column" spacing={2} alignItems="center">
-                <ToggleButtonGroup
-                    value={eventId}
-                    exclusive
-                    onChange={handleEventChange}
-                >
-                    {events.map((wcaEvent) => (
-                        <ToggleButton key={wcaEvent} value={wcaEvent} aria-label={wcaEvent}>
-                            <MyCubingIcon event={wcaEvent} size="2x" selected={eventId === wcaEvent}/>
-                        </ToggleButton>
-                    ))}
-                </ToggleButtonGroup>
+                {isSmall ? (
+                        <Autocomplete
+                            disablePortal
+                            id="combo-box-demo"
+                            options={events}
+                            sx={{width: 300}}
+                            value={eventId}
+                            onChange={handleEventChangeMobile}
+                            renderInput={(params) => <TextField {...params} label={t("rankings.event")}/>}
+                            getOptionLabel={(option) => t('events._' + option)}
+                        />
+                ) : (
 
-                <Stack direction="row" spacing={2} alignItems="center">
+                    <ToggleButtonGroup
+                        value={eventId}
+                        exclusive
+                        onChange={handleEventChange}
+                    >
+                        {events.map((wcaEvent) => (
+                            <ToggleButton key={wcaEvent} value={wcaEvent} aria-label={wcaEvent}>
+                                <MyCubingIcon event={wcaEvent} size="2x" selected={eventId === wcaEvent}/>
+                            </ToggleButton>
+                        ))}
+                    </ToggleButtonGroup>
+                )}
+
+                <Stack direction={isSmall ? "column" : "row"}
+                       spacing={2}
+                       alignItems="center">
                     <Autocomplete
                         disablePortal
                         id="combo-box-demo"
@@ -127,7 +150,7 @@ export const Rankings = () => {
                         <Typography>{t("rankings.single")}</Typography>
                         <Switch checked={useAverage}
                                 onChange={switchHandler}
-                                color="primary"/>
+                                color="default"/>
                         <Typography>{t("rankings.average")}</Typography>
 
                     </Stack>
@@ -140,7 +163,7 @@ export const Rankings = () => {
                 : (ranking != null && province != null) ? (
                     <div>
                         <Typography
-                            marginY="1rem">{t('rankings.rankfor')} {t("province_with_pronouns." + province?.id)} {t('rankings.in')} {t('events._'+eventId)} {t('rankings.for')} {useAverage ? t("rankings.average") : t("rankings.single")}</Typography>
+                            marginY="1rem">{t('rankings.rankfor')} {t("province_with_pronouns." + province?.id)} {t('rankings.in')} {t('events._' + eventId)} {t('rankings.for')} {useAverage ? t("rankings.average") : t("rankings.single")}</Typography>
                         <RankList data={ranking}/>
                     </div>
 
