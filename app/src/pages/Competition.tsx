@@ -1,5 +1,5 @@
 import { Button, Box, Container, Typography, LinearProgress, Tooltip } from "@mui/material";
-import { useTranslation } from "react-i18next";
+import { useTranslation, Trans } from "react-i18next";
 import { Link } from "../components/Link";
 import { LINKS } from "./links";
 import { useParams } from "react-router-dom";

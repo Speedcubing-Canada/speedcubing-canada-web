@@ -65,7 +65,9 @@ export const Series = () => {
   const seriesName = data[compIds[0]].series.name;
   
   const currentDate = new Date();
+  //Right now, the dates of the first competitoin are used for displaying registration open and close times
   const registrationOpen = new Date(data[compIds[0]].registration_open);
+  const registrationClose = new Date(data[compIds[0]].registration_close);
 
   return (
     <Container maxWidth="xl" style={{ textAlign: "center" }}>
@@ -81,6 +83,10 @@ export const Series = () => {
           {currentDate < registrationOpen
           ? t("competition.registration.before", { date: registrationOpen })
           : t("competition.registration.after", { date: registrationOpen })
+          }
+          {currentDate < registrationClose 
+          ? t("competition.registration.closes", { date: registrationClose})
+          : t("competition.registration.closed", { date: registrationClose})
           }
         </Typography>
       </Box>
