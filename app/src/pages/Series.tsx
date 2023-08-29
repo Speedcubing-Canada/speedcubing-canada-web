@@ -68,14 +68,6 @@ export const Series = () => {
     return approved;
   }
 
-  const currentDate = new Date();
-  //Currently the dates of the first competition in the list are used for displaying registration open and close times
-  const registrationOpen = new Date(data[compIds[0]].registration_open);
-  const registrationClose = new Date(data[compIds[0]].registration_close);
-
-  console.log(data)
-
-
   if (isLoading) {
     return (
       <Box sx={{ width: '100%' }}>
@@ -83,6 +75,13 @@ export const Series = () => {
       </Box>
     );
   }
+
+  console.log(data);
+
+  const currentDate = new Date();
+  //Currently the dates of the first competition in the list are used for displaying registration open and close times
+  const registrationOpen = new Date(data[compIds[0]].registration_open);
+  const registrationClose = new Date(data[compIds[0]].registration_close);
 
   return (
     <Container maxWidth="xl" style={{ textAlign: "center" }}>
