@@ -48,7 +48,6 @@ export const Competition = () => {
     let approved = 0;
     for (const competitor of competition.persons) {
       if (competitor.registration && competitor.registration.status === "accepted") {
-        console.log(competitor);
         approved++;
       }
     }
@@ -58,6 +57,8 @@ export const Competition = () => {
   const currentDate = new Date();
   const registrationOpen = new Date(competitionData.registration_open);
   const registrationClose = new Date(competitionData.registration_close);
+
+  console.log(venueData);
 
   return (
       <Container maxWidth="xl" style={{ textAlign: "center" }}>

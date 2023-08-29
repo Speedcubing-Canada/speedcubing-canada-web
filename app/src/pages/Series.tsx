@@ -8,12 +8,27 @@ import { LINKS } from "./links";
 export const Series = () => {
   const { t } = useTranslation();
   const { seriesid } = useParams ();
-  //TODO: find way to get reg fee and venue name, also make it use the entire width of the page
-  
-  const compIds = (seriesid!.split(" "));
 
   const [data, setData] = useState<any>({});
+  const [seriesData, setSeriesData] = useState<any>({});
   const [isLoading, setIsLoading] = useState(true);
+
+  const getSeriesData = async (seriesId: string) => {
+    const response = await fetch(LINKS.WCA.API.COMPETITION_SERIES + seriesId);
+    const seriesData = await response.json();
+    return seriesData;
+  }
+
+  useEffect(() => {
+      const getCompSeriesData = async () => {
+        const competitionList = await getSeriesData(seriesid!);
+        setSeriesData(competitionList);
+      };
+      getCompSeriesData();
+  }, [seriesid]);
+
+  const compIds = seriesData.competitionIds;
+  const seriesName = seriesData.name;
 
   const getCompetitionData = async (compId: string) => {
     const response = await fetch(LINKS.WCA.API.COMPETITION_INFO + compId);
@@ -23,36 +38,43 @@ export const Series = () => {
 
   const getVenueData = async (compId: string) => {
     const timestamp = new Date().getTime();
-    const response = await fetch (LINKS.WCA.API.COMPETITION_INFO + compId + "/wcif/public?cacheBust=${timestamp}");
+    const response = await fetch (LINKS.WCA.API.COMPETITION_INFO + compId + `/wcif/public?cacheBust=${timestamp}`);
     const data = await response.json();
     return data
   }
 
-  const competitorsApproved = (competition: any) => {
-    let approved = 0;
-    for (const competitor of competition.persons) {
-      if (competitor.registration && competitor.registration.status === "accepted") {
-        console.log(competitor);
-        approved++;
-      }
-    }
-    return approved;
-  }
-
   useEffect(() => {
     const getData = async () => {
-      const dataPromises = compIds.map((key) => getCompetitionData(key));
-      const venueDataPromises = compIds.map((key) => getVenueData(key));
+      const dataPromises = compIds.map((key: string) => getCompetitionData(key));
+      const venueDataPromises = compIds.map((key: string) => getVenueData(key));
 
       const [allData, allVenueData] = await Promise.all([Promise.all(dataPromises), Promise.all(venueDataPromises)]);
 
-      const infoDataObject = Object.fromEntries(compIds.map((key, index) => [key, {...allData[index], ...allVenueData[index] }]));
+      const infoDataObject = Object.fromEntries(compIds.map((key: string, index: number) => [key, {...allData[index], ...allVenueData[index] }]));
 
       setData(infoDataObject);
       setIsLoading(false);
     };
     getData();
   }, [compIds]);
+
+  const competitorsApproved = (competition: any) => {
+    let approved = 0;
+    for (const competitor of competition.persons) {
+      if (competitor.registration && competitor.registration.status === "accepted") {
+        approved++;
+      }
+    }
+    return approved;
+  }
+
+  const currentDate = new Date();
+  //Currently the dates of the first competition in the list are used for displaying registration open and close times
+  const registrationOpen = new Date(data[compIds[0]].registration_open);
+  const registrationClose = new Date(data[compIds[0]].registration_close);
+
+  console.log(data)
+
 
   if (isLoading) {
     return (
@@ -61,13 +83,6 @@ export const Series = () => {
       </Box>
     );
   }
-
-  const seriesName = data[compIds[0]].series.name;
-  
-  const currentDate = new Date();
-  //Right now, the dates of the first competitoin are used for displaying registration open and close times
-  const registrationOpen = new Date(data[compIds[0]].registration_open);
-  const registrationClose = new Date(data[compIds[0]].registration_close);
 
   return (
     <Container maxWidth="xl" style={{ textAlign: "center" }}>

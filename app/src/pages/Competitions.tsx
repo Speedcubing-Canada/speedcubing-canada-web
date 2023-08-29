@@ -81,8 +81,6 @@ export const Competitions = () => {
     }
   }
 
-  console.log(selectedRegions); 
-
   return (
     <Container maxWidth="xl" style={{ textAlign: "center" }}>
       <Box marginTop="4rem">

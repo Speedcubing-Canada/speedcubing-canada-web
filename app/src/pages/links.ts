@@ -15,7 +15,8 @@ export const LINKS = {
       "https://www.worldcubeassociation.org/competitions/CanadianOpen2007",
     API: {
       COMPETITION_LIST: "https://www.worldcubeassociation.org/api/v0/competitions?country_iso2=CA",
-      COMPETITION_INFO: "https://www.worldcubeassociation.org/api/v0/competitions/"
+      COMPETITION_INFO: "https://www.worldcubeassociation.org/api/v0/competitions/",
+      COMPETITION_SERIES: "https://www.worldcubeassociation.org/api/v0/competition_series/",
     },
   },
   FIRST_COMP: "https://youtu.be/xK2ycvTfgUY",
