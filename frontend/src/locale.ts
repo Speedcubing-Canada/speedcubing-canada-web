@@ -99,6 +99,17 @@ export const resources = {
                     q: "Is Speedcubing Canada affiliated with the World Cube Association?",
                     a: "Speedcubing Canada operates independently of the World Cube Association, with a separate Board of Directors. Speedcubing Canada is recognized as Canada’s official <regionalOrg>WCA regional organization</regionalOrg>.",
                 },
+                "why-doesnt-my-name-appear-on-the-rankings": {
+                    q: "Why doesn’t my name appear on the rankings?",
+                    a: "Province residence is self-reported, so you'll need to tell us your province:\n" +
+                       "- Create an account on the <wca>WCA website</wca> and link it with your WCA ID.\n" +
+                       "- Log in to the Speedcubing Canada website through the account tab.\n" +
+                       "- Edit your profile and set your home province. Since this also affects Regional Championship eligibility, you can only do this once per year.",
+                },
+                "why-does-this-person-appear-in-my-province": {
+                    q: "Why does this person appear in my province? They don’t live here!",
+                    a: "Please <report>contact us</report> and we'll be happy to investigate. ",
+                },
             },
             provinces: {
                 ab: "Alberta",
@@ -241,7 +252,7 @@ export const resources = {
                 organization: "Organisation",
                 faq: "FAQ",
                 account: "Compte",
-                rankings: "Classement",
+                rankings: "Classements",
             },
             about: {
                 title: "À propos",
@@ -308,6 +319,17 @@ export const resources = {
                 "affiliated-with-the-wca": {
                     q: "Speedcubing Canada est-elle affiliée à la World Cube Association ?",
                     a: "Speedcubing Canada fonctionne indépendamment de la World Cube Association, avec un conseil d'administration distinct. Speedcubing Canada est reconnue comme l'organisation régionale officielle du Canada par la <regionalOrg>WCA</regionalOrg>.",
+                },
+                "why-doesnt-my-name-appear-on-the-rankings": {
+                    q : "Pourquoi mon nom n'apparaît-il pas dans les classements ?",
+                    a: "La province de résidence est auto-déclarée, vous devez donc nous indiquer votre province:\n" +
+                        "- Créez un compte sur le <wca>site de la WCA</wca> et reliez-le à votre WCAID.\n" +
+                        "- Connectez-vous au site web de Speedcubing Canada via l'onglet compte.\n" +
+                        "- Modifiez votre profil et définissez votre province d'origine. Comme cela affecte également l'éligibilité aux championnats régionaux, vous ne pouvez le faire qu'une seule fois par an.",
+                },
+                "why-does-this-person-appear-in-my-province": {
+                    q : "Pourquoi cette personne apparaît-elle dans ma province ? Elle ne vit pas ici !",
+                    a : "Veuillez <report>nous contacter</report> et nous nous ferons un plaisir d'enquêter. ",
                 },
             },
             provinces: {
