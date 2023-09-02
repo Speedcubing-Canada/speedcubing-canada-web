@@ -56,12 +56,14 @@ export const Competitions = () => {
   let showComps: any[] = [];
   Object.keys(data).forEach((key) => {
     let province = data[key].city.split(", ")[1];
-    if (selectedRegions.length === 0 ) {
-      showComps.push(data[key]);
-    } else {
-      for (const provinceItem of provinces) {
-        if (provinceItem.label === province && selectedRegions.includes(provinceItem.region_id)) {
-          showComps.push(data[key]);
+    if (new Date(data[key].start_date) > new Date()) {
+      if (selectedRegions.length === 0 ) {
+        showComps.push(data[key]);
+      } else {
+        for (const provinceItem of provinces) {
+          if (provinceItem.label === province && selectedRegions.includes(provinceItem.region_id)) {
+            showComps.push(data[key]);
+          }
         }
       }
     }
