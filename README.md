@@ -25,24 +25,14 @@ Open [http://localhost:2003](http://localhost:2003) to view it in the browser.
 The page will reload if you make edits.\
 You will also see any lint errors in the console.
 
-### `npm test`
-
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
-
-Currently, there are no tests.
-
 ### `npm run build`
 
 Builds the app for production to the `build` folder.\
 It correctly bundles React in production mode and optimizes the build for the best performance.
 
 The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-Currently, this step is handled automatically by an AWS build pipeline.
+Currently, this step is handled deploy script described bellow.
 
 ## Backend
 As mentioned above you can either use docker-compose or run the app locally.
@@ -58,7 +48,7 @@ Then you can run the flask app with:
 ```shell
 gunicorn -b :8083 backend:app
 ```
-If you use pycharm, you can also create a flask configuration and run it from there (keep in mind the target folder is `back/backend`.
+If you use pycharm, you can also create a flask configuration and run it from there. Keep in mind the target folder is `back/backend`.
 
 ## Datastore emulator
 
@@ -68,10 +58,15 @@ gcloud beta emulators datastore start
 
 ## Deployment
 
-To deploy run the command (make sure you built the frontend first):
+To deploy the app use the script `deploy.sh` in the root directory. It will build the frontend and deploy the backend and frontend.
+Here are the options available (you must choose prod or staging at least):
 
 ```sh
-gcloud app deploy frontend/app.yaml dispatch.yaml back/api.yaml 
+./deploy.sh
+# Arguments:
+# -p: deploy to prod
+# -s: deploy to staging
+# -f: frontend only
+# -b: backend only
+# -v <app version>: On staging, the name of the app version to upload.
 ```
-
-You can also deploy the backend and frontend separately, but the first time make sure you either deploy everything at once or the app and then the dispatch and the api together, because the services need to be created first.

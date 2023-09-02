@@ -23,7 +23,7 @@ const DIRECTORS = [
   { name: "Liam Orovec", wcaId: "2014OROV01" },
 ] as const;
 
-const WCA_PROFILE_URL = "https://www.worldcubeassociation.org/persons/";
+export const WCA_PROFILE_URL = "https://www.worldcubeassociation.org/persons/";
 
 export const Organization = () => {
   const { t } = useTranslation();

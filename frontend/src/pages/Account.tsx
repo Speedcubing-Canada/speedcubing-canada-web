@@ -1,12 +1,7 @@
 import {Trans, useTranslation} from "react-i18next";
 import {useEffect, useReducer, useState} from "react";
-import {
-    AlertColor,
-    Box,
-    Container, Typography,
-} from "@mui/material";
+import {AlertColor, Box, Container, Theme, Typography, useMediaQuery,} from "@mui/material";
 import Button from '@mui/material/Button';
-import Grid from '@mui/material/Unstable_Grid2';
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
 import {DateField} from "@mui/x-date-pickers";
@@ -23,9 +18,10 @@ import {LocalizationProvider} from '@mui/x-date-pickers/LocalizationProvider';
 import dayjs from "dayjs";
 
 import {API_BASE_URL, signIn, signOut} from '../components/Api';
-import {Province, ChipData, chipColor, User, State, Action} from "../components/Types";
+import {Action, chipColor, ChipData, Province, State, User} from "../components/Types";
 import httpClient from "../httpClient";
 import {getProvincesWithNA} from "../components/Provinces";
+import {checkAdmin} from "./AdminPage";
 
 
 const initialState: State = {
@@ -56,6 +52,7 @@ const reducer = (state: State, action: Action) => {
 
 export const Account = () => {
     const {t} = useTranslation();
+    const isSmall = useMediaQuery<Theme>((theme) => theme.breakpoints.down("sm"));
 
     const [province, setProvince] = useState<Province | null>(null);
     const [chipData, setChipData] = useState<readonly ChipData[]>([]);
@@ -75,7 +72,7 @@ export const Account = () => {
     }
     const defaultDOB = user?.dob ? dayjs(user.dob) : dayjs('2022-01-01');
     const defaultWCAID = user?.wca_person || "";
-
+    const defaultEmail: string = user?.email || "";
 
     const showAlert = (alertType: AlertColor, alertContent: string) => {
         alertDispatch({
@@ -126,19 +123,13 @@ export const Account = () => {
             const resp = await httpClient.post(API_BASE_URL + "/edit", {
                 province: province ? province.id : 'na',
             });
-            if (resp.data.success === true) {
+            if (resp.status === 200) {
                 showAlert("success", t("account.success"));
             } else {
                 showAlert("error", t("account.error"));
             }
         } catch (error: any) {
-            if (error.response.status === 401) {
-                console.log("Invalid credentials" + error.response.status);
-            } else if (error.response.status === 403) {
-                console.log("Forbidden" + error.response.status);
-            } else if (error.response.status === 404) {
-                console.log("Not found" + error.response.status);
-            }
+            console.log(error);
         }
     };
 
@@ -146,6 +137,12 @@ export const Account = () => {
         setLoading(true);
         signIn();
     }
+
+    const handleAdmin = () => {
+        window.location.assign('/admin');
+    }
+
+    const isAdmin = checkAdmin(user);
 
     return (
         <Container maxWidth="md">
@@ -168,28 +165,25 @@ export const Account = () => {
                                 {t("account.hi")}{user.name}!
                             </Typography>
 
-                            <Autocomplete
-                                disablePortal
-                                id="combo-box-demo"
-                                options={provinces}
-                                sx={{width: 300}}
-                                value={province || defaultProvince}
-                                defaultValue={defaultProvince}
-                                onChange={(event, newValue) => {
-                                    setProvince(newValue);
-                                    if (newValue?.id === "qc") {
-                                        console.log("Vive le Québec libre!");
-                                    }
-                                }}
-                                renderInput={(params) => <TextField {...params} label="Province"/>}
-                                getOptionLabel={(option) => t('provinces.' + option.id)}
-                                isOptionEqualToValue={(option, value) => option.id === value.id}
-                            />
-                            <Typography variant="subtitle2" gutterBottom>
-                                <Trans>{t("account.policy")} </Trans>
-                            </Typography>
-
-                            <Stack direction="row" spacing={2} alignItems="center" marginY="1rem">
+                            <Stack direction={isSmall ? "column" : "row"} spacing={2} alignItems="center" marginY="1rem"
+                                   justifyContent="space-between">
+                                <Autocomplete
+                                    disablePortal
+                                    id="combo-box-demo"
+                                    options={provinces}
+                                    sx={{width: 330}}
+                                    value={province || defaultProvince}
+                                    defaultValue={defaultProvince}
+                                    onChange={(event, newValue) => {
+                                        setProvince(newValue);
+                                        if (newValue?.id === "qc") {
+                                            console.log("Vive le Québec libre!");
+                                        }
+                                    }}
+                                    renderInput={(params) => <TextField {...params} label="Province"/>}
+                                    getOptionLabel={(option) => t('provinces.' + option.id)}
+                                    isOptionEqualToValue={(option, value) => option.id === value.id}
+                                />
                                 <TextField
                                     disabled
                                     id="region"
@@ -197,6 +191,13 @@ export const Account = () => {
                                     value={province ? t('regions.' + province?.region_id) : t('regions.' + defaultProvince.region_id)}
                                     variant="outlined"
                                 />
+                            </Stack>
+                            <Typography variant="subtitle2" gutterBottom>
+                                <Trans>{t("account.policy")} </Trans>
+                            </Typography>
+
+                            <Stack direction={isSmall ? "column" : "row"} spacing={2} alignItems="center" marginY="1rem"
+                                   justifyContent="space-evenly" useFlexGap flexWrap="wrap">
                                 <TextField
                                     disabled
                                     id="wcaid"
@@ -210,9 +211,25 @@ export const Account = () => {
                                         label={t("account.dob")}
                                         defaultValue={defaultDOB}
                                         format="DD-MM-YYYY"
+                                        InputProps={{
+                                            style: {width: `${defaultEmail.length * 10 > 280 ? 145 : 280}px`},
+                                        }}
                                     />
                                 </LocalizationProvider>
+                                <Box>
+                                    <TextField
+                                        disabled
+                                        id="email"
+                                        label={t("account.email")}
+                                        defaultValue={defaultEmail}
+                                        variant="outlined"
+                                        InputProps={{
+                                            style: {width: `${(defaultEmail.length + 1) * 10}px`, maxWidth: '800px'},
+                                        }}
+                                    />
+                                </Box>
                             </Stack>
+
                             <Typography variant="subtitle2" gutterBottom>
                                 {t("account.roles")}
                             </Typography>
@@ -228,7 +245,8 @@ export const Account = () => {
                                 component="ul"
                             >
                                 {chipData.map((data) => {
-                                    const color: chipColor | undefined = data.label === 'GLOBAL_ADMIN' ? "primary" : "default"
+                                    const color: chipColor | undefined = data.label === 'GLOBAL_ADMIN'
+                                    || data.label === "DIRECTOR" || data.label === 'WEBMASTER' ? "primary" : "default"
 
                                     return (
                                         <ListItem key={data.key}>
@@ -242,26 +260,33 @@ export const Account = () => {
                             </Paper>
                         </Box>
 
-                        <Grid container spacing={2}>
-                            <Grid xs={10}>
+                        <Stack direction={isSmall ? "column" : "row"} spacing={2} alignItems="center" marginY="1rem"
+                               justifyContent="space-between">
+                            <Button
+                                variant="outlined"
+                                component="span"
+
+                                onClick={handleSaveProfile}>
+                                {t("account.save")}
+                            </Button>
+                            {isAdmin && (
                                 <Button
                                     variant="outlined"
                                     component="span"
-
-                                    onClick={handleSaveProfile}>
-                                    {t("account.save")}
+                                    onClick={handleAdmin}
+                                >
+                                    {t("account.admin")}
                                 </Button>
-                            </Grid>
-                            <Grid xs={2}>
-                                <Button
-                                    variant="outlined"
-                                    component="span"
+                            )
+                            }
+                            <Button
+                                variant="outlined"
+                                component="span"
 
-                                    onClick={signOut}>
-                                    {t("account.signout")}
-                                </Button>
-                            </Grid>
-                        </Grid>
+                                onClick={signOut}>
+                                {t("account.signout")}
+                            </Button>
+                        </Stack>
                         {alertState.alert && (
                             <Box marginY="1rem">
                                 <Alert

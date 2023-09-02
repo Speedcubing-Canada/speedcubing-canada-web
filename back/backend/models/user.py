@@ -29,7 +29,6 @@ class Roles:
 
 
 class UserLocationUpdate(ndb.Model):
-    city = ndb.StringProperty()
     province = ndb.KeyProperty(kind=Province)
 
     update_time = ndb.DateTimeProperty()
@@ -40,6 +39,7 @@ class UserLocationUpdate(ndb.Model):
 class User(ndb.Model):
     wca_person = ndb.KeyProperty(kind=Person)
     name = ndb.StringProperty()
+    name_lower = ndb.ComputedProperty(lambda self: self.name.lower())
     email = ndb.StringProperty()
     dob = ndb.DateProperty()
     roles = ndb.StringProperty(repeated=True)
@@ -57,6 +57,17 @@ class User(ndb.Model):
             if role in roles:
                 return True
         return False
+
+    def toJson(self):
+        return {
+            "id": self.key.id(),
+            "name": self.name,
+            "roles": self.roles,
+            "dob": self.dob.isoformat() if self.dob else None,
+            "province": self.province.id() if self.province else None,
+            "wca_person": self.wca_person.id() if self.wca_person else None,
+            "email": self.email,
+        }
 
 
 UserLocationUpdate.updater = ndb.KeyProperty(kind=User)

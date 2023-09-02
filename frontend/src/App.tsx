@@ -13,8 +13,7 @@ import {Rankings} from "./pages/Rankings";
 import {Account} from "./pages/Account";
 import {AdminPage} from "./pages/AdminPage";
 import * as React from "react";
-import simpleRestProvider from "ra-data-simple-rest";
-
+import {Quebec} from "./pages/Quebec";
 
 i18n.use(initReactI18next).init({
     resources,
@@ -43,6 +42,9 @@ const App = () => {
         <ThemeProvider theme={theme}>
             <BrowserRouter>
                 <Routes>
+                    {/* Admin page without the navigation bar */}
+                    <Route path="/admin/*" element={<AdminPage/>}/>
+                    {/* Normal pages */}
                     <Route element={<Base/>}>
                         <Route path=":locale/">
                             <Route index element={<Home/>}/>
@@ -51,8 +53,9 @@ const App = () => {
                             <Route path="faq" element={<FAQ/>}/>
                             <Route path="rankings" element={<Rankings/>}/>
                             <Route path="account" element={<Account/>}/>
+                            <Route path="quebec" element={<Quebec/>}/>
                         </Route>
-                        {["about", "organization", "faq", "rankings", "account"].map((route) => (
+                        {["about", "organization", "faq", "rankings", "account","quebec"].map((route) => (
                             <Route
                                 key={route}
                                 path={route}
@@ -61,10 +64,6 @@ const App = () => {
                         ))}
                         <Route path="*" element={<Navigate to={locale} replace/>}/>
                     </Route>
-
-                    {/* Admin page without the navigation bar */}
-                    <Route path=":locale/admin/*" element={<AdminPage/>}/>
-
                 </Routes>
             </BrowserRouter>
 

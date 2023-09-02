@@ -29,7 +29,9 @@ app = Flask(__name__)
 app.secret_key = get_secret('SESSION_SECRET_KEY')
 app.permanent_session_lifetime = datetime.timedelta(days=7)
 address = get_secret('FRONT_ADDRESS')
-CORS(app, supports_credentials=True, expose_headers='Content-Range')
+CORS(app,
+     origins=[address],
+     supports_credentials=True)
 
 
 @app.before_request

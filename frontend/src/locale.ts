@@ -1,3 +1,6 @@
+import englishMessages from "ra-language-english";
+import frenchMessages from "ra-language-french";
+
 export const LOCALES = {en: "en", fr: "fr"} as const;
 export const INVERTED_LOCALES = {en: "fr", fr: "en"} as const;
 export const LOCALE_TO_LANGUAGE = {en: "English", fr: "Français"} as const;
@@ -96,6 +99,17 @@ export const resources = {
                     q: "Is Speedcubing Canada affiliated with the World Cube Association?",
                     a: "Speedcubing Canada operates independently of the World Cube Association, with a separate Board of Directors. Speedcubing Canada is recognized as Canada’s official <regionalOrg>WCA regional organization</regionalOrg>.",
                 },
+                "why-doesnt-my-name-appear-on-the-rankings": {
+                    q: "Why doesn’t my name appear on the rankings?",
+                    a: "Province residence is self-reported, so you'll need to tell us your province:\n" +
+                       "- Create an account on the <wca>WCA website</wca> and link it with your WCA ID.\n" +
+                       "- Log in to the Speedcubing Canada website through the account tab.\n" +
+                       "- Edit your profile and set your home province. Since this also affects Regional Championship eligibility, you can only do this once per year.",
+                },
+                "why-does-this-person-appear-in-my-province": {
+                    q: "Why does this person appear in my province? They don’t live here!",
+                    a: "Please <report>contact us</report> and we'll be happy to investigate. ",
+                },
             },
             provinces: {
                 ab: "Alberta",
@@ -112,6 +126,7 @@ export const resources = {
                 sk: "Saskatchewan",
                 yt: "Yukon",
                 na: "N/A",
+                null: "N/A",
             },
             province_with_pronouns: {
                 ab: "Alberta",
@@ -160,20 +175,67 @@ export const resources = {
                 error: "There was an error updating your account.",
                 dob: "Date of Birth",
                 region: "Region",
+                admin: "Admin Section",
+                email: "Email",
             },
             rankings: {
                 title: "Rankings",
                 single: "Single",
                 average: "Average",
                 rankfor: "Rankings for",
+                event: "Event",
                 unavailable: "Ranking Unavailable",
                 choose: "Choose a province",
+                in: "in",
+                for: "for",
             },
             ranklist: {
                 rank: "Rank",
                 name: "Name",
                 time: "Time",
             },
+            events: {
+                _333: "3x3x3",
+                _222: "2x2x2",
+                _444: "4x4x4",
+                _555: "5x5x5",
+                _666: "6x6x6",
+                _777: "7x7x7",
+                _333bf: "3x3x3 Blindfolded",
+                _333oh: "3x3x3 One-Handed",
+                _333fm: "3x3x3 Fewest Moves",
+                _skewb: "Skewb",
+                _pyram: "Pyraminx",
+                _clock: "Clock",
+                _minx: "Megaminx",
+                _sq1: "Square-1",
+                _444bf: "4x4x4 Blindfolded",
+                _555bf: "5x5x5 Blindfolded",
+                _333mbf: "3x3x3 Multi-Blind",
+            },
+            quebec: {
+                body: "If you are not redirected automatically, click the link below.",
+            }
+        },
+        ...englishMessages,
+        resources: {
+            Users: {
+                name: 'User |||| Users',
+                fields: {
+                    id: 'Id',
+                    name: 'Name',
+                    province: 'Province',
+                    roles: 'Role(s)',
+                    wca_person: 'WCAID',
+                    dob: 'Date of Birth',
+                },
+            },
+        },
+        admin: {
+            title: "Welcome to the Admin Section",
+            body: "Please note that you can filter users using the start of their first name. If you want to use the family name, you must write the first name first. You may also use exact WCAID to filter.\n" +
+                " It's also important to know that you may move pages forward but not backwards. If you want to see a previous results, you need to go back to page one and then move forward again (or juste search the user).\n" +
+                "Sorting or removing people does not work currently. If you want to make someone disappear from the rankings, put his/her province to N/A.",
         },
     },
     [LOCALES.fr]: {
@@ -191,7 +253,7 @@ export const resources = {
                 organization: "Organisation",
                 faq: "FAQ",
                 account: "Compte",
-                rankings: "Classement",
+                rankings: "Classements",
             },
             about: {
                 title: "À propos",
@@ -259,6 +321,17 @@ export const resources = {
                     q: "Speedcubing Canada est-elle affiliée à la World Cube Association ?",
                     a: "Speedcubing Canada fonctionne indépendamment de la World Cube Association, avec un conseil d'administration distinct. Speedcubing Canada est reconnue comme l'organisation régionale officielle du Canada par la <regionalOrg>WCA</regionalOrg>.",
                 },
+                "why-doesnt-my-name-appear-on-the-rankings": {
+                    q : "Pourquoi mon nom n'apparaît-il pas dans les classements ?",
+                    a: "La province de résidence est auto-déclarée, vous devez donc nous indiquer votre province:\n" +
+                        "- Créez un compte sur le <wca>site de la WCA</wca> et reliez-le à votre WCAID.\n" +
+                        "- Connectez-vous au site web de Speedcubing Canada via l'onglet compte.\n" +
+                        "- Modifiez votre profil et définissez votre province d'origine. Comme cela affecte également l'éligibilité aux championnats régionaux, vous ne pouvez le faire qu'une seule fois par an.",
+                },
+                "why-does-this-person-appear-in-my-province": {
+                    q : "Pourquoi cette personne apparaît-elle dans ma province ? Elle ne vit pas ici !",
+                    a : "Veuillez <report>nous contacter</report> et nous nous ferons un plaisir d'enquêter. ",
+                },
             },
             provinces: {
                 ab: "Alberta",
@@ -275,6 +348,7 @@ export const resources = {
                 sk: "Saskatchewan",
                 yt: "Yukon",
                 na: "N/A",
+                null: "N/A",
             },
             province_with_pronouns: {
                 ab: "l'Alberta",
@@ -323,20 +397,67 @@ export const resources = {
                 error: "Une erreur s'est produite lors de la mise à jour de votre compte.",
                 dob: "Date de naissance",
                 region: "Région",
+                admin: "Section d'administration",
+                email: "Courriel",
             },
             rankings: {
                 title: "Classements",
                 single: "Single",
                 average: "Moyenne",
                 rankfor: "Classement pour",
+                event: "Épreuve",
                 unavailable: "Classement indisponible",
                 choose: "Choisissez une province",
+                in: "au",
+                for: "en",
             },
             ranklist: {
                 rank: "Rang",
                 name: "Nom",
                 time: "Temps",
             },
+            events: {
+                _333: "3x3x3",
+                _222: "2x2x2",
+                _444: "4x4x4",
+                _555: "5x5x5",
+                _666: "6x6x6",
+                _777: "7x7x7",
+                _333bf: "3x3x3 à l'aveugle",
+                _333oh: "3x3x3 à une main",
+                _333fm: "3x3x3 résolution optimisée",
+                _skewb: "Skewb",
+                _pyram: "Pyraminx",
+                _clock: "Clock",
+                _minx: "Mégaminx",
+                _sq1: "Square-1",
+                _444bf: "4x4x4 à l'aveugle",
+                _555bf: "5x5x5 à l'aveugle",
+                _333mbf: "3x3x3 Multi-Blind",
+            },
+            quebec: {
+                body: "Si vous n'êtes pas redirigés, cliquez sur le lien ci-dessous."
+            }
+        },
+        ...frenchMessages,
+        resources: {
+            Users: {
+                name: 'Utilisateur |||| Utilisateurs',
+                fields: {
+                    id: 'Id',
+                    name: 'Nom',
+                    province: 'Province',
+                    roles: 'Rôle(s)',
+                    wca_person: 'WCAID',
+                    dob: 'Date de naissance',
+                },
+            },
+        },
+        admin: {
+            title: "Bienvenue dans la section d'administration",
+            body: "Veuillez noter que vous pouvez filtrer les utilisateurs en utilisant le début de leur prénom. Si vous voulez utiliser le nom de famille, vous devez écrire le prénom en premier. Vous pouvez également utiliser le WCAID exact pour filtrer.\n" +
+                " Il est également important de savoir que vous pouvez avancer dans les pages mais pas aller en arrière. Si vous voulez voir un résultat précédent, vous devez revenir à la page une et avancer à nouveau (ou simplement rechercher l'utilisateur)." +
+                " Il n'est pas possible d'utiliser la fonctionnalité permettant de ranger les colonnes ni de supprimer des utilisateurs. Si vous voulez faire disparaitre un utilisateur des classements, changez sa province pour N/A.",
         },
     },
 };

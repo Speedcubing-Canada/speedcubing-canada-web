@@ -12,9 +12,12 @@ You can create a new VM at https://console.cloud.google.com/compute/instancesAdd
 * **Management**: Use the following Startup script:
 
 ```sh
-apt upgrade
+apt-get update; apt-get upgrade -y
 cd speedcubing-canada/back
+git reset --hard HEAD
 git pull
+chmod +x backend/load_db/startup.sh
+chmod +x backend/load_db/load_db.sh
 backend/load_db/startup.sh
 ```
 
