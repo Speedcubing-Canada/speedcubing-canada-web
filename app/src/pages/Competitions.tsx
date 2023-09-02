@@ -4,8 +4,6 @@ import { Link } from "../components/Link";
 import { LINKS } from "./links";
 import { Province } from "../components/Types";
 import { GetProvinces } from "../components/Provinces";
-import { useParams } from "react-router-dom";
-import { getLocaleOrFallback } from "../locale";
 import { useState, useEffect } from "react";
 import React from "react";
 
@@ -25,8 +23,6 @@ const provinces: Province[] = GetProvinces();
 
 export const Competitions = () => {
   const { t } = useTranslation();
-  const params = useParams();
-  const locale = getLocaleOrFallback(params.locale as string);
 
   const [data, setData] = useState<any>({});
   const [isLoading, setIsLoading] = useState(true); 
@@ -132,7 +128,7 @@ export const Competitions = () => {
                 { " | " }
                 { item.city }
               </Typography> 
-              <Button to={`/${locale}/competitions/${item.id}`} component={Link} variant="contained" size="large">
+              <Button to={ `competitions/${item.id}` } component={Link} variant="contained" size="large">
                 {t("competition.learnmore")}
               </Button>
             </Box>

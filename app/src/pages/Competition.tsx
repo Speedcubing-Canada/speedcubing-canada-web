@@ -2,12 +2,15 @@ import { Button, Box, Container, Typography, LinearProgress } from "@mui/materia
 import { useTranslation } from "react-i18next";
 import { Link } from "../components/Link";
 import { LINKS } from "./links";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
+import { getLocaleOrFallback } from "../locale";
 
 export const Competition = () => {
   const { t } = useTranslation();
-  const { compid } = useParams (); 
+  const { compid, localeParam } = useParams ();
+  const locale = getLocaleOrFallback(localeParam as string);
+  const navigate = useNavigate();
 
   const [competitionData, setCompetitionData] = useState<any>(null);
   const [venueData, setVenueData] = useState<any>(null);
@@ -32,9 +35,14 @@ export const Competition = () => {
       setCompetitionData(compData);
       setVenueData(venueData)
       setIsLoading(false);
+
+      if (venueData.series) {
+        console.log(venueData.series.id)
+        navigate(`/${locale}/competitions/series/${venueData.series.id}`);
+      }
     };
     getData();
-  }, [compid]);
+  }, [compid, locale, navigate]);
 
   if (isLoading) {
     return (
@@ -56,9 +64,7 @@ export const Competition = () => {
 
   const currentDate = new Date();
   const registrationOpen = new Date(competitionData.registration_open);
-  const registrationClose = new Date(competitionData.registration_close);
-
-  console.log(venueData);
+  const registrationClose = new Date(competitionData.registration_close); 
 
   return (
       <Container maxWidth="xl" style={{ textAlign: "center" }}>

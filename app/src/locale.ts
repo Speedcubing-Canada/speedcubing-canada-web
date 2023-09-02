@@ -220,6 +220,7 @@ export const resources = {
         fee: "\n\nFrais d'inscription :  ${{fee}} CAD",
         registration: {
           before: "\nOuverture des inscriptions : {{date}}",
+          after: "\nOuverture des inscriptions : {{date}}",
           closes: "\nLes inscriptions sont closes le : {{date}}",
           closed: "\n Les inscriptions sont closes le : {{date}}",
           count: "<b>Inscription:</b> {{num}}/{{total}} places occupées\n\n",
