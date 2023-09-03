@@ -4,5 +4,8 @@
   "workspaces": [
     "app"
   ],
-  "scripts": {}
+  "scripts": {},
+  "devDependencies": {
+    "prettier": "3.0.3"
+  }
 }
