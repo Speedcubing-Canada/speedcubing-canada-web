@@ -8,10 +8,10 @@ export interface LinkProps {
 export const Link = forwardRef(
   (
     { to, children, ...rest }: LinkProps,
-    ref: React.ForwardedRef<HTMLAnchorElement>
+    ref: React.ForwardedRef<HTMLAnchorElement>,
   ) => (
     <a ref={ref} href={to} target="_blank" rel="noopener noreferrer" {...rest}>
       {children}
     </a>
-  )
+  ),
 );
