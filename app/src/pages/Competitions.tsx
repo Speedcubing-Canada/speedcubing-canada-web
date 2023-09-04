@@ -53,31 +53,13 @@ export const Competitions = () => {
     );
   };
 
-  let showComps: any[] = [];
-  Object.keys(data).forEach((key) => {
-    let province = data[key].city.split(", ")[1];
-    if (new Date(data[key].start_date) > new Date()) {
-      if (selectedRegions.length === 0 ) {
-        showComps.push(data[key]);
-      } else {
-        for (const provinceItem of provinces) {
-          if (provinceItem.label === province && selectedRegions.includes(provinceItem.region_id)) {
-            showComps.push(data[key]);
-          }
-        }
-      }
-    }
-  });
+  const displayedComps = Object.keys(data).filter((key) => {
+    const province = data[key].city.split(", ")[1];
+    const startDate = new Date(data[key].start_date);
+    return startDate > new Date() && (selectedRegions.length === 0 || provinces.some((provinceItem) => provinceItem.label === province && selectedRegions.includes(provinceItem.region_id)));
+  }).map((key) => data[key]);
 
-  //Create a list of regions from provinces list
-  const dup: { [region: string]: boolean } = {};
-  const regions = [];
-  for (const province of provinces) {
-    if (!dup[province.region]) {
-      dup[province.region] = true;
-      regions.push(province.region_id);
-    }
-  }
+  const regions = Array.from(new Set(provinces.map((province) => province.region_id)));
 
   return (
     <Container maxWidth="xl" style={{ textAlign: "center" }}>
@@ -120,7 +102,7 @@ export const Competitions = () => {
             <CircularProgress />
           </Box> 
         : <Box display="flex" justifyContent="center" flexWrap="wrap">
-          { showComps.reverse().map((item, index) => (
+          { displayedComps.reverse().map((item, index) => (
             <Box margin="1rem" padding="1rem" key = {index}>
               <Typography variant="h5" fontWeight="bold">
                 { item.name }

@@ -37,7 +37,6 @@ export const Competition = () => {
       setIsLoading(false);
 
       if (venueData.series) {
-        console.log(venueData.series.id)
         navigate(`/${locale}/competitions/series/${venueData.series.id}`);
       }
     };
@@ -53,14 +52,10 @@ export const Competition = () => {
   }
 
   const competitorsApproved = (competition: any) => {
-    let approved = 0;
-    for (const competitor of competition.persons) {
-      if (competitor.registration && competitor.registration.status === "accepted") {
-        approved++;
-      }
-    }
-    return approved;
-  }
+    return competition.persons.filter((competitor: any) => {
+      return competitor.registration && competitor.registration.status === "accepted";
+    }).length;
+  };
 
   const currentDate = new Date();
   const registrationOpen = new Date(competitionData.registration_open);

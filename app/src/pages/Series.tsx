@@ -59,14 +59,10 @@ export const Series = () => {
   }, [compIds]);
 
   const competitorsApproved = (competition: any) => {
-    let approved = 0;
-    for (const competitor of competition.persons) {
-      if (competitor.registration && competitor.registration.status === "accepted") {
-        approved++;
-      }
-    }
-    return approved;
-  }
+    return competition.persons.filter((competitor: any) => {
+      return competitor.registration && competitor.registration.status === "accepted";
+    }).length;
+  };
 
   if (isLoading) {
     return (
