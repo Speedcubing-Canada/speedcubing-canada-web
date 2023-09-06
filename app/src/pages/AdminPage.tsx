@@ -49,7 +49,7 @@ export const AdminPage = () => {
         (async () => {
             try {
                 const resp = await httpClient.get(API_BASE_URL + "/user_info");
-                setUser(resp.data);
+                setUser(resp);
 
             } catch (error) {
                 console.log("Not authenticated");

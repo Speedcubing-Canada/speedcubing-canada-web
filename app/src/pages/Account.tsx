@@ -92,7 +92,7 @@ export const Account = () => {
         (async () => {
             try {
                 const resp = await httpClient.get(API_BASE_URL + "/user_info");
-                setUser(resp.data);
+                setUser(resp);
 
             } catch (error) {
                 console.log("Not authenticated");
@@ -123,7 +123,7 @@ export const Account = () => {
             const resp = await httpClient.post(API_BASE_URL + "/edit", {
                 province: province ? province.id : 'na',
             });
-            if (resp.status === 200) {
+            if (!resp.hasOwnProperty("error")) {
                 showAlert("success", t("account.success"));
             } else {
                 showAlert("error", t("account.error"));

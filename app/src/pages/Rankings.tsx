@@ -82,7 +82,7 @@ export const Rankings = () => {
                     resp = await httpClient.get(API_BASE_URL + "/province_rankings/" + eventId + "/" + province?.id + "/" + use_average_str);
                 }
 
-                setRanking(resp.data);
+                setRanking(resp);
             } catch (error: any) {
                 if (error?.code === "ERR_NETWORK") {
                     console.log("Network error" + error);
