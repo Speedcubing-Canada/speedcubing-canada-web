@@ -89,8 +89,8 @@ then
 fi
 
 echo "Recompiling react."
-rm -rf frontend/build
-cd frontend
+rm -rf app/build
+cd app
 if [ "$IS_PROD" == "0" ]
 then
   echo "Setting REACT_APP_API_BASE_URL to staging."
@@ -105,10 +105,10 @@ cd ..
 if [ $FRONTEND_ONLY -eq 1 ]
 then
   echo "Deploying frontend only."
-  CMD="gcloud app deploy frontend/app.yaml --project $PROJECT"
+  CMD="gcloud app deploy app/app.yaml --project $PROJECT"
 else
   echo "Deploying to App Engine."
-  CMD="gcloud app deploy frontend/app.yaml dispatch.yaml back/api.yaml --project $PROJECT"
+  CMD="gcloud app deploy app/app.yaml dispatch.yaml back/api.yaml --project $PROJECT"
 fi
 
 if [ ! -z "$VERSION" ]
