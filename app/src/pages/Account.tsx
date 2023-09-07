@@ -92,7 +92,9 @@ export const Account = () => {
         (async () => {
             try {
                 const resp = await httpClient.get(API_BASE_URL + "/user_info");
-                setUser(resp);
+                if (!resp.hasOwnProperty("error")) {
+                    setUser(resp);
+                }
 
             } catch (error) {
                 console.log("Not authenticated");
