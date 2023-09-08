@@ -14,7 +14,7 @@ export const DOCUMENTS = {
     { name: "By-laws (v1.3)", id: "by-laws-v1.3" },
     { name: "By-laws (v1.4)", id: "by-laws-v1.4" },
   ],
-  minutes: [    
+  minutes: [
     {
       name: "Directors' Meeting July 20, 2023",
       id: "directors-meeting-jul-20-2023",
