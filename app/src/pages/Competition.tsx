@@ -1,5 +1,5 @@
 import { Button, Box, Container, Typography, LinearProgress } from "@mui/material";
-import { useTranslation } from "react-i18next";
+import { Trans, useTranslation } from "react-i18next";
 import { Link } from "../components/Link";
 import { LINKS } from "./links";
 import { useParams, useNavigate } from "react-router-dom";
@@ -67,32 +67,32 @@ export const Competition = () => {
           <Typography component="h1" variant="h3" fontWeight="bold" gutterBottom>
             {t(competitionData.name)}
           </Typography>
-          <Typography gutterBottom sx={{ maxWidth: "md", margin: "0 auto" }}>
-              {/* {t("competition.fee", { fee: "30" })} */}
-          </Typography>
           <Typography gutterBottom style={{ textAlign: "center" }}>
-            {currentDate < registrationOpen
-            ? t("competition.registration.before", { date: registrationOpen })
-            : t("competition.registration.after", { date: registrationOpen })
-            }
-            {currentDate < registrationClose 
-            ? t("competition.registration.closes", { date: registrationClose})
-            : t("competition.registration.closed", { date: registrationClose})
-            }
+            <Trans>
+              { currentDate < registrationOpen
+              ? t("competition.registration.before", { date: registrationOpen })
+              : t("competition.registration.after", { date: registrationOpen })
+              }
+              { currentDate < registrationClose 
+              ? t("competition.registration.closes", { date: registrationClose})
+              : t("competition.registration.closed", { date: registrationClose})
+              }
+            </Trans>
           </Typography>
         </Box>
-
         <Box display="flex" justifyContent="center" flexWrap="wrap">
           <Box margin="1rem" padding="1rem">
-            <Typography gutterBottom maxWidth="100%" dangerouslySetInnerHTML={{
-              __html: `${t("competition.date", {date: new Date(competitionData.start_date + "T12:00:00.000Z").toLocaleString('en-US', {weekday: 'long', month: 'long', day: 'numeric', year: 'numeric'})})}` +
-              `${t("competition.city", {city: competitionData.city})}` +
-              `${t("competition.venue", {venue: venueData.schedule.venues[0].name})}` +
-              `${t("competition.address", {address: competitionData.venue_address})}` +
-              (currentDate > registrationOpen
-                ? `${t("competition.registration.count", {num: competitorsApproved(venueData).toString(), total: venueData.competitorLimit})}`
-                : "\n")
-              }}>
+            <Typography gutterBottom>
+              <Trans>
+                {t("competition.date", {date: new Date(competitionData.start_date + "T12:00:00.000Z").toLocaleString('en-US', {weekday: 'long', month: 'long', day: 'numeric', year: 'numeric'})})}
+                {t("competition.city", {city: competitionData.city})}
+                {t("competition.venue", {venue: venueData.schedule.venues[0].name})}
+                {t("competition.address", {address: competitionData.venue_address})}
+                { currentDate > registrationOpen
+                  ? `${t("competition.registration.count", {num: competitorsApproved(venueData).toString(), total: venueData.competitorLimit})}`
+                  : "\n"
+                }
+              </Trans>
             </Typography>
             <Button to={competitionData.url} component={Link} variant="contained" size="large">
               {t("competition.register")}

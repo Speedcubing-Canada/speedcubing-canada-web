@@ -1,5 +1,5 @@
 import { Button, Box, Container, Typography, LinearProgress } from "@mui/material";
-import { useTranslation } from "react-i18next";
+import { useTranslation, Trans } from "react-i18next";
 import { Link } from "../components/Link";
 import { useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
@@ -90,14 +90,16 @@ export const Series = () => {
             {/* {t("competition.fee", { fee: CompetitionData.RegistrationFee })} */}
         </Typography>
         <Typography gutterBottom style={{ textAlign: "center" }}>
-          {currentDate < registrationOpen
-          ? t("competition.registration.before", { date: registrationOpen })
-          : t("competition.registration.after", { date: registrationOpen })
-          }
-          {currentDate < registrationClose 
-          ? t("competition.registration.closes", { date: registrationClose})
-          : t("competition.registration.closed", { date: registrationClose})
-          }
+          <Trans>
+            {currentDate < registrationOpen
+            ? t("competition.registration.before", { date: registrationOpen })
+            : t("competition.registration.after", { date: registrationOpen })
+            }
+            {currentDate < registrationClose 
+            ? t("competition.registration.closes", { date: registrationClose})
+            : t("competition.registration.closed", { date: registrationClose})
+            }
+          </Trans>
         </Typography>
       </Box>
 
@@ -107,15 +109,17 @@ export const Series = () => {
               <Typography variant="h5" fontWeight="bold">
                 { data[key].name }  
               </Typography>
-              <Typography gutterBottom maxWidth="400px" dangerouslySetInnerHTML={{
-                __html: `${t("competition.date", {date: new Date(data[key].start_date + "T12:00:00.000Z").toLocaleString('en-US', {weekday: 'long', month: 'long', day: 'numeric', year: 'numeric'})})}` +
-                `${t("competition.city", {city: data[key].city})}` +
-                `${t("competition.venue", {venue: data[key].schedule.venues[0].name})}` +
-                `${t("competition.address", {address: data[key].venue_address})}` +
-                (currentDate > registrationOpen
-                  ? `${t("competition.registration.count", {num: competitorsApproved(data[key]).toString(), total: data[key].competitorLimit})}`
-                  : "\n")
-              }}>
+              <Typography gutterBottom>
+                <Trans>
+                  {t("competition.date", {date: new Date(data[key].start_date + "T12:00:00.000Z").toLocaleString('en-US', {weekday: 'long', month: 'long', day: 'numeric', year: 'numeric'})})}
+                  {t("competition.city", {city: data[key].city})}
+                  {t("competition.venue", {venue: data[key].schedule.venues[0].name})}
+                  {t("competition.address", {address: data[key].venue_address})}
+                  { currentDate > registrationOpen
+                    ? `${t("competition.registration.count", {num: competitorsApproved(data[key]).toString(), total: data[key].competitorLimit})}`
+                    : "\n"
+                  }
+                </Trans>
               </Typography>
               <Button to={data[key].url} component={Link} variant="contained" size="large">
                 {t("competition.register")}
