@@ -2,9 +2,12 @@ import { useTranslation } from "react-i18next";
 import { Box, Container, Typography } from "@mui/material";
 import { Link } from "../components/Link";
 import { LINKS } from "./links";
+import { useEffect } from "react";
 export const Quebec = () => {
   const { t } = useTranslation();
-  window.location.href = LINKS.DISCORD_QC;
+  useEffect(() => {
+    window.location.replace(LINKS.DISCORD_QC);
+  }, []);
 
   return (
     <Container maxWidth="md">
@@ -13,7 +16,9 @@ export const Quebec = () => {
           {t("provinces.qc")}
         </Typography>
         <Typography gutterBottom>{t("quebec.body")}</Typography>
-        <Link to={LINKS.DISCORD_QC}>Discord</Link>
+        <Typography>
+          <Link to={LINKS.DISCORD_QC}>Discord</Link>
+        </Typography>
       </Box>
     </Container>
   );
