@@ -9,6 +9,7 @@ import { Home } from "./pages/Home";
 import { About } from "./pages/About";
 import { Organization } from "./pages/Organization";
 import { FAQ } from "./pages/FAQ";
+import { Quebec } from "./pages/Quebec";
 
 i18n.use(initReactI18next).init({
   resources,
@@ -37,14 +38,16 @@ const App = () => {
     <ThemeProvider theme={theme}>
       <BrowserRouter>
         <Routes>
+          {/* Normal pages */}
           <Route element={<Base />}>
             <Route path=":locale/">
               <Route index element={<Home />} />
               <Route path="about" element={<About />} />
               <Route path="organization" element={<Organization />} />
               <Route path="faq" element={<FAQ />} />
+              <Route path="quebec" element={<Quebec />} />
             </Route>
-            {["about", "organization", "faq"].map((route) => (
+            {["about", "organization", "faq", "quebec"].map((route) => (
               <Route
                 key={route}
                 path={route}
