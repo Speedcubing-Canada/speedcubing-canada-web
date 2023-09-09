@@ -1,4 +1,4 @@
-version: '3.8'
+version: "3.8"
 
 services:
   app:
@@ -7,7 +7,7 @@ services:
       context: .
       target: development
     volumes:
-      - ./app:/frontend
+      - ./app:/app
     env_file: ./.env
     ports:
       - ${NODE_LOCAL_PORT}:${NODE_DOCKER_PORT}
@@ -15,16 +15,16 @@ services:
       - frontend
       - backend
 
-#  flask:
-#    build:
-#      context: backend
-#      target: builder
-#    restart: always
-#    env_file: ./.env
-#    networks:
-#      - backend
-#    ports:
-#      - ${FLASK_LOCAL_PORT}:${FLASK_DOCKER_PORT}
+  #  flask:
+  #    build:
+  #      context: backend
+  #      target: builder
+  #    restart: always
+  #    env_file: ./.env
+  #    networks:
+  #      - backend
+  #    ports:
+  #      - ${FLASK_LOCAL_PORT}:${FLASK_DOCKER_PORT}
 
   nginx:
     container_name: nginx-server
