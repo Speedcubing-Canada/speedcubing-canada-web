@@ -11,7 +11,9 @@ import {
   useTranslate,
 } from "react-admin";
 import { Link } from "@mui/material";
-import { WCA_PROFILE_URL } from "../pages/Organization";
+import { LINKS } from "../pages/links";
+
+const WCA_PROFILE_URL = LINKS.WCA.PROFILE;
 
 export const UserRoleChip = () => {
   const t = useTranslate();
