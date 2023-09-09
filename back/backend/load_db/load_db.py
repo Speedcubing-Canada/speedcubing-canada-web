@@ -5,7 +5,7 @@ from absl import flags
 from absl import logging
 from google.cloud import ndb
 
-from backend.load_db.update_champions import UpdateChampions
+from backend.load_db.update_champions import update_champions
 from backend.models.user import User
 from backend.models.wca.competition import Competition
 from backend.models.wca.continent import Continent
@@ -60,21 +60,21 @@ def get_modifier(table):
 def read_table(path, cls, apply_filter):
     filter_fn = lambda row: True
     if apply_filter:
-        filter_fn = cls.Filter()
+        filter_fn = cls.filter()
     out = {}
     try:
         with open(path) as csvfile:
             reader = csv.DictReader(csvfile, dialect='excel-tab')
             for row in reader:
                 if filter_fn(row):
-                    fields_to_write = cls.ColumnsUsed()
+                    fields_to_write = cls.columns_used()
                     if 'id' in row:
                         fields_to_write += ['id']
                     to_write = {}
                     for field in fields_to_write:
                         if field in row:
                             to_write[field] = row[field]
-                    out[cls.GetId(row)] = to_write
+                    out[cls.get_id(row)] = to_write
     except:
         # This is fine, the file might just not exist.
         pass
@@ -87,7 +87,7 @@ def write_table(path, rows, cls):
         reader = csv.DictReader(csvfile, dialect='excel-tab')
         use_id = 'id' in reader.fieldnames
     with open(path, 'w') as csvfile:
-        fields_to_write = cls.ColumnsUsed()
+        fields_to_write = cls.columns_used()
         if use_id:
             fields_to_write += ['id']
         writer = csv.DictWriter(csvfile, dialect='excel-tab', fieldnames=fields_to_write)
@@ -118,7 +118,7 @@ def process_export(old_export_path, new_export_path):
                     continue
                 else:
                     obj = cls(id=key)
-                    obj.ParseFromDict(row)
+                    obj.parse_from_dict(row)
                     if modifier:
                         modifier(obj)
                     objects_to_put += [obj]
@@ -156,7 +156,7 @@ def main(argv):
     client = ndb.Client()
     with client.context():
         set_latest_export(FLAGS.new_export_id)
-        UpdateChampions()
+        update_champions()
 
 
 if __name__ == '__main__':

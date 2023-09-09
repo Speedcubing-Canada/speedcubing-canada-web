@@ -1,7 +1,7 @@
 from backend.models.user import Roles
 
 
-def CanEditLocation(user, editor):
+def can_edit_location(user, editor):
     if not editor:
         return False
     if editor.HasAnyRole(Roles.AdminRoles()):
@@ -9,7 +9,7 @@ def CanEditLocation(user, editor):
     return user == editor
 
 
-def CanViewUser(user, viewer):
+def can_view_user(user, viewer):
     if not viewer:
         return False
     return (user == viewer or
@@ -17,14 +17,14 @@ def CanViewUser(user, viewer):
             viewer.HasAnyRole(Roles.AdminRoles()))
 
 
-def CanViewRoles(user, viewer):
+def can_view_roles(user, viewer):
     if not viewer:
         return False
     return (viewer.HasAnyRole(Roles.DelegateRoles()) or
             viewer.HasAnyRole(Roles.AdminRoles()))
 
 
-def EditableRoles(user, editor):
+def editable_roles(user, editor):
     if not editor:
         return []
     if editor.HasAnyRole([Roles.GLOBAL_ADMIN]):

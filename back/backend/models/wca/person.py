@@ -15,18 +15,18 @@ class Person(BaseModel):
     # the database import.
     province = ndb.KeyProperty(kind=Province)
 
-    def ParseFromDict(self, row):
+    def parse_from_dict(self, row):
         self.name = row['name']
         self.country = ndb.Key(Country, row['countryId'])
         self.gender = row['gender']
 
     @staticmethod
-    def Filter():
+    def filter():
         return lambda row: int(row['subid']) == 1
 
     @staticmethod
-    def ColumnsUsed():
+    def columns_used():
         return ['name', 'countryId', 'gender']
 
-    def GetWCALink(self):
+    def get_wca_link(self):
         return 'https://worldcubeassociation.org/persons/%s' % self.key.id()

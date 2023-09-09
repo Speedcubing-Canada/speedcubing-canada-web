@@ -18,18 +18,18 @@ class Championship(ndb.Model):
     residency_timezone = ndb.StringProperty()
 
     @staticmethod
-    def NationalsId(year):
+    def nationals_id(year):
         return str(year)
 
     @staticmethod
-    def RegionalsId(year, region):
+    def regionals_id(year, region):
         return '%s_%d' % (region.key.id(), year)
 
     @staticmethod
-    def ProvinceChampionshipId(year, province):
+    def province_championship_id(year, province):
         return '%s_%d' % (province.key.id(), year)
 
-    def GetEligibleProvinceKeys(self):
+    def get_eligible_province_keys(self):
         if self.province:
             return [self.province]
         if self.region:

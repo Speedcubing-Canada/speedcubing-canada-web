@@ -9,27 +9,27 @@ class RankBase(BaseModel):
     person = ndb.KeyProperty(kind=Person)
     event = ndb.KeyProperty(kind=Event)
     best = ndb.IntegerProperty()
-    province = ndb.ComputedProperty(lambda self: self.GetProvince())
+    province = ndb.ComputedProperty(lambda self: self.get_province())
 
-    def GetProvince(self):
+    def get_province(self):
         if not self.person or not self.person.get():
             return None
         return self.person.get().province
 
     @staticmethod
-    def GetId(row):
+    def get_id(row):
         return '%s_%s' % (row['personId'], row['eventId'])
 
-    def ParseFromDict(self, row):
+    def parse_from_dict(self, row):
         self.person = ndb.Key(Person, row['personId'])
         self.event = ndb.Key(Event, row['eventId'])
         self.best = int(row['best'])
 
     @staticmethod
-    def ColumnsUsed():
+    def columns_used():
         return ['personId', 'eventId', 'best']
 
-    def ObjectsToGet(self):
+    def objects_to_get(self):
         return [self.person]
 
 

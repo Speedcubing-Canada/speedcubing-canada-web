@@ -6,5 +6,5 @@ class Region(ndb.Model):
     championship_name = ndb.StringProperty()
     obsolete = ndb.BooleanProperty()
 
-    def CssClass(self):
+    def css_class(self):
         return 'region-%s' % self.key.id()

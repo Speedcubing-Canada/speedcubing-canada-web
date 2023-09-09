@@ -41,7 +41,7 @@ def province_rankings_table(event_id, province_id, use_average):
             output.append({
                 "rank": rank,
                 "name": rankings[i].person.get().name,
-                "url": rankings[i].person.get().GetWCALink(),
-                "time": common.Common().formatters.FormatTime(rankings[i].best, rankings[i].event, use_average == '1')
+                "url": rankings[i].person.get().get_wca_link(),
+                "time": common.Common().formatters.format_time(rankings[i].best, rankings[i].event, use_average == '1')
             })
         return jsonify(output)

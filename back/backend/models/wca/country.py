@@ -9,11 +9,11 @@ class Country(BaseModel):
     continent = ndb.KeyProperty(kind=Continent)
     iso2 = ndb.StringProperty()
 
-    def ParseFromDict(self, row):
+    def parse_from_dict(self, row):
         self.name = row['name']
         self.continent = ndb.Key(Continent, row['continentId'])
         self.iso2 = row['iso2']
 
     @staticmethod
-    def ColumnsUsed():
+    def columns_used():
         return ['name', 'continentId', 'iso2']

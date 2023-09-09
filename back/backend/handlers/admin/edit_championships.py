@@ -21,13 +21,13 @@ def add_championship(competition_id, championship_type):
             abort(403)
         competition = Competition.get_by_id(competition_id)
         if championship_type == 'national':
-            championship_id = Championship.NationalsId(competition.year)
+            championship_id = Championship.nationals_id(competition.year)
         elif championship_type == 'regional':
-            championship_id = Championship.RegionalsId(competition.year,
-                                                       competition.province.get().region.get())
+            championship_id = Championship.regionals_id(competition.year,
+                                                        competition.province.get().region.get())
         elif championship_type == 'province':
-            championship_id = Championship.ProvinceChampionshipId(competition.year,
-                                                               competition.province.get())
+            championship_id = Championship.province_championship_id(competition.year,
+                                                                    competition.province.get())
         championship = (Championship.get_by_id(championship_id) or
                         Championship(id=championship_id))
 

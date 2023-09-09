@@ -27,7 +27,7 @@ class Result(BaseModel):
     regional_single_record = ndb.StringProperty()
     regional_average_record = ndb.StringProperty()
 
-    def ParseFromDict(self, row):
+    def parse_from_dict(self, row):
         self.competition = ndb.Key(Competition, row['competitionId'])
         self.event = ndb.Key(Event, row['eventId'])
         self.round_type = ndb.Key(RoundType, row['roundTypeId'])
@@ -46,11 +46,11 @@ class Result(BaseModel):
         self.regional_average_record = row['regionalAverageRecord']
 
     @staticmethod
-    def GetId(row):
+    def get_id(row):
         return '%s_%s_%s_%s' % (row['competitionId'], row['eventId'], row['roundTypeId'], row['personId'])
 
     @staticmethod
-    def ColumnsUsed():
+    def columns_used():
         return ['competitionId', 'eventId', 'roundTypeId', 'personId', 'formatId', 'personName',
                 'personCountryId', 'pos', 'best', 'average', 'value1', 'value2', 'value3', 'value4',
                 'value5', 'regionalSingleRecord', 'regionalAverageRecord']

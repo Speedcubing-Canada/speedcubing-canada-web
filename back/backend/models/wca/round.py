@@ -8,11 +8,11 @@ class RoundType(BaseModel):
     name = ndb.StringProperty()
     final = ndb.BooleanProperty()
 
-    def ParseFromDict(self, row):
+    def parse_from_dict(self, row):
         self.rank = int(row['rank'])
         self.name = row['cellName']
         self.final = int(row['final']) == 1
 
     @staticmethod
-    def ColumnsUsed():
+    def columns_used():
         return ['rank', 'cellName', 'final']

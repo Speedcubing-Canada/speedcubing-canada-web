@@ -16,7 +16,7 @@ from backend.models.wca.result import Result
 from backend.models.wca.result import RoundType
 
 
-def ComputeEligibleCompetitors(championship, competition, results):
+def compute_eligible_competitors(championship, competition, results):
     if championship.national_championship:
         # We don't save this in the datastore because it's easy enough to compute.
         return set([r.person.id() for r in results
@@ -42,7 +42,7 @@ def ComputeEligibleCompetitors(championship, competition, results):
                 user.province_eligibilities = []
             return user.province_eligibilities
 
-    valid_province_keys = championship.GetEligibleProvinceKeys()
+    valid_province_keys = championship.get_eligible_province_keys()
     residency_deadline = (championship.residency_deadline or
                           datetime.datetime.combine(competition.start_date, datetime.time(0, 0, 0)))
 
@@ -84,7 +84,7 @@ def ComputeEligibleCompetitors(championship, competition, results):
     return eligible_competitors
 
 
-def UpdateChampions():
+def update_champions():
     champions_to_write = []
     champions_to_delete = []
     final_round_keys = set(r.key for r in RoundType.query(RoundType.final == True).iter())
@@ -111,7 +111,7 @@ def UpdateChampions():
         if not results:
             logging.info('Results are not uploaded yet.  Not computing champions yet.')
             continue
-        eligible_competitors = ComputeEligibleCompetitors(championship, competition, results)
+        eligible_competitors = compute_eligible_competitors(championship, competition, results)
         champions = collections.defaultdict(list)
         events_held_with_successes = set()
         for result in results:
@@ -138,7 +138,7 @@ def UpdateChampions():
             if result.pos > 1 and len(champions) >= len(events_held_with_successes):
                 break
         for event_key in all_event_keys:
-            champion_id = Champion.Id(championship.key.id(), event_key.id())
+            champion_id = Champion.id(championship.key.id(), event_key.id())
             if event_key in champions:
                 champion = Champion.get_by_id(champion_id) or Champion(id=champion_id)
                 champion.championship = championship.key

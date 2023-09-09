@@ -16,5 +16,5 @@ class Champion(ndb.Model):
     year = ndb.ComputedProperty(lambda e: e.championship.get().year)
 
     @staticmethod
-    def Id(championship_id, event_id):
+    def id(championship_id, event_id):
         return '%s_%s' % (championship_id, event_id)

@@ -24,14 +24,14 @@ def user_info(user_id=-1):
             user = User.get_by_id(user_id)
         if not user:
             return jsonify({"error": "Unrecognized user ID %s" % user_id}), 404
-        if not permissions.CanViewUser(user, me):
+        if not permissions.can_view_user(user, me):
             return jsonify({"error": "You're not authorized to view this user."}), 403
         return user.toJson()
 
 
 # After updating the user's province, write the RankSingle and RankAverage to the
 # datastore again to update their provinces.
-def RewriteRanks(wca_person):
+def rewrite_ranks(wca_person):
     if not wca_person:
         return
     for rank_class in (RankSingle, RankAverage):
@@ -51,7 +51,7 @@ def edit(user_id=-1):
             user = User.get_by_id(user_id)
         if not user:
             return jsonify({"error": "Unrecognized user ID %s" % user_id}), 404
-        if not permissions.CanViewUser(user, me):
+        if not permissions.can_view_user(user, me):
             return jsonify(
                 {"error": "You're not authorized to view this user. So you can't edit their location either."}), 403
 
@@ -62,7 +62,7 @@ def edit(user_id=-1):
         old_province_id = user.province.id() if user.province else ''
         changed_location = old_province_id != province_id
         user_modified = False
-        if permissions.CanEditLocation(user, me) and changed_location:
+        if permissions.can_edit_location(user, me) and changed_location:
             if province_id:
                 user.province = ndb.Key(Province, province_id)
             else:
@@ -72,7 +72,7 @@ def edit(user_id=-1):
                 if wca_person:
                     wca_person.province = user.province
                     wca_person.put()
-                RewriteRanks(wca_person)
+                rewrite_ranks(wca_person)
             user_modified = True
 
             if changed_location:
@@ -88,7 +88,7 @@ def edit(user_id=-1):
             return jsonify({"error": "You're not authorized to edit this user's location."}), 403
 
         if "roles" in request.json:
-            for role in permissions.EditableRoles(user, me):
+            for role in permissions.editable_roles(user, me):
                 if role in request.json["roles"] and role not in user.roles:
                     user.roles.append(role)
                     user_modified = True

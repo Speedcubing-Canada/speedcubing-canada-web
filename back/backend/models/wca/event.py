@@ -7,13 +7,13 @@ class Event(BaseModel):
     name = ndb.StringProperty()
     rank = ndb.IntegerProperty()
 
-    def ParseFromDict(self, row):
+    def parse_from_dict(self, row):
         self.name = row['name']
         self.rank = int(row['rank'])
 
     @staticmethod
-    def ColumnsUsed():
+    def columns_used():
         return ['name', 'rank']
 
-    def IconURL(self):
+    def icon_url(self):
         return '/static/img/events/%s.svg' % self.key.id()

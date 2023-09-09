@@ -7,10 +7,10 @@ class Continent(BaseModel):
     name = ndb.StringProperty()
     recordName = ndb.StringProperty()
 
-    def ParseFromDict(self, row):
+    def parse_from_dict(self, row):
         self.name = row['name']
         self.recordName = row['recordName']
 
     @staticmethod
-    def ColumnsUsed():
+    def columns_used():
         return ['name', 'recordName']

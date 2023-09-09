@@ -25,7 +25,7 @@ class Competition(BaseModel):
     city_name = ndb.StringProperty()
     province = ndb.KeyProperty(kind=Province)
 
-    def ParseFromDict(self, row):
+    def parse_from_dict(self, row):
         self.start_date = datetime.date(int(row['year']), int(row['month']), int(row['day']))
         self.end_date = datetime.date(int(row['year']), int(row['endMonth']), int(row['endDay']))
         self.year = int(row['year'])
@@ -51,7 +51,7 @@ class Competition(BaseModel):
         self.country = ndb.Key(Country, row['countryId'])
 
     @staticmethod
-    def Filter():
+    def filter():
         # Only load Canada competitions that haven't been cancelled.
         def filter_row(row):
             return row['countryId'] == 'Canada' and int(row['cancelled']) != 1
@@ -59,12 +59,12 @@ class Competition(BaseModel):
         return filter_row
 
     @staticmethod
-    def ColumnsUsed():
+    def columns_used():
         return ['year', 'month', 'day', 'endMonth', 'endDay', 'cellName', 'eventSpecs',
                 'latitude', 'longitude', 'cityName', 'countryId', 'name']
 
-    def GetWCALink(self):
+    def get_wca_link(self):
         return 'https://worldcubeassociation.org/competitions/%s' % self.key.id()
 
-    def GetEventsString(self):
+    def get_events_string(self):
         return ','.join([e.id() for e in self.events])

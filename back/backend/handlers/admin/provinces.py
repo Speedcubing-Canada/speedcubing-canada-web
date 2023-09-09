@@ -9,7 +9,7 @@ from backend.models.user import Roles
 bp = Blueprint('provinces', __name__)
 client = ndb.Client()
 
-def MakeRegion(region_id, region_name, championship_name, all_regions, futures):
+def make_region(region_id, region_name, championship_name, all_regions, futures):
   region = Region.get_by_id(region_id) or Region(id=region_id)
   region.name = region_name
   region.championship_name = championship_name
@@ -17,7 +17,7 @@ def MakeRegion(region_id, region_name, championship_name, all_regions, futures):
   all_regions[region_id] = region
   return region
 
-def MakeProvince(province_id, province_name, region, is_province, all_provinces, futures):
+def make_province(province_id, province_name, region, is_province, all_provinces, futures):
   province = Province.get_by_id(province_id) or Province(id=province_id)
   province.name = province_name
   province.region = region.key
@@ -37,12 +37,12 @@ def update_provinces():
 
     futures = []
     all_regions = {}
-    ATLANTIC = MakeRegion('at', 'Atlantic', 'Atlantic',all_regions, futures)
-    QUEBEC = MakeRegion('qc', 'Quebec', 'Quebec', all_regions, futures)
-    ONTARIO = MakeRegion('on', 'Ontario', 'Ontario', all_regions, futures)
-    PRAIRIES = MakeRegion('pr', 'Prairies', 'Prairies', all_regions, futures)
-    BRITISH_COLUMBIA = MakeRegion('bc', 'British Columbia', 'British Columbia', all_regions, futures)
-    TERRITORIES = MakeRegion('te', 'Territories', 'Territories', all_regions, futures)
+    ATLANTIC = make_region('at', 'Atlantic', 'Atlantic', all_regions, futures)
+    QUEBEC = make_region('qc', 'Quebec', 'Quebec', all_regions, futures)
+    ONTARIO = make_region('on', 'Ontario', 'Ontario', all_regions, futures)
+    PRAIRIES = make_region('pr', 'Prairies', 'Prairies', all_regions, futures)
+    BRITISH_COLUMBIA = make_region('bc', 'British Columbia', 'British Columbia', all_regions, futures)
+    TERRITORIES = make_region('te', 'Territories', 'Territories', all_regions, futures)
 
 
     for future in futures:
@@ -61,13 +61,13 @@ def update_provinces():
         ('sk', 'Saskatchewan', PRAIRIES),
         ('ab', 'Alberta', PRAIRIES),
         ('bc', 'British Columbia', BRITISH_COLUMBIA)):
-      MakeProvince(province_id, province_name, region, True, all_provinces, futures)
+      make_province(province_id, province_name, region, True, all_provinces, futures)
 
     for territory_id, territory_name, region in (
         ('yt', 'Yukon', TERRITORIES),
         ('nt', 'Northwest Territories', TERRITORIES),
         ('nu', 'Nunavut', TERRITORIES)):
-      MakeProvince(territory_id, territory_name, region, False, all_provinces, futures)
+      make_province(territory_id, territory_name, region, False, all_provinces, futures)
 
     for future in futures:
       future.wait()
