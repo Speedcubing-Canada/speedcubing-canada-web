@@ -7,11 +7,11 @@ class BaseModel(ndb.Model):
         return row['id']
 
     def parse_from_dict(self, row):
-        raise Exception('ParseFromDict is unimplemented.')
+        raise NotImplementedError('ParseFromDict is unimplemented.')
 
     @staticmethod
     def columns_used():
-        raise Exception('ColumnsUsed is unimplemented.')
+        raise NotImplementedError('ColumnsUsed is unimplemented.')
 
     @staticmethod
     def filter():

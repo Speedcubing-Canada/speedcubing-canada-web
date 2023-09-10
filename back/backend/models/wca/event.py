@@ -14,6 +14,3 @@ class Event(BaseModel):
     @staticmethod
     def columns_used():
         return ['name', 'rank']
-
-    def icon_url(self):
-        return '/static/img/events/%s.svg' % self.key.id()

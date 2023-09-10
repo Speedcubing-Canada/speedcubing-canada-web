@@ -1,4 +1,4 @@
-from flask import abort, Blueprint
+from flask import abort, Blueprint, jsonify
 from google.cloud import ndb
 
 from backend.lib import auth
@@ -32,8 +32,8 @@ def make_province(province_id, province_name, region, is_province, all_provinces
 def update_provinces():
   with client.context():
     me = auth.user()
-    if not me or not me.HasAnyRole([Roles.GLOBAL_ADMIN, Roles.WEBMASTER]):
-      abort(403)
+    if not me or not me.has_any_of_given_roles([Roles.GLOBAL_ADMIN, Roles.WEBMASTER]):
+      return jsonify({"error": "Forbidden"}), 403
 
     futures = []
     all_regions = {}

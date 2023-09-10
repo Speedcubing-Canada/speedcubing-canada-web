@@ -14,7 +14,7 @@ client = ndb.Client()
 def get_users():
     with client.context():
         me = auth.user()
-        if not me or not me.HasAnyRole(Roles.AdminRoles()):
+        if not me or not me.has_any_of_given_roles(Roles.AdminRoles()):
             return jsonify({"error": "Forbidden"}), 403
 
         # Pagination
@@ -25,25 +25,22 @@ def get_users():
             cursor = ndb.Cursor(urlsafe=cursor)
         if page < 1:
             page = 1
-        if per_page not in [10, 20, 30, 40, 50]:
+        if per_page not in (10, 20, 30, 40, 50):
             per_page = 30
 
         # Sort
         sort_field = request.args.get('sort_field', 'name')
         sort_order = request.args.get('sort_order', 'asc')
-        if sort_field not in ['id', 'name', 'wca_person', 'roles', 'province']:
+        if sort_field not in ('id', 'name', 'wca_person', 'roles', 'province'):
             sort_field = 'name'
-        if sort_order.lower() not in ['asc', 'desc']:
+        if sort_order.lower() not in ('asc', 'desc'):
             sort_order = 'asc'
 
         # Filter
-        filter_text = loads(request.args.get('filter', '')).get("q")
+        filter_text = loads(request.args.get('filter', '{}')).get("q")
 
         # Query
-        if sort_order == 'asc':
-            order_field = getattr(User, sort_field)
-        else:
-            order_field = -getattr(User, sort_field)
+        order_field = getattr(User, sort_field) if sort_order == 'asc' else -getattr(User, sort_field)
         if filter_text:
             text = filter_text.lower()
             limit = text[:-1] + chr(ord(text[-1]) + 1)
@@ -60,7 +57,7 @@ def get_users():
             users_to_show, cursor, has_more = User.query(order_by=[order_field]).fetch_page(per_page,
                                                                                             start_cursor=cursor)
         return jsonify({
-            'data': [user.toJson() for user in users_to_show],
+            'data': [user.to_json() for user in users_to_show],
             'cursor': cursor.urlsafe().decode() if cursor else '',
             'pageInfo': {
                 'hasPreviousPage': page > 1,
@@ -73,7 +70,7 @@ def get_users():
 def get_users_by_id():
     with client.context():
         me = auth.user()
-        if not me or not me.HasAnyRole(Roles.AdminRoles()):
+        if not me or not me.has_any_of_given_roles(Roles.AdminRoles()):
             return jsonify({"error": "Forbidden"}), 403
 
         user_ids = request.args.get('ids', "[]", type=str).strip("[]").split(",")
@@ -83,7 +80,7 @@ def get_users_by_id():
             else:
                 user_id = int(user_id)
         users = User.query(User.key.IN([ndb.Key(User, user_id) for user_id in user_ids])).fetch()
-        data = [user.toJson() for user in users]
+        data = [user.to_json() for user in users]
         return jsonify(
             {'data': data}
         )

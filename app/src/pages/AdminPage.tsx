@@ -17,7 +17,7 @@ import { IconButton } from "@mui/material";
 import { UserList } from "../components/UserList";
 import dataProvider from "../dataProvider";
 import httpClient from "../httpClient";
-import { API_BASE_URL } from "../components/Api";
+import { API_BASE_URL } from "../components/api";
 import { User } from "../components/Types";
 import { AdminDashboard } from "../components/AdminDashboard";
 import { UserEdit } from "../components/UserEdit";

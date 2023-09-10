@@ -1,6 +1,6 @@
 import { fetchUtils } from "react-admin";
 import { stringify } from "query-string";
-import { API_BASE_URL } from "./components/Api";
+import { API_BASE_URL } from "./components/api";
 import { DataProvider } from "ra-core/dist/cjs/types";
 
 const apiUrl = API_BASE_URL;

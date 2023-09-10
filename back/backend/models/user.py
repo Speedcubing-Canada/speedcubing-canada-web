@@ -52,13 +52,13 @@ class User(ndb.Model):
     regional_eligibilities = ndb.StructuredProperty(RegionalChampionshipEligibility, repeated=True)
     province_eligibilities = ndb.StructuredProperty(ProvinceChampionshipEligibility, repeated=True)
 
-    def HasAnyRole(self, roles):
+    def has_any_of_given_roles(self, roles):
         for role in self.roles:
             if role in roles:
                 return True
         return False
 
-    def toJson(self):
+    def to_json(self):
         return {
             "id": self.key.id(),
             "name": self.name,

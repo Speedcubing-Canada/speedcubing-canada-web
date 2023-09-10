@@ -37,7 +37,7 @@ class Common(object):
         return False
 
     def wca_profile(self, wca_id):
-        return 'https://www.worldcubeassociation.org/persons/%s' % wca_id
+        return f"https://www.worldcubeassociation.org/persons/{wca_id}"
 
     def format_date_range(self, start_date, end_date, include_year=True, full_months=False):
         year_chunk = ', %d' % start_date.year if include_year else ''
@@ -82,7 +82,7 @@ class Common(object):
         return os.environ['ENV'] == 'PROD'
 
     def IconUrl(self, event_id):
-        return '/static/img/events/%s.svg' % event_id
+        return f"/static/img/events/{event_id}.svg"
 
     def get_secret(self, name):
         return secrets.get_secret(name)

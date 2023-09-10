@@ -7,6 +7,7 @@ from authlib.integrations.flask_client import OAuth
 from dotenv import load_dotenv
 from flask import Flask, redirect, request
 from flask_cors import CORS
+from urllib.parse import urljoin
 import google.cloud.logging
 
 from backend.lib.secrets import get_secret
@@ -44,8 +45,7 @@ def before_request():
         url = request.url.replace('http://', 'https://', 1)
         is_changed = True
     if is_changed:
-        code = 301
-        return redirect(url, code=code)
+        return redirect(url, code=301)
 
 
 wca_host = os.environ.get('WCA_HOST')
@@ -54,11 +54,11 @@ oauth.register(
     name='wca',
     client_id=get_secret('WCA_CLIENT_ID'),
     client_secret=get_secret('WCA_CLIENT_SECRET'),
-    access_token_url=wca_host + '/oauth/token',
+    access_token_url=urljoin(wca_host, '/oauth/token'),
     access_token_params=None,
-    authorize_url=wca_host + '/oauth/authorize',
+    authorize_url=urljoin(wca_host, '/oauth/authorize'),
     authorize_params=None,
-    api_base_url=wca_host + '/api/v0/',
+    api_base_url=urljoin(wca_host, '/api/v0/'),
     token_endpoint_auth_method='client_secret_post',
     client_kwargs={'scope': 'public email dob'},
 )

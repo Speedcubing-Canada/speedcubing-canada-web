@@ -26,7 +26,7 @@ def user_info(user_id=-1):
             return jsonify({"error": "Unrecognized user ID %s" % user_id}), 404
         if not permissions.can_view_user(user, me):
             return jsonify({"error": "You're not authorized to view this user."}), 403
-        return user.toJson()
+        return user.to_json()
 
 
 # After updating the user's province, write the RankSingle and RankAverage to the
@@ -99,4 +99,4 @@ def edit(user_id=-1):
         if user_modified:
             user.put()
 
-        return user.toJson()
+        return user.to_json()

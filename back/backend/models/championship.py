@@ -23,11 +23,11 @@ class Championship(ndb.Model):
 
     @staticmethod
     def regionals_id(year, region):
-        return '%s_%d' % (region.key.id(), year)
+        return f"{region.key.id()}_{year}"
 
     @staticmethod
     def province_championship_id(year, province):
-        return '%s_%d' % (province.key.id(), year)
+        return f"{province.key.id()}_{year}"
 
     def get_eligible_province_keys(self):
         if self.province:

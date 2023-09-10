@@ -18,7 +18,7 @@ import CircularProgress from "@mui/material/CircularProgress";
 
 import { eventID, Province } from "../components/Types";
 import { getProvinces } from "../components/Provinces";
-import { API_BASE_URL, PRODUCTION } from "../components/Api";
+import { API_BASE_URL, PRODUCTION } from "../components/api";
 import httpClient from "../httpClient";
 import { RankList } from "../components/RankList";
 import { MyCubingIcon } from "../components/MyCubingIcon";

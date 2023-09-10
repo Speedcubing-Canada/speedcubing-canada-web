@@ -17,7 +17,7 @@ client = ndb.Client()
 def add_championship(competition_id, championship_type):
     with client.context():
         me = auth.user()
-        if not me or not me.HasAnyRole(Roles.AdminRoles()):
+        if not me or not me.has_any_of_given_roles(Roles.AdminRoles()):
             abort(403)
         competition = Competition.get_by_id(competition_id)
         if championship_type == 'national':
@@ -47,7 +47,7 @@ def add_championship(competition_id, championship_type):
 def delete_championship(championship_id):
     with client.context():
         me = auth.user()
-        if not me or not me.HasAnyRole(Roles.AdminRoles()):
+        if not me or not me.has_any_of_given_roles(Roles.AdminRoles()):
             abort(403)
         championship = Championship.get_by_id(championship_id)
         championship.key.delete()
@@ -59,7 +59,7 @@ def delete_championship(championship_id):
 def edit_championships():
     with client.context():
         me = auth.user()
-        if not me or not me.HasAnyRole(Roles.AdminRoles()):
+        if not me or not me.has_any_of_given_roles(Roles.AdminRoles()):
             abort(403)
 
         all_us_competitions = (

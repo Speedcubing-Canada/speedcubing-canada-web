@@ -17,4 +17,4 @@ class Champion(ndb.Model):
 
     @staticmethod
     def id(championship_id, event_id):
-        return '%s_%s' % (championship_id, event_id)
+        return f"{championship_id}_{event_id}"
