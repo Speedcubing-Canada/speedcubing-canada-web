@@ -18,7 +18,7 @@ BACKEND_ONLY=0
 while getopts "psfbv:" opt; do
   case $opt in
     p)
-      PROJECT="scc-UNKNOWN-YET"
+      PROJECT="scc-production-398617"
       IS_PROD=1
       ;;
     s)
