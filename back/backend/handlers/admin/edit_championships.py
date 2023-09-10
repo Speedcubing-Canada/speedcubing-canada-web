@@ -1,4 +1,4 @@
-from flask import abort, Blueprint, redirect, render_template
+from flask import abort, Blueprint, redirect, render_template, jsonify
 from google.cloud import ndb
 
 from backend.lib import auth, common
@@ -18,7 +18,7 @@ def add_championship(competition_id, championship_type):
     with client.context():
         me = auth.user()
         if not me or not me.has_any_of_given_roles(Roles.AdminRoles()):
-            abort(403)
+            return jsonify({"error": "Forbidden"}), 403
         competition = Competition.get_by_id(competition_id)
         if championship_type == 'national':
             championship_id = Championship.nationals_id(competition.year)
@@ -48,7 +48,7 @@ def delete_championship(championship_id):
     with client.context():
         me = auth.user()
         if not me or not me.has_any_of_given_roles(Roles.AdminRoles()):
-            abort(403)
+            return jsonify({"error": "Forbidden"}), 403
         championship = Championship.get_by_id(championship_id)
         championship.key.delete()
         # TODO: if we changed a championship we should update champions and eligibilities.
@@ -60,9 +60,9 @@ def edit_championships():
     with client.context():
         me = auth.user()
         if not me or not me.has_any_of_given_roles(Roles.AdminRoles()):
-            abort(403)
+            return jsonify({"error": "Forbidden"}), 403
 
-        all_us_competitions = (
+        all_ca_competitions = (
             Competition.query(Competition.country == ndb.Key(Country, 'Canada'))
             .order(Competition.name)
             .fetch())
@@ -85,11 +85,13 @@ def edit_championships():
         provinces = Province.query().fetch()
         regions = Region.query().fetch()
 
-        return render_template('admin/edit_championships.html',
-                               c=common.Common(),
-                               all_us_competitions=all_us_competitions,
-                               national_championships=national_championships,
-                               regional_championships=regional_championships,
-                               province_championships=province_championships,
-                               provinces=provinces,
-                               regions=regions)
+        return jsonify(
+            {
+                "all_ca_competitions": all_ca_competitions,
+                "national_championships": national_championships,
+                "regional_championships": regional_championships,
+                "province_championships": province_championships,
+                "provinces": provinces,
+                "regions": regions
+            }
+        )

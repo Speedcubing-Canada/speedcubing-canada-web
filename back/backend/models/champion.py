@@ -10,7 +10,7 @@ class Champion(ndb.Model):
     event = ndb.KeyProperty(kind=Event)
     champions = ndb.KeyProperty(kind=Result, repeated=True)
 
-    national_champion = ndb.ComputedProperty(lambda e: e.championship.get().national_championship)
+    is_national_champion = ndb.ComputedProperty(lambda e: e.championship.get().national_championship)
     region = ndb.ComputedProperty(lambda e: e.championship.get().region)
     province = ndb.ComputedProperty(lambda e: e.championship.get().province)
     year = ndb.ComputedProperty(lambda e: e.championship.get().year)
