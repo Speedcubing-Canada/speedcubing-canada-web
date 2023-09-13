@@ -87,7 +87,7 @@ def compute_eligible_competitors(championship, competition, results):
 def update_champions():
     champions_to_write = []
     champions_to_delete = []
-    final_round_keys = set(r.key for r in RoundType.query(RoundType.final == True).iter())
+    final_round_keys = set(r.key for r in RoundType.query(RoundType.is_final == True).iter())
     all_event_keys = set(e.key for e in Event.query().iter())
     championships_already_computed = set()
     for champion in Champion.query().iter():
