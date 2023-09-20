@@ -31,8 +31,8 @@ export const RankList: React.FC<{ data: Ranking[] }> = ({ data }) => {
     },
   ];
 
-  const rows = data.map((person: any) => ({
-    id: person.rank,
+  const rows = data.map((person: any, index: number) => ({
+    id: `${index}_${person.rank}`, // We can't use the rank as the id because it's not unique all the time
     rank: person.rank,
     name: person.name,
     time: person.time,
