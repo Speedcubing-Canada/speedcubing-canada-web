@@ -3,7 +3,7 @@ import { initReactI18next } from "react-i18next";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { red } from "@mui/material/colors";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
-import { Base } from "./components/Base";
+import { Base, ROUTES } from "./components/Base";
 import { getLocaleOrFallback, resources, SAVED_LOCALE } from "./locale";
 import { Home } from "./pages/Home";
 import { About } from "./pages/About";
@@ -55,14 +55,7 @@ const App = () => {
               <Route path="account" element={<Account />} />
               <Route path="quebec" element={<Quebec />} />
             </Route>
-            {[
-              "about",
-              "organization",
-              "faq",
-              "rankings",
-              "account",
-              "quebec",
-            ].map((route) => (
+            {ROUTES.map((route) => (
               <Route
                 key={route}
                 path={route}

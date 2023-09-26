@@ -25,8 +25,8 @@ def get_users():
             cursor = ndb.Cursor(urlsafe=cursor)
         if page < 1:
             page = 1
-        if per_page not in (10, 20, 30, 40, 50):
-            per_page = 30
+        if per_page not in (5, 10, 25, 50):
+            per_page = 25
 
         # Sort
         sort_field = request.args.get('sort_field', 'name')

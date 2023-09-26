@@ -4,10 +4,11 @@ import { Link, Theme, useMediaQuery } from "@mui/material";
 import { Ranking } from "./Types";
 import { useTranslation } from "react-i18next";
 import { getLocaleOrFallback, SAVED_LOCALE } from "../locale";
+import useResponsiveQuery from "./useResponsiveQuery";
 
 export const RankList: React.FC<{ data: Ranking[] }> = ({ data }) => {
   const { t } = useTranslation();
-  const isSmall = useMediaQuery<Theme>((theme) => theme.breakpoints.down("sm"));
+  const isSmall = useResponsiveQuery("sm");
 
   const savedLocale = localStorage.getItem(SAVED_LOCALE) as string;
   const locale = getLocaleOrFallback(savedLocale);
@@ -32,7 +33,7 @@ export const RankList: React.FC<{ data: Ranking[] }> = ({ data }) => {
   ];
 
   const rows = data.map((person: any, index: number) => ({
-    id: `${index}_${person.rank}`, // We can't use the rank as the id because it's not unique all the time
+    id: index,
     rank: person.rank,
     name: person.name,
     time: person.time,

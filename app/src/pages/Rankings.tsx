@@ -22,6 +22,7 @@ import { API_BASE_URL, PRODUCTION } from "../components/api";
 import httpClient from "../httpClient";
 import { RankList } from "../components/RankList";
 import { MyCubingIcon } from "../components/MyCubingIcon";
+import useResponsiveQuery from "../components/useResponsiveQuery";
 
 const provinces: Province[] = getProvinces();
 const events: eventID[] = [
@@ -46,17 +47,19 @@ const events: eventID[] = [
 
 export const Rankings = () => {
   const { t } = useTranslation();
-  const isSmall = useMediaQuery<Theme>((theme) => theme.breakpoints.down("sm"));
+  const isSmall = useResponsiveQuery("sm");
 
   const [province, setProvince] = useState<Province | null>(provinces[0]);
   const [eventId, setEventId] = useState<eventID>("333");
-  const [useAverage, setUseAverage] = useState(false);
+  const [usingAverage, setUsingAverage] = useState(false);
   const [loading, setLoading] = useState(true);
+
+  const [ranking, setRanking] = useState<any | null>(null);
 
   const switchHandler = (event: {
     target: { checked: boolean | ((prevState: boolean) => boolean) };
   }) => {
-    setUseAverage(event.target.checked);
+    setUsingAverage(event.target.checked);
   };
 
   const handleProvinceChange = (
@@ -92,18 +95,17 @@ export const Rankings = () => {
     setEventId(newValue as eventID);
   };
 
-  const [ranking, setRanking] = useState<any | null>(null);
-
   useEffect(() => {
     setLoading(true);
-    let use_average_str = useAverage ? "1" : "0";
+    setRanking(null);
+    const use_average_str = usingAverage ? "1" : "0";
 
     (async () => {
       try {
         if (
           eventId === null ||
           province?.id === null ||
-          useAverage === null ||
+          usingAverage === null ||
           province === undefined
         ) {
           return null;
@@ -118,8 +120,7 @@ export const Rankings = () => {
               "&province=" +
               province?.id +
               "&use_average=" +
-              use_average_str +
-              "&test=1",
+              use_average_str,
           ); //allows to not have the WCA DB locally
         } else {
           resp = await httpClient.get(
@@ -143,7 +144,7 @@ export const Rankings = () => {
       }
       setLoading(false);
     })();
-  }, [eventId, province, useAverage]);
+  }, [eventId, province, usingAverage]);
 
   return (
     <Container maxWidth="md">
@@ -209,7 +210,7 @@ export const Rankings = () => {
           <Stack direction="row" spacing={1} alignItems="center">
             <Typography>{t("rankings.single")}</Typography>
             <Switch
-              checked={useAverage}
+              checked={usingAverage}
               onChange={switchHandler}
               color="default"
             />
@@ -234,7 +235,7 @@ export const Rankings = () => {
             {t("rankings.rankfor")}{" "}
             {t("province_with_pronouns." + province?.id)} {t("rankings.in")}{" "}
             {t("events._" + eventId)} {t("rankings.for")}{" "}
-            {useAverage ? t("rankings.average") : t("rankings.single")}
+            {usingAverage ? t("rankings.average") : t("rankings.single")}
           </Typography>
           <RankList data={ranking} />
         </div>

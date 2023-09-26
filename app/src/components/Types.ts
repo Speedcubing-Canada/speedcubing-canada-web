@@ -116,3 +116,5 @@ export type roleID =
   | null;
 
 export type IconSize = "1x" | "2x" | "3x" | "4x" | "5x";
+
+export type Breakpoint = "xs" | "sm" | "md" | "lg" | "xl";

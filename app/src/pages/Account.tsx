@@ -1,13 +1,6 @@
 import { Trans, useTranslation } from "react-i18next";
 import { useEffect, useReducer, useState } from "react";
-import {
-  AlertColor,
-  Box,
-  Container,
-  Theme,
-  Typography,
-  useMediaQuery,
-} from "@mui/material";
+import { AlertColor, Box, Container, Typography } from "@mui/material";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 import Autocomplete from "@mui/material/Autocomplete";
@@ -36,6 +29,8 @@ import {
 import httpClient from "../httpClient";
 import { getProvincesWithNA } from "../components/Provinces";
 import { checkAdmin } from "./AdminPage";
+import useResponsiveQuery from "../components/useResponsiveQuery";
+import { useNavigate } from "react-router-dom";
 
 const initialState: State = {
   alert: false,
@@ -63,8 +58,9 @@ const reducer = (state: State, action: Action) => {
 };
 
 export const Account = () => {
+  const navigate = useNavigate();
   const { t } = useTranslation();
-  const isSmall = useMediaQuery<Theme>((theme) => theme.breakpoints.down("sm"));
+  const isSmall = useResponsiveQuery("sm");
 
   const [province, setProvince] = useState<Province | null>(null);
   const [chipData, setChipData] = useState<readonly ChipData[]>([]);
@@ -152,7 +148,7 @@ export const Account = () => {
   };
 
   const handleAdmin = () => {
-    window.location.assign("/admin");
+    navigate("/admin");
   };
 
   const isAdmin = checkAdmin(user);

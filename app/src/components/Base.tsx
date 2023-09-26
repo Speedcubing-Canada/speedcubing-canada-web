@@ -18,7 +18,7 @@ import {
 import { Link, Outlet, useLocation, useParams } from "react-router-dom";
 import { getLocaleOrFallback, SAVED_LOCALE } from "../locale";
 
-const ROUTES = [
+export const ROUTES = [
   "home",
   "about",
   "organization",

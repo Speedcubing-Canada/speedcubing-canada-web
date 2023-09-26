@@ -25,7 +25,7 @@ import { UserShow } from "../components/UserShow";
 import { i18nProvider } from "../i18nProvider";
 
 export const checkAdmin = (user: User | null) => {
-  return !!(
+  return (
     user?.roles.includes("GLOBAL_ADMIN") ||
     user?.roles.includes("DIRECTOR") ||
     user?.roles.includes("WEBMASTER")

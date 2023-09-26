@@ -109,7 +109,7 @@ export const resources = {
         },
         "why-does-this-person-appear-in-my-province": {
           q: "Why does this person appear in my province? They don’t live here!",
-          a: "Please <report>contact us</report> and we'll be happy to investigate. ",
+          a: "Please <report>contact us</report> and we'll be happy to investigate.",
         },
       },
       provinces: {
@@ -158,7 +158,7 @@ export const resources = {
         title: "Account",
         hi: "Hi, ",
         policy:
-          'Province determine your eligibility for Regional Championships. You may only represent a province where you live at least 50% of the year. We reserve the right to ask for proof of residency. If you are not a Canadian resident, or you would prefer not to list your home province, please select "N/A".',
+          'Province determines your eligibility for Regional Championships. You may only represent a province where you live at least 50% of the year. We reserve the right to ask for proof of residency. If you are not a Canadian resident, or you would prefer not to list your home province, please select "N/A".',
         save: "Save",
         signin: "Sign in with the WCA",
         signout: "Sign Out",
@@ -335,7 +335,7 @@ export const resources = {
         },
         "why-does-this-person-appear-in-my-province": {
           q: "Pourquoi cette personne apparaît-elle dans ma province ? Elle ne vit pas ici !",
-          a: "Veuillez <report>nous contacter</report> et nous nous ferons un plaisir d'enquêter. ",
+          a: "Veuillez <report>nous contacter</report> et nous nous ferons un plaisir d'enquêter.",
         },
       },
       provinces: {
