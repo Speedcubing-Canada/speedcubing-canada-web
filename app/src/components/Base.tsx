@@ -13,6 +13,8 @@ import {
   ListItem,
   IconButton,
   Drawer,
+  useMediaQuery,
+  Theme,
 } from "@mui/material";
 import { Home, Info, CorporateFare, QuestionAnswer, Menu } from "@mui/icons-material";
 import { Link, Outlet, useLocation, useParams } from "react-router-dom";
@@ -34,8 +36,6 @@ const ROUTE_NAME_TO_ROUTE = {
   faq: "faq",
 } as const;
 
-const BREAKPOINT = 700;
-
 export const Base = () => {
   const { t } = useTranslation();
   const { pathname } = useLocation();
@@ -43,8 +43,8 @@ export const Base = () => {
   const params = useParams();
   const locale = getLocaleOrFallback(params.locale as string);
 
-  const [width, setWidth] = React.useState(window.innerWidth);
   const [drawerState, setDrawerState] = useState(false);
+  const isSmall = useMediaQuery<Theme>((theme) => theme.breakpoints.down("sm"));
 
   useEffect(() => {
     localStorage.setItem(SAVED_LOCALE, locale);
@@ -55,42 +55,9 @@ export const Base = () => {
     window.scrollTo(0, 0);
   }, [pathWithoutLocale]);
 
-  useEffect(() => {
-    window.addEventListener("resize", () => setWidth(window.innerWidth));
-  } , []);
-
   return (
-    ( width > BREAKPOINT
+    ( isSmall
       ?
-      <Box minHeight="100vh" flex={1} display="flex" flexDirection="column">
-        <Box display="flex" flex={1}>
-          <Outlet />
-        </Box>
-        <Paper
-          sx={{ position: "sticky", bottom: 0, left: 0, right: 0, zIndex: 1100 }}
-          elevation={2}
-        >
-          <BottomNavigation showLabels value={pathWithoutLocale}>
-            {ROUTES.map((r) => {
-              const Icon = ICONS[r];
-              const route = ROUTE_NAME_TO_ROUTE[r];
-              const routeWithLocale = `${locale}/${route}`;
-
-              return (
-                <BottomNavigationAction
-                  key={r}
-                  label={t(`routes.${r}`)}
-                  icon={<Icon />}
-                  to={routeWithLocale}
-                  value={route}
-                  component={Link}
-                />
-              );
-            })}
-          </BottomNavigation>
-        </Paper>
-      </Box>
-      : 
       <Box minHeight="90vh" flex={1} display="flex" flexDirection="column"> 
         <Paper
           sx={{ position: "sticky", top: 0, zIndex: 1100 }}
@@ -128,6 +95,35 @@ export const Base = () => {
           <Outlet />
         </Box> 
       </Box>
+      :
+      <Box minHeight="100vh" flex={1} display="flex" flexDirection="column">
+        <Box display="flex" flex={1}>
+          <Outlet />
+        </Box>
+        <Paper
+          sx={{ position: "sticky", bottom: 0, left: 0, right: 0, zIndex: 1100 }}
+          elevation={2}
+        >
+          <BottomNavigation showLabels value={pathWithoutLocale}>
+            {ROUTES.map((r) => {
+              const Icon = ICONS[r];
+              const route = ROUTE_NAME_TO_ROUTE[r];
+              const routeWithLocale = `${locale}/${route}`;
+
+              return (
+                <BottomNavigationAction
+                  key={r}
+                  label={t(`routes.${r}`)}
+                  icon={<Icon />}
+                  to={routeWithLocale}
+                  value={route}
+                  component={Link}
+                />
+              );
+            })}
+          </BottomNavigation>
+        </Paper>
+      </Box> 
     )
   );
 };
