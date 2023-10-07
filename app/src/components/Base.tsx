@@ -74,13 +74,13 @@ export const Base = () => {
         onClose={() => setIsDrawerOpen(false)}
       >
         <List>
-          {ROUTES.map((r) => {
-            const Icon = ICONS[r];
-            const route = ROUTE_NAME_TO_ROUTE[r];
+          {ROUTES.map((routeName) => {
+            const Icon = ICONS[routeName];
+            const route = ROUTE_NAME_TO_ROUTE[routeName];
             const routeWithLocale = `${locale}/${route}`;
 
             return (
-              <ListItem key={r} disablePadding>
+              <ListItem key={routeName} disablePadding>
                 <ListItemButton
                   component={Link}
                   to={routeWithLocale}
@@ -89,7 +89,7 @@ export const Base = () => {
                   <ListItemIcon>
                     <Icon />
                   </ListItemIcon>
-                  <ListItemText primary={t(`routes.${r}`)} />
+                  <ListItemText primary={t(`routes.${routeName}`)} />
                 </ListItemButton>
               </ListItem>
             );
@@ -110,15 +110,15 @@ export const Base = () => {
         elevation={2}
       >
         <BottomNavigation showLabels value={pathWithoutLocale}>
-          {ROUTES.map((r) => {
-            const Icon = ICONS[r];
-            const route = ROUTE_NAME_TO_ROUTE[r];
+          {ROUTES.map((routeName) => {
+            const Icon = ICONS[routeName];
+            const route = ROUTE_NAME_TO_ROUTE[routeName];
             const routeWithLocale = `${locale}/${route}`;
 
             return (
               <BottomNavigationAction
-                key={r}
-                label={t(`routes.${r}`)}
+                key={routeName}
+                label={t(`routes.${routeName}`)}
                 icon={<Icon />}
                 to={routeWithLocale}
                 value={route}
