@@ -49,7 +49,7 @@ export const Base = () => {
   const params = useParams();
   const locale = getLocaleOrFallback(params.locale as string);
 
-  const [drawerState, setDrawerState] = useState(false);
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const isSmall = useMediaQuery<Theme>((theme) => theme.breakpoints.down("sm"));
 
   useEffect(() => {
@@ -64,14 +64,14 @@ export const Base = () => {
   return isSmall ? (
     <Box minHeight="90vh" flex={1} display="flex" flexDirection="column">
       <Paper sx={{ position: "sticky", top: 0, zIndex: 1100 }} elevation={2}>
-        <IconButton onClick={() => setDrawerState(true)}>
+        <IconButton onClick={() => setIsDrawerOpen(true)}>
           <Menu sx={{ fontSize: 40, color: "black" }} />
         </IconButton>
       </Paper>
       <Drawer
-        open={drawerState}
+        open={isDrawerOpen}
         anchor="left"
-        onClose={() => setDrawerState(false)}
+        onClose={() => setIsDrawerOpen(false)}
       >
         <List>
           {ROUTES.map((r) => {
@@ -84,7 +84,7 @@ export const Base = () => {
                 <ListItemButton
                   component={Link}
                   to={routeWithLocale}
-                  onClick={() => setDrawerState(false)}
+                  onClick={() => setIsDrawerOpen(false)}
                 >
                   <ListItemIcon>
                     <Icon />
