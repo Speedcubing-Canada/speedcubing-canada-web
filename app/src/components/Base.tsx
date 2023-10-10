@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import i18n from "i18next";
 import { useTranslation } from "react-i18next";
 import {
@@ -10,7 +10,6 @@ import {
   ListItemIcon,
   ListItemButton,
   ListItemText,
-  ListItem,
   IconButton,
   Drawer,
   useMediaQuery,
@@ -26,7 +25,7 @@ import {
 import { Link, Outlet, useLocation, useParams } from "react-router-dom";
 import { getLocaleOrFallback, SAVED_LOCALE } from "../locale";
 
-const ROUTES = ["home", "about", "organization", "faq"] as const;
+const ROUTE_NAMES = ["home", "about", "organization", "faq"] as const;
 
 const ICONS = {
   home: Home,
@@ -35,12 +34,24 @@ const ICONS = {
   faq: QuestionAnswer,
 } as const;
 
-const ROUTE_NAME_TO_ROUTE = {
+const ROUTE_NAME_TO_PATH = {
   home: "",
   about: "about",
   organization: "organization",
   faq: "faq",
 } as const;
+
+type RouteName = (typeof ROUTE_NAMES)[number];
+type NavigationIcon = (typeof ICONS)[keyof typeof ICONS];
+type Path = (typeof ROUTE_NAME_TO_PATH)[keyof typeof ROUTE_NAME_TO_PATH];
+type PathWithLocale = `${ReturnType<typeof getLocaleOrFallback>}/${Path}`;
+
+type NavigationBarItem = {
+  routeName: RouteName;
+  Icon: NavigationIcon;
+  path: Path;
+  pathWithLocale: PathWithLocale;
+};
 
 export const Base = () => {
   const { t } = useTranslation();
@@ -61,6 +72,19 @@ export const Base = () => {
     window.scrollTo(0, 0);
   }, [pathWithoutLocale]);
 
+  const navigationBarItems: NavigationBarItem[] = ROUTE_NAMES.map(
+    (routeName) => {
+      const path = ROUTE_NAME_TO_PATH[routeName];
+
+      return {
+        routeName,
+        Icon: ICONS[routeName],
+        path,
+        pathWithLocale: `${locale}/${path}`,
+      };
+    },
+  );
+
   return isSmall ? (
     <Box minHeight="90vh" flex={1} display="flex" flexDirection="column">
       <Paper sx={{ position: "sticky", top: 0, zIndex: 1100 }} elevation={2}>
@@ -74,26 +98,26 @@ export const Base = () => {
         onClose={() => setIsDrawerOpen(false)}
       >
         <List>
-          {ROUTES.map((routeName) => {
-            const Icon = ICONS[routeName];
-            const route = ROUTE_NAME_TO_ROUTE[routeName];
-            const routeWithLocale = `${locale}/${route}`;
-
-            return (
-              <ListItem key={routeName} disablePadding>
-                <ListItemButton
-                  component={Link}
-                  to={routeWithLocale}
-                  onClick={() => setIsDrawerOpen(false)}
+          {navigationBarItems.map(
+            ({ routeName, Icon, path, pathWithLocale }) => (
+              <ListItemButton
+                key={routeName}
+                component={Link}
+                to={pathWithLocale}
+                onClick={() => setIsDrawerOpen(false)}
+              >
+                <ListItemIcon
+                  sx={{ color: pathWithoutLocale === path ? "red" : undefined }}
                 >
-                  <ListItemIcon>
-                    <Icon />
-                  </ListItemIcon>
-                  <ListItemText primary={t(`routes.${routeName}`)} />
-                </ListItemButton>
-              </ListItem>
-            );
-          })}
+                  <Icon />
+                </ListItemIcon>
+                <ListItemText
+                  primary={t(`routes.${routeName}`)}
+                  sx={{ color: pathWithoutLocale === path ? "red" : undefined }}
+                />
+              </ListItemButton>
+            ),
+          )}
         </List>
       </Drawer>
       <Box display="flex" flex={1}>
@@ -110,22 +134,18 @@ export const Base = () => {
         elevation={2}
       >
         <BottomNavigation showLabels value={pathWithoutLocale}>
-          {ROUTES.map((routeName) => {
-            const Icon = ICONS[routeName];
-            const route = ROUTE_NAME_TO_ROUTE[routeName];
-            const routeWithLocale = `${locale}/${route}`;
-
-            return (
+          {navigationBarItems.map(
+            ({ routeName, Icon, path, pathWithLocale }) => (
               <BottomNavigationAction
                 key={routeName}
                 label={t(`routes.${routeName}`)}
-                icon={<Icon />}
-                to={routeWithLocale}
-                value={route}
                 component={Link}
+                to={pathWithLocale}
+                icon={<Icon />}
+                value={path}
               />
-            );
-          })}
+            ),
+          )}
         </BottomNavigation>
       </Paper>
     </Box>
