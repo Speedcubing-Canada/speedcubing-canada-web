@@ -14,6 +14,7 @@ import {
   Drawer,
   useMediaQuery,
   Theme,
+  useTheme,
 } from "@mui/material";
 import {
   Home,
@@ -59,9 +60,10 @@ export const Base = () => {
   const pathWithoutLocale = pathname.split("/").at(-1);
   const params = useParams();
   const locale = getLocaleOrFallback(params.locale as string);
+  const theme = useTheme();
+  const isSmall = useMediaQuery<Theme>((theme) => theme.breakpoints.down("sm"));
 
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-  const isSmall = useMediaQuery<Theme>((theme) => theme.breakpoints.down("sm"));
 
   useEffect(() => {
     localStorage.setItem(SAVED_LOCALE, locale);
@@ -85,6 +87,8 @@ export const Base = () => {
     },
   );
 
+  console.log(theme);
+
   return isSmall ? (
     <Box minHeight="90vh" flex={1} display="flex" flexDirection="column">
       <Paper sx={{ position: "sticky", top: 0, zIndex: 1100 }} elevation={2}>
@@ -107,13 +111,23 @@ export const Base = () => {
                 onClick={() => setIsDrawerOpen(false)}
               >
                 <ListItemIcon
-                  sx={{ color: pathWithoutLocale === path ? "red" : undefined }}
+                  sx={{
+                    color:
+                      pathWithoutLocale === path
+                        ? theme.palette.primary.main
+                        : undefined,
+                  }}
                 >
                   <Icon />
                 </ListItemIcon>
                 <ListItemText
                   primary={t(`routes.${routeName}`)}
-                  sx={{ color: pathWithoutLocale === path ? "red" : undefined }}
+                  sx={{
+                    color:
+                      pathWithoutLocale === path
+                        ? theme.palette.primary.main
+                        : undefined,
+                  }}
                 />
               </ListItemButton>
             ),
