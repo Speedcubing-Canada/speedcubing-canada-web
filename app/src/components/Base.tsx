@@ -87,8 +87,6 @@ export const Base = () => {
     },
   );
 
-  console.log(theme);
-
   return isSmall ? (
     <Box minHeight="90vh" flex={1} display="flex" flexDirection="column">
       <Paper sx={{ position: "sticky", top: 0, zIndex: 1100 }} elevation={2}>
