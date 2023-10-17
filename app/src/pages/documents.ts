@@ -16,6 +16,10 @@ export const DOCUMENTS = {
   ],
   minutes: [
     {
+      name: "Directors' Meeting October 9, 2023",
+      id: "directors-meeting-oct-9-2023",
+    },
+    {
       name: "Directors' Meeting July 20, 2023",
       id: "directors-meeting-jul-20-2023",
     },
@@ -78,6 +82,10 @@ export const DOCUMENTS = {
       id: "reimbursement-policy-v1.2",
     },
     {
+      name: "Speedcubing Canada Reimbursement Policy (v1.3)",
+      id: "reimbursement-policy-v1.3",
+    },
+    {
       name: "Speedcubing Canada Supported Events Policy (v1.0)",
       id: "supported-events-policy-v1.0",
     },
@@ -86,8 +94,16 @@ export const DOCUMENTS = {
       id: "supported-events-policy-v1.1",
     },
     {
+      name: "Speedcubing Canada Supported Events Policy (v1.2)",
+      id: "supported-events-policy-v1.2",
+    },
+    {
       name: "Speedcubing Canada Major Championship Reimbursement Transfer Policy (v1.0)",
-      id: "major-championship-reimbursement-transfer-policy",
+      id: "major-championship-reimbursement-transfer-policy-v1.0",
+    },
+    {
+      name: "Speedcubing Canada Major Championship Reimbursement Transfer Policy (v1.1)",
+      id: "major-championship-reimbursement-transfer-policy-v1.1",
     },
   ],
   corporate: [
