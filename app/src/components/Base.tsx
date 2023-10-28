@@ -101,34 +101,29 @@ export const Base = () => {
       >
         <List>
           {navigationBarItems.map(
-            ({ routeName, Icon, path, pathWithLocale }) => (
-              <ListItemButton
-                key={routeName}
-                component={Link}
-                to={pathWithLocale}
-                onClick={() => setIsDrawerOpen(false)}
-              >
-                <ListItemIcon
-                  sx={{
-                    color:
-                      pathWithoutLocale === path
-                        ? theme.palette.primary.main
-                        : undefined,
-                  }}
+            ({ routeName, Icon, path, pathWithLocale }) => {
+              const color =
+                pathWithoutLocale === path
+                  ? theme.palette.primary.main
+                  : undefined;
+
+              return (
+                <ListItemButton
+                  key={routeName}
+                  component={Link}
+                  to={pathWithLocale}
+                  onClick={() => setIsDrawerOpen(false)}
                 >
-                  <Icon />
-                </ListItemIcon>
-                <ListItemText
-                  primary={t(`routes.${routeName}`)}
-                  sx={{
-                    color:
-                      pathWithoutLocale === path
-                        ? theme.palette.primary.main
-                        : undefined,
-                  }}
-                />
-              </ListItemButton>
-            ),
+                  <ListItemIcon sx={{ color }}>
+                    <Icon />
+                  </ListItemIcon>
+                  <ListItemText
+                    primary={t(`routes.${routeName}`)}
+                    sx={{ color }}
+                  />
+                </ListItemButton>
+              );
+            },
           )}
         </List>
       </Drawer>
