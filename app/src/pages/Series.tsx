@@ -16,13 +16,18 @@ export const Series = () => {
   const { seriesid } = useParams();
 
   const [competitionData, setCompetitionData] = useState<any>({});
+  const [hasError, setHasError] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const getData = async (seriesId: string) => {
-      const seriesCompetitions = await (
-        await fetch(LINKS.WCA.API.COMPETITION_SERIES + seriesId)
-      ).json();
+      const response = await fetch(LINKS.WCA.API.COMPETITION_SERIES + seriesId);
+      const seriesCompetitions = await response.json();
+
+      if (!response.ok) {
+        setHasError(true);
+        return;
+      }
 
       let allData = await Promise.all(
         seriesCompetitions.competitionIds.map(async (key: string) => {
@@ -41,6 +46,23 @@ export const Series = () => {
     };
     getData(seriesid!);
   }, [seriesid]);
+
+  if (hasError) {
+    return (
+      <Container maxWidth="xl" style={{ textAlign: "center" }}>
+        <Box marginTop="4rem">
+          <Typography
+            component="h1"
+            variant="h5"
+            fontWeight="bold"
+            gutterBottom
+          >
+            {t("competition.error")}
+          </Typography>
+        </Box>
+      </Container>
+    );
+  }
 
   if (isLoading) {
     return (

@@ -112,6 +112,7 @@ export const resources = {
         venue: "<strong>Venue:</strong> {{venue}}\n",
         address: "<strong>Address:</strong> {{address}}\n",
         register: "Register",
+        error: "The page you were looking for does not exist.",
       },
       provinces: {
         ab: "Alberta",
@@ -237,6 +238,7 @@ export const resources = {
         venue: "<strong>Lieu  :</strong> {{venue}}\n",
         address: "<strong>Adresse :</strong> {{address}}\n",
         register: "S'inscrire",
+        error: "La page que vous recherchez n'existe pas.",
       },
       provinces: {
         ab: "Alberta",
