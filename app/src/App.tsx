@@ -10,7 +10,6 @@ import { About } from "./pages/About";
 import { Organization } from "./pages/Organization";
 import { FAQ } from "./pages/FAQ";
 import { Series } from "./pages/Series";
-import { Competitions } from "./pages/Competitions";
 import { Competition } from "./pages/Competition";
 import { Quebec } from "./pages/Quebec";
 
@@ -53,7 +52,6 @@ const App = () => {
                 element={<Series />}
               />
               <Route path="competitions/:compid" element={<Competition />} />
-              <Route path="competitions" element={<Competitions />} />
               <Route path="quebec" element={<Quebec />} />
             </Route>
             {["about", "organization", "faq", "quebec"].map((route) => (

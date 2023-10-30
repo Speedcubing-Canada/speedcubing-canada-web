@@ -22,25 +22,17 @@ import {
   CorporateFare,
   QuestionAnswer,
   Menu,
-  Stadium,
 } from "@mui/icons-material";
 import { Link, Outlet, useLocation, useParams } from "react-router-dom";
 import { getLocaleOrFallback, SAVED_LOCALE } from "../locale";
 
-const ROUTE_NAMES = [
-  "home",
-  "about",
-  "organization",
-  "faq",
-  "competitions",
-] as const;
+const ROUTE_NAMES = ["home", "about", "organization", "faq"] as const;
 
 const ICONS = {
   home: Home,
   about: Info,
   organization: CorporateFare,
   faq: QuestionAnswer,
-  competitions: Stadium,
 } as const;
 
 const ROUTE_NAME_TO_PATH = {
@@ -48,7 +40,6 @@ const ROUTE_NAME_TO_PATH = {
   about: "about",
   organization: "organization",
   faq: "faq",
-  competitions: "competitions",
 } as const;
 
 type RouteName = (typeof ROUTE_NAMES)[number];

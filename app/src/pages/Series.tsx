@@ -55,7 +55,7 @@ export const Series = () => {
 
   useEffect(() => {
     const getData = async () => {
-      const dataPromises = compIds.map((key: string) =>
+      const dataPromises = await compIds.map((key: string) =>
         getCompetitionData(key),
       );
       const venueDataPromises = compIds.map((key: string) => getVenueData(key));
@@ -94,8 +94,6 @@ export const Series = () => {
     );
   }
 
-  console.log(data);
-
   const currentDate = new Date();
   //Currently the dates of the first competition in the list are used for displaying registration open and close times
   const registrationOpen = new Date(data[compIds[0]].registration_open);
@@ -109,7 +107,6 @@ export const Series = () => {
         </Typography>
         <Typography gutterBottom sx={{ maxWidth: "md", margin: "0 auto" }}>
           {t("competition.series")}
-          {/* {t("competition.fee", { fee: CompetitionData.RegistrationFee })} */}
         </Typography>
         <Typography gutterBottom style={{ textAlign: "center" }}>
           <Trans>
