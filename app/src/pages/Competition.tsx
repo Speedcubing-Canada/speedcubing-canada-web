@@ -18,43 +18,29 @@ export const Competition = () => {
   const locale = getLocaleOrFallback(localeParam as string);
   const navigate = useNavigate();
 
-  const [competitionData, setCompetitionData] = useState<any>(null);
-  const [venueData, setVenueData] = useState<any>(null);
+  const [competitionData, setCompetitionData] = useState<any>({});
   const [isLoading, setIsLoading] = useState(true);
-
-  const getCompetitionData = async (compId: string) => {
-    const response = await fetch(LINKS.WCA.API.COMPETITION_INFO + compId);
-    const data = await response.json();
-    return data;
-  };
-
-  const getVenueData = async (compId: string) => {
-    const timestamp = new Date().getTime();
-    const response = await fetch(
-      LINKS.WCA.API.COMPETITION_INFO +
-        compId +
-        `/wcif/public?cacheBust=${timestamp}`,
-    );
-    const data = await response.json();
-    return data;
-  };
 
   useEffect(() => {
     const getData = async () => {
-      const [compData, venueData] = await Promise.all([
-        getCompetitionData(compid!),
-        getVenueData(compid!),
+      const [compData, wcifData] = await Promise.all([
+        fetch(LINKS.WCA.API.COMPETITION_INFO + compid).then((response) =>
+          response.json(),
+        ),
+        fetch(LINKS.WCA.API.COMPETITION_INFO + compid + "/wcif/public").then(
+          (response) => response.json(),
+        ),
       ]);
-      setCompetitionData(compData);
-      setVenueData(venueData);
-      setIsLoading(false);
 
-      if (venueData.series) {
-        navigate(`/${locale}/competitions/series/${venueData.series.id}`);
-      }
+      setCompetitionData({ ...compData, ...wcifData });
+      setIsLoading(false);
     };
     getData();
-  }, [compid, locale, navigate]);
+  }, [compid]);
+
+  if (competitionData.series) {
+    navigate(`/${locale}/competitions/series/${competitionData.series.id}`);
+  }
 
   if (isLoading) {
     return (
@@ -113,15 +99,15 @@ export const Competition = () => {
               })}
               {t("competition.city", { city: competitionData.city })}
               {t("competition.venue", {
-                venue: venueData.schedule.venues[0].name,
+                venue: competitionData.schedule.venues[0].name,
               })}
               {t("competition.address", {
                 address: competitionData.venue_address,
               })}
               {currentDate > registrationOpen
                 ? `${t("competition.registration.count", {
-                    num: competitorsApproved(venueData).toString(),
-                    total: venueData.competitorLimit,
+                    num: competitorsApproved(competitionData).toString(),
+                    total: competitionData.competitorLimit,
                   })}`
                 : "\n"}
             </Trans>

@@ -97,12 +97,9 @@ export const resources = {
         },
       },
       competition: {
-        upcoming: "Upcoming Competitions",
-        upcomingbody: "Here are some upcoming competitions in Canada!\n\n",
-        comp: "Check out this competition organized by Speedcubing Canada!",
+        header: "Check out this competition organized by Speedcubing Canada!",
         series:
           "Check out this upcoming series! As a reminder, competitors may only sign up for ONE of the competitions in a series. Read the competition pages carefully and ensure you register for the right competiton.",
-        fee: "\n\nRegistration fee: ${{fee}} CAD",
         registration: {
           before: "\n<strong>Registration opens on: </strong>{{date}}",
           after: "\n<strong>Registration opened on: </strong>{{date}}",
@@ -116,9 +113,6 @@ export const resources = {
         venue: "<strong>Venue:</strong> {{venue}}\n",
         address: "<strong>Address:</strong> {{address}}\n",
         register: "Register",
-        learnmore: "Learn more",
-        showonly: "Only show competitions in: ",
-        region: "Region",
       },
       regions: {
         at: "Atlantic",
@@ -235,8 +229,6 @@ export const resources = {
         },
       },
       competition: {
-        upcoming: "Concours à venir",
-        upcomingbody: "Voici quelques concours à venir au Canada !\n\n",
         comp: "Découvrez cette compétition organisée par Speedcubing Canada !",
         series:
           "Jetez un coup d'œil à cette série à venir ! Pour rappel, les concurrents ne peuvent s'inscrire qu'à UN seul des concours d'une série. Lisez attentivement les pages consacrées aux concours et assurez-vous de vous inscrire au bon concours.",
@@ -256,9 +248,6 @@ export const resources = {
         venue: "<strong>Lieu  :</strong> {{venue}}\n",
         address: "<strong>Adresse :</strong> {{address}}\n",
         register: "S'inscrire",
-        learnmore: "En savoir plus",
-        showonly: "Les concours ne se déroulent qu'en :",
-        region: "Région",
       },
       regions: {
         at: "Atlantique",

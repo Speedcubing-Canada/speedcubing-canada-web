@@ -15,76 +15,32 @@ export const Series = () => {
   const { t } = useTranslation();
   const { seriesid } = useParams();
 
-  const [data, setData] = useState<any>({});
-  const [seriesData, setSeriesData] = useState<any>({});
+  const [competitionData, setCompetitionData] = useState<any>({});
   const [isLoading, setIsLoading] = useState(true);
 
-  const getSeriesData = async (seriesId: string) => {
-    const response = await fetch(LINKS.WCA.API.COMPETITION_SERIES + seriesId);
-    const seriesData = await response.json();
-    return seriesData;
-  };
-
   useEffect(() => {
-    const getCompSeriesData = async () => {
-      const competitionList = await getSeriesData(seriesid!);
-      setSeriesData(competitionList);
-    };
-    getCompSeriesData();
-  }, [seriesid]);
+    const getData = async (seriesId: string) => {
+      const seriesCompetitions = await (
+        await fetch(LINKS.WCA.API.COMPETITION_SERIES + seriesId)
+      ).json();
 
-  const compIds = seriesData.competitionIds;
-  const seriesName = seriesData.name;
-
-  const getCompetitionData = async (compId: string) => {
-    const response = await fetch(LINKS.WCA.API.COMPETITION_INFO + compId);
-    const data = await response.json();
-    return data;
-  };
-
-  const getVenueData = async (compId: string) => {
-    const timestamp = new Date().getTime();
-    const response = await fetch(
-      LINKS.WCA.API.COMPETITION_INFO +
-        compId +
-        `/wcif/public?cacheBust=${timestamp}`,
-    );
-    const data = await response.json();
-    return data;
-  };
-
-  useEffect(() => {
-    const getData = async () => {
-      const dataPromises = await compIds.map((key: string) =>
-        getCompetitionData(key),
-      );
-      const venueDataPromises = compIds.map((key: string) => getVenueData(key));
-
-      const [allData, allVenueData] = await Promise.all([
-        Promise.all(dataPromises),
-        Promise.all(venueDataPromises),
-      ]);
-
-      const infoDataObject = Object.fromEntries(
-        compIds.map((key: string, index: number) => [
-          key,
-          { ...allData[index], ...allVenueData[index] },
-        ]),
+      let allData = await Promise.all(
+        seriesCompetitions.competitionIds.map(async (key: string) => {
+          const competitionData = await (
+            await fetch(LINKS.WCA.API.COMPETITION_INFO + key)
+          ).json();
+          const wcifData = await (
+            await fetch(LINKS.WCA.API.COMPETITION_INFO + key + "/wcif/public")
+          ).json();
+          return { ...competitionData, ...wcifData };
+        }),
       );
 
-      setData(infoDataObject);
+      setCompetitionData(allData);
       setIsLoading(false);
     };
-    getData();
-  }, [compIds]);
-
-  const competitorsApproved = (competition: any) => {
-    return competition.persons.filter((competitor: any) => {
-      return (
-        competitor.registration && competitor.registration.status === "accepted"
-      );
-    }).length;
-  };
+    getData(seriesid!);
+  }, [seriesid]);
 
   if (isLoading) {
     return (
@@ -94,16 +50,24 @@ export const Series = () => {
     );
   }
 
+  const competitorsApproved = (competition: any) => {
+    return competition.persons.filter((competitor: any) => {
+      return (
+        competitor.registration && competitor.registration.status === "accepted"
+      );
+    }).length;
+  };
+
   const currentDate = new Date();
   //Currently the dates of the first competition in the list are used for displaying registration open and close times
-  const registrationOpen = new Date(data[compIds[0]].registration_open);
-  const registrationClose = new Date(data[compIds[0]].registration_close);
+  const registrationOpen = new Date(competitionData[0].registration_open);
+  const registrationClose = new Date(competitionData[0].registration_close);
 
   return (
     <Container maxWidth="xl" style={{ textAlign: "center" }}>
       <Box marginTop="4rem">
         <Typography component="h1" variant="h3" fontWeight="bold" gutterBottom>
-          {t(seriesName)}
+          {competitionData[0].series.name}
         </Typography>
         <Typography gutterBottom sx={{ maxWidth: "md", margin: "0 auto" }}>
           {t("competition.series")}
@@ -130,16 +94,16 @@ export const Series = () => {
         flexWrap="wrap"
         marginTop="2rem"
       >
-        {Object.keys(data).map((key) => (
-          <Box margin="1rem" padding="1rem" key={key}>
+        {competitionData.map((competition: any, index: number) => (
+          <Box margin="1rem" padding="1rem" key={index}>
             <Typography variant="h5" fontWeight="bold">
-              {data[key].name}
+              {competition.name}
             </Typography>
             <Typography gutterBottom>
               <Trans>
                 {t("competition.date", {
                   date: new Date(
-                    data[key].start_date + "T12:00:00.000Z",
+                    competition.start_date + "T12:00:00.000Z",
                   ).toLocaleString("en-US", {
                     weekday: "long",
                     month: "long",
@@ -147,21 +111,23 @@ export const Series = () => {
                     year: "numeric",
                   }),
                 })}
-                {t("competition.city", { city: data[key].city })}
+                {t("competition.city", { city: competition.city })}
                 {t("competition.venue", {
-                  venue: data[key].schedule.venues[0].name,
+                  venue: competition.schedule.venues[0].name, //If multiple venues are listed, use the first one
                 })}
-                {t("competition.address", { address: data[key].venue_address })}
+                {t("competition.address", {
+                  address: competition.venue_address,
+                })}
                 {currentDate > registrationOpen
                   ? `${t("competition.registration.count", {
-                      num: competitorsApproved(data[key]).toString(),
-                      total: data[key].competitorLimit,
+                      num: competitorsApproved(competition).toString(),
+                      total: competition.competitorLimit,
                     })}`
                   : "\n"}
               </Trans>
             </Typography>
             <Button
-              to={data[key].url}
+              to={competition.url}
               component={Link}
               variant="contained"
               size="large"
