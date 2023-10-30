@@ -27,7 +27,6 @@ export const resources = {
         about: "About",
         organization: "Organization",
         faq: "FAQ",
-        competitions: "Competitions",
       },
       about: {
         title: "About",
@@ -114,15 +113,6 @@ export const resources = {
         address: "<strong>Address:</strong> {{address}}\n",
         register: "Register",
       },
-      regions: {
-        at: "Atlantic",
-        bc: "British Columbia",
-        qc: "Quebec",
-        on: "Ontario",
-        pr: "Prairies",
-        te: "Territories",
-        na: "N/A",
-      },
       provinces: {
         ab: "Alberta",
         bc: "British Columbia",
@@ -159,7 +149,6 @@ export const resources = {
         about: "À propos",
         organization: "Organisation",
         faq: "FAQ",
-        competitions: "Compétitions",
       },
       about: {
         title: "À propos",
@@ -248,15 +237,6 @@ export const resources = {
         venue: "<strong>Lieu  :</strong> {{venue}}\n",
         address: "<strong>Adresse :</strong> {{address}}\n",
         register: "S'inscrire",
-      },
-      regions: {
-        at: "Atlantique",
-        bc: "Colombie-Britannique",
-        qc: "Québec",
-        on: "Ontario",
-        pr: "Prairies",
-        te: "Territoires",
-        na: "N/A",
       },
       provinces: {
         ab: "Alberta",
