@@ -1,15 +1,10 @@
-import {
-  Button,
-  Box,
-  Container,
-  Typography,
-  LinearProgress,
-} from "@mui/material";
-import { useTranslation, Trans } from "react-i18next";
+import { Box, Container, Typography, LinearProgress } from "@mui/material";
+import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { LINKS } from "./links";
 import { CompetitionCard } from "../components/CompetitionCard";
+import { CompetitionHeader } from "../components/CompetitionHeader";
 
 export const Series = () => {
   const { t } = useTranslation();
@@ -72,36 +67,18 @@ export const Series = () => {
     );
   }
 
-  const currentDate = new Date();
   //Currently the dates of the first competition in the list are used for displaying registration open and close times
   const registrationOpen = new Date(competitionData[0].registration_open);
   const registrationClose = new Date(competitionData[0].registration_close);
 
   return (
     <Container maxWidth="xl" style={{ textAlign: "center" }}>
-      <Box marginTop="4rem">
-        <Typography component="h1" variant="h3" fontWeight="bold" gutterBottom>
-          {competitionData[0].series.name}
-        </Typography>
-        <Typography gutterBottom sx={{ maxWidth: "md", margin: "0 auto" }}>
-          {t("competition.series")}
-        </Typography>
-        <Typography gutterBottom style={{ textAlign: "center" }}>
-          <Trans>
-            {currentDate < registrationOpen
-              ? t("competition.registration.before", { date: registrationOpen })
-              : t("competition.registration.after", { date: registrationOpen })}
-            {currentDate < registrationClose
-              ? t("competition.registration.closes", {
-                  date: registrationClose,
-                })
-              : t("competition.registration.closed", {
-                  date: registrationClose,
-                })}
-          </Trans>
-        </Typography>
-      </Box>
-
+      <CompetitionHeader
+        name={competitionData[0].series.name}
+        registrationOpen={registrationOpen}
+        registrationClose={registrationClose}
+        series={true}
+      />
       <Box
         display="flex"
         justifyContent="center"

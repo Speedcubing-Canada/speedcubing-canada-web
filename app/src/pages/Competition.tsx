@@ -1,16 +1,11 @@
-import {
-  Button,
-  Box,
-  Container,
-  Typography,
-  LinearProgress,
-} from "@mui/material";
+import { Box, Container, Typography, LinearProgress } from "@mui/material";
 import { Trans, useTranslation } from "react-i18next";
 import { LINKS } from "./links";
 import { useParams, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { getLocaleOrFallback } from "../locale";
 import { CompetitionCard } from "../components/CompetitionCard";
+import { CompetitionHeader } from "../components/CompetitionHeader";
 
 export const Competition = () => {
   const { t } = useTranslation();
@@ -76,31 +71,17 @@ export const Competition = () => {
     );
   }
 
-  const currentDate = new Date();
   const registrationOpen = new Date(competitionData.registration_open);
   const registrationClose = new Date(competitionData.registration_close);
 
   return (
     <Container maxWidth="xl" style={{ textAlign: "center" }}>
-      <Box marginTop="4rem">
-        <Typography component="h1" variant="h3" fontWeight="bold" gutterBottom>
-          {competitionData.name}
-        </Typography>
-        <Typography gutterBottom style={{ textAlign: "center" }}>
-          <Trans>
-            {currentDate < registrationOpen
-              ? t("competition.registration.before", { date: registrationOpen })
-              : t("competition.registration.after", { date: registrationOpen })}
-            {currentDate < registrationClose
-              ? t("competition.registration.closes", {
-                  date: registrationClose,
-                })
-              : t("competition.registration.closed", {
-                  date: registrationClose,
-                })}
-          </Trans>
-        </Typography>
-      </Box>
+      <CompetitionHeader
+        name={competitionData.name}
+        registrationOpen={registrationOpen}
+        registrationClose={registrationClose}
+        series={false}
+      />
       <CompetitionCard {...competitionData} />
     </Container>
   );
