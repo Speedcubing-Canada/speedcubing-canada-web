@@ -6,11 +6,11 @@ import {
   LinearProgress,
 } from "@mui/material";
 import { Trans, useTranslation } from "react-i18next";
-import { Link } from "../components/Link";
 import { LINKS } from "./links";
 import { useParams, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { getLocaleOrFallback } from "../locale";
+import { CompetitionCard } from "../components/CompetitionCard";
 
 export const Competition = () => {
   const { t } = useTranslation();
@@ -76,14 +76,6 @@ export const Competition = () => {
     );
   }
 
-  const competitorsApproved = (competition: any) => {
-    return competition.persons.filter((competitor: any) => {
-      return (
-        competitor.registration && competitor.registration.status === "accepted"
-      );
-    }).length;
-  };
-
   const currentDate = new Date();
   const registrationOpen = new Date(competitionData.registration_open);
   const registrationClose = new Date(competitionData.registration_close);
@@ -109,45 +101,7 @@ export const Competition = () => {
           </Trans>
         </Typography>
       </Box>
-      <Box display="flex" justifyContent="center" flexWrap="wrap">
-        <Box margin="1rem" padding="1rem">
-          <Typography gutterBottom>
-            <Trans>
-              {t("competition.date", {
-                date: new Date(
-                  competitionData.start_date + "T12:00:00.000Z",
-                ).toLocaleString("en-US", {
-                  weekday: "long",
-                  month: "long",
-                  day: "numeric",
-                  year: "numeric",
-                }),
-              })}
-              {t("competition.city", { city: competitionData.city })}
-              {t("competition.venue", {
-                venue: competitionData.schedule.venues[0].name,
-              })}
-              {t("competition.address", {
-                address: competitionData.venue_address,
-              })}
-              {currentDate > registrationOpen
-                ? `${t("competition.registration.count", {
-                    num: competitorsApproved(competitionData).toString(),
-                    total: competitionData.competitorLimit,
-                  })}`
-                : "\n"}
-            </Trans>
-          </Typography>
-          <Button
-            to={competitionData.url}
-            component={Link}
-            variant="contained"
-            size="large"
-          >
-            {t("competition.register")}
-          </Button>
-        </Box>
-      </Box>
+      <CompetitionCard {...competitionData} />
     </Container>
   );
 };
