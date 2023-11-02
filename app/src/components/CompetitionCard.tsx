@@ -11,8 +11,6 @@ const competitorsApproved = (competition: any) => {
 };
 
 export const CompetitionCard = (competition: any) => {
-  console.log(competition);
-
   const { t } = useTranslation();
 
   const currentDate = new Date();

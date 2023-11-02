@@ -107,6 +107,9 @@ export const resources = {
           count:
             "<strong>Registration:</strong> {{num}}/{{total}} spots filled\n\n",
         },
+        isseries:
+          "\nIt looks like this competition is part of a seires, would you like to view the <seriesLink>series page</seriesLink> instead?",
+        viewseries: "Go to competition series page",
         date: "<strong>Date:</strong> {{date}}\n",
         city: "<strong>City:</strong> {{city}}\n",
         venue: "<strong>Venue:</strong> {{venue}}\n",

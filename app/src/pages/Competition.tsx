@@ -1,17 +1,17 @@
 import { Box, Container, Typography, LinearProgress } from "@mui/material";
 import { Trans, useTranslation } from "react-i18next";
 import { LINKS } from "./links";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { getLocaleOrFallback } from "../locale";
 import { CompetitionCard } from "../components/CompetitionCard";
 import { CompetitionHeader } from "../components/CompetitionHeader";
+import { Link } from "../components/Link";
 
 export const Competition = () => {
   const { t } = useTranslation();
   const { compid, localeParam } = useParams();
   const locale = getLocaleOrFallback(localeParam as string);
-  const navigate = useNavigate();
 
   const [competitionData, setCompetitionData] = useState<any>({});
   const [hasError, setHasError] = useState(false);
@@ -59,10 +59,6 @@ export const Competition = () => {
     );
   }
 
-  if (competitionData.series) {
-    navigate(`/${locale}/competitions/series/${competitionData.series.id}`);
-  }
-
   if (isLoading) {
     return (
       <Box sx={{ width: "100%" }}>
@@ -82,6 +78,21 @@ export const Competition = () => {
         registrationClose={registrationClose}
         series={false}
       />
+      {competitionData.series ? (
+        <Typography gutterBottom style={{ textAlign: "center" }}>
+          <Trans
+            components={{
+              seriesLink: (
+                <Link
+                  to={`/${locale}/competitions/series/${competitionData.series.id}`}
+                />
+              ),
+            }}
+          >
+            {t("competition.isseries")}
+          </Trans>
+        </Typography>
+      ) : null}
       <CompetitionCard {...competitionData} />
     </Container>
   );
