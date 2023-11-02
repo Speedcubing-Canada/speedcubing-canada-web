@@ -1,4 +1,5 @@
 import { useTranslation } from "react-i18next";
+import { styled } from "@mui/material/styles";
 import { Link as RouterLink, useParams } from "react-router-dom";
 import {
   Instagram,
@@ -7,7 +8,6 @@ import {
   Email,
 } from "@mui/icons-material";
 import { Box, Typography, useTheme } from "@mui/material";
-import { makeStyles } from "@mui/styles";
 import { Link } from "../components/Link";
 import {
   getLocaleOrFallback,
@@ -15,6 +15,14 @@ import {
   LOCALE_TO_LANGUAGE,
 } from "../locale";
 import { LINKS } from "./links";
+
+const PREFIX = "Home";
+
+const classes = {
+  logo: `${PREFIX}-logo`,
+  noTextDecoration: `${PREFIX}-noTextDecoration`,
+  verticalLine: `${PREFIX}-verticalLine`,
+};
 
 const SOCIAL_LINKS = [
   {
@@ -46,28 +54,26 @@ export const Home = () => {
 
   const inverseLocale = INVERTED_LOCALES[locale];
 
-  const useStyles = makeStyles({
-    logo: {
+  const StyledBox = styled(Box)({
+    [`& .${classes.logo}`]: {
       maxWidth: "50vw",
       marginBottom: 2 * GAP,
       [theme.breakpoints.down("sm")]: {
         maxWidth: "75vw",
       },
     },
-    noTextDecoration: {
+    [`& .${classes.noTextDecoration}`]: {
       textDecoration: "none",
     },
-    verticalLine: {
+    [`& .${classes.verticalLine}`]: {
       width: "3px",
       height: "35px",
       background: "black",
     },
   });
 
-  const classes = useStyles();
-
   return (
-    <Box
+    <StyledBox
       flex={1}
       display="flex"
       flexDirection="column"
@@ -101,6 +107,6 @@ export const Home = () => {
           </abbr>
         </RouterLink>
       </Box>
-    </Box>
+    </StyledBox>
   );
 };
