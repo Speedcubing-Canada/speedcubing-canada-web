@@ -1,0 +1,44 @@
+version: "3.8"
+
+services:
+  app:
+    container_name: frontend-dev
+    build:
+      context: .
+      target: development
+    volumes:
+      - ./app:/app
+    env_file: ./.env
+    ports:
+      - ${NODE_LOCAL_PORT}:${NODE_DOCKER_PORT}
+    networks:
+      - frontend
+      - backend
+
+  #  flask:
+  #    build:
+  #      context: backend
+  #      target: builder
+  #    restart: always
+  #    env_file: ./.env
+  #    networks:
+  #      - backend
+  #    ports:
+  #      - ${FLASK_LOCAL_PORT}:${FLASK_DOCKER_PORT}
+
+  nginx:
+    container_name: nginx-server
+    image: nginx:latest
+    ports:
+      - 80:80
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./nginx/conf.d:/etc/nginx/conf.d
+    networks:
+      - frontend
+    depends_on:
+      - app
+
+networks:
+  frontend:
+  backend:
