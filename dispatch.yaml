@@ -1,0 +1,8 @@
+dispatch:
+  # Send all api traffic to the backend service.
+  - url: "api.staging.speedcubingcanada.org/*"
+    service: api
+
+  # Send all other traffic to the default (frontend).
+  - url: "*/*"
+    service: default
