@@ -30,7 +30,7 @@ import {
 import { Link, Outlet, useLocation, useParams } from "react-router-dom";
 import { getLocaleOrFallback, SAVED_LOCALE } from "../locale";
 
-const ROUTE_NAMES = [
+export const ROUTE_NAMES = [
   "home",
   "about",
   "organization",
