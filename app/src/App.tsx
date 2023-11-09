@@ -11,6 +11,7 @@ import { Organization } from "./pages/Organization";
 import { FAQ } from "./pages/FAQ";
 import { Rankings } from "./pages/Rankings";
 import { Account } from "./pages/Account";
+import { AdminPage } from "./pages/AdminPage";
 import * as React from "react";
 import { Quebec } from "./pages/Quebec";
 
@@ -41,6 +42,9 @@ const App = () => {
     <ThemeProvider theme={theme}>
       <BrowserRouter>
         <Routes>
+          {/* Admin page without the navigation bar */}
+          <Route path="/admin/*" element={<AdminPage />} />
+          {/* Normal pages */}
           <Route element={<Base />}>
             <Route path=":locale/">
               <Route index element={<Home />} />
