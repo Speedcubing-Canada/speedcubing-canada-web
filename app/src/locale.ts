@@ -1,3 +1,6 @@
+import englishMessages from "ra-language-english";
+import frenchMessages from "ra-language-french";
+
 export const LOCALES = { en: "en", fr: "fr" } as const;
 export const INVERTED_LOCALES = { en: "fr", fr: "en" } as const;
 export const LOCALE_TO_LANGUAGE = { en: "English", fr: "Français" } as const;
@@ -243,6 +246,27 @@ export const resources = {
         body: "If you are not redirected automatically, click the link below.",
       },
     },
+    ...englishMessages,
+    resources: {
+      Users: {
+        name: "User |||| Users",
+        fields: {
+          id: "Id",
+          name: "Name",
+          province: "Province",
+          roles: "Role(s)",
+          wca_person: "WCAID",
+          dob: "Date of Birth",
+        },
+      },
+    },
+    admin: {
+      title: "Welcome to the Admin Section",
+      body:
+        "Please note that you can filter users using the start of their first name. If you want to use the family name, you must write the first name first. You may also use exact WCAID to filter.\n" +
+        " It's also important to know that you may move pages forward but not backwards. If you want to see a previous results, you need to go back to page one and then move forward again (or juste search the user).\n" +
+        "Sorting or removing people does not work currently. If you want to make someone disappear from the rankings, put his/her province to N/A.",
+    },
   },
   [LOCALES.fr]: {
     translation: {
@@ -475,6 +499,27 @@ export const resources = {
       quebec: {
         body: "Si vous n'êtes pas redirigés, cliquez sur le lien ci-dessous.",
       },
+    },
+    ...frenchMessages,
+    resources: {
+      Users: {
+        name: "Utilisateur |||| Utilisateurs",
+        fields: {
+          id: "Id",
+          name: "Nom",
+          province: "Province",
+          roles: "Rôle(s)",
+          wca_person: "WCAID",
+          dob: "Date de naissance",
+        },
+      },
+    },
+    admin: {
+      title: "Bienvenue dans la section d'administration",
+      body:
+        "Veuillez noter que vous pouvez filtrer les utilisateurs en utilisant le début de leur prénom. Si vous voulez utiliser le nom de famille, vous devez écrire le prénom en premier. Vous pouvez également utiliser le WCAID exact pour filtrer.\n" +
+        " Il est également important de savoir que vous pouvez avancer dans les pages mais pas aller en arrière. Si vous voulez voir un résultat précédent, vous devez revenir à la page une et avancer à nouveau (ou simplement rechercher l'utilisateur)." +
+        " Il n'est pas possible d'utiliser la fonctionnalité permettant de ranger les colonnes ni de supprimer des utilisateurs. Si vous voulez faire disparaitre un utilisateur des classements, changez sa province pour N/A.",
     },
   },
 };
