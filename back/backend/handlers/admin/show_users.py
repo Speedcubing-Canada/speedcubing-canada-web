@@ -1,13 +1,18 @@
 from json import loads
 from flask import Blueprint, jsonify, request
 from google.cloud import ndb
+import sys
 
 from backend.models.wca.person import Person
 from backend.lib import auth
 from backend.models.user import User, Roles
+from backend.test.mock_ndb_client import ndb_client
 
 bp = Blueprint('show_users', __name__)
-client = ndb.Client()
+if "pytest" in sys.modules:
+    client = ndb_client
+else:
+    client = ndb.Client()
 
 
 @bp.route('/get_users')
