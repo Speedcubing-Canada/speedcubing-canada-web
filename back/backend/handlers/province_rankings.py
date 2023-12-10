@@ -1,5 +1,3 @@
-import sys
-
 from flask import Blueprint, jsonify, request
 from google.cloud import ndb
 
@@ -8,13 +6,9 @@ from backend.models.province import Province
 from backend.models.wca.event import Event
 from backend.models.wca.rank import RankAverage
 from backend.models.wca.rank import RankSingle
-from backend.test.mock_ndb_client import ndb_client
 
 bp = Blueprint('province_rankings', __name__)
-if "pytest" in sys.modules:
-    client = ndb_client
-else:
-    client = ndb.Client()
+client = ndb.Client()
 
 
 @bp.route('/test_rankings')

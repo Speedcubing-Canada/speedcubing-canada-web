@@ -1,8 +1,6 @@
 import datetime
 import os
 import logging
-import sys
-
 import requests
 
 from flask import Blueprint, render_template, abort
@@ -13,13 +11,9 @@ from backend.models.championship import Championship
 from backend.models.region import Region
 from backend.models.province import Province
 from backend.models.user import User
-from backend.test.mock_ndb_client import ndb_client
 
 bp = Blueprint('regional', __name__)
-if "pytest" in sys.modules:
-    client = ndb_client
-else:
-    client = ndb.Client()
+client = ndb.Client()
 
 
 #@bp.route('/regional')

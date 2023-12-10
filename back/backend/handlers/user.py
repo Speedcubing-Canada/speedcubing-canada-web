@@ -7,14 +7,10 @@ from backend.lib import permissions, auth
 from backend.models.province import Province
 from backend.models.user import User, UserLocationUpdate
 from backend.models.wca.rank import RankSingle, RankAverage
-from backend.test.mock_ndb_client import ndb_client
 
 bp = Blueprint('user', __name__)
 
-if "pytest" in sys.modules:
-    client = ndb_client
-else:
-    client = ndb.Client()
+client = ndb.Client()
 
 
 @bp.route('/user_info', methods=['GET'])

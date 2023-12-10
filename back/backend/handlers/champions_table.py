@@ -1,5 +1,3 @@
-import sys
-
 from flask import Blueprint, render_template
 from google.cloud import ndb
 
@@ -8,13 +6,9 @@ from backend.models.champion import Champion
 from backend.models.region import Region
 from backend.models.province import Province
 from backend.models.wca.event import Event
-from backend.test.mock_ndb_client import ndb_client
 
 bp = Blueprint('champions_table', __name__)
-if "pytest" in sys.modules:
-    client = ndb_client
-else:
-    client = ndb.Client()
+client = ndb.Client()
 
 
 
