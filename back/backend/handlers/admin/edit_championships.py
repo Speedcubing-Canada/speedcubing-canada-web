@@ -1,22 +1,16 @@
-import sys
-
-from flask import abort, Blueprint, redirect, render_template, jsonify
+from flask import Blueprint, redirect, jsonify
 from google.cloud import ndb
 
-from backend.lib import auth, common
+from backend.lib import auth
 from backend.models.championship import Championship
 from backend.models.region import Region
 from backend.models.province import Province
 from backend.models.user import Roles
 from backend.models.wca.competition import Competition
 from backend.models.wca.country import Country
-from backend.test.mock_ndb_client import ndb_client
 
 bp = Blueprint('edit_championships', __name__)
-if "pytest" in sys.modules:
-    client = ndb_client
-else:
-    client = ndb.Client()
+client = ndb.Client()
 
 
 #@bp.route('/add_championship/<competition_id>/<championship_type>')

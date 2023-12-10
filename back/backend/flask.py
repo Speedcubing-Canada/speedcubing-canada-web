@@ -9,15 +9,14 @@ from urllib.parse import urljoin
 from backend.lib.secrets import get_secret
 
 
-def create_app(is_testing=False):
+def create_app():
     app = Flask(__name__)
     app.permanent_session_lifetime = datetime.timedelta(days=7)
-    if not is_testing:
-        app.secret_key = get_secret('SESSION_SECRET_KEY')
-        address = get_secret('FRONT_ADDRESS')
-        CORS(app,
-             origins=[address],
-             supports_credentials=True)
+    app.secret_key = get_secret('SESSION_SECRET_KEY')
+    address = get_secret('FRONT_ADDRESS')
+    CORS(app,
+         origins=[address],
+         supports_credentials=True)
 
     @app.before_request
     def before_request():
@@ -33,19 +32,18 @@ def create_app(is_testing=False):
 
     wca_host = os.environ.get('WCA_HOST')
     oauth = OAuth(app)
-    if not is_testing:
-        oauth.register(
-            name='wca',
-            client_id=get_secret('WCA_CLIENT_ID'),
-            client_secret=get_secret('WCA_CLIENT_SECRET'),
-            access_token_url=urljoin(wca_host, '/oauth/token'),
-            access_token_params=None,
-            authorize_url=urljoin(wca_host, '/oauth/authorize'),
-            authorize_params=None,
-            api_base_url=urljoin(wca_host, '/api/v0/'),
-            token_endpoint_auth_method='client_secret_post',
-            client_kwargs={'scope': 'public email dob'},
-        )
+    oauth.register(
+        name='wca',
+        client_id=get_secret('WCA_CLIENT_ID'),
+        client_secret=get_secret('WCA_CLIENT_SECRET'),
+        access_token_url=urljoin(wca_host, '/oauth/token'),
+        access_token_params=None,
+        authorize_url=urljoin(wca_host, '/oauth/authorize'),
+        authorize_params=None,
+        api_base_url=urljoin(wca_host, '/api/v0/'),
+        token_endpoint_auth_method='client_secret_post',
+        client_kwargs={'scope': 'public email dob'},
+    )
 
     from backend.handlers.admin import bp as admin_bp
     from backend.handlers.auth import create_bp as create_auth_bp

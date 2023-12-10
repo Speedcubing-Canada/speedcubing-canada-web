@@ -1,19 +1,13 @@
-import sys
-
-from flask import abort, Blueprint, jsonify
+from flask import Blueprint, jsonify
 from google.cloud import ndb
 
 from backend.lib import auth
 from backend.models.region import Region
 from backend.models.province import Province
 from backend.models.user import Roles
-from backend.test.mock_ndb_client import ndb_client
 
 bp = Blueprint('provinces', __name__)
-if "pytest" in sys.modules:
-    client = ndb_client
-else:
-    client = ndb.Client()
+client = ndb.Client()
 
 
 def make_region(region_id, region_name, championship_name, all_regions, futures):
