@@ -97,3 +97,9 @@ def test_edit_own_info(client_as_normal_user):
     assert response.json["province"] == "ON"
     assert response.json["wca_person"] == "2020XXXX01"
     assert response.json["email"] == "test@test.com"
+
+
+def test_edit_own_info_400(client_as_normal_user):
+    response = client_as_normal_user.post("/edit", json={"province": "ONN"})
+    assert response.json["error"] == "Invalid province code ONN"
+    assert response.status_code == 400
