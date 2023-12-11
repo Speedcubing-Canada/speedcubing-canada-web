@@ -59,6 +59,9 @@ def edit(user_id=-1):
         if province_id == 'na':
             province_id = ''
 
+        if province_id not in ['', 'na', 'qc', 'on', 'mb', 'sk', 'ab', 'bc', 'yt', 'nt', 'nu']:
+            return jsonify({"error": "Invalid province ID %s" % province_id}), 400
+
         old_province_id = user.province.id() if user.province else ''
         changed_location = old_province_id != province_id
         user_modified = False
