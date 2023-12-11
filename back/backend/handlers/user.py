@@ -91,7 +91,6 @@ def edit(user_id=-1):
 
         elif changed_location:
             return jsonify({"error": "You're not authorized to edit this user's location."}), 403
-
         if "roles" in request.json:
             for role in permissions.editable_roles(user, me):
                 if role in request.json["roles"] and role not in user.roles:
@@ -100,8 +99,6 @@ def edit(user_id=-1):
                 elif role not in request.json["roles"] and role in user.roles:
                     user.roles.remove(role)
                     user_modified = True
-
         if user_modified:
             user.put()
-
         return user.to_json()
