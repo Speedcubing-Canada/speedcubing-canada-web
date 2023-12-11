@@ -13,6 +13,8 @@ class TestUser:
         self.updates = []
         if id == 1:
             self.roles = ["DELEGATE"]  # This is a way to test for a user that has more rights.
+        elif id == 0:
+            self.roles = ["GLOBAL_ADMIN"]
 
     def to_json(self):
         return {
