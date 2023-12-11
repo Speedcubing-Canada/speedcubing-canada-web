@@ -89,17 +89,23 @@ def test_edit_401(client):
 
 
 def test_edit_own_info(client_as_normal_user):
-    response = client_as_normal_user.post("/edit", json={"province": "ON"})
+    response = client_as_normal_user.post("/edit", json={"province": "on"})
     assert response.json["id"] == 2
     assert response.json["name"] == "Test User"
     assert response.json["roles"] == []
     assert response.json["dob"] == "01-01-2000"
-    assert response.json["province"] == "ON"
+    assert response.json["province"] == "on"
     assert response.json["wca_person"] == "2020XXXX01"
     assert response.json["email"] == "test@test.com"
 
 
 def test_edit_own_info_400(client_as_normal_user):
-    response = client_as_normal_user.post("/edit", json={"province": "ONN"})
-    assert response.json["error"] == "Invalid province code ONN"
+    response = client_as_normal_user.post("/edit", json={"province": "onn"})
+    assert response.json["error"] == "Invalid province ID onn"
     assert response.status_code == 400
+
+
+def test_edit_403(client_as_normal_user):
+    response = client_as_normal_user.post("/edit/123", json={"province": "on"})
+    assert response.json["error"] == "You're not authorized to view this user. So you can't edit their location either."
+    assert response.status_code == 403
