@@ -17,7 +17,7 @@ set -e
 #
 # Then cd into the Speedcubing-Canada directory in the back folder and run this script (without sudo).
 # Finally, run backend/load_db/startup.sh to download the WCA database and
-# initialize the datastore.  The first run can take >1 hour; subsequent runs are
+# initialize the datastore.  The first run can take a few hours; subsequent runs are
 # faster since they only need to load entities that have changed.
 #
 # These commands can also be used to get a local development server working.
