@@ -15,7 +15,7 @@ __pycache__/
 .gitignore
 env/
 back/venv/
-frontend/node_modules/
+app/node_modules/
 
 # Ignore other unnecessary files
 *.pyc

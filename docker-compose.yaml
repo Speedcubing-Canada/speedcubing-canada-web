@@ -28,7 +28,7 @@ services:
 
   nginx:
     container_name: nginx-server
-    image: nginx:latest
+    image: nginx:stable
     ports:
       - 80:80
     volumes:
