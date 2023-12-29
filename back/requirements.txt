@@ -7,3 +7,4 @@ google-cloud-ndb==2.2.0
 google-cloud-secret-manager==2.16.3
 absl-py==1.4.0
 flask-cors==4.0.0
+six
