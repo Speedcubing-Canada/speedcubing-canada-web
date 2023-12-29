@@ -1,7 +1,6 @@
 from flask import Blueprint, jsonify, request
 from google.cloud import ndb
 import datetime
-import sys
 
 from backend.lib import permissions, auth
 from backend.models.province import Province
