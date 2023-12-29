@@ -38,12 +38,14 @@ def get_users():
 
         # Filter
         filter_text = loads(request.args.get('filter', '{}')).get("q")
+        print(filter_text)
 
         # Query
         order_field = getattr(User, sort_field) if sort_order == 'asc' else -getattr(User, sort_field)
         if filter_text:
             text = filter_text.lower()
             limit = text[:-1] + chr(ord(text[-1]) + 1)
+            print(User.query())
             users_to_show = User.query(
                 ndb.OR(
                     ndb.AND(
@@ -53,6 +55,7 @@ def get_users():
                     User.wca_person == ndb.Key(Person, filter_text)
                 )).order("name_lower", order_field).fetch(per_page)
             has_more = False
+            print(users_to_show)
         else:
             users_to_show, cursor, has_more = User.query(order_by=[order_field]).fetch_page(per_page,
                                                                                             start_cursor=cursor)
