@@ -1,0 +1,12 @@
+service: api
+runtime: python311
+entrypoint: gunicorn -b :$PORT backend:app
+
+env_variables:
+  ENV: "PROD"
+  WCA_HOST: "https://staging.worldcubeassociation.org"
+
+handlers:
+  - url: /.*
+    script: auto
+    secure: always
