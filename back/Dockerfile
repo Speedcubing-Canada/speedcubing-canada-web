@@ -1,8 +1,8 @@
-FROM python:3.11-alpine AS builder
+FROM python:3.11 AS builder
 
-ENV FLASK_APP scc
+ENV FLASK_APP backend
 ENV FLASK_DEBUG 1
-ENV FLASK_RUN_PORT 8000
+ENV FLASK_RUN_PORT 8083
 ENV FLASK_RUN_HOST 0.0.0.0
 
 WORKDIR /workdir
@@ -14,6 +14,6 @@ RUN pip3 install -r requirements.txt
 
 COPY . .
 
-EXPOSE 8000
+EXPOSE 8083
 
 CMD ["flask", "run"]
