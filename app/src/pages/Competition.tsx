@@ -1,4 +1,4 @@
-import { Box, Container, Typography, LinearProgress } from "@mui/material";
+import { Box, Container, Typography } from "@mui/material";
 import { Trans, useTranslation } from "react-i18next";
 import { LINKS } from "./links";
 import { useParams } from "react-router-dom";
@@ -7,6 +7,8 @@ import { getLocaleOrFallback } from "../locale";
 import { CompetitionCard } from "../components/CompetitionCard";
 import { CompetitionHeader } from "../components/CompetitionHeader";
 import { Link } from "../components/Link";
+import { PageNotFound } from "../components/PageNotFound";
+import { LoadingPageLinear } from "../components/LoadingPageLinear";
 
 export const Competition = () => {
   const { t } = useTranslation();
@@ -43,57 +45,54 @@ export const Competition = () => {
   }, [compid]);
 
   if (hasError) {
-    return (
-      <Container maxWidth="xl" style={{ textAlign: "center" }}>
-        <Box marginTop="4rem">
-          <Typography
-            component="h1"
-            variant="h5"
-            fontWeight="bold"
-            gutterBottom
-          >
-            {t("competition.error")}
-          </Typography>
-        </Box>
-      </Container>
-    );
+    return <PageNotFound />;
   }
 
   if (isLoading) {
-    return (
-      <Box sx={{ width: "100%" }}>
-        <LinearProgress />
-      </Box>
-    );
+    return <LoadingPageLinear />;
   }
 
   const registrationOpen = new Date(competitionData.registration_open);
   const registrationClose = new Date(competitionData.registration_close);
 
   return (
-    <Container maxWidth="xl" style={{ textAlign: "center" }}>
-      <CompetitionHeader
-        name={competitionData.name}
-        registrationOpen={registrationOpen}
-        registrationClose={registrationClose}
-        series={false}
-      />
-      {competitionData.series ? (
-        <Typography gutterBottom style={{ textAlign: "center" }}>
-          <Trans
-            components={{
-              seriesLink: (
-                <Link
-                  to={`/${locale}/competitions/series/${competitionData.series.id}`}
-                />
-              ),
-            }}
-          >
-            {t("competition.isseries")}
-          </Trans>
-        </Typography>
-      ) : null}
-      <CompetitionCard {...competitionData} />
+    <Container
+      maxWidth="xl"
+      style={{ textAlign: "center", display: "flex", flexDirection: "column" }}
+    >
+      <Box sx={{ flexGrow: 1 }}>
+        <CompetitionHeader
+          name={competitionData.name}
+          registrationOpen={registrationOpen}
+          registrationClose={registrationClose}
+        />
+        {competitionData.series && (
+          <Typography gutterBottom style={{ textAlign: "center" }}>
+            <Trans
+              components={{
+                seriesLink: (
+                  <Link
+                    to={`/${locale}/competitions/series/${competitionData.series.id}`}
+                  />
+                ),
+              }}
+            >
+              {t("competition.isseries")}
+            </Trans>
+          </Typography>
+        )}
+        <Box
+          display="flex"
+          justifyContent="center"
+          flexWrap="wrap"
+          marginTop="2rem"
+        >
+          <CompetitionCard {...competitionData} />
+        </Box>
+      </Box>
+      <Box minHeight="70px">
+        <Typography gutterBottom>{t("competition.disclaimer")}</Typography>
+      </Box>
     </Container>
   );
 };

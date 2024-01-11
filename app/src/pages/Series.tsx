@@ -1,10 +1,12 @@
-import { Box, Container, Typography, LinearProgress } from "@mui/material";
-import { useTranslation } from "react-i18next";
+import { Box, Container, Typography } from "@mui/material";
 import { useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { LINKS } from "./links";
 import { CompetitionCard } from "../components/CompetitionCard";
 import { CompetitionHeader } from "../components/CompetitionHeader";
+import { PageNotFound } from "../components/PageNotFound";
+import { LoadingPageLinear } from "../components/LoadingPageLinear";
+import { useTranslation } from "react-i18next";
 
 export const Series = () => {
   const { t } = useTranslation();
@@ -43,51 +45,55 @@ export const Series = () => {
   }, [seriesid]);
 
   if (hasError) {
-    return (
-      <Container maxWidth="xl" style={{ textAlign: "center" }}>
-        <Box marginTop="4rem">
-          <Typography
-            component="h1"
-            variant="h5"
-            fontWeight="bold"
-            gutterBottom
-          >
-            {t("competition.error")}
-          </Typography>
-        </Box>
-      </Container>
-    );
+    return <PageNotFound />;
   }
 
   if (isLoading) {
-    return (
-      <Box sx={{ width: "100%" }}>
-        <LinearProgress />
-      </Box>
-    );
+    return <LoadingPageLinear />;
   }
 
-  //Currently the dates of the first competition in the list are used for displaying registration open and close times
-  const registrationOpen = new Date(competitionData[0].registration_open);
-  const registrationClose = new Date(competitionData[0].registration_close);
+  const registrationOpenDates = competitionData.map(
+    (data: { registration_open: string }) => new Date(data.registration_open),
+  );
+  const isRegistrationDifferent = !registrationOpenDates.every(
+    (item: any) => item.getTime() === registrationOpenDates[0].getTime(),
+  );
+  const registrationOpen = new Date(Math.min(...registrationOpenDates));
+  const registrationClose = new Date(
+    Math.min(
+      ...competitionData.map(
+        (data: { registration_close: string }) =>
+          new Date(data.registration_close),
+      ),
+    ),
+  );
 
   return (
-    <Container maxWidth="xl" style={{ textAlign: "center" }}>
-      <CompetitionHeader
-        name={competitionData[0].series.name}
-        registrationOpen={registrationOpen}
-        registrationClose={registrationClose}
-        series={true}
-      />
-      <Box
-        display="flex"
-        justifyContent="center"
-        flexWrap="wrap"
-        marginTop="2rem"
-      >
-        {competitionData.map((competition: any, index: number) => (
-          <CompetitionCard {...competition} />
-        ))}
+    <Container
+      maxWidth="xl"
+      style={{ textAlign: "center", display: "flex", flexDirection: "column" }}
+    >
+      <Box sx={{ flexGrow: 1 }}>
+        <CompetitionHeader
+          name={competitionData[0].series.name}
+          registrationOpen={registrationOpen}
+          registrationClose={registrationClose}
+          isRegistrationDifferent={isRegistrationDifferent}
+          isSeries
+        />
+        <Box
+          display="flex"
+          justifyContent="center"
+          flexWrap="wrap"
+          marginTop="2rem"
+        >
+          {competitionData.map((competition: any) => (
+            <CompetitionCard {...competition} key={competition.id} />
+          ))}
+        </Box>
+      </Box>
+      <Box minHeight="70px">
+        <Typography gutterBottom>{t("competition.disclaimer")}</Typography>
       </Box>
     </Container>
   );

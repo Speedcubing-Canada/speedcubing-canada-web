@@ -100,10 +100,14 @@ export const resources = {
         series:
           "Check out this upcoming series! As a reminder, competitors may only sign up for ONE of the competitions in a series. Read the competition pages carefully and ensure you register for the right competiton.",
         registration: {
-          before: "\n<strong>Registration opens on: </strong>{{date}}",
-          after: "\n<strong>Registration opened on: </strong>{{date}}",
-          closes: "\n<strong>Registration closes on: </strong>{{date}}",
-          closed: "\n<strong>Registration closed on: </strong>{{date}}",
+          before: "\n<strong>Registration opens on:</strong> {{date}}",
+          after: "\n<strong>Registration opened on:</strong> {{date}}",
+          differentopen:
+            "\n<strong>Note: Registration may open at {{date}}.</strong>\nPlease check the competition pages on the WCA website to confirm when registration opens for each competition.",
+          closes: "\n<strong>Registration closes on:</strong> {{date}}",
+          closed: "\n<strong>Registration closed on:</strong> {{date}}",
+          disclaimer:
+            "Note: Registration opens at different times for the competitions in this series. The time listed here is the earliest possible registration date. Please check the competition pages on the WCA website to confirm when registration opens for each competition.",
           count:
             "<strong>Registration:</strong> {{num}}/{{total}} spots filled\n\n",
         },
@@ -116,6 +120,8 @@ export const resources = {
         address: "<strong>Address:</strong> {{address}}\n",
         register: "Register",
         error: "The page you were looking for does not exist.",
+        disclaimer:
+          "Competition information listed on Speedcubing Canada's website is pulled from the World Cube Association (WCA) website for your convenience. In the event of a discrepancy, the information listed on the WCA website is the official information. Always read the information on the WCA website carefully when registering for a competition.",
       },
       provinces: {
         ab: "Alberta",

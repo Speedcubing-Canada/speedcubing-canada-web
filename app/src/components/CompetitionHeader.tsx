@@ -5,18 +5,20 @@ export const CompetitionHeader = ({
   name,
   registrationOpen,
   registrationClose,
-  series,
+  isRegistrationDifferent = false,
+  isSeries = false,
 }: {
   name: string;
   registrationOpen: Date;
   registrationClose: Date;
-  series: boolean;
+  isRegistrationDifferent?: boolean;
+  isSeries?: boolean;
 }) => {
   const { t } = useTranslation();
 
   const currentDate = new Date();
-  const isRegistrationOpen = currentDate > registrationOpen;
-  const isRegistrationClosed = currentDate > registrationClose;
+  const hasRegistrationOpen = currentDate > registrationOpen;
+  const hasRegistrationClosed = currentDate > registrationClose;
 
   return (
     <Box marginTop="4rem">
@@ -24,14 +26,18 @@ export const CompetitionHeader = ({
         {name}
       </Typography>
       <Typography gutterBottom sx={{ maxWidth: "md", margin: "0 auto" }}>
-        {series ? t("competition.series") : ""}
+        {isSeries ? t("competition.series") : ""}
       </Typography>
       <Typography gutterBottom style={{ textAlign: "center" }}>
         <Trans>
-          {isRegistrationOpen
+          {hasRegistrationOpen
             ? t("competition.registration.after", { date: registrationOpen })
+            : isRegistrationDifferent
+            ? t("competition.registration.differentopen", {
+                date: registrationOpen,
+              })
             : t("competition.registration.before", { date: registrationOpen })}
-          {isRegistrationClosed
+          {hasRegistrationClosed
             ? t("competition.registration.closed", {
                 date: registrationClose,
               })
