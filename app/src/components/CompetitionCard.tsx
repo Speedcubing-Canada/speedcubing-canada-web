@@ -15,7 +15,7 @@ export const CompetitionCard = (competition: any) => {
   const registrationOpen = new Date(competition.registration_open);
 
   return (
-    <Box margin="1rem" padding="1rem" maxWidth="25vw">
+    <Box margin="1rem" padding="1rem" maxWidth="400px">
       <Typography gutterBottom>
         <Trans>
           {t("competition.date", {
