@@ -5,19 +5,19 @@ export const CompetitionHeader = ({
   name,
   registrationOpen,
   registrationClose,
-  isRegistrationDifferent = false,
+  doSeriesRegistrationsDiffer = false,
   isSeries = false,
 }: {
   name: string;
   registrationOpen: Date;
   registrationClose: Date;
-  isRegistrationDifferent?: boolean;
+  doSeriesRegistrationsDiffer?: boolean;
   isSeries?: boolean;
 }) => {
   const { t } = useTranslation();
 
   const currentDate = new Date();
-  const hasRegistrationOpen = currentDate > registrationOpen;
+  const hasRegistrationOpened = currentDate > registrationOpen;
   const hasRegistrationClosed = currentDate > registrationClose;
 
   return (
@@ -30,9 +30,9 @@ export const CompetitionHeader = ({
       </Typography>
       <Typography gutterBottom style={{ textAlign: "center" }}>
         <Trans>
-          {hasRegistrationOpen
+          {hasRegistrationOpened
             ? t("competition.registration.after", { date: registrationOpen })
-            : isRegistrationDifferent
+            : doSeriesRegistrationsDiffer
             ? t("competition.registration.differentopen", {
                 date: registrationOpen,
               })

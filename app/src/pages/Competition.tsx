@@ -9,26 +9,23 @@ import { CompetitionHeader } from "../components/CompetitionHeader";
 import { Link } from "../components/Link";
 import { PageNotFound } from "../components/PageNotFound";
 import { LoadingPageLinear } from "../components/LoadingPageLinear";
+import { competition, wcif } from "../components/types";
 
 export const Competition = () => {
   const { t } = useTranslation();
-  const { compid, localeParam } = useParams();
-  const locale = getLocaleOrFallback(localeParam as string);
+  const params = useParams();
+  const locale = getLocaleOrFallback(params.locale as string);
 
-  const [competitionData, setCompetitionData] = useState<any>({});
+  const [competitionData, setCompetitionData] = useState<null | {
+    data: competition;
+    wcif: wcif;
+  }>(null);
   const [hasError, setHasError] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const getData = async () => {
       const [compData, wcifData] = await Promise.all([
-        fetch(LINKS.WCA.API.COMPETITION_INFO + compid).then((response) => {
-          if (!response.ok) {
-            setHasError(true);
-          }
-          return response.json();
-        }),
-        fetch(LINKS.WCA.API.COMPETITION_INFO + compid + "/wcif/public").then(
+        fetch(LINKS.WCA.API.COMPETITION_INFO + params.compid).then(
           (response) => {
             if (!response.ok) {
               setHasError(true);
@@ -36,24 +33,31 @@ export const Competition = () => {
             return response.json();
           },
         ),
+        fetch(
+          LINKS.WCA.API.COMPETITION_INFO + params.compid + "/wcif/public",
+        ).then((response) => {
+          if (!response.ok) {
+            setHasError(true);
+          }
+          return response.json();
+        }),
       ]);
 
-      setCompetitionData({ ...compData, ...wcifData });
-      setIsLoading(false);
+      setCompetitionData({ data: compData, wcif: wcifData });
     };
     getData();
-  }, [compid]);
+  }, [params.compid]);
 
   if (hasError) {
     return <PageNotFound />;
   }
 
-  if (isLoading) {
+  if (!competitionData) {
     return <LoadingPageLinear />;
   }
 
-  const registrationOpen = new Date(competitionData.registration_open);
-  const registrationClose = new Date(competitionData.registration_close);
+  const registrationOpen = new Date(competitionData.data.registration_open);
+  const registrationClose = new Date(competitionData.data.registration_close);
 
   return (
     <Container
@@ -62,17 +66,17 @@ export const Competition = () => {
     >
       <Box sx={{ flexGrow: 1 }}>
         <CompetitionHeader
-          name={competitionData.name}
+          name={competitionData.data.name}
           registrationOpen={registrationOpen}
           registrationClose={registrationClose}
         />
-        {competitionData.series && (
+        {competitionData.wcif.series && (
           <Typography gutterBottom style={{ textAlign: "center" }}>
             <Trans
               components={{
                 seriesLink: (
                   <Link
-                    to={`/${locale}/competitions/series/${competitionData.series.id}`}
+                    to={`/${locale}/competitions/series/${competitionData.wcif.series.id}`}
                   />
                 ),
               }}

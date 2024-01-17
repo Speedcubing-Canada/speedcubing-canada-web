@@ -7,5 +7,3 @@ export const LoadingPageLinear = () => {
     </Box>
   );
 };
-
-export {};

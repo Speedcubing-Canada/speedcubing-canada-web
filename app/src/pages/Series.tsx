@@ -7,14 +7,16 @@ import { CompetitionHeader } from "../components/CompetitionHeader";
 import { PageNotFound } from "../components/PageNotFound";
 import { LoadingPageLinear } from "../components/LoadingPageLinear";
 import { useTranslation } from "react-i18next";
+import { competition, wcif } from "../components/types";
 
 export const Series = () => {
   const { t } = useTranslation();
   const { seriesid } = useParams();
 
-  const [competitionData, setCompetitionData] = useState<any>({});
+  const [competitionData, setCompetitionData] = useState<
+    null | { data: competition; wcif: wcif }[]
+  >(null);
   const [hasError, setHasError] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const getData = async (seriesId: string) => {
@@ -34,12 +36,11 @@ export const Series = () => {
           const wcifData = await (
             await fetch(LINKS.WCA.API.COMPETITION_INFO + key + "/wcif/public")
           ).json();
-          return { ...competitionData, ...wcifData };
+          return { data: competitionData, wcif: wcifData };
         }),
       );
 
       setCompetitionData(allData);
-      setIsLoading(false);
     };
     getData(seriesid!);
   }, [seriesid]);
@@ -48,24 +49,26 @@ export const Series = () => {
     return <PageNotFound />;
   }
 
-  if (isLoading) {
+  if (!competitionData) {
     return <LoadingPageLinear />;
   }
 
   const registrationOpenDates = competitionData.map(
-    (data: { registration_open: string }) => new Date(data.registration_open),
+    (value: { data: competition }) =>
+      new Date(value.data.registration_open).getTime(),
   );
+  const registrationCloseDates = competitionData.map(
+    (value: { data: competition }) =>
+      new Date(value.data.registration_close).getTime(),
+  );
+
+  const earliestRegistrationOpen = new Date(Math.min(...registrationOpenDates));
+  const earliestRegistrationClose = new Date(
+    Math.min(...registrationCloseDates),
+  );
+
   const isRegistrationDifferent = !registrationOpenDates.every(
-    (item: any) => item.getTime() === registrationOpenDates[0].getTime(),
-  );
-  const registrationOpen = new Date(Math.min(...registrationOpenDates));
-  const registrationClose = new Date(
-    Math.min(
-      ...competitionData.map(
-        (data: { registration_close: string }) =>
-          new Date(data.registration_close),
-      ),
-    ),
+    (item: number) => item === registrationOpenDates[0],
   );
 
   return (
@@ -75,10 +78,10 @@ export const Series = () => {
     >
       <Box sx={{ flexGrow: 1 }}>
         <CompetitionHeader
-          name={competitionData[0].series.name}
-          registrationOpen={registrationOpen}
-          registrationClose={registrationClose}
-          isRegistrationDifferent={isRegistrationDifferent}
+          name={competitionData[0].wcif.series.name}
+          registrationOpen={earliestRegistrationOpen}
+          registrationClose={earliestRegistrationClose}
+          doSeriesRegistrationsDiffer={isRegistrationDifferent}
           isSeries
         />
         <Box
@@ -87,9 +90,11 @@ export const Series = () => {
           flexWrap="wrap"
           marginTop="2rem"
         >
-          {competitionData.map((competition: any) => (
-            <CompetitionCard {...competition} key={competition.id} />
-          ))}
+          {competitionData.map(
+            (competition: { data: competition; wcif: wcif }) => (
+              <CompetitionCard {...competition} key={competition.data.id} />
+            ),
+          )}
         </Box>
       </Box>
       <Box minHeight="70px">
