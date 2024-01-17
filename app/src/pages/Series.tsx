@@ -7,7 +7,7 @@ import { CompetitionHeader } from "../components/CompetitionHeader";
 import { PageNotFound } from "../components/PageNotFound";
 import { LoadingPageLinear } from "../components/LoadingPageLinear";
 import { useTranslation } from "react-i18next";
-import { competition, wcif } from "../components/types";
+import { competition, wcif } from "../types";
 
 export const Series = () => {
   const { t } = useTranslation();

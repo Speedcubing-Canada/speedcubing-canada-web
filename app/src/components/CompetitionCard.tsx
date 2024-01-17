@@ -1,7 +1,7 @@
 import { Box, Typography, Button } from "@mui/material";
 import { Trans, useTranslation } from "react-i18next";
 import { Link } from "./Link";
-import { competition, wcif } from "./types";
+import { competition, wcif } from "../types";
 import { scheduler } from "timers/promises";
 
 const competitorsApproved = (competition: { data: competition; wcif: wcif }) =>

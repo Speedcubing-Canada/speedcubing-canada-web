@@ -9,7 +9,7 @@ import { CompetitionHeader } from "../components/CompetitionHeader";
 import { Link } from "../components/Link";
 import { PageNotFound } from "../components/PageNotFound";
 import { LoadingPageLinear } from "../components/LoadingPageLinear";
-import { competition, wcif } from "../components/types";
+import { competition, wcif } from "../types";
 
 export const Competition = () => {
   const { t } = useTranslation();
