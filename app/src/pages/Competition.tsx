@@ -14,7 +14,6 @@ import { competition, wcif } from "../types";
 export const Competition = () => {
   const { t } = useTranslation();
   const params = useParams();
-  const locale = getLocaleOrFallback(params.locale as string);
 
   const [competitionData, setCompetitionData] = useState<null | {
     data: competition;
@@ -75,9 +74,7 @@ export const Competition = () => {
             <Trans
               components={{
                 seriesLink: (
-                  <Link
-                    to={`/${locale}/competitions/series/${competitionData.wcif.series.id}`}
-                  />
+                  <Link to={`./series/${competitionData.wcif.series.id}`} />
                 ),
               }}
             >
