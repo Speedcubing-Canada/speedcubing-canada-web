@@ -179,7 +179,7 @@ export const resources = {
       },
       comps: {
         title: "Compétitions",
-        body: "Trouvez toutes les compétitions à venir au Canada sur le site Web de la World Cube Association.",
+        body: "Trouvez toutes les compétitions à venir au Canada sur le site web de la World Cube Association.",
         cta: "Voir tout",
       },
       organization: {
@@ -200,7 +200,7 @@ export const resources = {
         title: "Foire Aux Questions",
         "when-is-the-next-wca-competition-in-my-area": {
           q: "Quand aura lieu la prochaine compétition de la WCA dans ma région ?",
-          a: "Vous pouvez trouver <wcaComps>une liste de toutes les compétitions à venir au Canada</wcaComps> sur le site Web de la World Cube Association. Suivez Speedcubing Canada sur les réseaux sociaux et <mailingList>inscrivez-vous sur notre liste de diffusion</mailingList> pour être les premiers à être informés de l'annonce des compétitions !",
+          a: "Vous pouvez trouver <wcaComps>une liste de toutes les compétitions à venir au Canada</wcaComps> sur le site web de la World Cube Association. Suivez Speedcubing Canada sur les réseaux sociaux et <mailingList>inscrivez-vous sur notre liste de diffusion</mailingList> pour être les premiers à être informés de l'annonce des compétitions !",
         },
         "im-going-to-my-first-wca-competition-what-do-i-need-to-know": {
           q: "Je vais participer à ma première compétition de la WCA ! Que dois-je savoir ?",
@@ -227,22 +227,22 @@ export const resources = {
       },
       competition: {
         header:
-          "Jetez un coup d'œil cette compétition organisée par Speedcubing Canada !",
+          "Jetez un coup d'œil à cette compétition organisée par Speedcubing Canada !",
         series:
-          "Jetez un coup d'œil à cette série à venir ! Pour rappel, les compétiteurs ne peuvent s'inscrire qu'à UNE seul des compétitions d'une série. Lisez attentivement les pages consacrées aux compétitions et assurez-vous de vous inscrire à la bonne compétition.",
+          "Jetez un coup d'œil à cette série à venir ! Pour rappel, les compétiteurs ne peuvent s'inscrire qu'à UNE seule des compétitions d'une série. Lisez attentivement les pages consacrées aux compétitions et assurez-vous de vous inscrire à la bonne.",
         registration: {
-          before: "\n<strong>Les inscriptions ouvriront :</strong> {{date}}",
-          after: "\n<strong>Les inscriptions ont ouverts :</strong> {{date}}",
+          before: "\n<strong>Les inscriptions ouvriront le :</strong> {{date}}",
+          after: "\n<strong>Les inscriptions ont ouvert le :</strong> {{date}}",
           differentopen:
-            "\n<strong>Note : L'inscription pourrait ouvrir le {{date}}.</strong>\nVeuillez consulter les pages des compétitions sur le site web de la WCA pour confirmer la date d'ouverture des inscriptions pour chaque compétition.",
+            "\n<strong>Note : Les inscriptions pourraient ouvrir le {{date}}.</strong>\nVeuillez consulter les pages des compétitions sur le site web de la WCA pour confirmer la date d'ouverture des inscriptions pour chaque compétition.",
           closes: "\n<strong>Les inscriptions fermeront le :</strong> {{date}}",
           closed:
-            "\n<strong>Les inscriptions ont fermées le :</strong> {{date}}",
+            "\n<strong>Les inscriptions ont fermé le :</strong> {{date}}",
           count:
-            "<strong>Inscription :</strong> {{num}}/{{total}} places occupées\n\n",
+            "<strong>Inscriptions :</strong> {{num}}/{{total}} places occupées\n\n",
         },
         isseries:
-          "\nCette compétition fait partie d'une série. Voulez-vous voir la <seriesLink>page de la série</seriesLink> à la place ?",
+          "\nIl semble que cette compétition fasse partie d'une série. Voulez-vous voir la <seriesLink>page de la série</seriesLink> à la place ?",
         viewseries: "Aller à la page des séries de compétitions",
         date: "<strong>Date :</strong> {{date}}\n",
         city: "<strong>Ville :</strong> {{city}}\n",
@@ -251,7 +251,7 @@ export const resources = {
         register: "S'inscrire",
         error: "La page que vous recherchez n'existe pas.",
         disclaimer:
-          "L'information sur les compétitions présentées sur le site Web de Speedcubing Canada est tirée du site Web de la WCA pour votre commodité. En cas de divergence, l'information figurant sur le site Web de la WCA est l'information officielle. Lisez toujours attentivement l'information sur le site Web de la WCA lorsque vous vous inscrivez à une compétition.",
+          "L'information sur les compétitions présentée sur le site web de Speedcubing Canada est tirée du site web de la WCA pour votre commodité. En cas de divergence, l'information figurant sur le site web de la WCA est l'information officielle. Lisez toujours attentivement l'information sur le site web de la WCA lorsque vous vous inscrivez à une compétition.",
       },
       provinces: {
         ab: "Alberta",
