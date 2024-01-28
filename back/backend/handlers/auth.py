@@ -11,6 +11,7 @@ from backend.models.wca.rank import RankSingle, RankAverage
 
 client = ndb.Client()
 
+
 def create_bp(oauth):
   bp = Blueprint('auth', __name__)
 

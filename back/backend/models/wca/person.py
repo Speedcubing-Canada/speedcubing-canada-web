@@ -20,6 +20,12 @@ class Person(BaseModel):
         self.country = ndb.Key(Country, row['countryId'])
         self.gender = row['gender']
 
+    def create_test_person(self, name, country, gender):
+        self.name = name
+        self.country = country
+        self.gender = gender
+        return self
+
     @staticmethod
     def filter():
         return lambda row: int(row['subid']) == 1

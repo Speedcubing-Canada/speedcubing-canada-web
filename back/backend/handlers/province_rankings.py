@@ -10,6 +10,7 @@ from backend.models.wca.rank import RankSingle
 bp = Blueprint('province_rankings', __name__)
 client = ndb.Client()
 
+
 @bp.route('/test_rankings')
 def test_rankings():
     event= request.args.get('event', '333', type=str)

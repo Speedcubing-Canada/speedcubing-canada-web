@@ -8,6 +8,7 @@ from backend.models.user import User, UserLocationUpdate
 from backend.models.wca.rank import RankSingle, RankAverage
 
 bp = Blueprint('user', __name__)
+
 client = ndb.Client()
 
 
@@ -59,6 +60,9 @@ def edit(user_id=-1):
         if province_id == 'na':
             province_id = ''
 
+        if province_id not in ['', 'na', 'qc', 'on', 'mb', 'sk', 'ab', 'bc', 'yt', 'nt', 'nu']:
+            return jsonify({"error": "Invalid province ID %s" % province_id}), 400
+
         old_province_id = user.province.id() if user.province else ''
         changed_location = old_province_id != province_id
         user_modified = False
@@ -86,7 +90,6 @@ def edit(user_id=-1):
 
         elif changed_location:
             return jsonify({"error": "You're not authorized to edit this user's location."}), 403
-
         if "roles" in request.json:
             for role in permissions.editable_roles(user, me):
                 if role in request.json["roles"] and role not in user.roles:
@@ -95,8 +98,6 @@ def edit(user_id=-1):
                 elif role not in request.json["roles"] and role in user.roles:
                     user.roles.remove(role)
                     user_modified = True
-
         if user_modified:
             user.put()
-
         return user.to_json()

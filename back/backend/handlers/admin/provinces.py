@@ -1,4 +1,4 @@
-from flask import abort, Blueprint, jsonify
+from flask import Blueprint, jsonify
 from google.cloud import ndb
 
 from backend.lib import auth
@@ -8,6 +8,7 @@ from backend.models.user import Roles
 
 bp = Blueprint('provinces', __name__)
 client = ndb.Client()
+
 
 def make_region(region_id, region_name, championship_name, all_regions, futures):
   region = Region.get_by_id(region_id) or Region(id=region_id)

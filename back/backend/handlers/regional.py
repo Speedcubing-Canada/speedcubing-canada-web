@@ -15,6 +15,7 @@ from backend.models.user import User
 bp = Blueprint('regional', __name__)
 client = ndb.Client()
 
+
 #@bp.route('/regional')
 def regional():
   with client.context():
