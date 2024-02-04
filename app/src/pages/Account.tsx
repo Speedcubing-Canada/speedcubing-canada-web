@@ -19,26 +19,26 @@ import dayjs from "dayjs";
 
 import { API_BASE_URL, signIn, signOut } from "../components/api";
 import {
-  Action,
+  AlertAction,
   chipColor,
   ChipData,
   Province,
-  State,
+  AlertState,
   User,
 } from "../components/Types";
 import httpClient from "../httpClient";
-import { getProvincesWithNA } from "../components/Provinces";
-import { checkAdmin } from "./AdminPage";
+import { getProvincesWithNA } from "../components/provinces";
+import { isAdmin } from "./AdminPage";
 import useResponsiveQuery from "../components/useResponsiveQuery";
 import { useNavigate } from "react-router-dom";
 
-const initialState: State = {
+const initialState: AlertState = {
   alert: false,
   alertType: "error",
   alertContent: "",
 };
 
-const reducer = (state: State, action: Action) => {
+const reducer = (state: AlertState, action: AlertAction) => {
   switch (action.type) {
     case "SHOW_ALERT":
       return {
@@ -151,7 +151,7 @@ export const Account = () => {
     navigate("/admin");
   };
 
-  const isAdmin = checkAdmin(user);
+  const admin = isAdmin(user);
 
   return (
     <Container maxWidth="md">
@@ -312,7 +312,7 @@ export const Account = () => {
             >
               {t("account.save")}
             </Button>
-            {isAdmin && (
+            {admin && (
               <Button variant="outlined" component="span" onClick={handleAdmin}>
                 {t("account.admin")}
               </Button>

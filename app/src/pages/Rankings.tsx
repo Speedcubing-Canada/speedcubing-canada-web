@@ -17,7 +17,7 @@ import Switch from "@mui/material/Switch";
 import CircularProgress from "@mui/material/CircularProgress";
 
 import { eventID, Province } from "../components/Types";
-import { getProvinces } from "../components/Provinces";
+import { getProvinces } from "../components/provinces";
 import { API_BASE_URL, PRODUCTION } from "../components/api";
 import httpClient from "../httpClient";
 import { RankList } from "../components/RankList";

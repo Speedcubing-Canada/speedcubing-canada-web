@@ -38,13 +38,13 @@ export interface Ranking {
   url: string;
 }
 
-export interface State {
+export interface AlertState {
   alert: boolean;
   alertType: AlertColor;
   alertContent: string;
 }
 
-export type Action =
+export type AlertAction =
   | {
       type: "SHOW_ALERT";
       alertType: AlertColor;
