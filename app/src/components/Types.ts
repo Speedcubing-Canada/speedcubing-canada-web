@@ -95,8 +95,6 @@ export type provinceID =
 
 export type regionID = "at" | "qc" | "on" | "pr" | "bc" | "te" | "na";
 
-export type useAverage = "1" | "0";
-
 export type chipColor =
   | "default"
   | "error"
