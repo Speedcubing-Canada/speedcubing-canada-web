@@ -7,7 +7,7 @@ import {
   useTranslate,
 } from "react-admin";
 import { Province, provinceID } from "./Types";
-import { getProvincesWithNA } from "./Provinces";
+import { getProvincesWithNA } from "./provinces";
 import { roles } from "./Roles";
 
 const provinces: Province[] = getProvincesWithNA();

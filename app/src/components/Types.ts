@@ -38,13 +38,13 @@ export interface Ranking {
   url: string;
 }
 
-export interface State {
+export interface AlertState {
   alert: boolean;
   alertType: AlertColor;
   alertContent: string;
 }
 
-export type Action =
+export type AlertAction =
   | {
       type: "SHOW_ALERT";
       alertType: AlertColor;
@@ -94,8 +94,6 @@ export type provinceID =
   | "na";
 
 export type regionID = "at" | "qc" | "on" | "pr" | "bc" | "te" | "na";
-
-export type useAverage = "1" | "0";
 
 export type chipColor =
   | "default"

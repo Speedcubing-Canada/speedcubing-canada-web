@@ -24,7 +24,7 @@ import { UserEdit } from "../components/UserEdit";
 import { UserShow } from "../components/UserShow";
 import { i18nProvider } from "../i18nProvider";
 
-export const checkAdmin = (user: User | null) => {
+export const isAdmin = (user: User | null) => {
   return (
     user?.roles.includes("GLOBAL_ADMIN") ||
     user?.roles.includes("DIRECTOR") ||
@@ -66,7 +66,7 @@ export const AdminPage = () => {
     })();
   }, []);
 
-  const isAdmin = checkAdmin(user);
+  const admin = isAdmin(user);
 
   return (
     <div>
@@ -82,7 +82,7 @@ export const AdminPage = () => {
             <CircularProgress />
           </Box>
         </Container>
-      ) : isAdmin ? (
+      ) : admin ? (
         <Admin
           basename="/admin"
           dataProvider={dataProvider}
