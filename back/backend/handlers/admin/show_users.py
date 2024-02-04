@@ -46,6 +46,14 @@ def get_users():
             text = filter_text.lower()
             limit = text[:-1] + chr(ord(text[-1]) + 1)
             print(User.query())
+            print(ndb.OR())
+            print(ndb.AND())
+            print(User.query().fetch())
+            print(User.query().fetch_page(per_page, start_cursor=cursor))
+            print(User.wca_person)
+            print(User())
+            print(ndb.Key(Person, filter_text))
+            print(User.name_lower)
             users_to_show = User.query(
                 ndb.OR(
                     ndb.AND(
@@ -57,6 +65,8 @@ def get_users():
             has_more = False
             print(users_to_show)
         else:
+            print(User.query(order_by=[order_field]))
+            print(User.query(order_by=[order_field]).fetch_page(per_page, start_cursor=cursor))
             users_to_show, cursor, has_more = User.query(order_by=[order_field]).fetch_page(per_page,
                                                                                             start_cursor=cursor)
         return jsonify({

@@ -5,6 +5,7 @@ class TestUser:
         self.id = id
         self.wca_person = TestWCAPerson(wca_person_id)
         self.name = name
+        self.name_lower = name.lower()
         self.email = email
         self.dob = dob
         self.roles = roles
@@ -35,6 +36,9 @@ class TestUser:
 
     def put(self):
         pass
+
+    def __ge__(self, other):
+        return True
 
 
 class TestProvince:

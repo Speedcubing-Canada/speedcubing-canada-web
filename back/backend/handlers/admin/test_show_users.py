@@ -28,6 +28,8 @@ def test_get_users(client_as_admin):
     assert response.json["cursor"] == ""
     assert response.json["pageInfo"] == {"hasNextPage": False, "hasPreviousPage": False}
 
+
+def test_get_users_with_search(client_as_admin):
     response = client_as_admin.get('/admin/get_users?cursor=&filter={'
                                    '"q":"a"}&page=1&per_page=10&sort_field="id"&sort_order="ASC"')
     print(response.json)
