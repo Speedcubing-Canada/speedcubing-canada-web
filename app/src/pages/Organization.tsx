@@ -19,7 +19,6 @@ const DIRECTORS = [
   { name: "Kristopher De Asis", wcaId: "2008ASIS01" },
   { name: "Jonathan Esparaz", wcaId: "2013ESPA01" },
   { name: "Abdullah Gulab", wcaId: "2014GULA02" },
-  { name: "Brady Metherall", wcaId: "2009METH01" },
   { name: "Liam Orovec", wcaId: "2014OROV01" },
 ] as const;
 
