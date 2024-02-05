@@ -95,6 +95,32 @@ export const resources = {
           a: "Speedcubing Canada operates independently of the World Cube Association, with a separate Board of Directors. Speedcubing Canada is recognized as Canada’s official <regionalOrg>WCA regional organization</regionalOrg>.",
         },
       },
+      competition: {
+        header: "Check out this competition organized by Speedcubing Canada!",
+        series:
+          "Check out this upcoming series! As a reminder, competitors may only sign up for ONE of the competitions in a series. Read the competition pages carefully and ensure you register for the right competiton.",
+        registration: {
+          before: "\n<strong>Registration opens on:</strong> {{date}}",
+          after: "\n<strong>Registration opened on:</strong> {{date}}",
+          differentopen:
+            "\n<strong>Note: Registration may open at {{date}}.</strong>\nPlease check the competition pages on the WCA website to confirm when registration opens for each competition.",
+          closes: "\n<strong>Registration closes on:</strong> {{date}}",
+          closed: "\n<strong>Registration closed on:</strong> {{date}}",
+          count:
+            "<strong>Registration:</strong> {{num}}/{{total}} spots filled\n\n",
+        },
+        isseries:
+          "\nIt looks like this competition is part of a seires, would you like to view the <seriesLink>series page</seriesLink> instead?",
+        viewseries: "Go to competition series page",
+        date: "<strong>Date:</strong> {{date}}\n",
+        city: "<strong>City:</strong> {{city}}\n",
+        venue: "<strong>Venue:</strong> {{venue}}\n",
+        address: "<strong>Address:</strong> {{address}}\n",
+        register: "Register",
+        error: "The page you were looking for does not exist.",
+        disclaimer:
+          "Competition information listed on Speedcubing Canada's website is pulled from the World Cube Association (WCA) website for your convenience. In the event of a discrepancy, the information listed on the WCA website is the official information. Always read the information on the WCA website carefully when registering for a competition.",
+      },
       provinces: {
         ab: "Alberta",
         bc: "British Columbia",
@@ -153,7 +179,7 @@ export const resources = {
       },
       comps: {
         title: "Compétitions",
-        body: "Trouvez toutes les compétitions à venir au Canada sur le site Web de la World Cube Association.",
+        body: "Trouvez toutes les compétitions à venir au Canada sur le site web de la World Cube Association.",
         cta: "Voir tout",
       },
       organization: {
@@ -174,7 +200,7 @@ export const resources = {
         title: "Foire Aux Questions",
         "when-is-the-next-wca-competition-in-my-area": {
           q: "Quand aura lieu la prochaine compétition de la WCA dans ma région ?",
-          a: "Vous pouvez trouver <wcaComps>une liste de toutes les compétitions à venir au Canada</wcaComps> sur le site Web de la World Cube Association. Suivez Speedcubing Canada sur les réseaux sociaux et <mailingList>inscrivez-vous sur notre liste de diffusion</mailingList> pour être les premiers à être informés de l'annonce des compétitions !",
+          a: "Vous pouvez trouver <wcaComps>une liste de toutes les compétitions à venir au Canada</wcaComps> sur le site web de la World Cube Association. Suivez Speedcubing Canada sur les réseaux sociaux et <mailingList>inscrivez-vous sur notre liste de diffusion</mailingList> pour être les premiers à être informés de l'annonce des compétitions !",
         },
         "im-going-to-my-first-wca-competition-what-do-i-need-to-know": {
           q: "Je vais participer à ma première compétition de la WCA ! Que dois-je savoir ?",
@@ -198,6 +224,34 @@ export const resources = {
           q: "Speedcubing Canada est-elle affiliée à la World Cube Association ?",
           a: "Speedcubing Canada fonctionne indépendamment de la World Cube Association, avec un conseil d'administration distinct. Speedcubing Canada est reconnue comme l'organisation régionale officielle du Canada par la <regionalOrg>WCA</regionalOrg>.",
         },
+      },
+      competition: {
+        header:
+          "Jetez un coup d'œil à cette compétition organisée par Speedcubing Canada !",
+        series:
+          "Jetez un coup d'œil à cette série à venir ! Pour rappel, les compétiteurs ne peuvent s'inscrire qu'à UNE seule des compétitions d'une série. Lisez attentivement les pages consacrées aux compétitions et assurez-vous de vous inscrire à la bonne.",
+        registration: {
+          before: "\n<strong>Les inscriptions ouvriront le :</strong> {{date}}",
+          after: "\n<strong>Les inscriptions ont ouvert le :</strong> {{date}}",
+          differentopen:
+            "\n<strong>Note : Les inscriptions pourraient ouvrir le {{date}}.</strong>\nVeuillez consulter les pages des compétitions sur le site web de la WCA pour confirmer la date d'ouverture des inscriptions pour chaque compétition.",
+          closes: "\n<strong>Les inscriptions fermeront le :</strong> {{date}}",
+          closed:
+            "\n<strong>Les inscriptions ont fermé le :</strong> {{date}}",
+          count:
+            "<strong>Inscriptions :</strong> {{num}}/{{total}} places occupées\n\n",
+        },
+        isseries:
+          "\nIl semble que cette compétition fasse partie d'une série. Voulez-vous voir la <seriesLink>page de la série</seriesLink> à la place ?",
+        viewseries: "Aller à la page des séries de compétitions",
+        date: "<strong>Date :</strong> {{date}}\n",
+        city: "<strong>Ville :</strong> {{city}}\n",
+        venue: "<strong>Lieu :</strong> {{venue}}\n",
+        address: "<strong>Adresse :</strong> {{address}}\n",
+        register: "S'inscrire",
+        error: "La page que vous recherchez n'existe pas.",
+        disclaimer:
+          "L'information sur les compétitions présentée sur le site web de Speedcubing Canada est tirée du site web de la WCA pour votre commodité. En cas de divergence, l'information figurant sur le site web de la WCA est l'information officielle. Lisez toujours attentivement l'information sur le site web de la WCA lorsque vous vous inscrivez à une compétition.",
       },
       provinces: {
         ab: "Alberta",

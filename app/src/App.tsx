@@ -9,6 +9,8 @@ import { Home } from "./pages/Home";
 import { About } from "./pages/About";
 import { Organization } from "./pages/Organization";
 import { FAQ } from "./pages/FAQ";
+import { Series } from "./pages/Series";
+import { Competition } from "./pages/Competition";
 import { Quebec } from "./pages/Quebec";
 
 i18n.use(initReactI18next).init({
@@ -45,6 +47,11 @@ const App = () => {
               <Route path="about" element={<About />} />
               <Route path="organization" element={<Organization />} />
               <Route path="faq" element={<FAQ />} />
+              <Route
+                path="competitions/series/:seriesid"
+                element={<Series />}
+              />
+              <Route path="competitions/:compid" element={<Competition />} />
               <Route path="quebec" element={<Quebec />} />
             </Route>
             {["about", "organization", "faq", "quebec"].map((route) => (
