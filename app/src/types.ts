@@ -9,6 +9,7 @@ export type competition = {
   venue_address: string;
   url: string;
   start_date: string;
+  organizers: Array<{ id: number }>;
 };
 
 export type wcif = {

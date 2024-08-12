@@ -8,6 +8,7 @@ import { PageNotFound } from "../components/PageNotFound";
 import { LoadingPageLinear } from "../components/LoadingPageLinear";
 import { useTranslation } from "react-i18next";
 import { competition, wcif } from "../types";
+import { isSpeedcubingCanadaCompetition } from "../helpers/competitionValidator";
 
 export const Series = () => {
   const { t } = useTranslation();
@@ -28,7 +29,7 @@ export const Series = () => {
         return;
       }
 
-      let allData = await Promise.all(
+      const allData = await Promise.all(
         seriesCompetitions.competitionIds.map(async (key: string) => {
           const competitionData = await (
             await fetch(LINKS.WCA.API.COMPETITION_INFO + key)
@@ -39,6 +40,14 @@ export const Series = () => {
           return { data: competitionData, wcif: wcifData };
         }),
       );
+
+      if (
+        allData.length === 0 ||
+        !isSpeedcubingCanadaCompetition(allData[0].data)
+      ) {
+        setHasError(true);
+        return;
+      }
 
       setCompetitionData(allData);
     };

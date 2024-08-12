@@ -3,13 +3,13 @@ import { Trans, useTranslation } from "react-i18next";
 import { LINKS } from "./links";
 import { useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
-import { getLocaleOrFallback } from "../locale";
 import { CompetitionCard } from "../components/CompetitionCard";
 import { CompetitionHeader } from "../components/CompetitionHeader";
 import { Link } from "../components/Link";
 import { PageNotFound } from "../components/PageNotFound";
 import { LoadingPageLinear } from "../components/LoadingPageLinear";
 import { competition, wcif } from "../types";
+import { isSpeedcubingCanadaCompetition } from "../helpers/competitionValidator";
 
 export const Competition = () => {
   const { t } = useTranslation();
@@ -41,6 +41,11 @@ export const Competition = () => {
           return response.json();
         }),
       ]);
+
+      if (!isSpeedcubingCanadaCompetition(compData)) {
+        setHasError(true);
+        return;
+      }
 
       setCompetitionData({ data: compData, wcif: wcifData });
     };
