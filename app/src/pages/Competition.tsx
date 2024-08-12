@@ -1,7 +1,7 @@
 import { Box, Container, Typography } from "@mui/material";
 import { Trans, useTranslation } from "react-i18next";
 import { LINKS } from "./links";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { CompetitionCard } from "../components/CompetitionCard";
 import { CompetitionHeader } from "../components/CompetitionHeader";
@@ -20,6 +20,7 @@ export const Competition = () => {
     wcif: wcif;
   }>(null);
   const [hasError, setHasError] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const getData = async () => {
@@ -43,14 +44,13 @@ export const Competition = () => {
       ]);
 
       if (!isSpeedcubingCanadaCompetition(compData)) {
-        setHasError(true);
-        return;
+        navigate("/", { replace: true });
       }
 
       setCompetitionData({ data: compData, wcif: wcifData });
     };
     getData();
-  }, [params.compid]);
+  }, [navigate, params.compid]);
 
   if (hasError) {
     return <PageNotFound />;

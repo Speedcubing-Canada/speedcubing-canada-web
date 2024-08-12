@@ -1,5 +1,5 @@
 import { Box, Container, Typography } from "@mui/material";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { LINKS } from "./links";
 import { CompetitionCard } from "../components/CompetitionCard";
@@ -18,6 +18,7 @@ export const Series = () => {
     null | { data: competition; wcif: wcif }[]
   >(null);
   const [hasError, setHasError] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const getData = async (seriesId: string) => {
@@ -45,14 +46,13 @@ export const Series = () => {
         allData.length === 0 ||
         !isSpeedcubingCanadaCompetition(allData[0].data)
       ) {
-        setHasError(true);
-        return;
+        navigate("/", { replace: true });
       }
 
       setCompetitionData(allData);
     };
     getData(seriesid!);
-  }, [seriesid]);
+  }, [navigate, seriesid]);
 
   if (hasError) {
     return <PageNotFound />;
