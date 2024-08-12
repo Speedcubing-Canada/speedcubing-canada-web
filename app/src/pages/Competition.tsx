@@ -88,7 +88,7 @@ export const Competition = () => {
           flexWrap="wrap"
           marginTop="2rem"
         >
-          <CompetitionCard {...competitionData} />
+          <CompetitionCard {...competitionData} shouldShowName={false} />
         </Box>
       </Box>
       <Box minHeight="70px">

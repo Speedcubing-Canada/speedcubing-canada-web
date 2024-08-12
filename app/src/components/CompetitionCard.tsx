@@ -11,6 +11,7 @@ const competitorsApproved = (competition: { data: competition; wcif: wcif }) =>
 export const CompetitionCard = (competition: {
   data: competition;
   wcif: wcif;
+  shouldShowName: boolean;
 }) => {
   const { t } = useTranslation();
 
@@ -27,6 +28,14 @@ export const CompetitionCard = (competition: {
     <Box margin="1rem" padding="1rem" maxWidth="400px">
       <Typography gutterBottom>
         <Trans>
+          {competition.shouldShowName && (
+            <>
+              <Typography component="h1" variant="h5" fontWeight="bold">
+                {competition.data.name}
+              </Typography>
+              <br />
+            </>
+          )}
           {t("competition.date", {
             date: new Date(
               competition.data.start_date + "T00:00:00.000",

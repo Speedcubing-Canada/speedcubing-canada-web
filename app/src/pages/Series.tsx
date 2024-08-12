@@ -92,7 +92,11 @@ export const Series = () => {
         >
           {competitionData.map(
             (competition: { data: competition; wcif: wcif }) => (
-              <CompetitionCard {...competition} key={competition.data.id} />
+              <CompetitionCard
+                {...competition}
+                key={competition.data.id}
+                shouldShowName
+              />
             ),
           )}
         </Box>
