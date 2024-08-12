@@ -4,7 +4,6 @@ import { useState, useEffect } from "react";
 import { LINKS } from "./links";
 import { CompetitionCard } from "../components/CompetitionCard";
 import { CompetitionHeader } from "../components/CompetitionHeader";
-import { PageNotFound } from "../components/PageNotFound";
 import { LoadingPageLinear } from "../components/LoadingPageLinear";
 import { useTranslation } from "react-i18next";
 import { competition, wcif } from "../types";
@@ -17,7 +16,6 @@ export const Series = () => {
   const [competitionData, setCompetitionData] = useState<
     null | { data: competition; wcif: wcif }[]
   >(null);
-  const [hasError, setHasError] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -26,8 +24,7 @@ export const Series = () => {
       const seriesCompetitions = await response.json();
 
       if (!response.ok) {
-        setHasError(true);
-        return;
+        navigate("/", { replace: true });
       }
 
       const allData = await Promise.all(
@@ -53,10 +50,6 @@ export const Series = () => {
     };
     getData(seriesid!);
   }, [navigate, seriesid]);
-
-  if (hasError) {
-    return <PageNotFound />;
-  }
 
   if (!competitionData) {
     return <LoadingPageLinear />;

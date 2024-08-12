@@ -6,7 +6,6 @@ import { useState, useEffect } from "react";
 import { CompetitionCard } from "../components/CompetitionCard";
 import { CompetitionHeader } from "../components/CompetitionHeader";
 import { Link } from "../components/Link";
-import { PageNotFound } from "../components/PageNotFound";
 import { LoadingPageLinear } from "../components/LoadingPageLinear";
 import { competition, wcif } from "../types";
 import { isSpeedcubingCanadaCompetition } from "../helpers/competitionValidator";
@@ -19,7 +18,6 @@ export const Competition = () => {
     data: competition;
     wcif: wcif;
   }>(null);
-  const [hasError, setHasError] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -28,7 +26,7 @@ export const Competition = () => {
         fetch(LINKS.WCA.API.COMPETITION_INFO + params.compid).then(
           (response) => {
             if (!response.ok) {
-              setHasError(true);
+              navigate("/", { replace: true });
             }
             return response.json();
           },
@@ -37,7 +35,7 @@ export const Competition = () => {
           LINKS.WCA.API.COMPETITION_INFO + params.compid + "/wcif/public",
         ).then((response) => {
           if (!response.ok) {
-            setHasError(true);
+            navigate("/", { replace: true });
           }
           return response.json();
         }),
@@ -51,10 +49,6 @@ export const Competition = () => {
     };
     getData();
   }, [navigate, params.compid]);
-
-  if (hasError) {
-    return <PageNotFound />;
-  }
 
   if (!competitionData) {
     return <LoadingPageLinear />;
