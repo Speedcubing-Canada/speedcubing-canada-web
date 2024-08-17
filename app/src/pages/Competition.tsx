@@ -1,15 +1,14 @@
 import { Box, Container, Typography } from "@mui/material";
 import { Trans, useTranslation } from "react-i18next";
 import { LINKS } from "./links";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
-import { getLocaleOrFallback } from "../locale";
 import { CompetitionCard } from "../components/CompetitionCard";
 import { CompetitionHeader } from "../components/CompetitionHeader";
 import { Link } from "../components/Link";
-import { PageNotFound } from "../components/PageNotFound";
 import { LoadingPageLinear } from "../components/LoadingPageLinear";
 import { competition, wcif } from "../types";
+import { isSpeedcubingCanadaCompetition } from "../helpers/competitionValidator";
 
 export const Competition = () => {
   const { t } = useTranslation();
@@ -19,7 +18,7 @@ export const Competition = () => {
     data: competition;
     wcif: wcif;
   }>(null);
-  const [hasError, setHasError] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const getData = async () => {
@@ -27,7 +26,7 @@ export const Competition = () => {
         fetch(LINKS.WCA.API.COMPETITION_INFO + params.compid).then(
           (response) => {
             if (!response.ok) {
-              setHasError(true);
+              navigate("/", { replace: true });
             }
             return response.json();
           },
@@ -36,20 +35,20 @@ export const Competition = () => {
           LINKS.WCA.API.COMPETITION_INFO + params.compid + "/wcif/public",
         ).then((response) => {
           if (!response.ok) {
-            setHasError(true);
+            navigate("/", { replace: true });
           }
           return response.json();
         }),
       ]);
 
+      if (!isSpeedcubingCanadaCompetition(compData)) {
+        navigate("/", { replace: true });
+      }
+
       setCompetitionData({ data: compData, wcif: wcifData });
     };
     getData();
-  }, [params.compid]);
-
-  if (hasError) {
-    return <PageNotFound />;
-  }
+  }, [navigate, params.compid]);
 
   if (!competitionData) {
     return <LoadingPageLinear />;
@@ -88,7 +87,7 @@ export const Competition = () => {
           flexWrap="wrap"
           marginTop="2rem"
         >
-          <CompetitionCard {...competitionData} />
+          <CompetitionCard {...competitionData} shouldShowName={false} />
         </Box>
       </Box>
       <Box minHeight="70px">

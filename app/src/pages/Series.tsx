@@ -1,13 +1,13 @@
 import { Box, Container, Typography } from "@mui/material";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { LINKS } from "./links";
 import { CompetitionCard } from "../components/CompetitionCard";
 import { CompetitionHeader } from "../components/CompetitionHeader";
-import { PageNotFound } from "../components/PageNotFound";
 import { LoadingPageLinear } from "../components/LoadingPageLinear";
 import { useTranslation } from "react-i18next";
 import { competition, wcif } from "../types";
+import { isSpeedcubingCanadaCompetition } from "../helpers/competitionValidator";
 
 export const Series = () => {
   const { t } = useTranslation();
@@ -16,7 +16,7 @@ export const Series = () => {
   const [competitionData, setCompetitionData] = useState<
     null | { data: competition; wcif: wcif }[]
   >(null);
-  const [hasError, setHasError] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const getData = async (seriesId: string) => {
@@ -24,11 +24,10 @@ export const Series = () => {
       const seriesCompetitions = await response.json();
 
       if (!response.ok) {
-        setHasError(true);
-        return;
+        navigate("/", { replace: true });
       }
 
-      let allData = await Promise.all(
+      const allData = await Promise.all(
         seriesCompetitions.competitionIds.map(async (key: string) => {
           const competitionData = await (
             await fetch(LINKS.WCA.API.COMPETITION_INFO + key)
@@ -40,14 +39,17 @@ export const Series = () => {
         }),
       );
 
+      if (
+        allData.length === 0 ||
+        !isSpeedcubingCanadaCompetition(allData[0].data)
+      ) {
+        navigate("/", { replace: true });
+      }
+
       setCompetitionData(allData);
     };
     getData(seriesid!);
-  }, [seriesid]);
-
-  if (hasError) {
-    return <PageNotFound />;
-  }
+  }, [navigate, seriesid]);
 
   if (!competitionData) {
     return <LoadingPageLinear />;
@@ -92,7 +94,11 @@ export const Series = () => {
         >
           {competitionData.map(
             (competition: { data: competition; wcif: wcif }) => (
-              <CompetitionCard {...competition} key={competition.data.id} />
+              <CompetitionCard
+                {...competition}
+                key={competition.data.id}
+                shouldShowName
+              />
             ),
           )}
         </Box>

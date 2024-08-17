@@ -31,21 +31,39 @@ export const CompetitionHeader = ({
       <Typography gutterBottom style={{ textAlign: "center" }}>
         <Trans>
           {hasRegistrationOpened
-            ? t("competition.registration.after", { date: registrationOpen })
+            ? t("competition.registration.after", {
+                date: formatDate(registrationOpen),
+              })
             : doSeriesRegistrationsDiffer
             ? t("competition.registration.differentopen", {
-                date: registrationOpen,
+                date: formatDate(registrationOpen),
               })
-            : t("competition.registration.before", { date: registrationOpen })}
+            : t("competition.registration.before", {
+                date: formatDate(registrationOpen),
+              })}
           {hasRegistrationClosed
             ? t("competition.registration.closed", {
-                date: registrationClose,
+                date: formatDate(registrationClose),
               })
             : t("competition.registration.closes", {
-                date: registrationClose,
+                date: formatDate(registrationClose),
               })}
         </Trans>
       </Typography>
     </Box>
   );
 };
+
+/**
+ * Formats a date to the following style: "Thursday, September 12, 2024 at 8:00 PM EDT"
+ */
+const formatDate = (date: Date): string =>
+  date.toLocaleString("en-US", {
+    weekday: "long",
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
+    timeZoneName: "short",
+  });
