@@ -66,6 +66,10 @@ export const DOCUMENTS = {
   ],
   policies: [
     {
+      name: "Speedcubing Canada Logo Usage Policy",
+      id: "Speedcubing-Canada-Logo-Usage-Policy",
+    },
+    {
       name: "Speedcubing Canada Reimbursement Policy",
       id: "reimbursement-policy",
     },
@@ -76,6 +80,10 @@ export const DOCUMENTS = {
     {
       name: "Speedcubing Canada Major Championship Reimbursement Transfer Policy",
       id: "major-championship-reimbursement-transfer-policy",
+    },
+    {
+      name: "Speedcubing Canada Logo Usage Policy (v1.0)",
+      id: "Speedcubing-Canada-Logo-Usage-Policy-v1.0",
     },
     {
       name: "Speedcubing Canada Reimbursement Policy (v1.0)",
