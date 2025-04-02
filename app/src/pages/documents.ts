@@ -102,6 +102,10 @@ export const DOCUMENTS = {
       id: "reimbursement-policy-v1.3",
     },
     {
+      name: "Speedcubing Canada Reimbursement Policy (v1.4)",
+      id: "reimbursement-policy-v1.4",
+    },
+    {
       name: "Speedcubing Canada Supported Events Policy (v1.0)",
       id: "supported-events-policy-v1.0",
     },
@@ -112,6 +116,10 @@ export const DOCUMENTS = {
     {
       name: "Speedcubing Canada Supported Events Policy (v1.2)",
       id: "supported-events-policy-v1.2",
+    },
+    {
+      name: "Speedcubing Canada Supported Events Policy (v1.2.1)",
+      id: "supported-events-policy-v1.2.1",
     },
     {
       name: "Speedcubing Canada Major Championship Reimbursement Transfer Policy (v1.0)",
