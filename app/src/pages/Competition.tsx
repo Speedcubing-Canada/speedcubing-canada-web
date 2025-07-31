@@ -7,7 +7,7 @@ import { CompetitionCard } from "../components/CompetitionCard";
 import { CompetitionHeader } from "../components/CompetitionHeader";
 import { Link } from "../components/Link";
 import { LoadingPageLinear } from "../components/LoadingPageLinear";
-import { competition, wcif } from "../types";
+import { Competition as CompetitionType, Wcif } from "../types";
 import { isSpeedcubingCanadaCompetition } from "../helpers/competitionValidator";
 
 export const Competition = () => {
@@ -15,8 +15,8 @@ export const Competition = () => {
   const params = useParams();
 
   const [competitionData, setCompetitionData] = useState<null | {
-    data: competition;
-    wcif: wcif;
+    data: CompetitionType;
+    wcif: Wcif;
   }>(null);
   const navigate = useNavigate();
 

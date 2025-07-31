@@ -10,8 +10,8 @@ import { About } from "./pages/About";
 import { Organization } from "./pages/Organization";
 import { FAQ } from "./pages/FAQ";
 import { Series } from "./pages/Series";
-import { Competition } from "./pages/Competition";
 import { Quebec } from "./pages/Quebec";
+import { Competition } from "./pages/Competition";
 
 i18n.use(initReactI18next).init({
   resources,

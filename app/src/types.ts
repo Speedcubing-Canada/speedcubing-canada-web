@@ -1,4 +1,4 @@
-export type competition = {
+export type Competition = {
   id: string;
   name: string;
   venue: string;
@@ -12,8 +12,21 @@ export type competition = {
   organizers: Array<{ id: number }>;
 };
 
-export type wcif = {
-  series: { id: string; name: string };
-  persons: { registration: null | { status: string } }[];
-  schedule: { venues: { name: string }[] };
+export type Wcif = {
+  series: WcifSeries;
+  persons: WcifPerson[];
+  schedule: WcifSchedule;
+};
+
+export type RegistrationStatus = "accepted" | "pending" | "deleted";
+
+export type WcifSeries = { id: string; name: string };
+
+export type WcifPerson = { registration: null | { status: string } };
+
+export type WcifVenue = {
+  name: string;
+};
+export type WcifSchedule = {
+  venues: WcifVenue[];
 };

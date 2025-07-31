@@ -6,7 +6,7 @@ import { CompetitionCard } from "../components/CompetitionCard";
 import { CompetitionHeader } from "../components/CompetitionHeader";
 import { LoadingPageLinear } from "../components/LoadingPageLinear";
 import { useTranslation } from "react-i18next";
-import { competition, wcif } from "../types";
+import { Competition, Wcif } from "../types";
 import { isSpeedcubingCanadaCompetition } from "../helpers/competitionValidator";
 
 export const Series = () => {
@@ -14,7 +14,7 @@ export const Series = () => {
   const { seriesid } = useParams();
 
   const [competitionData, setCompetitionData] = useState<
-    null | { data: competition; wcif: wcif }[]
+    null | { data: Competition; wcif: Wcif }[]
   >(null);
   const navigate = useNavigate();
 
@@ -56,11 +56,11 @@ export const Series = () => {
   }
 
   const registrationOpenDates = competitionData.map(
-    (value: { data: competition }) =>
+    (value: { data: Competition }) =>
       new Date(value.data.registration_open).getTime(),
   );
   const registrationCloseDates = competitionData.map(
-    (value: { data: competition }) =>
+    (value: { data: Competition }) =>
       new Date(value.data.registration_close).getTime(),
   );
 
@@ -93,7 +93,7 @@ export const Series = () => {
           marginTop="2rem"
         >
           {competitionData.map(
-            (competition: { data: competition; wcif: wcif }) => (
+            (competition: { data: Competition; wcif: Wcif }) => (
               <CompetitionCard
                 {...competition}
                 key={competition.data.id}
