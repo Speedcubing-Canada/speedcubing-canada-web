@@ -22,7 +22,9 @@ export type RegistrationStatus = "accepted" | "pending" | "deleted";
 
 export type WcifSeries = { id: string; name: string };
 
-export type WcifPerson = { registration: null | { status: string } };
+export type WcifPerson = {
+  registration: null | { status: RegistrationStatus };
+};
 
 export type WcifVenue = {
   name: string;

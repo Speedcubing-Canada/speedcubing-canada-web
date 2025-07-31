@@ -25,7 +25,7 @@ import {
 } from "@mui/icons-material";
 import { Link, Outlet, useLocation, useParams } from "react-router-dom";
 import { getLocaleOrFallback, SAVED_LOCALE } from "../locale";
-import { getScrollbarWidth } from "../helpers/scrollbarWidth";
+import { useScrollbarWidth } from "../helpers/scrollbarWidth";
 import { useBodyScrollable } from "../helpers/useBodyScrollable";
 
 const ROUTE_NAMES = ["home", "about", "organization", "faq"] as const;
@@ -90,7 +90,8 @@ export const Base = () => {
   );
 
   const bodyScrollable = useBodyScrollable();
-  const paddingWidth = bodyScrollable ? 0 : getScrollbarWidth();
+  const scrollbarWidth = useScrollbarWidth();
+  const paddingWidth = bodyScrollable ? 0 : scrollbarWidth;
 
   return isSmall ? (
     <Box minHeight="90vh" flex={1} display="flex" flexDirection="column">
