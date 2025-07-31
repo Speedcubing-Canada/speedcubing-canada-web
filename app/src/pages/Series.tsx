@@ -1,34 +1,12 @@
 import { Box, Container, Typography } from "@mui/material";
 import { useNavigate, useParams } from "react-router-dom";
-import { LINKS } from "./links";
 import { CompetitionCard } from "../components/CompetitionCard";
 import { CompetitionHeader } from "../components/CompetitionHeader";
 import { LoadingPageLinear } from "../components/LoadingPageLinear";
 import { useTranslation } from "react-i18next";
-import { CompetitionSeries } from "../types";
 import { isSpeedcubingCanadaCompetition } from "../helpers/competitionValidator";
 import { useQuery } from "@tanstack/react-query";
-import { fetchCompetitionData } from "../helpers/fetchCompetitionData";
-
-const fetchSeriesData = async (seriesId: string) => {
-  const response = await fetch(
-    `${LINKS.WCA.API.COMPETITION_SERIES}${seriesId}`,
-  );
-
-  if (!response.ok) {
-    throw new Error(
-      `Failed to fetch series data ${response.status} ${response.statusText}`,
-    );
-  }
-
-  const seriesData: CompetitionSeries = await response.json();
-
-  const competitionData = await Promise.all(
-    seriesData.competitionIds.map(fetchCompetitionData),
-  );
-
-  return competitionData;
-};
+import { fetchSeriesData } from "../helpers/fetchSeriesdata";
 
 export const Series = () => {
   const { t } = useTranslation();
@@ -49,11 +27,7 @@ export const Series = () => {
     isSpeedcubingCanadaCompetition(competition.compData),
   );
 
-<<<<<<< HEAD
   if (isError || !data || !hasSCCOrganizer) {
-=======
-  if (!hasSCCOrganizer) {
->>>>>>> 01ce7d5 (Make async json parsing parallel, minor improvements)
     navigate("/", { replace: true });
     return;
   }
