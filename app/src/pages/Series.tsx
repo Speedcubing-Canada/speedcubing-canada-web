@@ -1,67 +1,65 @@
 import { Box, Container, Typography } from "@mui/material";
 import { useNavigate, useParams } from "react-router-dom";
-import { useState, useEffect } from "react";
 import { LINKS } from "./links";
 import { CompetitionCard } from "../components/CompetitionCard";
 import { CompetitionHeader } from "../components/CompetitionHeader";
 import { LoadingPageLinear } from "../components/LoadingPageLinear";
 import { useTranslation } from "react-i18next";
-import { Competition, Wcif } from "../types";
+import { CompetitionSeries } from "../types";
 import { isSpeedcubingCanadaCompetition } from "../helpers/competitionValidator";
+import { useQuery } from "@tanstack/react-query";
+import { fetchCompetitionData } from "../helpers/fetchCompetitionData";
 
+const fetchSeriesData = async (seriesId: string) => {
+  const response = await fetch(
+    `${LINKS.WCA.API.COMPETITION_SERIES}${seriesId}`,
+  );
+  const seriesData: CompetitionSeries = await response.json();
+
+  if (!response.ok) {
+    throw new Error("Error in WCA response.");
+  }
+
+  const competitionData = await Promise.all(
+    seriesData.competitionIds.map(fetchCompetitionData),
+  );
+
+  return competitionData;
+};
 export const Series = () => {
   const { t } = useTranslation();
   const { seriesid } = useParams();
-
-  const [competitionData, setCompetitionData] = useState<
-    null | { data: Competition; wcif: Wcif }[]
-  >(null);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const getData = async (seriesId: string) => {
-      const response = await fetch(LINKS.WCA.API.COMPETITION_SERIES + seriesId);
-      const seriesCompetitions = await response.json();
+  const { isLoading, isError, data } = useQuery({
+    queryKey: ["series", seriesid],
+    enabled: !!seriesid,
+    queryFn: () => fetchSeriesData(seriesid!),
+  });
 
-      if (!response.ok) {
-        navigate("/", { replace: true });
-      }
-
-      const allData = await Promise.all(
-        seriesCompetitions.competitionIds.map(async (key: string) => {
-          const competitionData = await (
-            await fetch(LINKS.WCA.API.COMPETITION_INFO + key)
-          ).json();
-          const wcifData = await (
-            await fetch(LINKS.WCA.API.COMPETITION_INFO + key + "/wcif/public")
-          ).json();
-          return { data: competitionData, wcif: wcifData };
-        }),
-      );
-
-      if (
-        allData.length === 0 ||
-        !isSpeedcubingCanadaCompetition(allData[0].data)
-      ) {
-        navigate("/", { replace: true });
-      }
-
-      setCompetitionData(allData);
-    };
-    getData(seriesid!);
-  }, [navigate, seriesid]);
-
-  if (!competitionData) {
+  if (isLoading) {
     return <LoadingPageLinear />;
   }
 
-  const registrationOpenDates = competitionData.map(
-    (value: { data: Competition }) =>
-      new Date(value.data.registration_open).getTime(),
+  if (isError || !data) {
+    navigate("/", { replace: true });
+    return;
+  }
+
+  const hasSCCOrganizer = data.some((competition) =>
+    isSpeedcubingCanadaCompetition(competition.compData),
   );
-  const registrationCloseDates = competitionData.map(
-    (value: { data: Competition }) =>
-      new Date(value.data.registration_close).getTime(),
+  if (!hasSCCOrganizer) {
+    navigate("/", { replace: true });
+    return;
+  }
+
+  const registrationOpenDates = data.map((competition) =>
+    new Date(competition.compData.registration_open).getTime(),
+  );
+
+  const registrationCloseDates = data.map((competition) =>
+    new Date(competition.compData.registration_close).getTime(),
   );
 
   const earliestRegistrationOpen = new Date(Math.min(...registrationOpenDates));
@@ -80,7 +78,7 @@ export const Series = () => {
     >
       <Box sx={{ flexGrow: 1 }}>
         <CompetitionHeader
-          name={competitionData[0].wcif.series.name}
+          name={data[0].wcif.series.name}
           registrationOpen={earliestRegistrationOpen}
           registrationClose={earliestRegistrationClose}
           doSeriesRegistrationsDiffer={isRegistrationDifferent}
@@ -92,15 +90,14 @@ export const Series = () => {
           flexWrap="wrap"
           marginTop="2rem"
         >
-          {competitionData.map(
-            (competition: { data: Competition; wcif: Wcif }) => (
-              <CompetitionCard
-                {...competition}
-                key={competition.data.id}
-                shouldShowName
-              />
-            ),
-          )}
+          {data.map(({ compData, wcif }) => (
+            <CompetitionCard
+              wcif={wcif}
+              data={compData}
+              key={compData.id}
+              shouldShowName
+            />
+          ))}
         </Box>
       </Box>
       <Box minHeight="70px">

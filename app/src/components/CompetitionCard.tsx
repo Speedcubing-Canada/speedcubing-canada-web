@@ -26,16 +26,13 @@ export const CompetitionCard = (competition: {
 
   return (
     <Box margin="1rem" padding="1rem" maxWidth="400px">
+      {competition.shouldShowName && (
+        <Typography component="h1" variant="h5" fontWeight="bold" gutterBottom>
+          {competition.data.name}
+        </Typography>
+      )}
       <Typography gutterBottom>
         <Trans>
-          {competition.shouldShowName && (
-            <>
-              <Typography component="h1" variant="h5" fontWeight="bold">
-                {competition.data.name}
-              </Typography>
-              <br />
-            </>
-          )}
           <>
             {t("competition.date", {
               date: new Date(
