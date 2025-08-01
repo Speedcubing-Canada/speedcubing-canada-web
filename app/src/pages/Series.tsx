@@ -29,6 +29,7 @@ const fetchSeriesData = async (seriesId: string) => {
 
   return competitionData;
 };
+
 export const Series = () => {
   const { t } = useTranslation();
   const { seriesid } = useParams();
@@ -48,32 +49,34 @@ export const Series = () => {
     isSpeedcubingCanadaCompetition(competition.compData),
   );
 
+<<<<<<< HEAD
   if (isError || !data || !hasSCCOrganizer) {
+=======
+  if (!hasSCCOrganizer) {
+>>>>>>> 01ce7d5 (Make async json parsing parallel, minor improvements)
     navigate("/", { replace: true });
     return;
   }
 
-  const registrationOpenDates = data.map((competition) =>
-    new Date(competition.compData.registration_open).getTime(),
-  );
+  const registrationDates = data.map((competition) => ({
+    open: new Date(competition.compData.registration_open).getTime(),
+    close: new Date(competition.compData.registration_close).getTime(),
+  }));
 
-  const registrationCloseDates = data.map((competition) =>
-    new Date(competition.compData.registration_close).getTime(),
+  const earliestRegistrationOpen = new Date(
+    Math.min(...registrationDates.map((d) => d.open)),
   );
-
-  const earliestRegistrationOpen = new Date(Math.min(...registrationOpenDates));
   const earliestRegistrationClose = new Date(
-    Math.min(...registrationCloseDates),
+    Math.min(...registrationDates.map((d) => d.close)),
   );
-
-  const isRegistrationDifferent = !registrationOpenDates.every(
-    (item: number) => item === registrationOpenDates[0],
+  const isRegistrationDifferent = !registrationDates.every(
+    (d) => d.open === registrationDates[0].open,
   );
 
   return (
     <Container
       maxWidth="xl"
-      style={{ textAlign: "center", display: "flex", flexDirection: "column" }}
+      sx={{ textAlign: "center", display: "flex", flexDirection: "column" }}
     >
       <Box sx={{ flexGrow: 1 }}>
         <CompetitionHeader

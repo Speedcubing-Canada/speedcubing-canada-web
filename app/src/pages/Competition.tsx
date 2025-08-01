@@ -36,7 +36,7 @@ export const Competition = () => {
   return (
     <Container
       maxWidth="xl"
-      style={{ textAlign: "center", display: "flex", flexDirection: "column" }}
+      sx={{ textAlign: "center", display: "flex", flexDirection: "column" }}
     >
       <Box sx={{ flexGrow: 1 }}>
         <CompetitionHeader
@@ -45,7 +45,7 @@ export const Competition = () => {
           registrationClose={registrationClose}
         />
         {wcif.series && (
-          <Typography gutterBottom style={{ textAlign: "center" }}>
+          <Typography gutterBottom sx={{ textAlign: "center" }}>
             <Trans
               components={{
                 seriesLink: (
