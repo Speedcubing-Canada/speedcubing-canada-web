@@ -16,6 +16,7 @@ export const Series = () => {
   const [competitionData, setCompetitionData] = useState<
     null | { data: Competition; wcif: Wcif }[]
   >(null);
+
   const navigate = useNavigate();
 
   useEffect(() => {

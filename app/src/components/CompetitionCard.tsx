@@ -1,6 +1,6 @@
 import { Box, Typography, Button } from "@mui/material";
 import { Trans, useTranslation } from "react-i18next";
-import { Link } from "./Link";
+import { ExternalLink } from "./ExternalLink";
 import { Competition, Wcif, WcifPerson } from "../types";
 
 const competitorsApproved = (competition: { data: Competition; wcif: Wcif }) =>
@@ -65,7 +65,7 @@ export const CompetitionCard = (competition: {
       </Typography>
       <Button
         to={competition.data.url}
-        component={Link}
+        component={ExternalLink}
         variant="contained"
         size="large"
       >

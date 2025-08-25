@@ -1,11 +1,10 @@
 import { Box, Container, Typography } from "@mui/material";
 import { Trans, useTranslation } from "react-i18next";
 import { LINKS } from "./links";
-import { useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { CompetitionCard } from "../components/CompetitionCard";
 import { CompetitionHeader } from "../components/CompetitionHeader";
-import { Link } from "../components/Link";
 import { LoadingPageLinear } from "../components/LoadingPageLinear";
 import { Competition as CompetitionType, Wcif } from "../types";
 import { isSpeedcubingCanadaCompetition } from "../helpers/competitionValidator";
@@ -73,7 +72,9 @@ export const Competition = () => {
             <Trans
               components={{
                 seriesLink: (
-                  <Link to={`./series/${competitionData.wcif.series.id}`} />
+                  <Link
+                    to={`../competitions/series/${competitionData.wcif.series.id}`}
+                  />
                 ),
               }}
             >
