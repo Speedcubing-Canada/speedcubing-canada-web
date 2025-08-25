@@ -32,3 +32,10 @@ export type WcifVenue = {
 export type WcifSchedule = {
   venues: WcifVenue[];
 };
+
+export type CompetitionSeries = {
+  id: string;
+  name: string;
+  shortName: string;
+  competitionIds: string[];
+};
