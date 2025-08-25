@@ -12,6 +12,7 @@ import { FAQ } from "./pages/FAQ";
 import { Series } from "./pages/Series";
 import { Quebec } from "./pages/Quebec";
 import { Competition } from "./pages/Competition";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 i18n.use(initReactI18next).init({
   resources,
@@ -32,40 +33,44 @@ const theme = createTheme({
   },
 });
 
+const queryClient = new QueryClient();
+
 const App = () => {
   const savedLocale = localStorage.getItem(SAVED_LOCALE) as string;
   const locale = getLocaleOrFallback(savedLocale);
 
   return (
-    <ThemeProvider theme={theme}>
-      <BrowserRouter>
-        <Routes>
-          {/* Normal pages */}
-          <Route element={<Base />}>
-            <Route path=":locale/">
-              <Route index element={<Home />} />
-              <Route path="about" element={<About />} />
-              <Route path="organization" element={<Organization />} />
-              <Route path="faq" element={<FAQ />} />
-              <Route
-                path="competitions/series/:seriesid"
-                element={<Series />}
-              />
-              <Route path="competitions/:compid" element={<Competition />} />
-              <Route path="quebec" element={<Quebec />} />
+    <QueryClientProvider client={queryClient}>
+      <ThemeProvider theme={theme}>
+        <BrowserRouter>
+          <Routes>
+            {/* Normal pages */}
+            <Route element={<Base />}>
+              <Route path=":locale/">
+                <Route index element={<Home />} />
+                <Route path="about" element={<About />} />
+                <Route path="organization" element={<Organization />} />
+                <Route path="faq" element={<FAQ />} />
+                <Route
+                  path="competitions/series/:seriesid"
+                  element={<Series />}
+                />
+                <Route path="competitions/:compid" element={<Competition />} />
+                <Route path="quebec" element={<Quebec />} />
+              </Route>
+              {["about", "organization", "faq", "quebec"].map((route) => (
+                <Route
+                  key={route}
+                  path={route}
+                  element={<Navigate to={`/${locale}/${route}`} replace />}
+                />
+              ))}
+              <Route path="*" element={<Navigate to={locale} replace />} />
             </Route>
-            {["about", "organization", "faq", "quebec"].map((route) => (
-              <Route
-                key={route}
-                path={route}
-                element={<Navigate to={`/${locale}/${route}`} replace />}
-              />
-            ))}
-            <Route path="*" element={<Navigate to={locale} replace />} />
-          </Route>
-        </Routes>
-      </BrowserRouter>
-    </ThemeProvider>
+          </Routes>
+        </BrowserRouter>
+      </ThemeProvider>
+    </QueryClientProvider>
   );
 };
 

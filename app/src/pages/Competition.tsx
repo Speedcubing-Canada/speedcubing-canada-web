@@ -1,60 +1,37 @@
 import { Box, Container, Typography } from "@mui/material";
 import { Trans, useTranslation } from "react-i18next";
-import { LINKS } from "./links";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { useState, useEffect } from "react";
 import { CompetitionCard } from "../components/CompetitionCard";
 import { CompetitionHeader } from "../components/CompetitionHeader";
 import { LoadingPageLinear } from "../components/LoadingPageLinear";
-import { Competition as CompetitionType, Wcif } from "../types";
 import { isSpeedcubingCanadaCompetition } from "../helpers/competitionValidator";
+import { useQuery } from "@tanstack/react-query";
+import { fetchCompetitionData } from "../helpers/fetchCompetitionData";
 
 export const Competition = () => {
   const { t } = useTranslation();
-  const params = useParams();
-
-  const [competitionData, setCompetitionData] = useState<null | {
-    data: CompetitionType;
-    wcif: Wcif;
-  }>(null);
+  const { compid } = useParams();
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const getData = async () => {
-      const [compData, wcifData] = await Promise.all([
-        fetch(LINKS.WCA.API.COMPETITION_INFO + params.compid).then(
-          (response) => {
-            if (!response.ok) {
-              navigate("/", { replace: true });
-            }
-            return response.json();
-          },
-        ),
-        fetch(
-          LINKS.WCA.API.COMPETITION_INFO + params.compid + "/wcif/public",
-        ).then((response) => {
-          if (!response.ok) {
-            navigate("/", { replace: true });
-          }
-          return response.json();
-        }),
-      ]);
+  const { isLoading, isError, data } = useQuery({
+    queryKey: ["competition", compid],
+    queryFn: () => fetchCompetitionData(compid!),
+    enabled: !!compid,
+  });
 
-      if (!isSpeedcubingCanadaCompetition(compData)) {
-        navigate("/", { replace: true });
-      }
-
-      setCompetitionData({ data: compData, wcif: wcifData });
-    };
-    getData();
-  }, [navigate, params.compid]);
-
-  if (!competitionData) {
+  if (isLoading) {
     return <LoadingPageLinear />;
   }
 
-  const registrationOpen = new Date(competitionData.data.registration_open);
-  const registrationClose = new Date(competitionData.data.registration_close);
+  if (isError || !data || !isSpeedcubingCanadaCompetition(data.compData)) {
+    navigate("/", { replace: true });
+    return;
+  }
+
+  const { compData, wcif } = data;
+
+  const registrationOpen = new Date(compData.registration_open);
+  const registrationClose = new Date(compData.registration_close);
 
   return (
     <Container
@@ -63,18 +40,16 @@ export const Competition = () => {
     >
       <Box sx={{ flexGrow: 1 }}>
         <CompetitionHeader
-          name={competitionData.data.name}
+          name={compData.name}
           registrationOpen={registrationOpen}
           registrationClose={registrationClose}
         />
-        {competitionData.wcif.series && (
+        {wcif.series && (
           <Typography gutterBottom style={{ textAlign: "center" }}>
             <Trans
               components={{
                 seriesLink: (
-                  <Link
-                    to={`../competitions/series/${competitionData.wcif.series.id}`}
-                  />
+                  <Link to={`../competitions/series/${wcif.series.id}`} />
                 ),
               }}
             >
@@ -88,7 +63,7 @@ export const Competition = () => {
           flexWrap="wrap"
           marginTop="2rem"
         >
-          <CompetitionCard {...competitionData} shouldShowName={false} />
+          <CompetitionCard wcif={wcif} data={compData} shouldShowName={false} />
         </Box>
       </Box>
       <Box minHeight="70px">
