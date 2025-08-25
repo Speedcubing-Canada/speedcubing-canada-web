@@ -30,24 +30,26 @@ export const CompetitionHeader = ({
       </Typography>
       <Typography gutterBottom style={{ textAlign: "center" }}>
         <Trans>
-          {hasRegistrationOpened
-            ? t("competition.registration.after", {
-                date: formatDate(registrationOpen),
-              })
-            : doSeriesRegistrationsDiffer
-            ? t("competition.registration.differentopen", {
-                date: formatDate(registrationOpen),
-              })
-            : t("competition.registration.before", {
-                date: formatDate(registrationOpen),
-              })}
-          {hasRegistrationClosed
-            ? t("competition.registration.closed", {
-                date: formatDate(registrationClose),
-              })
-            : t("competition.registration.closes", {
-                date: formatDate(registrationClose),
-              })}
+          <>
+            {hasRegistrationOpened
+              ? t("competition.registration.after", {
+                  date: formatDate(registrationOpen),
+                })
+              : doSeriesRegistrationsDiffer
+              ? t("competition.registration.differentopen", {
+                  date: formatDate(registrationOpen),
+                })
+              : t("competition.registration.before", {
+                  date: formatDate(registrationOpen),
+                })}
+            {hasRegistrationClosed
+              ? t("competition.registration.closed", {
+                  date: formatDate(registrationClose),
+                })
+              : t("competition.registration.closes", {
+                  date: formatDate(registrationClose),
+                })}
+          </>
         </Trans>
       </Typography>
     </Box>

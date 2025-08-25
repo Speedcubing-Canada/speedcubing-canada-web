@@ -236,8 +236,7 @@ export const resources = {
           differentopen:
             "\n<strong>Note : Les inscriptions pourraient ouvrir le {{date}}.</strong>\nVeuillez consulter les pages des compétitions sur le site web de la WCA pour confirmer la date d'ouverture des inscriptions pour chaque compétition.",
           closes: "\n<strong>Les inscriptions fermeront le :</strong> {{date}}",
-          closed:
-            "\n<strong>Les inscriptions ont fermé le :</strong> {{date}}",
+          closed: "\n<strong>Les inscriptions ont fermé le :</strong> {{date}}",
           count:
             "<strong>Inscriptions :</strong> {{num}}/{{total}} places occupées\n\n",
         },
