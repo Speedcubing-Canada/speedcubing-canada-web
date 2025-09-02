@@ -1,6 +1,6 @@
 import { Button, Box, Container, Typography } from "@mui/material";
 import { useTranslation, Trans } from "react-i18next";
-import { Link } from "../components/Link";
+import { ExternalLink } from "../components/ExternalLink";
 import { LINKS } from "./links";
 
 export const About = () => {
@@ -15,8 +15,8 @@ export const About = () => {
         <Typography gutterBottom>
           <Trans
             components={{
-              wca: <Link to={LINKS.WCA.HOME} />,
-              regionalOrg: <Link to={LINKS.WCA.REGIONAL_ORGS} />,
+              wca: <ExternalLink to={LINKS.WCA.HOME} />,
+              regionalOrg: <ExternalLink to={LINKS.WCA.REGIONAL_ORGS} />,
             }}
           >
             {t("about.body")}
@@ -31,7 +31,7 @@ export const About = () => {
         <Typography gutterBottom>
           <Trans
             components={{
-              wc2003: <Link to={LINKS.WCA.WC2003} />,
+              wc2003: <ExternalLink to={LINKS.WCA.WC2003} />,
             }}
           >
             {t("history.body1")}
@@ -46,7 +46,7 @@ export const About = () => {
         >
           <Trans
             components={{
-              wca: <Link to={LINKS.WCA.HOME} />,
+              wca: <ExternalLink to={LINKS.WCA.HOME} />,
             }}
           >
             {t("history.quote")}
@@ -55,7 +55,7 @@ export const About = () => {
         <Typography gutterBottom>
           <Trans
             components={{
-              canadianOpen: <Link to={LINKS.WCA.CO2007} />,
+              canadianOpen: <ExternalLink to={LINKS.WCA.CO2007} />,
             }}
           >
             {t("history.body2")}
@@ -71,7 +71,7 @@ export const About = () => {
         <Box marginTop="2rem">
           <Button
             to={LINKS.WCA.COMPS_CANADA}
-            component={Link}
+            component={ExternalLink}
             variant="contained"
             size="large"
           >

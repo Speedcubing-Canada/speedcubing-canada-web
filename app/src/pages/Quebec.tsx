@@ -1,6 +1,6 @@
 import { useTranslation } from "react-i18next";
 import { Box, Container, Typography } from "@mui/material";
-import { Link } from "../components/Link";
+import { ExternalLink } from "../components/ExternalLink";
 import { LINKS } from "./links";
 import { useEffect } from "react";
 export const Quebec = () => {
@@ -17,7 +17,7 @@ export const Quebec = () => {
         </Typography>
         <Typography gutterBottom>{t("quebec.body")}</Typography>
         <Typography>
-          <Link to={LINKS.DISCORD_QC}>Discord</Link>
+          <ExternalLink to={LINKS.DISCORD_QC}>Discord</ExternalLink>
         </Typography>
       </Box>
     </Container>

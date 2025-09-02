@@ -7,7 +7,7 @@ import {
   Email,
 } from "@mui/icons-material";
 import { Box, Typography, useTheme } from "@mui/material";
-import { Link } from "../components/Link";
+import { ExternalLink } from "../components/ExternalLink";
 import {
   getLocaleOrFallback,
   INVERTED_LOCALES,
@@ -72,9 +72,9 @@ export const Home = () => {
         gap={GAP_PX}
       >
         {SOCIAL_LINKS.map(({ Icon, to, nameKey }) => (
-          <Link key={nameKey} to={to}>
+          <ExternalLink key={nameKey} to={to}>
             <Icon fontSize="large" htmlColor="black" titleAccess={t(nameKey)} />
-          </Link>
+          </ExternalLink>
         ))}
         <Box
           sx={{
