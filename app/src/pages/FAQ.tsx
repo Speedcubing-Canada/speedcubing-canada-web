@@ -1,6 +1,6 @@
 import { Box, Container, Typography } from "@mui/material";
 import { useTranslation, Trans } from "react-i18next";
-import { Link } from "../components/Link";
+import { ExternalLink } from "../components/ExternalLink";
 import { LINKS } from "./links";
 
 const QUESTIONS = [
@@ -14,34 +14,42 @@ const QUESTIONS = [
   "why-the-change-from-canadiancubing-to-speedcubing-canada",
 ] as const;
 
-const INTERPOLATE = {
-  "when-is-the-next-wca-competition-in-my-area": {
-    wcaComps: <Link to={LINKS.WCA.COMPS_CANADA} />,
-    mailingList: <Link to={LINKS.MAILING_LIST} />,
-  },
-  "im-going-to-my-first-wca-competition-what-do-i-need-to-know": {
-    regs: <Link to={LINKS.WCA.REGS} />,
-    firstComp: <Link to={LINKS.FIRST_COMP} />,
-    compBasics: <Link to={LINKS.COMP_BASICS} />,
-  },
-  "who-are-the-wca-delegates-in-my-area": {
-    delegates: <Link to={LINKS.WCA.DELEGATES} />,
-  },
-  "why-doesnt-my-name-appear-on-the-rankings": {
-    wca: <Link to={LINKS.WCA.HOME} />,
-  },
-  "why-does-this-person-appear-in-my-province": {
-    report: <Link to={LINKS.REPORT} />,
-  },
-  "how-can-i-volunteer-with-speedcubing-canada": {},
-  "affiliated-with-the-wca": {
-    regionalOrg: <Link to={LINKS.WCA.REGIONAL_ORGS} />,
-  },
-  "why-the-change-from-canadiancubing-to-speedcubing-canada": {},
-} as const;
-
 export const FAQ = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+
+  const INTERPOLATE = {
+    "when-is-the-next-wca-competition-in-my-area": {
+      wcaComps: <ExternalLink to={LINKS.WCA.COMPS_CANADA} />,
+      mailingList: <ExternalLink to={LINKS.MAILING_LIST} />,
+    },
+    "im-going-to-my-first-wca-competition-what-do-i-need-to-know": {
+      regs: <ExternalLink to={LINKS.WCA.REGS} />,
+      firstComp: (
+        <ExternalLink
+          to={i18n.language === "fr" ? LINKS.FIRST_COMP_FR : LINKS.FIRST_COMP}
+        />
+      ),
+      compBasics: (
+        <ExternalLink
+          to={i18n.language === "fr" ? LINKS.COMP_BASICS_FR : LINKS.COMP_BASICS}
+        />
+      ),
+    },
+    "who-are-the-wca-delegates-in-my-area": {
+      delegates: <ExternalLink to={LINKS.WCA.DELEGATES} />,
+    },
+    "why-doesnt-my-name-appear-on-the-rankings": {
+      wca: <ExternalLink to={LINKS.WCA.HOME} />,
+    },
+    "why-does-this-person-appear-in-my-province": {
+      report: <ExternalLink to={LINKS.REPORT} />,
+    },
+    "how-can-i-volunteer-with-speedcubing-canada": {},
+    "affiliated-with-the-wca": {
+      regionalOrg: <ExternalLink to={LINKS.WCA.REGIONAL_ORGS} />,
+    },
+    "why-the-change-from-canadiancubing-to-speedcubing-canada": {},
+  } as const;
 
   return (
     <Container maxWidth="md">

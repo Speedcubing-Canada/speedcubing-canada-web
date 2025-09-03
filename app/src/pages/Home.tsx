@@ -7,8 +7,7 @@ import {
   Email,
 } from "@mui/icons-material";
 import { Box, Typography, useTheme } from "@mui/material";
-import { makeStyles } from "@mui/styles";
-import { Link } from "../components/Link";
+import { ExternalLink } from "../components/ExternalLink";
 import {
   getLocaleOrFallback,
   INVERTED_LOCALES,
@@ -46,26 +45,6 @@ export const Home = () => {
 
   const inverseLocale = INVERTED_LOCALES[locale];
 
-  const useStyles = makeStyles({
-    logo: {
-      maxWidth: "50vw",
-      marginBottom: 2 * GAP,
-      [theme.breakpoints.down("sm")]: {
-        maxWidth: "75vw",
-      },
-    },
-    noTextDecoration: {
-      textDecoration: "none",
-    },
-    verticalLine: {
-      width: "3px",
-      height: "35px",
-      background: "black",
-    },
-  });
-
-  const classes = useStyles();
-
   return (
     <Box
       flex={1}
@@ -74,7 +53,18 @@ export const Home = () => {
       justifyContent="center"
       alignItems="center"
     >
-      <img src="/logo.svg" alt="Speedcubing Canada" className={classes.logo} />
+      <Box
+        component="img"
+        src="/logo.svg"
+        alt="Speedcubing Canada"
+        sx={{
+          maxWidth: "50vw",
+          marginBottom: `${2 * GAP}px`,
+          [theme.breakpoints.down("sm")]: {
+            maxWidth: "75vw",
+          },
+        }}
+      />
       <Box
         display="flex"
         flexDirection="row"
@@ -82,24 +72,35 @@ export const Home = () => {
         gap={GAP_PX}
       >
         {SOCIAL_LINKS.map(({ Icon, to, nameKey }) => (
-          <Link key={nameKey} to={to}>
+          <ExternalLink key={nameKey} to={to}>
             <Icon fontSize="large" htmlColor="black" titleAccess={t(nameKey)} />
-          </Link>
+          </ExternalLink>
         ))}
-        <div className={classes.verticalLine} />
-        <RouterLink
+        <Box
+          sx={{
+            width: "3px",
+            height: "35px",
+            background: "black",
+          }}
+        />
+        <Box
+          component={RouterLink}
           to={`/${inverseLocale}`}
-          className={classes.noTextDecoration}
+          sx={{
+            textDecoration: "none",
+            color: "inherit",
+          }}
         >
-          <abbr
+          <Box
+            component="abbr"
             title={LOCALE_TO_LANGUAGE[inverseLocale]}
-            className={classes.noTextDecoration}
+            sx={{ textDecoration: "none" }}
           >
             <Typography fontSize="24px" fontWeight="bold" color="black">
               {inverseLocale.toUpperCase()}
             </Typography>
-          </abbr>
-        </RouterLink>
+          </Box>
+        </Box>
       </Box>
     </Box>
   );

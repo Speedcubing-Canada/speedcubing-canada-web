@@ -29,6 +29,8 @@ import {
 
 import { Link, Outlet, useLocation, useParams } from "react-router-dom";
 import { getLocaleOrFallback, SAVED_LOCALE } from "../locale";
+import { useScrollbarWidth } from "../helpers/scrollbarWidth";
+import { useBodyScrollable } from "../helpers/useBodyScrollable";
 
 export const ROUTE_NAMES = [
   "home",
@@ -102,6 +104,10 @@ export const Base = () => {
     },
   );
 
+  const bodyScrollable = useBodyScrollable();
+  const scrollbarWidth = useScrollbarWidth();
+  const paddingWidth = bodyScrollable ? 0 : scrollbarWidth;
+
   return isSmall ? (
     <Box minHeight="90vh" flex={1} display="flex" flexDirection="column">
       <Paper sx={{ position: "sticky", top: 0, zIndex: 1100 }} elevation={2}>
@@ -155,7 +161,13 @@ export const Base = () => {
         sx={{ position: "sticky", bottom: 0, left: 0, right: 0, zIndex: 1100 }}
         elevation={2}
       >
-        <BottomNavigation showLabels value={pathWithoutLocale}>
+        <BottomNavigation
+          showLabels
+          value={pathWithoutLocale}
+          sx={{
+            paddingRight: `${paddingWidth}px`,
+          }}
+        >
           {navigationBarItems.map(
             ({ routeName, Icon, path, pathWithLocale }) => (
               <BottomNavigationAction

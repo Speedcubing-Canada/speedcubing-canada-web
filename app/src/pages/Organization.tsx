@@ -12,7 +12,7 @@ import {
   IconButton,
 } from "@mui/material";
 import { useTranslation } from "react-i18next";
-import { Link } from "../components/Link";
+import { ExternalLink } from "../components/ExternalLink";
 import { DOCUMENT_TYPES, DOCUMENTS } from "./documents";
 import { LINKS } from "./links";
 
@@ -20,7 +20,7 @@ const DIRECTORS = [
   { name: "Kristopher De Asis", wcaId: "2008ASIS01" },
   { name: "Jonathan Esparaz", wcaId: "2013ESPA01" },
   { name: "Abdullah Gulab", wcaId: "2014GULA02" },
-  { name: "Brady Metherall", wcaId: "2009METH01" },
+  { name: "Tarandeep Mittal", wcaId: "2014MITT02" },
   { name: "Liam Orovec", wcaId: "2014OROV01" },
 ] as const;
 
@@ -49,7 +49,7 @@ export const Organization = () => {
                 <IconButton
                   edge="end"
                   aria-label="WCA Profile"
-                  component={Link}
+                  component={ExternalLink}
                   to={WCA_PROFILE_URL + wcaId}
                 >
                   <AccountCircle />
@@ -81,7 +81,7 @@ export const Organization = () => {
             {DOCUMENTS[documentType].map(({ name, id }) => (
               <ListItemButton
                 key={id}
-                component={Link}
+                component={ExternalLink}
                 to={`/documents/${id}.pdf`}
               >
                 <ListItemIcon>

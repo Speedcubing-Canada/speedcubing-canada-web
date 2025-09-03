@@ -13,10 +13,18 @@ export const LINKS = {
     WC2003: "https://www.worldcubeassociation.org/competitions/WC2003",
     CO2007:
       "https://www.worldcubeassociation.org/competitions/CanadianOpen2007",
+    API: {
+      COMPETITION_INFO:
+        "https://www.worldcubeassociation.org/api/v0/competitions/",
+      COMPETITION_SERIES:
+        "https://www.worldcubeassociation.org/api/v0/competition_series/",
+    },
     PROFILE: "https://www.worldcubeassociation.org/persons/",
   },
   FIRST_COMP: "https://youtu.be/xK2ycvTfgUY",
+  FIRST_COMP_FR: "https://youtu.be/yYZHzTc0GMc",
   COMP_BASICS: "https://youtu.be/vz1V0Gv0qX0",
+  COMP_BASICS_FR: "https://youtu.be/LH3QG7krdgc",
   DISCORD_QC: "https://discord.gg/BTwYPg4qcJ",
   REPORT: "mailto:software@speedcubingcanada.org",
 } as const;
