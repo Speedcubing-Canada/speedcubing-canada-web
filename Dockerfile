@@ -1,5 +1,5 @@
-FROM node:16-alpine AS development
-ENV NODE_ENV development
+FROM node:20.19.5-alpine AS development
+ENV NODE_ENV=development
 
 WORKDIR /
 COPY app/package.json ./
