@@ -1,3 +1,6 @@
+import englishMessages from "ra-language-english";
+import frenchMessages from "ra-language-french";
+
 export const LOCALES = { en: "en", fr: "fr" } as const;
 export const INVERTED_LOCALES = { en: "fr", fr: "en" } as const;
 export const LOCALE_TO_LANGUAGE = { en: "English", fr: "Français" } as const;
@@ -27,6 +30,8 @@ export const resources = {
         about: "About",
         organization: "Organization",
         faq: "FAQ",
+        account: "Account",
+        rankings: "Rankings",
       },
       about: {
         title: "About",
@@ -94,6 +99,44 @@ export const resources = {
           q: "Is Speedcubing Canada affiliated with the World Cube Association?",
           a: "Speedcubing Canada operates independently of the World Cube Association, with a separate Board of Directors. Speedcubing Canada is recognized as Canada’s official <regionalOrg>WCA regional organization</regionalOrg>.",
         },
+        "why-doesnt-my-name-appear-on-the-rankings": {
+          q: "Why doesn’t my name appear on the rankings?",
+          a:
+            "Province residence is self-reported, so you'll need to tell us your province:\n" +
+            "- Create an account on the <wca>WCA website</wca> and link it with your WCA ID.\n" +
+            "- Log in to the Speedcubing Canada website through the account tab.\n" +
+            "- Edit your profile and set your home province. Since this also affects Regional Championship eligibility, you can only do this once per year.",
+        },
+        "why-does-this-person-appear-in-my-province": {
+          q: "Why does this person appear in my province? They don’t live here!",
+          a: "Please <report>contact us</report> and we'll be happy to investigate.",
+        },
+      },
+      competition: {
+        header: "Check out this competition organized by Speedcubing Canada!",
+        series:
+          "Check out this upcoming series! As a reminder, competitors may only sign up for ONE of the competitions in a series. Read the competition pages carefully and ensure you register for the right competiton.",
+        registration: {
+          before: "\n<strong>Registration opens on:</strong> {{date}}",
+          after: "\n<strong>Registration opened on:</strong> {{date}}",
+          differentopen:
+            "\n<strong>Note: Registration may open at {{date}}.</strong>\nPlease check the competition pages on the WCA website to confirm when registration opens for each competition.",
+          closes: "\n<strong>Registration closes on:</strong> {{date}}",
+          closed: "\n<strong>Registration closed on:</strong> {{date}}",
+          count:
+            "<strong>Registration:</strong> {{num}}/{{total}} spots filled\n\n",
+        },
+        isseries:
+          "\nIt looks like this competition is part of a seires, would you like to view the <seriesLink>series page</seriesLink> instead?",
+        viewseries: "Go to competition series page",
+        date: "<strong>Date:</strong> {{date}}\n",
+        city: "<strong>City:</strong> {{city}}\n",
+        venue: "<strong>Venue:</strong> {{venue}}\n",
+        address: "<strong>Address:</strong> {{address}}\n",
+        register: "Register",
+        error: "The page you were looking for does not exist.",
+        disclaimer:
+          "Competition information listed on Speedcubing Canada's website is pulled from the World Cube Association (WCA) website for your convenience. In the event of a discrepancy, the information listed on the WCA website is the official information. Always read the information on the WCA website carefully when registering for a competition.",
       },
       provinces: {
         ab: "Alberta",
@@ -112,9 +155,117 @@ export const resources = {
         na: "N/A",
         null: "N/A",
       },
+      province_with_pronouns: {
+        ab: "Alberta",
+        bc: "British Columbia",
+        mb: "Manitoba",
+        nb: "New Brunswick",
+        nl: "Newfoundland and Labrador",
+        ns: "Nova Scotia",
+        nt: "Northwest Territories",
+        nu: "Nunavut",
+        on: "Ontario",
+        pe: "Prince Edward Island",
+        qc: "Quebec",
+        sk: "Saskatchewan",
+        yt: "Yukon",
+        na: "N/A",
+      },
+      regions: {
+        at: "Atlantic",
+        bc: "British Columbia",
+        qc: "Quebec",
+        on: "Ontario",
+        pr: "Prairies",
+        te: "Territories",
+        na: "N/A",
+      },
+      account: {
+        title: "Account",
+        hi: "Hi, ",
+        policy:
+          'Province determines your eligibility for Regional Championships. You may only represent a province where you live at least 50% of the year. We reserve the right to ask for proof of residency. If you are not a Canadian resident, or you would prefer not to list your home province, please select "N/A".',
+        save: "Save",
+        signin: "Sign in with the WCA",
+        signout: "Sign Out",
+        welcome:
+          "Welcome to Speedcubing Canada account page. \n\n" +
+          "To access it, please sign in with your WCA account.",
+        roles: "Roles",
+        role: {
+          GLOBAL_ADMIN: "Global Admin",
+          DIRECTOR: "Director",
+          WEBMASTER: "Webmaster",
+          SENIOR_DELEGATE: "Senior Delegate",
+          DELEGATE: "Delegate",
+          CANDIDATE_DELEGATE: "Junior Delegate",
+        },
+        success: "Your account has been successfully updated.",
+        error: "There was an error updating your account.",
+        dob: "Date of Birth",
+        region: "Region",
+        admin: "Admin Section",
+        email: "Email",
+      },
+      rankings: {
+        title: "Rankings",
+        single: "Single",
+        average: "Average",
+        rankfor: "Rankings for",
+        event: "Event",
+        unavailable: "Ranking Unavailable",
+        choose: "Choose a province",
+        in: "in",
+        for: "for",
+      },
+      ranklist: {
+        rank: "Rank",
+        name: "Name",
+        time: "Time",
+      },
+      events: {
+        _333: "3x3x3",
+        _222: "2x2x2",
+        _444: "4x4x4",
+        _555: "5x5x5",
+        _666: "6x6x6",
+        _777: "7x7x7",
+        _333bf: "3x3x3 Blindfolded",
+        _333oh: "3x3x3 One-Handed",
+        _333fm: "3x3x3 Fewest Moves",
+        _skewb: "Skewb",
+        _pyram: "Pyraminx",
+        _clock: "Clock",
+        _minx: "Megaminx",
+        _sq1: "Square-1",
+        _444bf: "4x4x4 Blindfolded",
+        _555bf: "5x5x5 Blindfolded",
+        _333mbf: "3x3x3 Multi-Blind",
+      },
       quebec: {
         body: "If you are not redirected automatically, click the link below.",
       },
+    },
+    ...englishMessages,
+    resources: {
+      Users: {
+        name: "User |||| Users",
+        fields: {
+          id: "Id",
+          name: "Name",
+          province: "Province",
+          roles: "Role(s)",
+          wca_person: "WCAID",
+          dob: "Date of Birth",
+        },
+      },
+    },
+    admin: {
+      title: "Welcome to the Admin Section",
+      body:
+        "Please note that you can filter users using the start of their first name. If you want to use the family name, you must write the first name first. You may also use exact WCAID to filter.\n" +
+        " It's also important to know that you may move pages forward but not backwards. If you want to see a previous results, you need to go back to page one and then move forward again (or juste search the user).\n" +
+        "Sorting or removing people does not work currently. If you want to make someone disappear from the rankings, put his/her province to N/A.",
     },
   },
   [LOCALES.fr]: {
@@ -131,6 +282,8 @@ export const resources = {
         about: "À propos",
         organization: "Organisation",
         faq: "FAQ",
+        account: "Compte",
+        rankings: "Classements",
       },
       about: {
         title: "À propos",
@@ -153,7 +306,7 @@ export const resources = {
       },
       comps: {
         title: "Compétitions",
-        body: "Trouvez toutes les compétitions à venir au Canada sur le site Web de la World Cube Association.",
+        body: "Trouvez toutes les compétitions à venir au Canada sur le site web de la World Cube Association.",
         cta: "Voir tout",
       },
       organization: {
@@ -174,7 +327,7 @@ export const resources = {
         title: "Foire Aux Questions",
         "when-is-the-next-wca-competition-in-my-area": {
           q: "Quand aura lieu la prochaine compétition de la WCA dans ma région ?",
-          a: "Vous pouvez trouver <wcaComps>une liste de toutes les compétitions à venir au Canada</wcaComps> sur le site Web de la World Cube Association. Suivez Speedcubing Canada sur les réseaux sociaux et <mailingList>inscrivez-vous sur notre liste de diffusion</mailingList> pour être les premiers à être informés de l'annonce des compétitions !",
+          a: "Vous pouvez trouver <wcaComps>une liste de toutes les compétitions à venir au Canada</wcaComps> sur le site web de la World Cube Association. Suivez Speedcubing Canada sur les réseaux sociaux et <mailingList>inscrivez-vous sur notre liste de diffusion</mailingList> pour être les premiers à être informés de l'annonce des compétitions !",
         },
         "im-going-to-my-first-wca-competition-what-do-i-need-to-know": {
           q: "Je vais participer à ma première compétition de la WCA ! Que dois-je savoir ?",
@@ -198,6 +351,45 @@ export const resources = {
           q: "Speedcubing Canada est-elle affiliée à la World Cube Association ?",
           a: "Speedcubing Canada fonctionne indépendamment de la World Cube Association, avec un conseil d'administration distinct. Speedcubing Canada est reconnue comme l'organisation régionale officielle du Canada par la <regionalOrg>WCA</regionalOrg>.",
         },
+        "why-doesnt-my-name-appear-on-the-rankings": {
+          q: "Pourquoi mon nom n'apparaît-il pas dans les classements ?",
+          a:
+            "La province de résidence est auto-déclarée, vous devez donc nous indiquer votre province:\n" +
+            "- Créez un compte sur le <wca>site de la WCA</wca> et reliez-le à votre WCAID.\n" +
+            "- Connectez-vous au site web de Speedcubing Canada via l'onglet compte.\n" +
+            "- Modifiez votre profil et définissez votre province d'origine. Comme cela affecte également l'éligibilité aux championnats régionaux, vous ne pouvez le faire qu'une seule fois par an.",
+        },
+        "why-does-this-person-appear-in-my-province": {
+          q: "Pourquoi cette personne apparaît-elle dans ma province ? Elle ne vit pas ici !",
+          a: "Veuillez <report>nous contacter</report> et nous nous ferons un plaisir d'enquêter.",
+        },
+      },
+      competition: {
+        header:
+          "Jetez un coup d'œil à cette compétition organisée par Speedcubing Canada !",
+        series:
+          "Jetez un coup d'œil à cette série à venir ! Pour rappel, les compétiteurs ne peuvent s'inscrire qu'à UNE seule des compétitions d'une série. Lisez attentivement les pages consacrées aux compétitions et assurez-vous de vous inscrire à la bonne.",
+        registration: {
+          before: "\n<strong>Les inscriptions ouvriront le :</strong> {{date}}",
+          after: "\n<strong>Les inscriptions ont ouvert le :</strong> {{date}}",
+          differentopen:
+            "\n<strong>Note : Les inscriptions pourraient ouvrir le {{date}}.</strong>\nVeuillez consulter les pages des compétitions sur le site web de la WCA pour confirmer la date d'ouverture des inscriptions pour chaque compétition.",
+          closes: "\n<strong>Les inscriptions fermeront le :</strong> {{date}}",
+          closed: "\n<strong>Les inscriptions ont fermé le :</strong> {{date}}",
+          count:
+            "<strong>Inscriptions :</strong> {{num}}/{{total}} places occupées\n\n",
+        },
+        isseries:
+          "\nIl semble que cette compétition fasse partie d'une série. Voulez-vous voir la <seriesLink>page de la série</seriesLink> à la place ?",
+        viewseries: "Aller à la page des séries de compétitions",
+        date: "<strong>Date :</strong> {{date}}\n",
+        city: "<strong>Ville :</strong> {{city}}\n",
+        venue: "<strong>Lieu :</strong> {{venue}}\n",
+        address: "<strong>Adresse :</strong> {{address}}\n",
+        register: "S'inscrire",
+        error: "La page que vous recherchez n'existe pas.",
+        disclaimer:
+          "L'information sur les compétitions présentée sur le site web de Speedcubing Canada est tirée du site web de la WCA pour votre commodité. En cas de divergence, l'information figurant sur le site web de la WCA est l'information officielle. Lisez toujours attentivement l'information sur le site web de la WCA lorsque vous vous inscrivez à une compétition.",
       },
       provinces: {
         ab: "Alberta",
@@ -216,9 +408,118 @@ export const resources = {
         na: "N/A",
         null: "N/A",
       },
+      province_with_pronouns: {
+        ab: "l'Alberta",
+        bc: "la Colombie-Britannique",
+        mb: "le Manitoba",
+        nb: "le Nouveau-Brunswick",
+        nl: "Terre-Neuve-et-Labrador",
+        ns: "la Nouvelle-Écosse",
+        nt: "les Territoires du Nord-Ouest",
+        nu: "le Nunavut",
+        on: "l'Ontario",
+        pe: "l'Île-du-Prince-Édouard",
+        qc: "le Québec",
+        sk: "la Saskatchewan",
+        yt: "le Yukon",
+        na: "N/A",
+      },
+      regions: {
+        at: "Atlantique",
+        bc: "Colombie-Britannique",
+        qc: "Québec",
+        on: "Ontario",
+        pr: "Prairies",
+        te: "Territoires",
+        na: "N/A",
+      },
+      account: {
+        title: "Compte",
+        hi: "Salut, ",
+        policy:
+          "Votre province détermine votre admissibilité aux championnats régionaux. Vous ne pouvez représenter qu'une province où vous résidez au moins 50 % de l'année. Nous nous réservons le droit de demander une preuve de résidence. Si vous n'êtes pas résident canadien ou si vous préférez ne pas indiquer votre province de résidence, veuillez sélectionner \"N/A\".",
+        save: "Sauvegarder",
+        signin: "Se connecter avec la WCA",
+        signout: "Déconnexion",
+        welcome:
+          "Bienvenue sur la page du compte de Speedcubing Canada. \n" +
+          "Pour y accéder, veuillez vous connecter avec votre compte WCA.",
+        roles: "Rôles",
+        role: {
+          GLOBAL_ADMIN: "Administrateur.ice global",
+          DIRECTOR: "Directeur.ice",
+          WEBMASTER: "Webmaster",
+          SENIOR_DELEGATE: "Délégué.e senior",
+          DELEGATE: "Délégué.e",
+          CANDIDATE_DELEGATE: "Délégué.e junior",
+        },
+        success: "Votre compte a été mis à jour avec succès.",
+        error:
+          "Une erreur s'est produite lors de la mise à jour de votre compte.",
+        dob: "Date de naissance",
+        region: "Région",
+        admin: "Section d'administration",
+        email: "Courriel",
+      },
+      rankings: {
+        title: "Classements",
+        single: "Single",
+        average: "Moyenne",
+        rankfor: "Classement pour",
+        event: "Épreuve",
+        unavailable: "Classement indisponible",
+        choose: "Choisissez une province",
+        in: "au",
+        for: "en",
+      },
+      ranklist: {
+        rank: "Rang",
+        name: "Nom",
+        time: "Temps",
+      },
+      events: {
+        _333: "3x3x3",
+        _222: "2x2x2",
+        _444: "4x4x4",
+        _555: "5x5x5",
+        _666: "6x6x6",
+        _777: "7x7x7",
+        _333bf: "3x3x3 à l'aveugle",
+        _333oh: "3x3x3 à une main",
+        _333fm: "3x3x3 résolution optimisée",
+        _skewb: "Skewb",
+        _pyram: "Pyraminx",
+        _clock: "Clock",
+        _minx: "Mégaminx",
+        _sq1: "Square-1",
+        _444bf: "4x4x4 à l'aveugle",
+        _555bf: "5x5x5 à l'aveugle",
+        _333mbf: "3x3x3 Multi-Blind",
+      },
       quebec: {
         body: "Si vous n'êtes pas redirigés, cliquez sur le lien ci-dessous.",
       },
+    },
+    ...frenchMessages,
+    resources: {
+      Users: {
+        name: "Utilisateur |||| Utilisateurs",
+        fields: {
+          id: "Id",
+          name: "Nom",
+          province: "Province",
+          roles: "Rôle(s)",
+          wca_person: "WCAID",
+          dob: "Date de naissance",
+        },
+      },
+    },
+    admin: {
+      title: "Bienvenue dans la section d'administration",
+      body:
+        "Veuillez noter que vous pouvez filtrer les utilisateurs en utilisant le début de leur prénom. Si vous voulez utiliser le nom de famille, vous devez écrire le prénom en premier. Vous pouvez également utiliser le WCAID exact pour filtrer.\n" +
+        " Il est également important de savoir que vous pouvez avancer dans les pages mais pas aller en arrière. Si vous voulez voir un résultat précédent, vous devez revenir à la page une et avancer à nouveau (ou simplement rechercher l'utilisateur)." +
+        " Il n'est pas possible d'utiliser la fonctionnalité permettant de ranger les colonnes ni de supprimer des utilisateurs. Si vous voulez faire disparaitre un utilisateur des classements, changez sa province pour N/A.",
     },
   },
 };

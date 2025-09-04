@@ -16,23 +16,38 @@ import {
   Theme,
   useTheme,
 } from "@mui/material";
+
 import {
   Home,
   Info,
   CorporateFare,
   QuestionAnswer,
   Menu,
+  AccountCircle,
+  Leaderboard,
 } from "@mui/icons-material";
+
 import { Link, Outlet, useLocation, useParams } from "react-router-dom";
 import { getLocaleOrFallback, SAVED_LOCALE } from "../locale";
+import { useScrollbarWidth } from "../helpers/scrollbarWidth";
+import { useBodyScrollable } from "../helpers/useBodyScrollable";
 
-const ROUTE_NAMES = ["home", "about", "organization", "faq"] as const;
+export const ROUTE_NAMES = [
+  "home",
+  "about",
+  "organization",
+  "faq",
+  "rankings",
+  "account",
+] as const;
 
 const ICONS = {
   home: Home,
   about: Info,
   organization: CorporateFare,
   faq: QuestionAnswer,
+  account: AccountCircle,
+  rankings: Leaderboard,
 } as const;
 
 const ROUTE_NAME_TO_PATH = {
@@ -40,6 +55,8 @@ const ROUTE_NAME_TO_PATH = {
   about: "about",
   organization: "organization",
   faq: "faq",
+  rankings: "rankings",
+  account: "account",
 } as const;
 
 type RouteName = (typeof ROUTE_NAMES)[number];
@@ -86,6 +103,10 @@ export const Base = () => {
       };
     },
   );
+
+  const bodyScrollable = useBodyScrollable();
+  const scrollbarWidth = useScrollbarWidth();
+  const paddingWidth = bodyScrollable ? 0 : scrollbarWidth;
 
   return isSmall ? (
     <Box minHeight="90vh" flex={1} display="flex" flexDirection="column">
@@ -140,7 +161,13 @@ export const Base = () => {
         sx={{ position: "sticky", bottom: 0, left: 0, right: 0, zIndex: 1100 }}
         elevation={2}
       >
-        <BottomNavigation showLabels value={pathWithoutLocale}>
+        <BottomNavigation
+          showLabels
+          value={pathWithoutLocale}
+          sx={{
+            paddingRight: `${paddingWidth}px`,
+          }}
+        >
           {navigationBarItems.map(
             ({ routeName, Icon, path, pathWithLocale }) => (
               <BottomNavigationAction

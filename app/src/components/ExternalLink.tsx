@@ -5,13 +5,12 @@ export interface LinkProps {
   children?: React.ReactNode;
 }
 
-export const Link = forwardRef(
-  (
-    { to, children, ...rest }: LinkProps,
-    ref: React.ForwardedRef<HTMLAnchorElement>,
-  ) => (
+export const ExternalLink = forwardRef<HTMLAnchorElement, LinkProps>(
+  ({ to, children, ...rest }, ref) => (
     <a ref={ref} href={to} target="_blank" rel="noopener noreferrer" {...rest}>
       {children}
     </a>
   ),
 );
+
+ExternalLink.displayName = "Link";
