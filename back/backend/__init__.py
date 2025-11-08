@@ -12,8 +12,9 @@ import google.cloud.logging
 
 from backend.lib.secrets import get_secret
 
-if os.path.exists('.env.dev'):
-    load_dotenv('.env')
+env_path = os.path.join(os.path.dirname(__file__), '../../.env')
+if os.path.exists(env_path):
+    load_dotenv(env_path)
 
 if os.environ.get('ENV') == 'PROD':
     client = google.cloud.logging.Client()
