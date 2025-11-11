@@ -7,4 +7,4 @@ source env/bin/activate
 source /root/.bashrc
 pip3 install -r requirements.txt
 
-SCC_ENV=COMPUTE_ENGINE ./backend/load_db/load_db.sh
+SCC_ENV=COMPUTE_ENGINE ENV=PROD GOOGLE_CLOUD_PROJECT=scc-staging-391105 ./backend/load_db/load_db.sh
