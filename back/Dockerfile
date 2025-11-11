@@ -1,9 +1,9 @@
-FROM python:3.11 AS builder
+FROM python:3.12 AS builder
 
-ENV FLASK_APP backend
-ENV FLASK_DEBUG 1
-ENV FLASK_RUN_PORT 8083
-ENV FLASK_RUN_HOST 0.0.0.0
+ENV FLASK_APP=backend
+ENV FLASK_DEBUG=1
+ENV FLASK_RUN_PORT=8083
+ENV FLASK_RUN_HOST=0.0.0.0
 
 WORKDIR /workdir
 
@@ -16,4 +16,4 @@ COPY . .
 
 EXPOSE 8083
 
-CMD ["flask", "run"]
+CMD ["gunicorn", "-b", "0.0.0.0:8083", "backend:app"]

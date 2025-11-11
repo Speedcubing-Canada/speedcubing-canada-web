@@ -9,6 +9,7 @@ from backend.models.champion import Champion
 from backend.models.championship import Championship
 from backend.models.eligibility import RegionalChampionshipEligibility
 from backend.models.eligibility import ProvinceChampionshipEligibility
+from backend.models.locked_residency import LockedResidency
 from backend.models.user import User
 from backend.models.wca.country import Country
 from backend.models.wca.event import Event
@@ -56,25 +57,32 @@ def compute_eligible_competitors(championship, competition, results):
 
     for user in users:
         resolution = Resolution.UNRESOLVED
-        for eligibility in eligibility_field(user):
-            if eligibility.year != championship.year:
+        # Check if user has a locked residency for this year
+        for locked_residency in user.locked_residencies or []:
+            if locked_residency.year != championship.year:
                 continue
-            if eligibility.championship == championship.key:
+            if locked_residency.province in valid_province_keys:
                 resolution = Resolution.ELIGIBLE
             else:
                 resolution = Resolution.INELIGIBLE
+        
         # If the competitor hasn't already used their eligibility, check their province.
         if resolution == Resolution.UNRESOLVED:
             province = None
             for update in user.updates or []:
                 if update.update_time < residency_deadline:
                     province = update.province
+            if not user.updates:
+                province = user.province
             if province and province in valid_province_keys:
                 # This competitor is eligible, so save this on their User.
                 resolution = Resolution.ELIGIBLE
-                eligibility = eligibility_class()
-                eligibility.championship = championship.key
-                eligibility_field(user).append(eligibility)
+                locked_residency = LockedResidency()
+                locked_residency.year = championship.year
+                locked_residency.province = province
+                if not user.locked_residencies:
+                    user.locked_residencies = []
+                user.locked_residencies.append(locked_residency)
                 competitors_to_put.append(user)
             else:
                 resolution = Resolution.INELIGIBLE

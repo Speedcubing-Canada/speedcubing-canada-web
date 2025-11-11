@@ -26,14 +26,14 @@ fi
 if [ "$SAVED_EXPORT" != "$LATEST_EXPORT" ]
 then
   echo "Downloading $LATEST_EXPORT"
-  URL_TO_FETCH="https://www.worldcubeassociation.org/export/results/$LATEST_EXPORT.tsv.zip"
+  URL_TO_FETCH="https://www.worldcubeassociation.org/export/results/WCA_export.tsv"
   EXPORT_DIR="exports/$LATEST_EXPORT"
   mkdir -p exports/
   rm -rf ./$EXPORT_DIR
   mkdir $EXPORT_DIR
-  ZIP_FILE="$EXPORT_DIR/$LATEST_EXPORT.sql.zip"
+  ZIP_FILE="$EXPORT_DIR/$LATEST_EXPORT.tsv.zip"
 
-  curl $URL_TO_FETCH > $ZIP_FILE
+  curl -L $URL_TO_FETCH > $ZIP_FILE
   unzip $ZIP_FILE -d $EXPORT_DIR
   rm $ZIP_FILE
 
