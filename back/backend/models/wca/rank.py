@@ -10,6 +10,7 @@ class RankBase(BaseModel):
     event = ndb.KeyProperty(kind=Event)
     best = ndb.IntegerProperty()
     province = ndb.ComputedProperty(lambda self: self.get_province())
+    is_province_record = ndb.BooleanProperty()
 
     def get_province(self):
         if not self.person or not self.person.get():

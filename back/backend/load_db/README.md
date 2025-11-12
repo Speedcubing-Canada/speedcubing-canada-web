@@ -23,6 +23,6 @@ backend/load_db/startup.sh
 
 Next, SSH into the instance and follow the instructions in `vm_setup.sh`.
 
-Download a service account private key from the Google Cloud Console IAM service accounts page (https://console.cloud.google.com/iam-admin/serviceaccounts/details/112965168706819091056/keys?project=scc-staging-391105) and save it as service-account.json.
+Download a service account private key from the Google Cloud Console IAM service accounts page (https://console.cloud.google.com/iam-admin/serviceaccounts/details/112965168706819091056/keys?project=scc-staging-391105) and save it as service-account.json in the app folder.
 
 Finally, switch to the Instance Schedule tab, and either create a new schedule or attach it to an existing one. The schedule should both start and stop the instance.
