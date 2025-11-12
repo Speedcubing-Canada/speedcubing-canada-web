@@ -89,15 +89,15 @@ then
 fi
 
 echo "Recompiling react."
-rm -rf app/build
+rm -rf app/dist
 cd app
 if [ "$IS_PROD" == "0" ]
 then
-  echo "Setting REACT_APP_API_BASE_URL to staging."
-  export REACT_APP_API_BASE_URL="https://api.staging.speedcubingcanada.org"
+  echo "Setting VITE_API_BASE_URL to staging."
+  export VITE_API_BASE_URL="https://api.staging.speedcubingcanada.org"
 else
-  echo "Setting REACT_APP_API_BASE_URL to prod."
-  export REACT_APP_API_BASE_URL="https://api.speedcubingcanada.org"
+  echo "Setting VITE_API_BASE_URL to prod."
+  export VITE_API_BASE_URL="https://api.speedcubingcanada.org"
 fi
 npm run build
 cd ..
