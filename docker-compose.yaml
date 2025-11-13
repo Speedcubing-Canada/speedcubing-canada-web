@@ -8,6 +8,7 @@ services:
       target: development
     volumes:
       - ./app:/app
+      - /app/node_modules
     env_file: ./.env
     ports:
       - ${NODE_LOCAL_PORT}:${NODE_DOCKER_PORT}
@@ -15,9 +16,23 @@ services:
       - frontend
       - backend
 
+  backend:
+    container_name: backend-dev
+    build:
+      context: back
+      target: builder
+    restart: always
+    env_file: ./.env
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    networks:
+      - backend
+    ports:
+      - ${FLASK_LOCAL_PORT}:${FLASK_DOCKER_PORT}
+
   nginx:
     container_name: nginx-server
-    image: nginx:stable
+    image: nginx:latest
     ports:
       - 80:80
     volumes:

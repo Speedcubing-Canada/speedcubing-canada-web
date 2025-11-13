@@ -63,6 +63,10 @@ indexes:
       - name: year
       - name: region
 
+  - kind: Championship
+    properties:
+      - name: is_pbq
+
   - kind: Competition
     properties:
       - name: country
@@ -85,11 +89,19 @@ indexes:
       - name: province
       - name: best
 
+  - kind: RankAverage
+    properties:
+      - name: is_province_record
+
   - kind: RankSingle
     properties:
       - name: event
       - name: province
       - name: best
+
+  - kind: RankSingle
+    properties:
+      - name: is_province_record
 
   - kind: Result
     properties:
@@ -120,3 +132,37 @@ indexes:
       - name: user
       - name: update_time
         direction: desc
+
+  - kind: RoundType
+    properties:
+      - name: is_final
+
+  - kind: LockedResidency
+    properties:
+      - name: province
+      - name: year
+
+  - kind: Region
+    properties:
+      - name: name
+
+  - kind: Province
+    properties:
+      - name: name
+
+  - kind: Province
+    properties:
+      - name: region
+
+  - kind: Event
+    properties:
+      - name: rank
+
+  - kind: GroupStatus
+    properties:
+      - name: competition
+      - name: group_id
+
+  - kind: CompetitionMetadata
+    properties:
+      - name: refresh_ts

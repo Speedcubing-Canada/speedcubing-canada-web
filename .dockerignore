@@ -4,3 +4,4 @@ app/build
 node_modules
 npm-debug.log
 back/venv
+back/scc

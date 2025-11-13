@@ -1,12 +1,14 @@
-FROM node:16-alpine AS development
-ENV NODE_ENV development
+FROM node:20.19.5-slim AS development
+ENV NODE_ENV=development
 
-WORKDIR /
-COPY app/package.json ./
-COPY package-lock.json ./
-RUN npm install
-
-COPY . .
 WORKDIR /app
 
-CMD ["npm", "start"]
+# Copy package.json first for better Docker layer caching
+COPY app/package.json ./
+RUN npm install
+
+# Copy the rest of the app (node_modules excluded by .dockerignore)
+COPY app/ .
+
+EXPOSE 2003
+CMD ["npm", "run", "dev", "--", "--host"]
