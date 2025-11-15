@@ -9,6 +9,9 @@
 
 set -e
 
+PROD_PROJECT="scc-production-398617"
+STAGING_PROJECT="scc-staging-391105"
+
 PROJECT=""
 IS_PROD=0
 VERSION=""
@@ -18,11 +21,11 @@ BACKEND_ONLY=0
 while getopts "psfbv:" opt; do
   case $opt in
     p)
-      PROJECT="scc-production-398617"
+      PROJECT="$PROD_PROJECT"
       IS_PROD=1
       ;;
     s)
-      PROJECT="scc-staging-391105"
+      PROJECT="$STAGING_PROJECT"
       IS_PROD=0
       ;;
     f)
@@ -94,12 +97,11 @@ cd app
 if [ "$IS_PROD" == "0" ]
 then
   echo "Setting VITE_API_BASE_URL to staging."
-  export VITE_API_BASE_URL="https://api.staging.speedcubingcanada.org"
+  VITE_API_BASE_URL="https://api.staging.speedcubingcanada.org" npm run build
 else
   echo "Setting VITE_API_BASE_URL to prod."
-  export VITE_API_BASE_URL="https://api.speedcubingcanada.org"
+  VITE_API_BASE_URL="https://api.speedcubingcanada.org" npm run build
 fi
-npm run build
 cd ..
 
 if [ $FRONTEND_ONLY -eq 1 ]

@@ -1,4 +1,4 @@
-FROM node:20.19.5-slim AS development
+FROM node:24-slim AS development
 ENV NODE_ENV=development
 
 WORKDIR /app
