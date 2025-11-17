@@ -138,3 +138,7 @@ dist
 venv
 back/exports/WCA_export*
 back/venv
+back/scc
+
+org/
+service-account.json
