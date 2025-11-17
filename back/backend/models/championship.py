@@ -11,6 +11,7 @@ class Championship(ndb.Model):
     province = ndb.KeyProperty(kind=Province)
 
     competition = ndb.KeyProperty(kind=Competition)
+    is_pbq = ndb.BooleanProperty()
 
     year = ndb.ComputedProperty(lambda self: self.competition.get().year)
 
@@ -22,12 +23,14 @@ class Championship(ndb.Model):
         return str(year)
 
     @staticmethod
-    def regionals_id(year, region):
-        return f"{region.key.id()}_{year}"
+    def regionals_id(year, region, is_pbq=False):
+        suffix = "_pbq" if is_pbq else ""
+        return f"{region.key.id()}_{year}{suffix}"
 
     @staticmethod
-    def province_championship_id(year, province):
-        return f"{province.key.id()}_{year}"
+    def province_championship_id(year, province, is_pbq=False):
+        suffix = "_pbq" if is_pbq else ""
+        return f"{province.key.id()}_{year}{suffix}"
 
     def get_eligible_province_keys(self):
         if self.province:
