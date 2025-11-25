@@ -18,7 +18,6 @@ import { DOCUMENT_TYPES, DOCUMENTS } from "./documents";
 const DIRECTORS = [
   { name: "Kristopher De Asis", wcaId: "2008ASIS01" },
   { name: "Jonathan Esparaz", wcaId: "2013ESPA01" },
-  { name: "Abdullah Gulab", wcaId: "2014GULA02" },
   { name: "Tarandeep Mittal", wcaId: "2014MITT02" },
   { name: "Liam Orovec", wcaId: "2014OROV01" },
 ] as const;
