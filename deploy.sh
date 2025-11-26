@@ -7,7 +7,7 @@
 # -b: backend only
 # -v <app version>: On staging, the name of the app version to upload.
 
-set -e
+set -euo pipefail
 
 PROD_PROJECT="scc-production-398617"
 STAGING_PROJECT="scc-staging-391105"
