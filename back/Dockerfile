@@ -16,4 +16,5 @@ COPY . .
 
 EXPOSE 8083
 
-CMD ["gunicorn", "-b", "0.0.0.0:8083", "backend:app"]
+ENTRYPOINT ["gunicorn"]
+CMD ["-b", "0.0.0.0:8083", "backend:app"]
