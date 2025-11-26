@@ -17,7 +17,7 @@ set -e
 #
 # Then cd into the Speedcubing-Canada directory in the back folder and run this script (without sudo).
 # Finally, run backend/load_db/startup.sh to download the WCA database and
-# initialize the datastore.  The first run can take a few hours; subsequent runs are
+# initialize the datastore.  The first run can take >1 hour; subsequent runs are
 # faster since they only need to load entities that have changed.
 #
 # These commands can also be used to get a local development server working.
@@ -35,6 +35,3 @@ pip3 install -r requirements.txt
 
 # Set up the staging environment.
 git config --global pull.rebase false
-echo export SCC_ENV=COMPUTE_ENGINE >> /root/.bashrc
-echo export WCA_HOST=https://staging.worldcubeassociation.org >> /root/.bashrc
-echo export GOOGLE_CLOUD_PROJECT=scc-staging-391105 >> /root/.bashrc

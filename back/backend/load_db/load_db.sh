@@ -26,18 +26,18 @@ fi
 if [ "$SAVED_EXPORT" != "$LATEST_EXPORT" ]
 then
   echo "Downloading $LATEST_EXPORT"
-  URL_TO_FETCH="https://www.worldcubeassociation.org/export/results/$LATEST_EXPORT.tsv.zip"
+  URL_TO_FETCH="https://www.worldcubeassociation.org/export/results/WCA_export.tsv"
   EXPORT_DIR="exports/$LATEST_EXPORT"
   mkdir -p exports/
   rm -rf ./$EXPORT_DIR
   mkdir $EXPORT_DIR
-  ZIP_FILE="$EXPORT_DIR/$LATEST_EXPORT.sql.zip"
+  ZIP_FILE="$EXPORT_DIR/$LATEST_EXPORT.tsv.zip"
 
-  curl $URL_TO_FETCH > $ZIP_FILE
+  curl -L $URL_TO_FETCH > $ZIP_FILE
   unzip $ZIP_FILE -d $EXPORT_DIR
   rm $ZIP_FILE
 
-  python3 backend/load_db/load_db.py \
+  GOOGLE_APPLICATION_CREDENTIALS=service-account.json python3 backend/load_db/load_db.py \
       --old_export_id="$SAVED_EXPORT" \
       --new_export_id="$LATEST_EXPORT" \
       --export_base=exports/
