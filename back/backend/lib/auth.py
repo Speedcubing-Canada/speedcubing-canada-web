@@ -9,7 +9,7 @@ def logged_in():
 
 def user():
     if not logged_in():
-        return None
+        return
 
     wca_account_number = session['wca_account_number']
 

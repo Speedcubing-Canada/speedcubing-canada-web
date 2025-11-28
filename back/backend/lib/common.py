@@ -22,10 +22,10 @@ class Common(object):
         self.user = auth.user()
         self.wca_disclaimer = wca_disclaimer
 
-        if self.user:
-            time_since_login = datetime.datetime.now() - self.user.last_login
-            if time_since_login < datetime.timedelta(seconds=1):
-                self.just_logged_in = True
+        if not self.user:
+            return
+        time_since_login = datetime.datetime.now() - self.user.last_login
+        self.just_logged_in = time_since_login < datetime.timedelta(seconds=1)
 
     def uri_matches(self, path):
         return self.uri.endswith(path)
