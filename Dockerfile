@@ -11,4 +11,6 @@ RUN npm install
 COPY app/ .
 
 EXPOSE 2003
-CMD ["npm", "run", "dev", "--", "--host"]
+
+ENTRYPOINT [ "npm" ]
+CMD ["run", "dev", "--", "--host"]
