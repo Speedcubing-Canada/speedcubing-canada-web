@@ -13,6 +13,7 @@ export const DOCUMENTS = {
     { name: "By-laws (v1.2)", id: "by-laws-v1.2" },
     { name: "By-laws (v1.3)", id: "by-laws-v1.3" },
     { name: "By-laws (v1.4)", id: "by-laws-v1.4" },
+    { name: "By-laws (v1.5)", id: "by-laws-v1.5" },
   ],
   minutes: [
     {
@@ -78,8 +79,8 @@ export const DOCUMENTS = {
       id: "supported-events-policy",
     },
     {
-      name: "Speedcubing Canada Major Championship Reimbursement Transfer Policy",
-      id: "major-championship-reimbursement-transfer-policy",
+      name: "Speedcubing Canada Membership Policy",
+      id: "membership-policy",
     },
     {
       name: "Speedcubing Canada Logo Usage Policy (v1.0)",
@@ -122,12 +123,8 @@ export const DOCUMENTS = {
       id: "supported-events-policy-v1.2.1",
     },
     {
-      name: "Speedcubing Canada Major Championship Reimbursement Transfer Policy (v1.0)",
-      id: "major-championship-reimbursement-transfer-policy-v1.0",
-    },
-    {
-      name: "Speedcubing Canada Major Championship Reimbursement Transfer Policy (v1.1)",
-      id: "major-championship-reimbursement-transfer-policy-v1.1",
+      name: "Speedcubing Canada Membership Policy (v1.0)",
+      id: "membership-policy-v1.0",
     },
   ],
   corporate: [
