@@ -79,6 +79,10 @@ export const DOCUMENTS = {
       id: "supported-events-policy",
     },
     {
+      name: "Speedcubing Canada Membership Policy",
+      id: "membership-policy",
+    },
+    {
       name: "Speedcubing Canada Logo Usage Policy (v1.0)",
       id: "Speedcubing-Canada-Logo-Usage-Policy-v1.0",
     },
@@ -117,6 +121,10 @@ export const DOCUMENTS = {
     {
       name: "Speedcubing Canada Supported Events Policy (v1.2.1)",
       id: "supported-events-policy-v1.2.1",
+    },
+    {
+      name: "Speedcubing Canada Membership Policy (v1.0)",
+      id: "membership-policy-v1.0",
     },
   ],
   corporate: [
