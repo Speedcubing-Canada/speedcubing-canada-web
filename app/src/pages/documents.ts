@@ -79,10 +79,6 @@ export const DOCUMENTS = {
       id: "supported-events-policy",
     },
     {
-      name: "Speedcubing Canada Major Championship Reimbursement Transfer Policy",
-      id: "major-championship-reimbursement-transfer-policy",
-    },
-    {
       name: "Speedcubing Canada Logo Usage Policy (v1.0)",
       id: "Speedcubing-Canada-Logo-Usage-Policy-v1.0",
     },
@@ -121,14 +117,6 @@ export const DOCUMENTS = {
     {
       name: "Speedcubing Canada Supported Events Policy (v1.2.1)",
       id: "supported-events-policy-v1.2.1",
-    },
-    {
-      name: "Speedcubing Canada Major Championship Reimbursement Transfer Policy (v1.0)",
-      id: "major-championship-reimbursement-transfer-policy-v1.0",
-    },
-    {
-      name: "Speedcubing Canada Major Championship Reimbursement Transfer Policy (v1.1)",
-      id: "major-championship-reimbursement-transfer-policy-v1.1",
     },
   ],
   corporate: [
