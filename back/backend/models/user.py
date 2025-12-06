@@ -53,10 +53,7 @@ class User(ndb.Model):
     province_eligibilities = ndb.StructuredProperty(ProvinceChampionshipEligibility, repeated=True)
 
     def has_any_of_given_roles(self, roles):
-        for role in self.roles:
-            if role in roles:
-                return True
-        return False
+        return bool(set(self.roles) & set(roles))
 
     def to_json(self):
         return {

@@ -31,63 +31,71 @@ class Common(object):
         return self.uri.endswith(path)
 
     def uri_matches_any(self, path_list):
-        for text, path in path_list:
-            if self.uri_matches(path):
-                return True
-        return False
+        return any(self.uri_matches(path) for _, path in path_list)
 
     def wca_profile(self, wca_id):
         return f"https://www.worldcubeassociation.org/persons/{wca_id}"
 
     def format_date_range(self, start_date, end_date, include_year=True, full_months=False):
-        year_chunk = ', %d' % start_date.year if include_year else ''
-        month_format = lambda date: date.strftime('%B' if full_months else '%b')
-        if start_date == end_date:
-            return '%s %d%s' % (month_format(start_date), start_date.day, year_chunk)
-        elif start_date.month == end_date.month:
-            return '%s %d &ndash; %d%s' % (month_format(start_date), start_date.day,
-                                           end_date.day, year_chunk)
-        else:
-            return '%s %d &ndash; %s %d%s' % (month_format(start_date), start_date.day,
-                                              month_format(end_date), end_date.day,
-                                              year_chunk)
+        month_fmt = "%B" if full_months else "%b"
+        sm, em = start_date.strftime(month_fmt), end_date.strftime(month_fmt)
 
-    def sort_events(self, events):
+        year_chunk = f", {start_date.year}" if include_year else ""
+
+        sd, ed = start_date.day, end_date.day
+
+        if start_date == end_date:
+            return f"{sm} {sd}{year_chunk}"
+
+        if start_date.month == end_date.month:
+            return f"{sm} {sd} &ndash; {ed}{year_chunk}"
+
+        return f"{sm} {sd} &ndash; {em} {ed}{year_chunk}"
+
+    @staticmethod
+    def sort_events(events):
         return sorted(events, key=lambda evt: evt.get().rank)
 
-    def all_provinces(self):
-        return [province for province in Province.query().order(Province.name).iter()]
+    @staticmethod
+    def all_provinces():
+        return list(Province.query().order(Province.name).iter())
 
-    def regions(self):
-        return [r for r in Region.query().order(Region.name).iter()]
+    @staticmethod
+    def regions():
+        return list(Region.query().order(Region.name).iter())
 
-    def events(self, include_magic, include_mbo):
+    @staticmethod
+    def events(include_magic, include_mbo):
         return [e for e in Event.query().order(Event.rank).iter()
                 if (include_magic or e.key.id() not in ['magic', 'mmagic']) and
                 (include_mbo or e.key.id() != '333mbo')]
 
-    def years(self):
+    @staticmethod
+    def years():
         return reversed(range(2004, datetime.date.today().year + 2))
 
-    def format_date(self, date):
-        return '%s %d, %d' % (date.strftime('%B'), date.day, date.year)
+    @staticmethod
+    def format_date(date):
+        return f"{date.strftime('%B')} {date.day}, {date.year}"
 
-    def is_string(self, h):
-        return type(h) is str
+    @staticmethod
+    def is_string(h):
+        return isinstance(h, str)
 
-    def is_none(self, h):
-        return h is None
-
-    def is_prod(self):
+    @staticmethod
+    def is_prod():
         return os.environ['ENV'] == 'PROD'
 
-    def IconUrl(self, event_id):
+    @staticmethod
+    def IconUrl(event_id):
         return f"/static/img/events/{event_id}.svg"
 
-    def get_secret(self, name):
+    @staticmethod
+    def get_secret(name):
         return secrets.get_secret(name)
 
-    def get_wca_export(self):
+    @staticmethod
+    def get_wca_export():
         val = get_latest_export()
         date_part = val.split('_')[-1][:8]
         return datetime.datetime.strptime(date_part, '%Y%m%d').strftime('%B %d, %Y').replace(' 0', ' ')

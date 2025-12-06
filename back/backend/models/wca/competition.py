@@ -64,7 +64,7 @@ class Competition(BaseModel):
                 'latitude', 'longitude', 'cityName', 'countryId', 'name']
 
     def get_wca_link(self):
-        return 'https://worldcubeassociation.org/competitions/%s' % self.key.id()
+        return f'https://worldcubeassociation.org/competitions/{self.key.id()}'
 
     def get_events_string(self):
-        return ','.join([e.id() for e in self.events])
+        return ','.join(e.id() for e in self.events)

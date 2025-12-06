@@ -1,17 +1,21 @@
+from abc import ABC, abstractmethod
+
 from google.cloud import ndb
 
 
-class BaseModel(ndb.Model):
+class BaseModel(ndb.Model, ABC):
     @staticmethod
     def get_id(row):
         return row['id']
 
+    @abstractmethod
     def parse_from_dict(self, row):
-        raise NotImplementedError('ParseFromDict is unimplemented.')
+        pass
 
     @staticmethod
+    @abstractmethod
     def columns_used():
-        raise NotImplementedError('ColumnsUsed is unimplemented.')
+        pass
 
     @staticmethod
     def filter():

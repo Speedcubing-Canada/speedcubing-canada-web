@@ -7,9 +7,7 @@ class LatestWcaExport(ndb.Model):
 
 def get_latest_export():
     latest = LatestWcaExport.get_by_id('1')
-    if latest:
-        return latest.export_id
-    return None
+    return latest.export_id if latest else None
 
 
 def set_latest_export(export_id):

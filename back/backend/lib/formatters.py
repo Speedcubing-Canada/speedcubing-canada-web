@@ -1,3 +1,14 @@
+from dataclasses import dataclass
+
+
+@dataclass
+class ParsedTime:
+    hours: int
+    minutes: int
+    seconds: int
+    centiseconds: int
+
+
 def parse_time(time):
     centiseconds = time % 100
     res = time // 100
@@ -5,20 +16,20 @@ def parse_time(time):
     res = res // 60
     minutes = res % 60
     hours = res // 60
-    return (hours, minutes, seconds, centiseconds)
+    return ParsedTime(hours, minutes, seconds, centiseconds)
 
 
 def format_standard(time, trim_zeros):
-    hours, minutes, seconds, centiseconds = parse_time(time)
-    centiseconds_section = '' if trim_zeros and not centiseconds else '.%02d' % centiseconds
-    if hours > 0:
-        return '%d:%02d:%02d' % (hours, minutes, seconds)
-    elif minutes >= 10:
-        return '%d:%02d' % (minutes, seconds)
-    elif minutes > 0:
-        return '%d:%02d%s' % (minutes, seconds, centiseconds_section)
+    parsed = parse_time(time)
+    centiseconds_section = '' if trim_zeros and not parsed.centiseconds else '.%02d' % parsed.centiseconds
+    if parsed.hours > 0:
+        return '%d:%02d:%02d' % (parsed.hours, parsed.minutes, parsed.seconds)
+    elif parsed.minutes >= 10:
+        return '%d:%02d' % (parsed.minutes, parsed.seconds)
+    elif parsed.minutes > 0:
+        return '%d:%02d%s' % (parsed.minutes, parsed.seconds, centiseconds_section)
     else:
-        return '%01d%s' % (seconds, centiseconds_section)
+        return '%01d%s' % (parsed.seconds, centiseconds_section)
 
 
 def format_verbose(time, trim_zeros, short_units):

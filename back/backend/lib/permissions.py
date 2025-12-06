@@ -4,9 +4,7 @@ from backend.models.user import Roles
 def can_edit_location(user, editor):
     if not editor:
         return False
-    if editor.has_any_of_given_roles(Roles.AdminRoles()):
-        return True
-    return user == editor
+    return editor.has_any_of_given_roles(Roles.AdminRoles()) or user == editor
 
 
 def can_view_user(user, viewer):
