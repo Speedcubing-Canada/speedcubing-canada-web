@@ -1,4 +1,5 @@
-set -e
+#!/usr/bin/env bash
+set -euo pipefail
 
 # Commands that should be run to set up a new Compute Engine VM.
 # First, switch to root.  You'll need to set up a root password, use the one
