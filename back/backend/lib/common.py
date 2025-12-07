@@ -12,8 +12,6 @@ from backend.models.wca.export import get_latest_export
 
 
 class Common(object):
-    current_date = datetime.datetime.now()
-
     def __init__(self, wca_disclaimer=False):
         self.uri = request.path
         self.len = len
