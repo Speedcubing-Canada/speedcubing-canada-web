@@ -38,14 +38,8 @@ CORS(app,
 
 @app.before_request
 def before_request():
-    is_changed = False
     if request.url.endswith('/'):
         url = request.url[:-1]
-        is_changed = True
-    if os.environ.get('ENV') == 'PROD' and not request.is_secure:
-        url = request.url.replace('http://', 'https://', 1)
-        is_changed = True
-    if is_changed:
         return redirect(url, code=301)
 
 
