@@ -36,13 +36,6 @@ CORS(app,
      supports_credentials=True)
 
 
-@app.before_request
-def before_request():
-    if request.url.endswith('/'):
-        url = request.url[:-1]
-        return redirect(url, code=301)
-
-
 wca_host = os.environ.get('WCA_HOST')
 oauth = OAuth(app)
 oauth.register(
