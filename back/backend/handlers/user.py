@@ -3,6 +3,7 @@ from google.cloud import ndb
 import datetime
 
 from backend.lib import permissions, auth
+from backend.lib.permissions import require_auth
 from backend.models.province import Province
 from backend.models.user import User, UserLocationUpdate
 from backend.models.wca.rank import RankSingle, RankAverage
@@ -13,11 +14,10 @@ client = ndb.Client()
 
 @bp.route('/user_info', methods=['GET'])
 @bp.route('/user_info/<user_id>', methods=['GET'])
+@require_auth
 def user_info(user_id=-1):
     with client.context():
         me = auth.user()
-        if not me:
-            return jsonify({"error": "Unauthorized"}), 401
         if user_id == -1:
             user = me
         else:
@@ -40,11 +40,10 @@ def rewrite_ranks(wca_person):
 
 @bp.route('/edit', methods=['POST'])
 @bp.route('/edit/<user_id>', methods=['POST'])
+@require_auth
 def edit(user_id=-1):
     with client.context():
         me = auth.user()
-        if not me:
-            return jsonify({"error": "Unauthorized"}), 401
         if user_id == -1:
             user = me
         else:
