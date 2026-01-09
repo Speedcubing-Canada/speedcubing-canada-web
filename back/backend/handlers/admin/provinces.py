@@ -1,7 +1,7 @@
-from flask import abort, Blueprint, jsonify
+from flask import Blueprint
 from google.cloud import ndb
 
-from backend.lib import auth
+from backend.lib.permissions import require_roles
 from backend.models.region import Region
 from backend.models.province import Province
 from backend.models.user import Roles
@@ -29,12 +29,9 @@ def make_province(province_id, province_name, region, is_province, all_provinces
 # Provinces and regions standards come from the following source:
 # https://www12.statcan.gc.ca/census-recensement/2021/ref/dict/tab/index-eng.cfm?ID=t1_8
 @bp.route('/update_provinces')
+@require_roles(Roles.GLOBAL_ADMIN, Roles.WEBMASTER)
 def update_provinces():
   with client.context():
-    me = auth.user()
-    if not me or not me.has_any_of_given_roles([Roles.GLOBAL_ADMIN, Roles.WEBMASTER]):
-      return jsonify({"error": "Forbidden"}), 403
-
     futures = []
     all_regions = {}
     ATLANTIC = make_region('at', 'Atlantic', 'Atlantic', all_regions, futures)
