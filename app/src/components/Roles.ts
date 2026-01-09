@@ -1,4 +1,4 @@
-import { Role } from "./Types";
+import { Role, User } from "./Types";
 
 export const roles: Role[] = [
   { id: "GLOBAL_ADMIN", name: "Global Admin" },
@@ -8,3 +8,11 @@ export const roles: Role[] = [
   { id: "DELEGATE", name: "Delegate" },
   { id: "CANDIDATE_DELEGATE", name: "Junior Delegate" },
 ];
+
+export const isAdmin = (user: User | null) => {
+  return (
+    user?.roles.includes("GLOBAL_ADMIN") ||
+    user?.roles.includes("DIRECTOR") ||
+    user?.roles.includes("WEBMASTER")
+  );
+};

@@ -28,7 +28,7 @@ import {
 } from "../components/Types";
 import httpClient from "../httpClient";
 import { getProvincesWithNA, NA_PROVINCE } from "../components/provinces";
-import { isAdmin } from "./AdminPage";
+import { isAdmin } from "../components/Roles";
 import useResponsiveQuery from "../components/useResponsiveQuery";
 import { useNavigate } from "react-router-dom";
 
