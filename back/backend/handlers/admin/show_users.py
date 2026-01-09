@@ -3,7 +3,7 @@ from flask import Blueprint, jsonify, request
 from google.cloud import ndb
 
 from backend.models.wca.person import Person
-from backend.lib import auth
+from backend.lib.permissions import require_roles
 from backend.models.user import User, Roles
 
 bp = Blueprint('show_users', __name__)
@@ -11,12 +11,9 @@ client = ndb.Client()
 
 
 @bp.route('/get_users')
+@require_roles(*Roles.AdminRoles())
 def get_users():
     with client.context():
-        me = auth.user()
-        if not me or not me.has_any_of_given_roles(Roles.AdminRoles()):
-            return jsonify({"error": "Forbidden"}), 403
-
         # Pagination
         page = request.args.get('page', 1, type=int)
         per_page = request.args.get('per_page', 30, type=int)
@@ -67,12 +64,9 @@ def get_users():
 
 
 @bp.route('/get_users_by_id')
+@require_roles(*Roles.AdminRoles())
 def get_users_by_id():
     with client.context():
-        me = auth.user()
-        if not me or not me.has_any_of_given_roles(Roles.AdminRoles()):
-            return jsonify({"error": "Forbidden"}), 403
-
         user_ids = request.args.get('ids', "[]", type=str).strip("[]").split(",")
         for user_id in user_ids:
             if not user_id.isdigit():
