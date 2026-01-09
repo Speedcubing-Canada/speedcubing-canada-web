@@ -27,14 +27,14 @@ import {
   User,
 } from "../components/Types";
 import httpClient from "../httpClient";
-import { getProvincesWithNA } from "../components/provinces";
+import { getProvincesWithNA, NA_PROVINCE } from "../components/provinces";
 import { isAdmin } from "./AdminPage";
 import useResponsiveQuery from "../components/useResponsiveQuery";
 import { useNavigate } from "react-router-dom";
 
 const initialState: AlertState = {
   alert: false,
-  alertType: "error",
+  alertType: "info",
   alertContent: "",
 };
 
@@ -48,10 +48,7 @@ const reducer = (state: AlertState, action: AlertAction) => {
         alertContent: action.alertContent,
       };
     case "HIDE_ALERT":
-      return {
-        ...state,
-        alert: false,
-      };
+      return initialState;
     default:
       return state;
   }
@@ -72,15 +69,9 @@ export const Account = () => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
-  const defaultProvince: Province = provinces.find(
-    ({ id }) => id === user?.province,
-  ) || {
-    label: "N/A",
-    id: "na",
-    region: "N/A",
-    region_id: "na",
-  };
-  const defaultDOB = user?.dob ? dayjs(user.dob) : dayjs("2022-01-01");
+  const defaultProvince: Province =
+    provinces.find(({ id }) => id === user?.province) || NA_PROVINCE;
+  const defaultDOB = dayjs(user?.dob ?? "2022-01-01");
   const defaultWCAID = user?.wca_person || "";
   const defaultEmail: string = user?.email || "";
 
@@ -113,14 +104,14 @@ export const Account = () => {
   }, []);
 
   useEffect(() => {
-    if (user && user.roles && user.roles.length > 0) {
-      let tmpChipData = [];
-      for (let i = 0; i < user.roles.length; i++) {
-        tmpChipData.push({ key: i, label: user.roles[i] });
-      }
-      setChipData(tmpChipData);
+    if (user?.roles) {
+      const chipData = user.roles.map((role, index) => ({
+        key: index,
+        label: role,
+      }));
+      setChipData(chipData);
     }
-  }, [user]);
+  }, [user?.roles]);
 
   const ListItem = styled("li")(({ theme }) => ({
     margin: theme.spacing(0.5),
@@ -132,10 +123,10 @@ export const Account = () => {
       const resp = await httpClient.post(API_BASE_URL + "/edit", {
         province: province ? province.id : "na",
       });
-      if (!resp.hasOwnProperty("error")) {
-        showAlert("success", t("account.success"));
-      } else {
+      if (resp.hasOwnProperty("error")) {
         showAlert("error", t("account.error"));
+      } else {
+        showAlert("success", t("account.success"));
       }
     } catch (error: any) {
       console.log(error);
@@ -240,9 +231,9 @@ export const Account = () => {
                   label={t("account.dob")}
                   defaultValue={defaultDOB}
                   format="DD-MM-YYYY"
-                  InputProps={{
-                    style: {
-                      width: `${defaultEmail.length * 10 > 280 ? 145 : 280}px`,
+                  slotProps={{
+                    textField: {
+                      sx: { width: 200 },
                     },
                   }}
                 />
@@ -279,7 +270,7 @@ export const Account = () => {
               component="ul"
             >
               {chipData.map((data) => {
-                const color: chipColor | undefined =
+                const color: chipColor =
                   data.label === "GLOBAL_ADMIN" ||
                   data.label === "DIRECTOR" ||
                   data.label === "WEBMASTER"

@@ -67,13 +67,6 @@ export const Rankings = () => {
     newValue: React.SetStateAction<Province | null>,
   ) => {
     setProvince(newValue);
-
-    if (province != null) {
-      console.log(ranking);
-      if (province.id === "qc") {
-        console.log("Vive le Québec libre!");
-      }
-    }
   };
 
   const handleEventChange = (
@@ -102,12 +95,7 @@ export const Rankings = () => {
 
     (async () => {
       try {
-        if (
-          eventId === null ||
-          province?.id === null ||
-          usingAverage === null ||
-          province === undefined
-        ) {
+        if (!eventId || !province?.id) {
           return null;
         }
 

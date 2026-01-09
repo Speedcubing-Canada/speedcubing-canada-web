@@ -36,13 +36,15 @@ const provinces: Province[] = [
   { label: "Yukon", id: "yt", region: "Territories", region_id: "te" },
 ];
 
+export const NA_PROVINCE: Province = {
+  label: "N/A",
+  id: "na",
+  region: "N/A",
+  region_id: "na",
+};
+
 export const getProvincesWithNA: () => Province[] = () => {
-  return provinces.concat({
-    label: "N/A",
-    id: "na",
-    region: "N/A",
-    region_id: "na",
-  });
+  return provinces.concat(NA_PROVINCE);
 };
 
 export const getProvinces = () => {
