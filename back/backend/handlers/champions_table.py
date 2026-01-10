@@ -11,6 +11,7 @@ bp = Blueprint('champions_table', __name__)
 client = ndb.Client()
 
 
+
 #@bp.route('/async/champions_by_year/<event_id>/<championship_type>/<championship_region>')
 #@bp.route('/async/champions_by_region/<event_id>/<championship_type>/<year>')
 def champions_table(event_id, championship_type, championship_region='', year=0):

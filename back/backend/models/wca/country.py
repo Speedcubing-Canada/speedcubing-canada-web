@@ -14,6 +14,12 @@ class Country(BaseModel):
         self.continent = ndb.Key(Continent, row['continentId'])
         self.iso2 = row['iso2']
 
+    def create_test_country(self, name, continent, iso2):
+        self.name = name
+        self.continent = continent
+        self.iso2 = iso2
+        return self
+
     @staticmethod
     def columns_used():
         return ['name', 'continentId', 'iso2']

@@ -1,6 +1,6 @@
 service: api
 runtime: python312
-entrypoint: gunicorn -b :$PORT backend:app
+entrypoint: gunicorn -b :$PORT backend.flask:app
 
 env_variables:
   ENV: "PROD"

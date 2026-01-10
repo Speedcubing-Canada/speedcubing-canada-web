@@ -1,7 +1,7 @@
-from flask import abort, Blueprint, redirect, render_template, jsonify
+from flask import Blueprint, redirect, jsonify
 from google.cloud import ndb
 
-from backend.lib import auth, common
+from backend.lib import auth
 from backend.models.championship import Championship
 from backend.models.region import Region
 from backend.models.province import Province
