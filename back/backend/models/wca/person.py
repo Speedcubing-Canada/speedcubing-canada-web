@@ -29,4 +29,4 @@ class Person(BaseModel):
         return ['name', 'countryId', 'gender']
 
     def get_wca_link(self):
-        return 'https://worldcubeassociation.org/persons/%s' % self.key.id()
+        return f'https://worldcubeassociation.org/persons/{self.key.id()}'

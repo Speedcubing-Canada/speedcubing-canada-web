@@ -40,14 +40,14 @@ class Result(BaseModel):
         self.pos = int(row['pos'])
         self.best = int(row['best'])
         self.average = int(row['average'])
-        self.values = [v for v in [int(row['value%d' % n]) for n in range(1, 6)] if v != 0]
+        self.values = [v for v in [int(row[f'value{n}']) for n in range(1, 6)] if v != 0]
 
         self.regional_single_record = row['regionalSingleRecord']
         self.regional_average_record = row['regionalAverageRecord']
 
     @staticmethod
     def get_id(row):
-        return '%s_%s_%s_%s' % (row['competitionId'], row['eventId'], row['roundTypeId'], row['personId'])
+        return f"{row['competitionId']}_{row['eventId']}_{row['roundTypeId']}_{row['personId']}"
 
     @staticmethod
     def columns_used():
