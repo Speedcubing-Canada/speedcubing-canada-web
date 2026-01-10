@@ -21,15 +21,15 @@ def parse_time(time):
 
 def format_standard(time, trim_zeros):
     parsed = parse_time(time)
-    centiseconds_section = '' if trim_zeros and not parsed.centiseconds else '.%02d' % parsed.centiseconds
+    centiseconds_section = '' if trim_zeros and not parsed.centiseconds else f'.{parsed.centiseconds:02d}'
     if parsed.hours > 0:
-        return '%d:%02d:%02d' % (parsed.hours, parsed.minutes, parsed.seconds)
+        return f'{parsed.hours}:{parsed.minutes:02d}:{parsed.seconds:02d}'
     elif parsed.minutes >= 10:
-        return '%d:%02d' % (parsed.minutes, parsed.seconds)
+        return f'{parsed.minutes}:{parsed.seconds:02d}'
     elif parsed.minutes > 0:
-        return '%d:%02d%s' % (parsed.minutes, parsed.seconds, centiseconds_section)
+        return f'{parsed.minutes}:{parsed.seconds:02d}{centiseconds_section}'
     else:
-        return '%01d%s' % (parsed.seconds, centiseconds_section)
+        return f'{parsed.seconds:01d}{centiseconds_section}'
 
 
 def format_verbose(time, trim_zeros, short_units):
@@ -42,7 +42,7 @@ def format_verbose(time, trim_zeros, short_units):
             unit = 'second'
         else:
             unit = 'seconds'
-        return '%s %s' % (format_standard(time, trim_zeros), unit)
+        return f'{format_standard(time, trim_zeros)} {unit}'
 
 
 def format_multi_blind_old(time, verbose, trim_zeros, short_units):
@@ -52,12 +52,9 @@ def format_multi_blind_old(time, verbose, trim_zeros, short_units):
     solved = 199 - res // 100
 
     if verbose:
-        return '%d out of %d cubes in %s' % (
-            solved, attempted,
-            format_standard(time_in_seconds * 100, trim_zeros))
+        return f'{solved} out of {attempted} cubes in {format_standard(time_in_seconds * 100, trim_zeros)}'
     else:
-        return '%d/%d %s' % (solved, attempted,
-                             format_standard(time_in_seconds * 100, trim_zeros))
+        return f'{solved}/{attempted} {format_standard(time_in_seconds * 100, trim_zeros)}'
 
 
 def format_multi_blind(time, verbose, trim_zeros, short_units):
@@ -69,22 +66,19 @@ def format_multi_blind(time, verbose, trim_zeros, short_units):
     attempted = solved + missed
 
     if verbose:
-        return '%d out of %d cubes in %s' % (
-            solved, attempted,
-            format_standard(time_in_seconds * 100, trim_zeros))
+        return f'{solved} out of {attempted} cubes in {format_standard(time_in_seconds * 100, trim_zeros)}'
     else:
-        return '%d/%d %s' % (solved, attempted,
-                             format_standard(time_in_seconds * 100, trim_zeros))
+        return f'{solved}/{attempted} {format_standard(time_in_seconds * 100, trim_zeros)}'
 
 
 def format_fewest_moves(time, is_average, verbose, short_units):
     result = str(time)
     if is_average:
-        result = '%d.%02d' % (time // 100, time % 100)
+        result = f'{time // 100}.{time % 100:02d}'
     if short_units:
         return result
     if verbose:
-        return '%s moves%s' % (result, ' (average)' if is_average else '')
+        return f'{result} moves{" (average)" if is_average else ""}'
     else:
         return result
 
@@ -112,7 +106,7 @@ def format_qualifying(time, event_key, is_average, short_units=False):
     if event_key.id() == '333fm':
         return format_fewest_moves(time, is_average, verbose=False, short_units=short_units)
     elif event_key.id() == '333mbf':
-        return '%d %s' % (99 - time // 10000000, 'pts' if short_units else 'points')
+        return f'{99 - time // 10000000} {"pts" if short_units else "points"}'
     else:
         return format_verbose(time, trim_zeros=True, short_units=short_units)
 
@@ -126,7 +120,7 @@ def format_result(result, verbose=False):
 
 
 def format_date(date):
-    return '%s, %s %d' % (date.strftime('%A'), date.strftime('%B'), date.day)
+    return f"{date.strftime('%A')}, {date.strftime('%B')} {date.day}"
 
 
 def FormatClockTime(time):
