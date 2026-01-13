@@ -71,7 +71,6 @@ export const Account = () => {
 
   const defaultProvince: Province =
     provinces.find(({ id }) => id === user?.province) || NA_PROVINCE;
-  const defaultDOB = dayjs(user?.dob ?? "2022-01-01");
   const defaultWCAID = user?.wca_person || "";
   const defaultEmail: string = user?.email || "";
 
@@ -130,6 +129,7 @@ export const Account = () => {
       }
     } catch (error: any) {
       console.log(error);
+      showAlert("error", t("account.error"));
     }
   };
 
@@ -229,7 +229,7 @@ export const Account = () => {
                 <DateField
                   disabled
                   label={t("account.dob")}
-                  defaultValue={defaultDOB}
+                  defaultValue={user.dob ? dayjs(user.dob) : null}
                   format="DD-MM-YYYY"
                   slotProps={{
                     textField: {

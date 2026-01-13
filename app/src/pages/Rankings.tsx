@@ -16,7 +16,7 @@ import Stack from "@mui/material/Stack";
 import Switch from "@mui/material/Switch";
 import CircularProgress from "@mui/material/CircularProgress";
 
-import { eventID, Province } from "../components/Types";
+import { eventID, Province, Ranking } from "../components/Types";
 import { getProvinces } from "../components/provinces";
 import { API_BASE_URL, PRODUCTION } from "../components/api";
 import httpClient from "../httpClient";
@@ -54,7 +54,7 @@ export const Rankings = () => {
   const [usingAverage, setUsingAverage] = useState(false);
   const [loading, setLoading] = useState(true);
 
-  const [ranking, setRanking] = useState<any | null>(null);
+  const [ranking, setRanking] = useState<Ranking[] | null>(null);
 
   const switchHandler = (event: {
     target: { checked: boolean | ((prevState: boolean) => boolean) };
@@ -73,7 +73,7 @@ export const Rankings = () => {
     event: React.MouseEvent<HTMLElement>,
     newEvent: eventID | null,
   ) => {
-    if (newEvent === null) {
+    if (newEvent == null) {
       return;
     }
     setEventId(newEvent);
@@ -82,7 +82,7 @@ export const Rankings = () => {
     event: any,
     newValue: React.SetStateAction<eventID | null>,
   ) => {
-    if (newValue === null) {
+    if (newValue == null) {
       return;
     }
     setEventId(newValue as eventID);
