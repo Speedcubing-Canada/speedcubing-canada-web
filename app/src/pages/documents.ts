@@ -17,6 +17,10 @@ export const DOCUMENTS = {
   ],
   minutes: [
     {
+      name: "Annual Members' Meeting January 14, 2026",
+      id: "annual-members-meeting-jan-14-2026",
+    },
+    {
       name: "Annual Members' Meeting February 3, 2024",
       id: "annual-members-meeting-feb-3-2024",
     },
