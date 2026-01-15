@@ -1,4 +1,4 @@
-import { AccountCircle, Download } from "@mui/icons-material";
+import { AccountCircle, Download, OpenInNew } from "@mui/icons-material";
 import {
   ListSubheader,
   ListItemIcon,
@@ -17,9 +17,8 @@ import { DOCUMENT_TYPES, DOCUMENTS } from "./documents";
 
 const DIRECTORS = [
   { name: "Kristopher De Asis", wcaId: "2008ASIS01" },
-  { name: "Jonathan Esparaz", wcaId: "2013ESPA01" },
-  { name: "Tarandeep Mittal", wcaId: "2014MITT02" },
-  { name: "Liam Orovec", wcaId: "2014OROV01" },
+  { name: "Joanne Chew", wcaId: "2024CHEW09" },
+  { name: "Alex Mutch", wcaId: "2014MUTC01" },
 ] as const;
 
 const WCA_PROFILE_URL = "https://www.worldcubeassociation.org/persons/";
@@ -61,6 +60,21 @@ export const Organization = () => {
             </ListItem>
           ))}
         </List>
+      </Box>
+
+      <Box marginY="4rem">
+        <Typography component="h2" variant="h4" fontWeight="bold" gutterBottom>
+          {t("officers.title")}
+        </Typography>
+        <ListItemButton
+          component={ExternalLink}
+          to="https://docs.google.com/spreadsheets/d/1qZAEH93FfKqOO3gqJPVNPezUHKgBaM8pg2zetBEE4Js/edit?usp=sharing"
+        >
+          <ListItemIcon>
+            <OpenInNew />
+          </ListItemIcon>
+          <ListItemText primary={t("officers.list")} />
+        </ListItemButton>
       </Box>
 
       <Box marginY="4rem">
