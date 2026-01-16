@@ -190,8 +190,8 @@ export const resources = {
         title: "Organisation",
       },
       officers: {
-        title: "Agents",
-        list: "Liste des agents",
+        title: "Cadres",
+        list: "Liste des cadres",
       },
       directors: {
         title: "Directeurs",
