@@ -12,6 +12,7 @@ import { FAQ } from "./pages/FAQ";
 import { Series } from "./pages/Series";
 import { Rankings } from "./pages/Rankings";
 import { Account } from "./pages/Account";
+import { AdminPage } from "./pages/AdminPage";
 import * as React from "react";
 import { Quebec } from "./pages/Quebec";
 import { Competition } from "./pages/Competition";
@@ -47,6 +48,8 @@ const App = () => {
       <ThemeProvider theme={theme}>
         <BrowserRouter>
           <Routes>
+            {/* Admin page without the navigation bar */}
+            <Route path="/admin/*" element={<AdminPage />} />
             {/* Normal pages */}
             <Route element={<Base />}>
               <Route path=":locale/">
