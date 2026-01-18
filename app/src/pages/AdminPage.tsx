@@ -37,6 +37,7 @@ const MyAppBar = () => (
     <SettingsButton />
   </AppBar>
 );
+
 const MyLayout = (props: JSX.IntrinsicAttributes & LayoutProps) => (
   <Layout {...props} appBar={MyAppBar} />
 );
