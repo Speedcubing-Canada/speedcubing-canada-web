@@ -264,7 +264,7 @@ export const resources = {
       title: "Welcome to the Admin Section",
       body:
         "Please note that you can filter users using the start of their first name. If you want to use the family name, you must write the first name first. You may also use exact WCAID to filter.\n" +
-        " It's also important to know that you may move pages forward but not backwards. If you want to see a previous results, you need to go back to page one and then move forward again (or juste search the user).\n" +
+        "It's also important to know that you may move pages forward but not backwards. If you want to see a previous results, you need to go back to page one and then move forward again (or just search for the user).\n" +
         "Sorting or removing people does not work currently. If you want to make someone disappear from the rankings, put his/her province to N/A.",
     },
   },
