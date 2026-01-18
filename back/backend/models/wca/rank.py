@@ -18,7 +18,7 @@ class RankBase(BaseModel):
 
     @staticmethod
     def get_id(row):
-        return f"{row['personId']}_{row['eventId']}"}
+        return f"{row['personId']}_{row['eventId']}"
 
     def parse_from_dict(self, row):
         self.person = ndb.Key(Person, row['personId'])

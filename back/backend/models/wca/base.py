@@ -1,9 +1,14 @@
-from abc import ABC, abstractmethod
+from abc import ABCMeta, abstractmethod
 
 from google.cloud import ndb
 
 
-class BaseModel(ndb.Model, ABC):
+# Combine metaclasses to avoid conflict
+class CombinedMeta(type(ndb.Model), ABCMeta):
+    pass
+
+
+class BaseModel(ndb.Model, metaclass=CombinedMeta):
     @staticmethod
     def get_id(row):
         return row['id']
