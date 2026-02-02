@@ -25,22 +25,6 @@ import { UserShow } from "../components/UserShow";
 import { i18nProvider } from "../i18nProvider";
 import { isAdmin } from "../components/Roles";
 
-const SettingsButton = () => (
-  <IconButton color="inherit" href="/">
-    <HomeIcon />
-  </IconButton>
-);
-
-const MyAppBar = () => (
-  <AppBar>
-    <TitlePortal />
-    <SettingsButton />
-  </AppBar>
-);
-const MyLayout = (props: JSX.IntrinsicAttributes & LayoutProps) => (
-  <Layout {...props} appBar={MyAppBar} />
-);
-
 export const AdminPage = () => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
@@ -110,3 +94,20 @@ export const AdminPage = () => {
     </div>
   );
 };
+
+const SettingsButton = () => (
+  <IconButton color="inherit" href="/">
+    <HomeIcon />
+  </IconButton>
+);
+
+const MyAppBar = () => (
+  <AppBar>
+    <TitlePortal />
+    <SettingsButton />
+  </AppBar>
+);
+
+const MyLayout = (props: JSX.IntrinsicAttributes & LayoutProps) => (
+  <Layout {...props} appBar={MyAppBar} />
+);

@@ -15,6 +15,22 @@ import { LINKS } from "../pages/links";
 
 const WCA_PROFILE_URL = LINKS.WCA.PROFILE;
 
+export const UserShow = () => (
+  <Show>
+    <SimpleShowLayout>
+      <TextField source="id" />
+      <TextField source="name" />
+      <ProvinceField source="province" />
+      <ArrayField source="roles">
+        <UserRoleChip />
+      </ArrayField>
+      <DateField source="dob" />
+      <WcaProfileUrlField source="wca_person" />
+      <EmailField source="email" />
+    </SimpleShowLayout>
+  </Show>
+);
+
 export const UserRoleChip = () => {
   const t = useTranslate();
   const { data } = useListContext();
@@ -49,19 +65,3 @@ export const ProvinceField = ({ source }: { source: string }) => {
 
   return <ChipField record={{ label: translatedLabel }} source="label" />;
 };
-
-export const UserShow = () => (
-  <Show>
-    <SimpleShowLayout>
-      <TextField source="id" />
-      <TextField source="name" />
-      <ProvinceField source="province" />
-      <ArrayField source="roles">
-        <UserRoleChip />
-      </ArrayField>
-      <DateField source="dob" />
-      <WcaProfileUrlField source="wca_person" />
-      <EmailField source="email" />
-    </SimpleShowLayout>
-  </Show>
-);

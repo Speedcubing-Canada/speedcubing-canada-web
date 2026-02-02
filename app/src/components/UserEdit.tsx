@@ -10,12 +10,6 @@ import { Province, provinceID } from "./Types";
 import { getProvincesWithNA } from "./provinces";
 import { roles } from "./Roles";
 
-const provinces: Province[] = getProvincesWithNA();
-const provincesIds: provinceID[] = provinces.map((province) => province.id);
-const validateProvince = choices(
-  provincesIds,
-  "Please choose one of the values",
-);
 export const UserEdit = () => {
   const t = useTranslate();
 
@@ -41,3 +35,10 @@ export const UserEdit = () => {
     </Edit>
   );
 };
+
+const provinces: Province[] = getProvincesWithNA();
+const provincesIds: provinceID[] = provinces.map((province) => province.id);
+const validateProvince = choices(
+  provincesIds,
+  "Please choose one of the values",
+);

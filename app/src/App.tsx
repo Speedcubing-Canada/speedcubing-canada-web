@@ -3,7 +3,7 @@ import { initReactI18next } from "react-i18next";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { red } from "@mui/material/colors";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
-import { Base, ROUTE_NAMES } from "./components/Base";
+import { Base as NavBar, ROUTE_NAMES } from "./components/Base";
 import { getLocaleOrFallback, resources, SAVED_LOCALE } from "./locale";
 import { Home } from "./pages/Home";
 import { About } from "./pages/About";
@@ -48,10 +48,8 @@ const App = () => {
       <ThemeProvider theme={theme}>
         <BrowserRouter>
           <Routes>
-            {/* Admin page without the navigation bar */}
             <Route path="/admin/*" element={<AdminPage />} />
-            {/* Normal pages */}
-            <Route element={<Base />}>
+            <Route element={<NavBar />}>
               <Route path=":locale/">
                 <Route index element={<Home />} />
                 <Route path="about" element={<About />} />
