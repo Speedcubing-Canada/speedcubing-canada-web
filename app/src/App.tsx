@@ -3,7 +3,7 @@ import { initReactI18next } from "react-i18next";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { red } from "@mui/material/colors";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
-import { Base, ROUTE_NAMES } from "./components/Base";
+import { Base as NavBar, ROUTE_NAMES } from "./components/Base";
 import { getLocaleOrFallback, resources, SAVED_LOCALE } from "./locale";
 import { Home } from "./pages/Home";
 import { About } from "./pages/About";
@@ -12,6 +12,7 @@ import { FAQ } from "./pages/FAQ";
 import { Series } from "./pages/Series";
 import { Rankings } from "./pages/Rankings";
 import { Account } from "./pages/Account";
+import { AdminPage } from "./pages/AdminPage";
 import * as React from "react";
 import { Quebec } from "./pages/Quebec";
 import { Competition } from "./pages/Competition";
@@ -47,8 +48,8 @@ const App = () => {
       <ThemeProvider theme={theme}>
         <BrowserRouter>
           <Routes>
-            {/* Normal pages */}
-            <Route element={<Base />}>
+            <Route path="/admin/*" element={<AdminPage />} />
+            <Route element={<NavBar />}>
               <Route path=":locale/">
                 <Route index element={<Home />} />
                 <Route path="about" element={<About />} />
