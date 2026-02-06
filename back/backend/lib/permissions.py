@@ -1,7 +1,10 @@
 from functools import wraps
 from flask import jsonify
+from google.cloud import ndb
 
 from backend.models.user import Roles
+
+client = ndb.Client()
 
 
 def require_roles(*roles):
@@ -15,13 +18,14 @@ def require_roles(*roles):
     def decorator(f):
         @wraps(f)
         def decorated_function(*args, **kwargs):
-            from backend.lib import auth
-            user = auth.user()
-            if not user:
-                return jsonify({"error": "Unauthorized"}), 401
-            if not user.has_any_of_given_roles(list(roles)):
-                return jsonify({"error": "Forbidden"}), 403
-            return f(*args, **kwargs)
+            with client.context():
+                from backend.lib import auth
+                user = auth.user()
+                if not user:
+                    return jsonify({"error": "Unauthorized"}), 401
+                if not user.has_any_of_given_roles(list(roles)):
+                    return jsonify({"error": "Forbidden"}), 403
+                return f(*args, **kwargs)
         return decorated_function
     return decorator
 
@@ -36,11 +40,12 @@ def require_auth(f):
     """
     @wraps(f)
     def decorated_function(*args, **kwargs):
-        from backend.lib import auth
-        user = auth.user()
-        if not user:
-            return jsonify({"error": "Unauthorized"}), 401
-        return f(*args, **kwargs)
+        with client.context():
+            from backend.lib import auth
+            user = auth.user()
+            if not user:
+                return jsonify({"error": "Unauthorized"}), 401
+            return f(*args, **kwargs)
     return decorated_function
 
 

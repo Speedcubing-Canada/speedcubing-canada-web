@@ -31,49 +31,48 @@ def make_province(province_id, province_name, region, is_province, all_provinces
 @bp.route('/update_provinces')
 @require_roles(Roles.GLOBAL_ADMIN, Roles.WEBMASTER)
 def update_provinces():
-  with client.context():
-    futures = []
-    all_regions = {}
-    ATLANTIC = make_region('at', 'Atlantic', 'Atlantic', all_regions, futures)
-    QUEBEC = make_region('qc', 'Quebec', 'Quebec', all_regions, futures)
-    ONTARIO = make_region('on', 'Ontario', 'Ontario', all_regions, futures)
-    PRAIRIES = make_region('pr', 'Prairies', 'Prairies', all_regions, futures)
-    BRITISH_COLUMBIA = make_region('bc', 'British Columbia', 'British Columbia', all_regions, futures)
-    TERRITORIES = make_region('te', 'Territories', 'Territories', all_regions, futures)
+  futures = []
+  all_regions = {}
+  ATLANTIC = make_region('at', 'Atlantic', 'Atlantic', all_regions, futures)
+  QUEBEC = make_region('qc', 'Quebec', 'Quebec', all_regions, futures)
+  ONTARIO = make_region('on', 'Ontario', 'Ontario', all_regions, futures)
+  PRAIRIES = make_region('pr', 'Prairies', 'Prairies', all_regions, futures)
+  BRITISH_COLUMBIA = make_region('bc', 'British Columbia', 'British Columbia', all_regions, futures)
+  TERRITORIES = make_region('te', 'Territories', 'Territories', all_regions, futures)
 
 
-    for future in futures:
-      future.wait()
-    del futures[:]
+  for future in futures:
+    future.wait()
+  del futures[:]
 
-    all_provinces = {}
-    for province_id, province_name, region in (
-        ('nl', 'Newfoundland and Labrador', ATLANTIC),
-        ('pe', 'Prince Edward Island', ATLANTIC),
-        ('ns', 'Nova Scotia', ATLANTIC),
-        ('nb', 'New Brunswick', ATLANTIC),
-        ('qc', 'Quebec', QUEBEC),
-        ('on', 'Ontario', ONTARIO),
-        ('mb', 'Manitoba', PRAIRIES),
-        ('sk', 'Saskatchewan', PRAIRIES),
-        ('ab', 'Alberta', PRAIRIES),
-        ('bc', 'British Columbia', BRITISH_COLUMBIA)):
-      make_province(province_id, province_name, region, True, all_provinces, futures)
+  all_provinces = {}
+  for province_id, province_name, region in (
+      ('nl', 'Newfoundland and Labrador', ATLANTIC),
+      ('pe', 'Prince Edward Island', ATLANTIC),
+      ('ns', 'Nova Scotia', ATLANTIC),
+      ('nb', 'New Brunswick', ATLANTIC),
+      ('qc', 'Quebec', QUEBEC),
+      ('on', 'Ontario', ONTARIO),
+      ('mb', 'Manitoba', PRAIRIES),
+      ('sk', 'Saskatchewan', PRAIRIES),
+      ('ab', 'Alberta', PRAIRIES),
+      ('bc', 'British Columbia', BRITISH_COLUMBIA)):
+    make_province(province_id, province_name, region, True, all_provinces, futures)
 
-    for territory_id, territory_name, region in (
-        ('yt', 'Yukon', TERRITORIES),
-        ('nt', 'Northwest Territories', TERRITORIES),
-        ('nu', 'Nunavut', TERRITORIES)):
-      make_province(territory_id, territory_name, region, False, all_provinces, futures)
+  for territory_id, territory_name, region in (
+      ('yt', 'Yukon', TERRITORIES),
+      ('nt', 'Northwest Territories', TERRITORIES),
+      ('nu', 'Nunavut', TERRITORIES)):
+    make_province(territory_id, territory_name, region, False, all_provinces, futures)
 
-    for future in futures:
-      future.wait()
-    del futures[:]
+  for future in futures:
+    future.wait()
+  del futures[:]
 
-    for region in Region.query().iter():
-      if region.key.id() not in all_regions:
-        region.delete()
-    for province in Province.query().iter():
-      if province.key.id() not in all_provinces:
-        province.delete()
-    return 'ok'
+  for region in Region.query().iter():
+    if region.key.id() not in all_regions:
+      region.delete()
+  for province in Province.query().iter():
+    if province.key.id() not in all_provinces:
+      province.delete()
+  return 'ok'
