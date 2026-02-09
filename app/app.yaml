@@ -1,4 +1,4 @@
-runtime: nodejs20
+runtime: nodejs24
 
 handlers:
   # Serve all static files with url ending with a file extension

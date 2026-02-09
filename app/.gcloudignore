@@ -12,6 +12,4 @@
 .*/**
 
 # Project-specific excludes
-src/
-public/
 node_modules/
