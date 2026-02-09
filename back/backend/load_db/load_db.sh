@@ -27,7 +27,7 @@ fi
 if [ "$SAVED_EXPORT" != "$LATEST_EXPORT" ]
 then
   echo "Downloading $LATEST_EXPORT"
-  URL_TO_FETCH="https://www.worldcubeassociation.org/export/results/WCA_export.tsv"
+  URL_TO_FETCH="https://www.worldcubeassociation.org/export/results/v2/tsv"
   EXPORT_DIR="exports/$LATEST_EXPORT"
   mkdir -p exports/
   rm -rf ./$EXPORT_DIR

@@ -18,16 +18,16 @@ class RankBase(BaseModel):
 
     @staticmethod
     def get_id(row):
-        return f"{row['personId']}_{row['eventId']}"
+        return f"{row['person_id']}_{row['event_id']}"
 
     def parse_from_dict(self, row):
-        self.person = ndb.Key(Person, row['personId'])
-        self.event = ndb.Key(Event, row['eventId'])
+        self.person = ndb.Key(Person, row['person_id'])
+        self.event = ndb.Key(Event, row['event_id'])
         self.best = int(row['best'])
 
     @staticmethod
     def columns_used():
-        return ['personId', 'eventId', 'best']
+        return ['person_id', 'event_id', 'best']
 
     def objects_to_get(self):
         return [self.person]

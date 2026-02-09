@@ -9,8 +9,8 @@ class Continent(BaseModel):
 
     def parse_from_dict(self, row):
         self.name = row['name']
-        self.recordName = row['recordName']
+        self.recordName = row['record_name']
 
     @staticmethod
     def columns_used():
-        return ['name', 'recordName']
+        return ['name', 'record_name']
