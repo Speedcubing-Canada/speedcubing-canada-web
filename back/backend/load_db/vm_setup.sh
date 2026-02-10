@@ -24,11 +24,10 @@ set -euo pipefail
 # These commands can also be used to get a local development server working.
 
 # Install dependencies.
-apt install unzip python3-distutils python3-venv build-essential python3-dev libffi-dev libssl-dev python3-pip
+apt install unzip python3-distutils python3-venv build-essential python3-dev libffi-dev libssl-dev python3-pip python3-virtualenv
 
 # Set up the virtualenv.
 cd back
-pip3 install virtualenv
 python3 -m venv env
 source env/bin/activate
 pip3 install --upgrade pip

@@ -38,7 +38,7 @@ then
   unzip $ZIP_FILE -d $EXPORT_DIR
   rm $ZIP_FILE
 
-  GOOGLE_APPLICATION_CREDENTIALS=service-account.json python3 backend/load_db/load_db.py \
+  python3 backend/load_db/load_db.py \
       --old_export_id="$SAVED_EXPORT" \
       --new_export_id="$LATEST_EXPORT" \
       --export_base=exports/
