@@ -32,6 +32,7 @@ python3 -m venv env
 source env/bin/activate
 pip3 install --upgrade pip
 pip3 install -r requirements.txt
+mkdir -p exports
 
 # Set up the staging environment.
 git config --global pull.rebase false
