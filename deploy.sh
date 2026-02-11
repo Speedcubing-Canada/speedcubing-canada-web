@@ -17,16 +17,19 @@ IS_PROD=0
 VERSION=""
 FRONTEND_ONLY=0
 BACKEND_ONLY=0
+DISPATCH_FILE=""
 
 while getopts "psfbv:" opt; do
   case $opt in
     p)
       PROJECT="$PROD_PROJECT"
       IS_PROD=1
+      DISPATCH_FILE="dispatch.prod.yaml"
       ;;
     s)
       PROJECT="$STAGING_PROJECT"
       IS_PROD=0
+      DISPATCH_FILE="dispatch.staging.yaml"
       ;;
     f)
       FRONTEND_ONLY=1
@@ -103,6 +106,9 @@ else
   VITE_API_BASE_URL="https://api.speedcubingcanada.org" npm run build
 fi
 cd ..
+
+echo "Using $DISPATCH_FILE for dispatch configuration."
+cp "$DISPATCH_FILE" dispatch.yaml
 
 if [ $FRONTEND_ONLY -eq 1 ]
 then
