@@ -60,6 +60,10 @@ export const resources = {
       organization: {
         title: "Organization",
       },
+      officers: {
+        title: "Officers",
+        list: "Officers List",
+      },
       directors: {
         title: "Directors",
         boardMember: "Board Member",
@@ -311,6 +315,10 @@ export const resources = {
       },
       organization: {
         title: "Organisation",
+      },
+      officers: {
+        title: "Cadres",
+        list: "Liste des cadres",
       },
       directors: {
         title: "Directeurs",
