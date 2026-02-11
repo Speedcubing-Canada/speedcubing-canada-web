@@ -41,7 +41,8 @@ then
   python3 backend/load_db/load_db.py \
       --old_export_id="$SAVED_EXPORT" \
       --new_export_id="$LATEST_EXPORT" \
-      --export_base=exports/
+      --export_base=exports/ \
+      --only_load_db
 fi
 
 /usr/sbin/shutdown -h now
