@@ -26,7 +26,7 @@ class Person(BaseModel):
 
     @staticmethod
     def columns_used():
-        return ['name', 'country_id', 'gender', 'id', 'sub_id']
+        return ['name', 'country_id', 'gender', 'wca_id', 'sub_id']
 
     def get_wca_link(self):
         return f'https://worldcubeassociation.org/persons/{self.key.id()}'
