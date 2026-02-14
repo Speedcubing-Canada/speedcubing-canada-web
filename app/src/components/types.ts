@@ -13,7 +13,6 @@ export interface User {
 export interface Province {
   id: provinceID;
   label: string;
-  region: string;
   region_id: regionID;
 }
 

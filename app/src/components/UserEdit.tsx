@@ -6,9 +6,9 @@ import {
   SimpleForm,
   useTranslate,
 } from "react-admin";
-import { Province, provinceID } from "./Types";
+import { Province, provinceID } from "./types";
 import { getProvincesWithNA } from "./provinces";
-import { roles } from "./Roles";
+import { roles } from "./roles";
 
 export const UserEdit = () => {
   const t = useTranslate();

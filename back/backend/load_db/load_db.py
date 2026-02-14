@@ -64,7 +64,7 @@ def get_modifier(table):
 
 
 def read_table(path, cls, apply_filter, shard, shards):
-    filter_fn = lambda row: True
+    filter_fn = None
     if apply_filter:
         client = ndb.Client()
         with client.context():
@@ -74,7 +74,8 @@ def read_table(path, cls, apply_filter, shard, shards):
         with open(path) as csvfile:
             reader = csv.DictReader(csvfile, dialect='excel-tab')
             for row in reader:
-                if filter_fn(row):
+                # Check if filter_fn exists before calling it
+                if filter_fn is None or filter_fn(row):
                     fields_to_write = cls.columns_used()
                     if 'id' in row:
                         fields_to_write += ['id']

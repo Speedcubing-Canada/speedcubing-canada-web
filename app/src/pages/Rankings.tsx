@@ -16,13 +16,13 @@ import Stack from "@mui/material/Stack";
 import Switch from "@mui/material/Switch";
 import CircularProgress from "@mui/material/CircularProgress";
 
-import { eventID, Province, Ranking } from "../components/Types";
+import { eventID, Province, Ranking } from "../components/types";
 import { getProvinces } from "../components/provinces";
 import { API_BASE_URL, PRODUCTION } from "../components/api";
 import httpClient from "../httpClient";
 import { RankList } from "../components/RankList";
 import { MyCubingIcon } from "../components/MyCubingIcon";
-import useResponsiveQuery from "../components/useResponsiveQuery";
+import UseResponsiveQuery from "../components/UseResponsiveQuery";
 
 const provinces: Province[] = getProvinces();
 const events: eventID[] = [
@@ -47,7 +47,7 @@ const events: eventID[] = [
 
 export const Rankings = () => {
   const { t } = useTranslation();
-  const isSmall = useResponsiveQuery("sm");
+  const isSmall = UseResponsiveQuery("sm");
 
   const [province, setProvince] = useState<Province | null>(provinces[0]);
   const [eventId, setEventId] = useState<eventID>("333");

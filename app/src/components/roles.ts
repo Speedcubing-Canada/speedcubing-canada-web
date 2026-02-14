@@ -1,4 +1,4 @@
-import { Role, User } from "./Types";
+import { Role, User } from "./types";
 
 export const roles: Role[] = [
   { id: "GLOBAL_ADMIN", name: "Global Admin" },

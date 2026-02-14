@@ -17,7 +17,6 @@ def create_bp(oauth):
   @bp.route('/login')
   def login():
     redirect_uri = url_for('auth.oauth_callback', _external=True)
-    session['referrer'] = request.referrer
     return oauth.wca.authorize_redirect(redirect_uri)
 
   @bp.route('/oauth_callback')
@@ -96,6 +95,7 @@ def create_bp(oauth):
   @bp.route('/logout')
   def logout():
     session.pop('wca_account_number', None)
-    return redirect(request.referrer or '/')
+    address = get_secret('FRONT_ADDRESS')
+    return redirect(address or '/')
 
   return bp

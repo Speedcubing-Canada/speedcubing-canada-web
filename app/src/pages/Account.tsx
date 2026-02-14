@@ -25,11 +25,11 @@ import {
   Province,
   AlertState,
   User,
-} from "../components/Types";
+} from "../components/types";
 import httpClient from "../httpClient";
 import { getProvincesWithNA, NA_PROVINCE } from "../components/provinces";
-import { isAdmin } from "../components/Roles";
-import useResponsiveQuery from "../components/useResponsiveQuery";
+import { isAdmin } from "../components/roles";
+import UseResponsiveQuery from "../components/UseResponsiveQuery";
 import { useNavigate } from "react-router-dom";
 
 const initialState: AlertState = {
@@ -57,7 +57,7 @@ const reducer = (state: AlertState, action: AlertAction) => {
 export const Account = () => {
   const navigate = useNavigate();
   const { t } = useTranslation();
-  const isSmall = useResponsiveQuery("sm");
+  const isSmall = UseResponsiveQuery("sm");
 
   const [province, setProvince] = useState<Province | null>(null);
   const [chipData, setChipData] = useState<readonly ChipData[]>([]);

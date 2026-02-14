@@ -2,7 +2,7 @@ import "../cubingicon.css";
 import React from "react";
 import { Icon, Tooltip } from "@mui/material";
 import { useTranslation } from "react-i18next";
-import { eventID, IconSize } from "./Types";
+import { eventID, IconSize } from "./types";
 
 export const MyCubingIcon: React.FC<{
   event: eventID;
@@ -14,7 +14,7 @@ export const MyCubingIcon: React.FC<{
   const { event, selected, size = "medium" } = data;
 
   return (
-    <Tooltip title={t("events._" + event)} arrow>
+    <Tooltip title={t(`events._${event}`)} arrow>
       <Icon
         baseClassName={`icon cubing-icon event-${event} cubing-icon-${size} ${
           selected ? "cubing-icon-selected" : "cubing-icon-unselected"
