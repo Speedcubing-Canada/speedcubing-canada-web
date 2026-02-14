@@ -65,14 +65,16 @@ def get_users():
 @bp.route('/get_users_by_id')
 @require_roles(*Roles.AdminRoles())
 def get_users_by_id():
-    user_ids = request.args.get('ids', "[]", type=str).strip("[]").split(",")
-    for user_id in user_ids:
-        if not user_id.isdigit():
-            return jsonify({"error": "Invalid user id: " + user_id}), 400
-        else:
-            user_id = int(user_id)
-    users = User.query(User.key.IN([ndb.Key(User, user_id) for user_id in user_ids])).fetch()
+    raw_ids = request.args.get('ids', "[]", type=str).strip("[]").split(",")
+    
+    clean_ids = []
+    for uid in raw_ids:
+        uid = uid.strip()
+        if not uid.isdigit():
+            return jsonify({"error": f"Invalid user id: {uid}"}), 400
+        clean_ids.append(int(uid))
+
+    users = User.query(User.key.IN([ndb.Key(User, i) for i in clean_ids])).fetch()
+    
     data = [user.to_json() for user in users]
-    return jsonify(
-        {'data': data}
-    )
+    return jsonify({'data': data})
