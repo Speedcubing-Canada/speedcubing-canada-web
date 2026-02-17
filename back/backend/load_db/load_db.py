@@ -89,7 +89,6 @@ def read_table(path, cls, apply_filter, shard, shards):
     except FileNotFoundError as e:
         # This is fine, the file might just not exist.
         logging.exception(e)
-        pass
     return out
 
 
