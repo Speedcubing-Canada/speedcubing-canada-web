@@ -8,9 +8,9 @@ class Continent(BaseModel):
     recordName = ndb.StringProperty()
 
     def parse_from_dict(self, row):
-        self.name = row['name']
-        self.recordName = row['record_name']
+        self.name = row["name"]
+        self.recordName = row["record_name"]
 
     @staticmethod
     def columns_used():
-        return ['name', 'record_name']
+        return ["name", "record_name"]

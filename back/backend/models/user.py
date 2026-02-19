@@ -7,17 +7,23 @@ from backend.models.wca.person import Person
 
 
 class Roles:
-    GLOBAL_ADMIN = 'GLOBAL_ADMIN'
-    DIRECTOR = 'DIRECTOR'
-    WEBMASTER = 'WEBMASTER'
-    SENIOR_DELEGATE = 'SENIOR_DELEGATE'
-    DELEGATE = 'DELEGATE'
-    CANDIDATE_DELEGATE = 'CANDIDATE_DELEGATE'
+    GLOBAL_ADMIN = "GLOBAL_ADMIN"
+    DIRECTOR = "DIRECTOR"
+    WEBMASTER = "WEBMASTER"
+    SENIOR_DELEGATE = "SENIOR_DELEGATE"
+    DELEGATE = "DELEGATE"
+    CANDIDATE_DELEGATE = "CANDIDATE_DELEGATE"
 
     @staticmethod
     def AllRoles():
-        return [Roles.GLOBAL_ADMIN, Roles.DIRECTOR, Roles.WEBMASTER,
-                Roles.SENIOR_DELEGATE, Roles.DELEGATE, Roles.CANDIDATE_DELEGATE]
+        return [
+            Roles.GLOBAL_ADMIN,
+            Roles.DIRECTOR,
+            Roles.WEBMASTER,
+            Roles.SENIOR_DELEGATE,
+            Roles.DELEGATE,
+            Roles.CANDIDATE_DELEGATE,
+        ]
 
     @staticmethod
     def DelegateRoles():

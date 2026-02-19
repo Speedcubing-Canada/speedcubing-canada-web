@@ -18,10 +18,11 @@ class ProvinceChampionshipEligibility(ndb.Model):
 
 class LockedResidency(ndb.Model):
     """Prevents competitors from being eligible for multiple championships of the same type.
-    
+
     When a competitor participates in a championship, their residency is locked
     to prevent them from being eligible for other championships of the same type
     in the same year.
     """
+
     year = ndb.IntegerProperty()
     province = ndb.KeyProperty(kind=Province)

@@ -9,10 +9,10 @@ class RoundType(BaseModel):
     is_final = ndb.BooleanProperty()
 
     def parse_from_dict(self, row):
-        self.rank = int(row['rank'])
-        self.name = row['cell_name']
-        self.is_final = int(row['final']) == 1
+        self.rank = int(row["rank"])
+        self.name = row["cell_name"]
+        self.is_final = int(row["final"]) == 1
 
     @staticmethod
     def columns_used():
-        return ['rank', 'cell_name', 'final']
+        return ["rank", "cell_name", "final"]

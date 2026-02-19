@@ -23,42 +23,44 @@ from backend.models.wca.round import RoundType
 
 FLAGS = flags.FLAGS
 
-flags.DEFINE_string('old_export_id', '', 'ID of the old export.')
-flags.DEFINE_string('new_export_id', '', 'ID of the new export.')
-flags.DEFINE_string('export_base', '', 'Base directory of exports.')
+flags.DEFINE_string("old_export_id", "", "ID of the old export.")
+flags.DEFINE_string("new_export_id", "", "ID of the new export.")
+flags.DEFINE_string("export_base", "", "Base directory of exports.")
 
-flags.DEFINE_boolean('only_load_db', False, 'Whether to only load the new database.')
-flags.DEFINE_boolean('only_update_championships', False, 'Whether to only update championships.')
-flags.DEFINE_boolean('only_update_champions', False, 'Whether to only update champions.')
-flags.DEFINE_boolean('only_update_province_records', False, 'Whether to only update province records.')
+flags.DEFINE_boolean("only_load_db", False, "Whether to only load the new database.")
+flags.DEFINE_boolean("only_update_championships", False, "Whether to only update championships.")
+flags.DEFINE_boolean("only_update_champions", False, "Whether to only update champions.")
+flags.DEFINE_boolean("only_update_province_records", False, "Whether to only update province records.")
 
 
 def get_tables():
-    return [('continents', Continent, 1),
-            ('countries', Country, 1),
-            ('events', Event, 1),
-            ('formats', Format, 1),
-            ('round_types', RoundType, 1),
-            ('persons', Person, 1),
-            ('ranks_single', RankSingle, 5),
-            ('ranks_average', RankAverage, 5),
-            ('competitions', Competition, 5),
-            ('results', Result, 10),
-            ]
+    return [
+        ("continents", Continent, 1),
+        ("countries", Country, 1),
+        ("events", Event, 1),
+        ("formats", Format, 1),
+        ("round_types", RoundType, 1),
+        ("persons", Person, 1),
+        ("ranks_single", RankSingle, 5),
+        ("ranks_average", RankAverage, 5),
+        ("competitions", Competition, 5),
+        ("results", Result, 10),
+    ]
 
 
 # Ideally this would live in person.py, but that would be a circular dependency
 # between Person and User.
 def get_modifier(table):
-    if table == 'persons':
+    if table == "persons":
         id_to_province = {}
-        for user in User.query(User.province != None):
+        for user in User.query(User.province is not None):
             if user.wca_person:
                 id_to_province[user.wca_person.id()] = user.province
 
         def modify(person):
             if person.key.id() in id_to_province:
                 person.province = id_to_province[person.key.id()]
+
         return modify
     return None
 
@@ -72,13 +74,13 @@ def read_table(path, cls, apply_filter, shard, shards):
     out = {}
     try:
         with open(path) as csvfile:
-            reader = csv.DictReader(csvfile, dialect='excel-tab')
+            reader = csv.DictReader(csvfile, dialect="excel-tab")
             for row in reader:
                 # Check if filter_fn exists before calling it
                 if filter_fn is None or filter_fn(row):
                     fields_to_write = cls.columns_used()
-                    if 'id' in row:
-                        fields_to_write += ['id']
+                    if "id" in row:
+                        fields_to_write += ["id"]
                     to_write = {}
                     for field in fields_to_write:
                         if field in row:
@@ -94,14 +96,14 @@ def read_table(path, cls, apply_filter, shard, shards):
 
 def write_table(path, rows, cls, shard):
     use_id = False
-    with open(path, 'r') as csvfile:
-        reader = csv.DictReader(csvfile, dialect='excel-tab')
-        use_id = 'id' in reader.fieldnames
-    with open(path + '.filtered', 'w' if shard == 0 else 'a') as csvfile:
+    with open(path, "r") as csvfile:
+        reader = csv.DictReader(csvfile, dialect="excel-tab")
+        use_id = "id" in reader.fieldnames
+    with open(path + ".filtered", "w" if shard == 0 else "a") as csvfile:
         fields_to_write = cls.columns_used()
         if use_id:
-            fields_to_write += ['id']
-        writer = csv.DictWriter(csvfile, dialect='excel-tab', fieldnames=fields_to_write)
+            fields_to_write += ["id"]
+        writer = csv.DictWriter(csvfile, dialect="excel-tab", fieldnames=fields_to_write)
         if shard == 0:
             writer.writeheader()
         for row in rows.items():
@@ -111,14 +113,14 @@ def write_table(path, rows, cls, shard):
 def process_export(old_export_path, new_export_path):
     client = ndb.Client()
     for table, cls, shards in get_tables():
-        logging.info('Processing ' + table)
-        table_suffix = '/WCA_export_' + table + '.tsv'
+        logging.info("Processing " + table)
+        table_suffix = "/WCA_export_" + table + ".tsv"
         for shard in range(shards):
-            logging.info('Shard %d/%d' % (shard + 1, shards))
-            old_rows = read_table(old_export_path + table_suffix + '.filtered', cls, False, shard, shards)
+            logging.info("Shard %d/%d" % (shard + 1, shards))
+            old_rows = read_table(old_export_path + table_suffix + ".filtered", cls, False, shard, shards)
             new_rows = read_table(new_export_path + table_suffix, cls, True, shard, shards)
-            logging.info('Old: %d' % len(old_rows))
-            logging.info('New: %d' % len(new_rows))
+            logging.info("Old: %d" % len(old_rows))
+            logging.info("New: %d" % len(new_rows))
             write_table(new_export_path + table_suffix, new_rows, cls, shard)
 
             objects_to_put = []
@@ -145,26 +147,26 @@ def process_export(old_export_path, new_export_path):
                     with client.context():
                         keys_to_delete += [ndb.Key(cls, key)]
 
-            logging.info('Putting %d objects' % len(objects_to_put))
+            logging.info("Putting %d objects" % len(objects_to_put))
             while objects_to_put:
                 with client.context():
                     batch_size = 5000
-                    logging.info('%d left' % len(objects_to_put))
+                    logging.info("%d left" % len(objects_to_put))
                     subslice = objects_to_put[:batch_size]
                     objects_to_put = objects_to_put[batch_size:]
                     ndb.put_multi(subslice)
 
-            logging.info('Deleting %d objects' % len(keys_to_delete))
+            logging.info("Deleting %d objects" % len(keys_to_delete))
             with client.context():
                 ndb.delete_multi(keys_to_delete)
 
 
 def main(argv):
     do_everything = (
-        not FLAGS.only_load_db and
-        not FLAGS.only_update_champions and
-        not FLAGS.only_update_championships and
-        not FLAGS.only_update_province_records
+        not FLAGS.only_load_db
+        and not FLAGS.only_update_champions
+        and not FLAGS.only_update_championships
+        and not FLAGS.only_update_province_records
     )
 
     if do_everything or FLAGS.only_load_db:
@@ -191,5 +193,5 @@ def main(argv):
             update_province_records()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     app.run(main)

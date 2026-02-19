@@ -16,21 +16,21 @@ class Person(BaseModel):
     province = ndb.KeyProperty(kind=Province)
 
     def parse_from_dict(self, row):
-        self.name = row['name']
-        self.country = ndb.Key(Country, row['country_id'])
-        self.gender = row['gender']
+        self.name = row["name"]
+        self.country = ndb.Key(Country, row["country_id"])
+        self.gender = row["gender"]
 
     @staticmethod
     def filter():
-        return lambda row: int(row['sub_id']) == 1
+        return lambda row: int(row["sub_id"]) == 1
 
     @staticmethod
     def columns_used():
-        return ['name', 'country_id', 'gender', 'wca_id', 'sub_id']
+        return ["name", "country_id", "gender", "wca_id", "sub_id"]
 
     def get_wca_link(self):
-        return f'https://worldcubeassociation.org/persons/{self.key.id()}'
+        return f"https://worldcubeassociation.org/persons/{self.key.id()}"
 
     @staticmethod
     def get_id(row):
-        return row['wca_id']
+        return row["wca_id"]

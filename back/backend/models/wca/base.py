@@ -11,7 +11,7 @@ class CombinedMeta(type(ndb.Model), ABCMeta):
 class BaseModel(ndb.Model, metaclass=CombinedMeta):
     @staticmethod
     def get_id(row):
-        return row['id']
+        return row["id"]
 
     @abstractmethod
     def parse_from_dict(self, row):

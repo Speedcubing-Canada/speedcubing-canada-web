@@ -14,7 +14,7 @@ class GroupStatus(ndb.Model):
 
     @staticmethod
     def get_id(competition_id, group_id):
-        return f'{competition_id}_{group_id}'
+        return f"{competition_id}_{group_id}"
 
 
 class CompetitionMetadata(ndb.Model):

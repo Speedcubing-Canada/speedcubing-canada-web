@@ -14,10 +14,10 @@ def _get_client():
 
 
 def get_secret(name):
-    if os.environ.get('ENV') == 'DEV':
+    if os.environ.get("ENV") == "DEV":
         return os.environ.get(name)
     client = _get_client()
-    project_id = os.environ.get('GOOGLE_CLOUD_PROJECT')
+    project_id = os.environ.get("GOOGLE_CLOUD_PROJECT")
     name = f"projects/{project_id}/secrets/{name}/versions/latest"
-    response = client.access_secret_version(request={'name': name})
-    return response.payload.data.decode('UTF-8')
+    response = client.access_secret_version(request={"name": name})
+    return response.payload.data.decode("UTF-8")

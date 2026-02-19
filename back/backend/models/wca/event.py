@@ -8,9 +8,9 @@ class Event(BaseModel):
     rank = ndb.IntegerProperty()
 
     def parse_from_dict(self, row):
-        self.name = row['name']
-        self.rank = int(row['rank'])
+        self.name = row["name"]
+        self.rank = int(row["rank"])
 
     @staticmethod
     def columns_used():
-        return ['name', 'rank']
+        return ["name", "rank"]

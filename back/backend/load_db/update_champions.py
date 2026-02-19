@@ -20,8 +20,7 @@ from backend.models.wca.result import RoundType
 def compute_eligible_competitors(championship, competition, results):
     if championship.national_championship:
         # We don't save this in the datastore because it's easy enough to compute.
-        return set([r.person.id() for r in results
-                    if r.person_country == ndb.Key(Country, 'Canada')])
+        return set([r.person.id() for r in results if r.person_country == ndb.Key(Country, "Canada")])
     competitors = set([r.person for r in results])
     users = User.query(User.wca_person.IN(competitors)).fetch()
     user_keys = [user.key for user in users]
@@ -44,8 +43,9 @@ def compute_eligible_competitors(championship, competition, results):
             return user.province_eligibilities
 
     valid_province_keys = championship.get_eligible_province_keys()
-    residency_deadline = (championship.residency_deadline or
-                          datetime.datetime.combine(competition.start_date, datetime.time(0, 0, 0)))
+    residency_deadline = championship.residency_deadline or datetime.datetime.combine(
+        competition.start_date, datetime.time(0, 0, 0)
+    )
 
     eligible_competitors = set()
     competitors_to_put = []
@@ -65,7 +65,7 @@ def compute_eligible_competitors(championship, competition, results):
                 resolution = Resolution.ELIGIBLE
             else:
                 resolution = Resolution.INELIGIBLE
-        
+
         # If the competitor hasn't already used their eligibility, check their province.
         if resolution == Resolution.UNRESOLVED:
             province = None
@@ -95,29 +95,30 @@ def compute_eligible_competitors(championship, competition, results):
 def update_champions():
     champions_to_write = []
     champions_to_delete = []
-    final_round_keys = set(r.key for r in RoundType.query(RoundType.is_final == True).iter())
+    final_round_keys = set(r.key for r in RoundType.query(RoundType.is_final).iter())
     all_event_keys = set(e.key for e in Event.query().iter())
     championships_already_computed = set()
     for champion in Champion.query().iter():
         championships_already_computed.add(champion.championship.id())
     for championship in Championship.query().iter():
-        if not championship.national_championship and os.environ.get('ENV') == 'DEV':
+        if not championship.national_championship and os.environ.get("ENV") == "DEV":
             # Don't try to compute regional champions on dev, since we don't have
             # location data.
             continue
         competition = championship.competition.get()
         # Only recompute champions from the last 2 weeks, in case there are result updates.
-        if (championship.key.id() in championships_already_computed and
-                datetime.date.today() - competition.end_date > datetime.timedelta(days=14)):
+        if (
+            championship.key.id() in championships_already_computed
+            and datetime.date.today() - competition.end_date > datetime.timedelta(days=14)
+        ):
             continue
         if competition.end_date > datetime.date.today():
             continue
         competition_id = championship.competition.id()
-        logging.info('Computing champions for %s' % competition_id)
-        results = (Result.query(Result.competition == championship.competition)
-                   .order(Result.pos).fetch())
+        logging.info("Computing champions for %s" % competition_id)
+        results = Result.query(Result.competition == championship.competition).order(Result.pos).fetch()
         if not results:
-            logging.info('Results are not uploaded yet.  Not computing champions yet.')
+            logging.info("Results are not uploaded yet.  Not computing champions yet.")
             continue
         eligible_competitors = compute_eligible_competitors(championship, competition, results)
         champions = collections.defaultdict(list)
@@ -133,9 +134,9 @@ def update_champions():
             # champions listings, we list those champions as the 333mbf champions for
             # those years.
             if championship.competition.get().year < 2009:
-                if result.event.id() == '333mbo':
-                    this_event = ndb.Key(Event, '333mbf')
-                elif result.event.id() == '333mbf':
+                if result.event.id() == "333mbo":
+                    this_event = ndb.Key(Event, "333mbf")
+                elif result.event.id() == "333mbf":
                     continue
             events_held_with_successes.add(this_event)
             if this_event in champions and champions[this_event][0].pos < result.pos:

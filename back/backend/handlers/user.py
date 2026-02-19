@@ -8,12 +8,12 @@ from backend.models.province import Province
 from backend.models.user import User, UserLocationUpdate
 from backend.models.wca.rank import RankSingle, RankAverage
 
-bp = Blueprint('user', __name__)
+bp = Blueprint("user", __name__)
 client = ndb.Client()
 
 
-@bp.route('/user_info', methods=['GET'])
-@bp.route('/user_info/<user_id>', methods=['GET'])
+@bp.route("/user_info", methods=["GET"])
+@bp.route("/user_info/<user_id>", methods=["GET"])
 @require_auth
 def user_info(user_id=-1):
     me = auth.user()
@@ -37,8 +37,8 @@ def rewrite_ranks(wca_person):
         ndb.put_multi(rank_class.query(rank_class.person == wca_person.key).fetch())
 
 
-@bp.route('/edit', methods=['POST'])
-@bp.route('/edit/<user_id>', methods=['POST'])
+@bp.route("/edit", methods=["POST"])
+@bp.route("/edit/<user_id>", methods=["POST"])
 @require_auth
 def edit(user_id=-1):
     me = auth.user()
@@ -49,17 +49,32 @@ def edit(user_id=-1):
     if not user:
         return jsonify({"error": "Unrecognized user ID %s" % user_id}), 404
     if not permissions.can_view_user(user, me):
-        return jsonify(
-            {"error": "You're not authorized to view this user. So you can't edit their location either."}), 403
+        return jsonify({"error": "You're not authorized to view this user. So you can't edit their location either."}), 403
 
-    province_id = request.json['province']
-    if province_id == 'na':
-        province_id = ''
+    province_id = request.json["province"]
+    if province_id == "na":
+        province_id = ""
 
-    if province_id not in ['', 'na', 'qc', 'on', 'mb', 'sk', 'ab', 'bc', 'nb','pe', 'nl','ns', 'yt', 'nt', 'nu']:
+    if province_id not in [
+        "",
+        "na",
+        "qc",
+        "on",
+        "mb",
+        "sk",
+        "ab",
+        "bc",
+        "nb",
+        "pe",
+        "nl",
+        "ns",
+        "yt",
+        "nt",
+        "nu",
+    ]:
         return jsonify({"error": "Invalid province ID %s" % province_id}), 400
 
-    old_province_id = user.province.id() if user.province else ''
+    old_province_id = user.province.id() if user.province else ""
     changed_location = old_province_id != province_id
     user_modified = False
     if permissions.can_edit_location(user, me) and changed_location:

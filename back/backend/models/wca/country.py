@@ -10,10 +10,10 @@ class Country(BaseModel):
     iso2 = ndb.StringProperty()
 
     def parse_from_dict(self, row):
-        self.name = row['name']
-        self.continent = ndb.Key(Continent, row['continent_id'])
-        self.iso2 = row['iso2']
+        self.name = row["name"]
+        self.continent = ndb.Key(Continent, row["continent_id"])
+        self.iso2 = row["iso2"]
 
     @staticmethod
     def columns_used():
-        return ['name', 'continent_id', 'iso2']
+        return ["name", "continent_id", "iso2"]

@@ -6,7 +6,6 @@ from flask import request
 from backend.lib import formatters, auth, secrets
 from backend.models.region import Region
 from backend.models.province import Province
-from backend.models.user import Roles
 from backend.models.wca.event import Event
 from backend.models.wca.export import get_latest_export
 
@@ -64,9 +63,11 @@ class Common(object):
 
     @staticmethod
     def events(include_magic, include_mbo):
-        return [e for e in Event.query().order(Event.rank).iter()
-                if (include_magic or e.key.id() not in ['magic', 'mmagic']) and
-                (include_mbo or e.key.id() != '333mbo')]
+        return [
+            e
+            for e in Event.query().order(Event.rank).iter()
+            if (include_magic or e.key.id() not in ["magic", "mmagic"]) and (include_mbo or e.key.id() != "333mbo")
+        ]
 
     @staticmethod
     def years():
@@ -82,7 +83,7 @@ class Common(object):
 
     @staticmethod
     def is_prod():
-        return os.environ['ENV'] == 'PROD'
+        return os.environ["ENV"] == "PROD"
 
     @staticmethod
     def IconUrl(event_id):
@@ -95,5 +96,5 @@ class Common(object):
     @staticmethod
     def get_wca_export():
         val = get_latest_export()
-        date_part = val.split('_')[-1][:8]
-        return datetime.datetime.strptime(date_part, '%Y%m%d').strftime('%B %d, %Y').replace(' 0', ' ')
+        date_part = val.split("_")[-1][:8]
+        return datetime.datetime.strptime(date_part, "%Y%m%d").strftime("%B %d, %Y").replace(" 0", " ")

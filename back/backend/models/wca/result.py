@@ -28,21 +28,21 @@ class Result(BaseModel):
     regional_average_record = ndb.StringProperty()
 
     def parse_from_dict(self, row):
-        self.competition = ndb.Key(Competition, row['competition_id'])
-        self.event = ndb.Key(Event, row['event_id'])
-        self.round_type = ndb.Key(RoundType, row['round_type_id'])
-        self.person = ndb.Key(Person, row['person_id'])
-        self.fmt = ndb.Key(Format, row['format_id'])
+        self.competition = ndb.Key(Competition, row["competition_id"])
+        self.event = ndb.Key(Event, row["event_id"])
+        self.round_type = ndb.Key(RoundType, row["round_type_id"])
+        self.person = ndb.Key(Person, row["person_id"])
+        self.fmt = ndb.Key(Format, row["format_id"])
 
-        self.person_name = row['person_name']
-        self.person_country = ndb.Key(Country, row['person_country_id'])
+        self.person_name = row["person_name"]
+        self.person_country = ndb.Key(Country, row["person_country_id"])
 
-        self.pos = int(row['pos'])
-        self.best = int(row['best'])
-        self.average = int(row['average'])
+        self.pos = int(row["pos"])
+        self.best = int(row["best"])
+        self.average = int(row["average"])
 
-        self.regional_single_record = row['regional_single_record']
-        self.regional_average_record = row['regional_average_record']
+        self.regional_single_record = row["regional_single_record"]
+        self.regional_average_record = row["regional_average_record"]
 
     @staticmethod
     def Filter():
@@ -50,7 +50,8 @@ class Result(BaseModel):
         known_competitions = set([championship.competition.id() for championship in Championship.query().iter()])
 
         def filter_row(row):
-            return row['competition_id'] in known_competitions
+            return row["competition_id"] in known_competitions
+
         return filter_row
 
     @staticmethod
@@ -59,5 +60,17 @@ class Result(BaseModel):
 
     @staticmethod
     def columns_used():
-        return ['competition_id', 'event_id', 'round_type_id', 'person_id', 'format_id', 'person_name',
-                'person_country_id', 'pos', 'best', 'average', 'regional_single_record', 'regional_average_record']
+        return [
+            "competition_id",
+            "event_id",
+            "round_type_id",
+            "person_id",
+            "format_id",
+            "person_name",
+            "person_country_id",
+            "pos",
+            "best",
+            "average",
+            "regional_single_record",
+            "regional_average_record",
+        ]
