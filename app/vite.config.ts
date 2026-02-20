@@ -6,4 +6,24 @@ export default defineConfig({
   server: {
     port: 2003,
   },
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          "vendor-react": ["react", "react-dom", "react-router-dom"],
+          "vendor-mui": [
+            "@mui/material",
+            "@mui/icons-material",
+            "@emotion/react",
+            "@emotion/styled",
+          ],
+          "vendor-admin": [
+            "react-admin",
+            "ra-data-simple-rest",
+            "ra-language-french",
+          ],
+        },
+      },
+    },
+  },
 });
