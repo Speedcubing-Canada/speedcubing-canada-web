@@ -2,12 +2,10 @@ import { Theme, useMediaQuery } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import { Breakpoint } from "./types";
 
-const UseResponsiveQuery = (breakpoint: Breakpoint | string) => {
+const UseResponsiveQuery = (breakpoint: Breakpoint) => {
   const theme = useTheme();
-  const query =
-    typeof breakpoint === "string" ? (breakpoint as Breakpoint) : breakpoint;
 
-  return useMediaQuery<Theme>((theme) => theme.breakpoints.down(query));
+  return useMediaQuery<Theme>((theme) => theme.breakpoints.down(breakpoint));
 };
 
 export default UseResponsiveQuery;

@@ -6,7 +6,7 @@ import {
   SimpleForm,
   useTranslate,
 } from "react-admin";
-import { Province, provinceID } from "./types";
+import { Province, ProvinceID } from "./types";
 import { getProvincesWithNA } from "./provinces";
 import { roles } from "./roles";
 
@@ -37,7 +37,7 @@ export const UserEdit = () => {
 };
 
 const provinces: Province[] = getProvincesWithNA();
-const provincesIds: provinceID[] = provinces.map((province) => province.id);
+const provincesIds: ProvinceID[] = provinces.map((province) => province.id);
 const validateProvince = choices(
   provincesIds,
   "Please choose one of the values",

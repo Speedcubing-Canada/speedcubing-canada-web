@@ -31,7 +31,7 @@ export const UserList = () => {
           <ArrayField source="roles">
             <UserRoleChip />
           </ArrayField>
-          <TextField source="wca_person" />
+          <TextField source="wca_id" />
           <EditButton />
         </Datagrid>
       )}

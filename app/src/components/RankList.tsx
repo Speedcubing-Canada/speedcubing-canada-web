@@ -32,7 +32,7 @@ export const RankList: React.FC<{ data: Ranking[] }> = ({ data }) => {
     },
   ];
 
-  const rows = data.map((person: any, index: number) => ({
+  const rows = data.map((person: Ranking, index: number) => ({
     id: index,
     rank: person.rank,
     name: person.name,

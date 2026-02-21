@@ -5,19 +5,19 @@ export interface User {
   name: string;
   roles: string[];
   province: string;
-  wca_person: string;
+  wca_id: string;
   dob: string;
   email: string;
 }
 
 export interface Province {
-  id: provinceID;
+  id: ProvinceID;
   label: string;
-  region_id: regionID;
+  region_id: RegionID;
 }
 
 export interface Role {
-  id: roleID;
+  id: RoleID;
   name: string;
 }
 
@@ -53,48 +53,103 @@ export type AlertAction =
       type: "HIDE_ALERT";
     };
 
-export type eventID =
-  | "333"
-  | "222"
-  | "444"
-  | "555"
-  | "666"
-  | "777"
-  | "333bf"
-  | "333fm"
-  | "333oh"
-  | "333ft"
-  | "minx"
-  | "pyram"
-  | "skewb"
-  | "sq1"
-  | "clock"
-  | "444bf"
-  | "555bf"
-  | "333mbf"
-  | "333mbo"
-  | "magic"
-  | "mmagic";
+export const EVENTS = [
+  "333",
+  "222",
+  "444",
+  "555",
+  "666",
+  "777",
+  "333bf",
+  "333fm",
+  "333oh",
+  "333ft",
+  "minx",
+  "pyram",
+  "skewb",
+  "sq1",
+  "clock",
+  "444bf",
+  "555bf",
+  "333mbf",
+  "333mbo",
+  "magic",
+  "mmagic",
+] as const;
 
-export type provinceID =
-  | "ab"
-  | "bc"
-  | "mb"
-  | "nb"
-  | "nl"
-  | "ns"
-  | "nt"
-  | "nu"
-  | "on"
-  | "pe"
-  | "qc"
-  | "sk"
-  | "yt"
-  | "na";
+export type EventID = (typeof EVENTS)[number];
 
-export type regionID = "at" | "qc" | "on" | "pr" | "bc" | "te" | "na";
+// Active events used for rankings
+export const ACTIVE_EVENTS = [
+  "333",
+  "222",
+  "444",
+  "555",
+  "666",
+  "777",
+  "333bf",
+  "333fm",
+  "333oh",
+  "clock",
+  "minx",
+  "pyram",
+  "skewb",
+  "sq1",
+  "444bf",
+  "555bf",
+  "333mbf",
+] as const;
 
-export type chipColor =
+export const REGIONS = {
+  at: "Atlantic",
+  qc: "Quebec",
+  on: "Ontario",
+  pr: "Prairies",
+  bc: "British Columbia",
+  te: "Territories",
+  na: "N/A",
+} as const;
+
+export type RegionID = keyof typeof REGIONS;
+
+export const PROVINCES_DATA = [
+  { label: "Alberta", id: "ab", region_id: "pr" },
+  { label: "British Columbia", id: "bc", region_id: "bc" },
+  { label: "Manitoba", id: "mb", region_id: "pr" },
+  { label: "New Brunswick", id: "nb", region_id: "at" },
+  { label: "Newfoundland and Labrador", id: "nl", region_id: "at" },
+  { label: "Northwest Territories", id: "nt", region_id: "te" },
+  { label: "Nova Scotia", id: "ns", region_id: "at" },
+  { label: "Nunavut", id: "nu", region_id: "te" },
+  { label: "Ontario", id: "on", region_id: "on" },
+  { label: "Prince Edward Island", id: "pe", region_id: "at" },
+  { label: "Quebec", id: "qc", region_id: "qc" },
+  { label: "Saskatchewan", id: "sk", region_id: "pr" },
+  { label: "Yukon", id: "yt", region_id: "te" },
+] as const;
+
+export const NA_PROVINCE_DATA = {
+  label: "N/A",
+  id: "na",
+  region_id: "na",
+} as const;
+
+export type ProvinceID =
+  | (typeof PROVINCES_DATA)[number]["id"]
+  | (typeof NA_PROVINCE_DATA)["id"];
+
+export const ROLES_DATA = [
+  { id: "GLOBAL_ADMIN", name: "Global Admin" },
+  { id: "DIRECTOR", name: "Director" },
+  { id: "WEBMASTER", name: "Webmaster" },
+  { id: "SENIOR_DELEGATE", name: "Senior Delegate" },
+  { id: "DELEGATE", name: "Delegate" },
+  { id: "CANDIDATE_DELEGATE", name: "Junior Delegate" },
+] as const;
+
+export type RoleID = (typeof ROLES_DATA)[number]["id"] | null;
+
+export type ChipColor =
   | "default"
   | "error"
   | "primary"
@@ -102,15 +157,6 @@ export type chipColor =
   | "info"
   | "success"
   | "warning";
-
-export type roleID =
-  | "GLOBAL_ADMIN"
-  | "DIRECTOR"
-  | "WEBMASTER"
-  | "SENIOR_DELEGATE"
-  | "DELEGATE"
-  | "CANDIDATE_DELEGATE"
-  | null;
 
 export type IconSize = "1x" | "2x" | "3x" | "4x" | "5x";
 

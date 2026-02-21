@@ -20,7 +20,7 @@ import dayjs from "dayjs";
 import { API_BASE_URL, signIn, signOut } from "../components/api";
 import {
   AlertAction,
-  chipColor,
+  ChipColor,
   ChipData,
   Province,
   AlertState,
@@ -71,7 +71,7 @@ export const Account = () => {
 
   const defaultProvince: Province =
     provinces.find(({ id }) => id === user?.province) || NA_PROVINCE;
-  const defaultWCAID = user?.wca_person || "";
+  const defaultWCAID = user?.wca_id || "";
   const defaultEmail: string = user?.email || "";
 
   const showAlert = (alertType: AlertColor, alertContent: string) => {
@@ -270,7 +270,7 @@ export const Account = () => {
               component="ul"
             >
               {chipData.map((data) => {
-                const color: chipColor =
+                const color: ChipColor =
                   data.label === "GLOBAL_ADMIN" ||
                   data.label === "DIRECTOR" ||
                   data.label === "WEBMASTER"

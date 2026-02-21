@@ -27,6 +27,9 @@ def get_users():
     # Sort
     sort_field = request.args.get("sort_field", "name")
     sort_order = request.args.get("sort_order", "asc")
+    # Map JSON field names to model property names
+    field_mapping = {"wca_id": "wca_person"}
+    sort_field = field_mapping.get(sort_field, sort_field)
     if sort_field not in ("id", "name", "wca_person", "roles", "province"):
         sort_field = "name"
     if sort_order.lower() not in ("asc", "desc"):

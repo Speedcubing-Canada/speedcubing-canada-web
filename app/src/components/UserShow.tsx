@@ -25,7 +25,7 @@ export const UserShow = () => (
         <UserRoleChip />
       </ArrayField>
       <DateField source="dob" />
-      <WcaProfileUrlField source="wca_person" />
+      <WcaProfileUrlField source="wca_id" />
       <EmailField source="email" />
     </SimpleShowLayout>
   </Show>

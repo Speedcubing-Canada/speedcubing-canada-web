@@ -4,7 +4,7 @@ import { API_BASE_URL } from "./components/api";
 import { DataProvider } from "ra-core/dist/cjs/types";
 
 const apiUrl = API_BASE_URL;
-const httpClient = (url: string, options: any = {}) => {
+const httpClient = (url: string, options: RequestInit = {}) => {
   if (!options.headers) {
     options.headers = new Headers({
       Accept: "application/json",
@@ -25,14 +25,7 @@ const convertResponseToDataProviderFormat = (response: any) => {
 };
 
 const dataProvider: DataProvider = {
-  getList: (
-    resource: any,
-    params: {
-      pagination: { page: any; perPage: any };
-      sort: { field: any; order: any };
-      filter: any;
-    },
-  ) => {
+  getList: (resource, params) => {
     const { page, perPage } = params.pagination;
     const { field, order } = params.sort;
     const query = {
@@ -51,12 +44,12 @@ const dataProvider: DataProvider = {
     });
   },
 
-  getOne: (resource: any, params: { id: any }) =>
+  getOne: (resource, params) =>
     httpClient(`${apiUrl}/user_info/${params.id}`).then(({ json }) => ({
       data: json,
     })),
 
-  getMany: (resource: any, params: { ids: any }) => {
+  getMany: (resource, params) => {
     const query = {
       filter: JSON.stringify({ ids: params.ids }),
     };
@@ -103,14 +96,13 @@ const dataProvider: DataProvider = {
       data: { ...params.data, id: json.id },
     })),
 
-  update: (resource: any, params: { id: any; data: any }) =>
+  update: (resource, params) =>
     httpClient(`${apiUrl}/edit/${params.id}`, {
       method: "POST",
       body: JSON.stringify(params.data),
     }).then(({ json }) => ({ data: json })),
 
-  updateMany: (resource: any, params: { ids: any; data: any }) => {
-    //not setup
+  updateMany: (resource, params) => {
     const query = {
       filter: JSON.stringify({ id: params.ids }),
     };
@@ -120,7 +112,7 @@ const dataProvider: DataProvider = {
     }).then(({ json }) => ({ data: json }));
   },
 
-  delete: (resource: any, params: { id: any }) =>
+  delete: (resource, params) =>
     httpClient(`${apiUrl}/${resource}/${params.id}`, {
       method: "DELETE",
     }).then(({ json }) => ({ data: json })),

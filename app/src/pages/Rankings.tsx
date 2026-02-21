@@ -16,7 +16,7 @@ import Stack from "@mui/material/Stack";
 import Switch from "@mui/material/Switch";
 import CircularProgress from "@mui/material/CircularProgress";
 
-import { eventID, Province, Ranking } from "../components/types";
+import { EventID, Province, Ranking, ACTIVE_EVENTS } from "../components/types";
 import { getProvinces } from "../components/provinces";
 import { API_BASE_URL, PRODUCTION } from "../components/api";
 import httpClient from "../httpClient";
@@ -25,32 +25,14 @@ import { MyCubingIcon } from "../components/MyCubingIcon";
 import UseResponsiveQuery from "../components/UseResponsiveQuery";
 
 const provinces: Province[] = getProvinces();
-const events: eventID[] = [
-  "333",
-  "222",
-  "444",
-  "555",
-  "666",
-  "777",
-  "333bf",
-  "333fm",
-  "333oh",
-  "clock",
-  "minx",
-  "pyram",
-  "skewb",
-  "sq1",
-  "444bf",
-  "555bf",
-  "333mbf",
-];
+const events = ACTIVE_EVENTS;
 
 export const Rankings = () => {
   const { t } = useTranslation();
   const isSmall = UseResponsiveQuery("sm");
 
   const [province, setProvince] = useState<Province | null>(provinces[0]);
-  const [eventId, setEventId] = useState<eventID>("333");
+  const [eventId, setEventId] = useState<EventID>("333");
   const [usingAverage, setUsingAverage] = useState(false);
   const [loading, setLoading] = useState(true);
 
@@ -71,7 +53,7 @@ export const Rankings = () => {
 
   const handleEventChange = (
     event: React.MouseEvent<HTMLElement>,
-    newEvent: eventID | null,
+    newEvent: EventID | null,
   ) => {
     if (newEvent == null) {
       return;
@@ -80,12 +62,12 @@ export const Rankings = () => {
   };
   const handleEventChangeMobile = (
     event: any,
-    newValue: React.SetStateAction<eventID | null>,
+    newValue: React.SetStateAction<EventID | null>,
   ) => {
     if (newValue == null) {
       return;
     }
-    setEventId(newValue as eventID);
+    setEventId(newValue as EventID);
   };
 
   useEffect(() => {

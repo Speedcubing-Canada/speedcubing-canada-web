@@ -1,41 +1,21 @@
-import { Province, regionID } from "./types";
+import {
+  Province,
+  RegionID,
+  REGIONS,
+  PROVINCES_DATA,
+  NA_PROVINCE_DATA,
+} from "./types";
 
-export const REGIONS: Record<regionID, string> = {
-  at: "Atlantic",
-  qc: "Quebec",
-  on: "Ontario",
-  pr: "Prairies",
-  bc: "British Columbia",
-  te: "Territories",
-  na: "N/A",
-};
+export { REGIONS };
 
-export const getRegionName = (regionId: regionID): string => REGIONS[regionId];
+export const getRegionName = (regionId: RegionID): string => REGIONS[regionId];
 
-const provinces: Province[] = [
-  { label: "Alberta", id: "ab", region_id: "pr" },
-  { label: "British Columbia", id: "bc", region_id: "bc" },
-  { label: "Manitoba", id: "mb", region_id: "pr" },
-  { label: "New Brunswick", id: "nb", region_id: "at" },
-  { label: "Newfoundland and Labrador", id: "nl", region_id: "at" },
-  { label: "Northwest Territories", id: "nt", region_id: "te" },
-  { label: "Nova Scotia", id: "ns", region_id: "at" },
-  { label: "Nunavut", id: "nu", region_id: "te" },
-  { label: "Ontario", id: "on", region_id: "on" },
-  { label: "Prince Edward Island", id: "pe", region_id: "at" },
-  { label: "Quebec", id: "qc", region_id: "qc" },
-  { label: "Saskatchewan", id: "sk", region_id: "pr" },
-  { label: "Yukon", id: "yt", region_id: "te" },
-];
+const provinces = PROVINCES_DATA as unknown as Province[];
 
-export const NA_PROVINCE: Province = {
-  label: "N/A",
-  id: "na",
-  region_id: "na",
-};
+export const NA_PROVINCE = NA_PROVINCE_DATA as unknown as Province;
 
-export const getProvincesWithNA: () => Province[] = () => {
-  return provinces.concat(NA_PROVINCE);
+export const getProvincesWithNA = (): Province[] => {
+  return [...provinces, NA_PROVINCE];
 };
 
 export const getProvinces = () => {

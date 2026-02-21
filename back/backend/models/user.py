@@ -68,7 +68,7 @@ class User(ndb.Model):
             "roles": self.roles,
             "dob": self.dob.isoformat() if self.dob else None,
             "province": self.province.id() if self.province else None,
-            "wca_person": self.wca_person.id() if self.wca_person else None,
+            "wca_id": self.wca_person.id() if self.wca_person else None,
             "email": self.email,
         }
 

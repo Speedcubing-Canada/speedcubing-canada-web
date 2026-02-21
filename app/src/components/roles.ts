@@ -1,13 +1,6 @@
-import { Role, User } from "./types";
+import { Role, User, ROLES_DATA } from "./types";
 
-export const roles: Role[] = [
-  { id: "GLOBAL_ADMIN", name: "Global Admin" },
-  { id: "DIRECTOR", name: "Director" },
-  { id: "WEBMASTER", name: "Webmaster" },
-  { id: "SENIOR_DELEGATE", name: "Senior Delegate" },
-  { id: "DELEGATE", name: "Delegate" },
-  { id: "CANDIDATE_DELEGATE", name: "Junior Delegate" },
-];
+export const roles = ROLES_DATA as unknown as Role[];
 
 export const isAdmin = (user: User | null) => {
   return (
