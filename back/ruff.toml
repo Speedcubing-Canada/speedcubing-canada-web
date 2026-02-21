@@ -18,6 +18,8 @@ select = [
 [lint.per-file-ignores]
 # F841: Intentional unused variables for code clarity
 "back/backend/load_db/update_champions.py" = ["F841"]
+# is not None (otherwise causing a bug with ndb that expects a type filter node and not a bool)
+"back/backend/load_db/load_db.py" = ["E711"]
 
 [format]
 # Format configuration

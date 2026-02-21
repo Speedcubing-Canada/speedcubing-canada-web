@@ -53,7 +53,7 @@ def get_tables():
 def get_modifier(table):
     if table == "persons":
         id_to_province = {}
-        for user in User.query(User.province is not None):
+        for user in User.query(User.province != None):
             if user.wca_person:
                 id_to_province[user.wca_person.id()] = user.province
 
