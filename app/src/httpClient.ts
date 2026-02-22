@@ -1,40 +1,108 @@
-class httpClient {
-  static async request(
-    method: string,
-    endpoint: string,
-    data: any,
-    customConfig = {},
-  ) {
-    const credentials: RequestCredentials = "include";
-    const headers = { "Content-Type": "application/json" };
-    const config = {
-      method: method,
-      body: data ? JSON.stringify(data) : undefined,
-      ...customConfig,
-      headers: {
-        ...headers,
-      },
-      credentials: credentials,
-    };
+export interface HttpResponse<
+  D extends unknown = undefined,
+  E extends unknown = undefined,
+> {
+  ok: boolean;
+  data?: D;
+  error?: E;
+}
 
+class httpClient {
+  private static parseBody(response: Response): Promise<unknown> {
+    if (response.headers.get("Content-Type")?.includes("application/json")) {
+      return response.json();
+    } else {
+      return response.text();
+    }
+  }
+
+  static async request<
+    R extends unknown,
+    D extends unknown,
+    E extends unknown = unknown,
+  >(
+    method: "GET" | "POST" | "PUT" | "PATCH" | "DELETE",
+    endpoint: string,
+    body: R | undefined,
+    options: Omit<RequestInit, "method" | "body"> = {},
+  ): Promise<HttpResponse<D, E>> {
     return window
-      .fetch(endpoint, config)
-      .then((response) => response.json())
-      .then((data) => {
-        return data;
+      .fetch(endpoint, {
+        method: method,
+        body: body ? JSON.stringify(body) : undefined,
+        ...options,
+        headers: {
+          "Content-Type": "application/json",
+          ...(options.headers || {}),
+        },
+        credentials: "include",
+      })
+      .then(async (response) => {
+        const body = await this.parseBody(response);
+
+        if (!response.ok) {
+          return {
+            ok: false,
+            error: body as E,
+            data: undefined,
+          };
+        }
+        return {
+          ok: true,
+          error: undefined,
+          data: body as D,
+        };
       })
       .catch((error) => {
-        const errorMessage = error.text();
-        return Promise.reject(new Error(errorMessage));
+        return {
+          ok: false,
+          data: undefined,
+          error: error.message as E,
+        };
       });
   }
 
-  static get(endpoint: string, customConfig = {}) {
-    return this.request("GET", endpoint, undefined, customConfig);
+  static get<D extends unknown, E extends unknown = unknown>(
+    endpoint: string,
+    options: Omit<RequestInit, "method" | "body"> = {},
+  ): Promise<HttpResponse<D, E>> {
+    return this.request<undefined, D, E>("GET", endpoint, undefined, options);
   }
 
-  static post(endpoint: string, data: any, customConfig = {}) {
-    return this.request("POST", endpoint, data, customConfig);
+  static post<R, D extends unknown, E extends unknown = unknown>(
+    endpoint: string,
+    data: R,
+    options: Omit<RequestInit, "method" | "body"> = {},
+  ): Promise<HttpResponse<D, E>> {
+    return this.request<R, D, E>("POST", endpoint, data, options);
+  }
+
+  static put<R, D extends unknown, E extends unknown = unknown>(
+    endpoint: string,
+    data: R,
+    options: Omit<RequestInit, "method" | "body"> = {},
+  ): Promise<HttpResponse<D, E>> {
+    return this.request<R, D, E>("PUT", endpoint, data, options);
+  }
+
+  static patch<R, D extends unknown, E extends unknown = unknown>(
+    endpoint: string,
+    data: R,
+    options: Omit<RequestInit, "method" | "body"> = {},
+  ): Promise<HttpResponse<D, E>> {
+    return this.request<R, D, E>("PATCH", endpoint, data, options);
+  }
+
+  static delete<D extends unknown, E extends unknown = unknown>(
+    endpoint: string,
+    options: Omit<RequestInit, "method" | "body"> = {},
+  ): Promise<HttpResponse<D, E>> {
+    return this.request<undefined, D, E>(
+      "DELETE",
+      endpoint,
+      undefined,
+      options,
+    );
   }
 }
 
