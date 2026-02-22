@@ -16,7 +16,7 @@ import { IconButton } from "@mui/material";
 
 import { UserList } from "../components/UserList";
 import dataProvider from "../dataProvider";
-import httpClient from "../httpClient";
+import httpClient, { HttpResponse } from "../httpClient";
 import { API_BASE_URL } from "../components/api";
 import { User } from "../components/types";
 import { AdminDashboard } from "../components/AdminDashboard";
@@ -31,13 +31,11 @@ export const AdminPage = () => {
 
   useEffect(() => {
     (async () => {
-      try {
-        const resp = await httpClient.get(API_BASE_URL + "/user_info");
-        if (!resp.hasOwnProperty("error")) {
-          setUser(resp);
-        }
-      } catch (error) {
-        console.log("Not authenticated");
+      const response = await httpClient.get<User>(API_BASE_URL + "/user_info");
+      if (response.ok && response.data) {
+        setUser(response.data);
+      } else {
+        // Expected when user is not logged in (401)
       }
       setLoading(false);
     })();

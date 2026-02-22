@@ -102,7 +102,8 @@ const dataProvider: DataProvider = {
       body: JSON.stringify(params.data),
     }).then(({ json }) => ({ data: json })),
 
-  updateMany: (resource, params) => {
+  updateMany: (resource: any, params: { ids: any; data: any }) => {
+    //not setup
     const query = {
       filter: JSON.stringify({ id: params.ids }),
     };

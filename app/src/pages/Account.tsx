@@ -26,7 +26,7 @@ import {
   AlertState,
   User,
 } from "../components/types";
-import httpClient from "../httpClient";
+import httpClient, { HttpResponse } from "../httpClient";
 import { getProvincesWithNA, NA_PROVINCE } from "../components/provinces";
 import { isAdmin } from "../components/roles";
 import UseResponsiveQuery from "../components/UseResponsiveQuery";
@@ -90,13 +90,11 @@ export const Account = () => {
 
   useEffect(() => {
     (async () => {
-      try {
-        const resp = await httpClient.get(API_BASE_URL + "/user_info");
-        if (!resp.hasOwnProperty("error")) {
-          setUser(resp);
-        }
-      } catch (error) {
-        console.log("Not authenticated");
+      const response = await httpClient.get<User>(API_BASE_URL + "/user_info");
+      if (response.ok && response.data) {
+        setUser(response.data);
+      } else {
+        // Expected when user is not logged in (401)
       }
       setLoading(false);
     })();
@@ -118,17 +116,13 @@ export const Account = () => {
 
   const handleSaveProfile = async () => {
     hideAlert();
-    try {
-      const resp = await httpClient.post(API_BASE_URL + "/edit", {
-        province: province ? province.id : "na",
-      });
-      if (resp.hasOwnProperty("error")) {
-        showAlert("error", t("account.error"));
-      } else {
-        showAlert("success", t("account.success"));
-      }
-    } catch (error: any) {
-      console.log(error);
+    const response = await httpClient.post(API_BASE_URL + "/edit", {
+      province: province ? province.id : "na",
+    });
+    if (response.ok) {
+      showAlert("success", t("account.success"));
+    } else {
+      console.log(response.error);
       showAlert("error", t("account.error"));
     }
   };

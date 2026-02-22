@@ -19,7 +19,7 @@ import CircularProgress from "@mui/material/CircularProgress";
 import { EventID, Province, Ranking, ACTIVE_EVENTS } from "../components/types";
 import { getProvinces } from "../components/provinces";
 import { API_BASE_URL, PRODUCTION } from "../components/api";
-import httpClient from "../httpClient";
+import httpClient, { HttpResponse } from "../httpClient";
 import { RankList } from "../components/RankList";
 import { MyCubingIcon } from "../components/MyCubingIcon";
 import UseResponsiveQuery from "../components/UseResponsiveQuery";
@@ -76,41 +76,38 @@ export const Rankings = () => {
     const use_average_str = usingAverage ? "1" : "0";
 
     (async () => {
-      try {
-        if (!eventId || !province?.id) {
-          return null;
-        }
+      if (!eventId || !province?.id) {
+        setLoading(false);
+        return;
+      }
 
-        let resp;
-        if (!PRODUCTION) {
-          resp = await httpClient.get(
-            API_BASE_URL +
-              "/test_rankings?event=" +
-              eventId +
-              "&province=" +
-              province?.id +
-              "&use_average=" +
-              use_average_str,
-          ); //allows to not have the WCA DB locally
-        } else {
-          resp = await httpClient.get(
-            API_BASE_URL +
-              "/province_rankings/" +
-              eventId +
-              "/" +
-              province?.id +
-              "/" +
-              use_average_str,
-          );
-        }
+      let response: HttpResponse<Ranking[], unknown>;
+      if (!PRODUCTION) {
+        response = await httpClient.get<Ranking[]>(
+          API_BASE_URL +
+            "/test_rankings?event=" +
+            eventId +
+            "&province=" +
+            province?.id +
+            "&use_average=" +
+            use_average_str,
+        ); //allows to not have the WCA DB locally
+      } else {
+        response = await httpClient.get<Ranking[]>(
+          API_BASE_URL +
+            "/province_rankings/" +
+            eventId +
+            "/" +
+            province?.id +
+            "/" +
+            use_average_str,
+        );
+      }
 
-        setRanking(resp);
-      } catch (error: any) {
-        if (error?.code === "ERR_NETWORK") {
-          console.log("Network error" + error);
-        } else {
-          console.log("Error" + error);
-        }
+      if (response.ok && response.data) {
+        setRanking(response.data);
+      } else {
+        console.log("Error fetching rankings:", response.error);
       }
       setLoading(false);
     })();
