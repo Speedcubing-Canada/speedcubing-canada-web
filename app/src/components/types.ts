@@ -10,17 +10,6 @@ export interface User {
   email: string;
 }
 
-export interface Province {
-  id: ProvinceID;
-  label: string;
-  region_id: RegionID;
-}
-
-export interface Role {
-  id: RoleID;
-  name: string;
-}
-
 export interface ProfileEditData {
   province: string;
 }
@@ -134,9 +123,11 @@ export const NA_PROVINCE_DATA = {
   region_id: "na",
 } as const;
 
-export type ProvinceID =
-  | (typeof PROVINCES_DATA)[number]["id"]
-  | (typeof NA_PROVINCE_DATA)["id"];
+export type Province =
+  | (typeof PROVINCES_DATA)[number]
+  | typeof NA_PROVINCE_DATA;
+
+export type ProvinceID = Province["id"];
 
 export const ROLES_DATA = [
   { id: "GLOBAL_ADMIN", name: "Global Admin" },
@@ -147,7 +138,8 @@ export const ROLES_DATA = [
   { id: "CANDIDATE_DELEGATE", name: "Junior Delegate" },
 ] as const;
 
-export type RoleID = (typeof ROLES_DATA)[number]["id"] | null;
+export type Role = (typeof ROLES_DATA)[number];
+export type RoleID = Role["id"];
 
 export type ChipColor =
   | "default"

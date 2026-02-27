@@ -26,8 +26,8 @@ import {
   AlertState,
   User,
 } from "../components/types";
-import httpClient, { HttpResponse } from "../httpClient";
-import { getProvincesWithNA, NA_PROVINCE } from "../components/provinces";
+import httpClient from "../httpClient";
+import { getProvincesWithNA, getNAProvince } from "../components/provinces";
 import { isAdmin } from "../components/roles";
 import UseResponsiveQuery from "../components/UseResponsiveQuery";
 import { useNavigate } from "react-router-dom";
@@ -70,7 +70,7 @@ export const Account = () => {
   const [loading, setLoading] = useState(true);
 
   const defaultProvince: Province =
-    provinces.find(({ id }) => id === user?.province) || NA_PROVINCE;
+    provinces.find(({ id }) => id === user?.province) || getNAProvince();
   const defaultWCAID = user?.wca_id || "";
   const defaultEmail: string = user?.email || "";
 

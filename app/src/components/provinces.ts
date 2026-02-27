@@ -6,18 +6,16 @@ import {
   NA_PROVINCE_DATA,
 } from "./types";
 
-export { REGIONS };
-
 export const getRegionName = (regionId: RegionID): string => REGIONS[regionId];
 
-const provinces = PROVINCES_DATA as unknown as Province[];
-
-export const NA_PROVINCE = NA_PROVINCE_DATA as unknown as Province;
-
 export const getProvincesWithNA = (): Province[] => {
-  return [...provinces, NA_PROVINCE];
+  return [...PROVINCES_DATA, NA_PROVINCE_DATA];
 };
 
 export const getProvinces = () => {
-  return provinces;
+  return [...PROVINCES_DATA];
+};
+
+export const getNAProvince = () => {
+  return { ...NA_PROVINCE_DATA };
 };
