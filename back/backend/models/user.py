@@ -1,7 +1,6 @@
 from google.cloud import ndb
 
-from backend.models.eligibility import RegionalChampionshipEligibility
-from backend.models.eligibility import ProvinceChampionshipEligibility
+from backend.models.eligibility import ProvinceChampionshipEligibility, RegionalChampionshipEligibility
 from backend.models.province import Province
 from backend.models.wca.person import Person
 

@@ -1,8 +1,7 @@
 from google.cloud import ndb
 
 from backend.models.province import Province
-from backend.models.wca.country import BaseModel
-from backend.models.wca.country import Country
+from backend.models.wca.country import BaseModel, Country
 
 
 class Person(BaseModel):

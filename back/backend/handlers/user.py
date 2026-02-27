@@ -1,12 +1,13 @@
-from flask import Blueprint, jsonify, request
-from google.cloud import ndb
 import datetime
 
-from backend.lib import permissions, auth
+from flask import Blueprint, jsonify, request
+from google.cloud import ndb
+
+from backend.lib import auth, permissions
 from backend.lib.permissions import require_auth
 from backend.models.province import Province
 from backend.models.user import User, UserLocationUpdate
-from backend.models.wca.rank import RankSingle, RankAverage
+from backend.models.wca.rank import RankAverage, RankSingle
 
 bp = Blueprint("user", __name__)
 client = ndb.Client()

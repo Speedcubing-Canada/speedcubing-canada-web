@@ -2,7 +2,6 @@ import os
 
 from google.cloud import secretmanager
 
-
 _client = None
 
 

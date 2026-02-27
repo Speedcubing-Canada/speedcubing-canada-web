@@ -1,8 +1,8 @@
 import datetime
 import logging
 
-from google.cloud import ndb
 import requests
+from google.cloud import ndb
 
 from backend.models.championship import Championship
 

@@ -2,8 +2,8 @@ from flask import Blueprint
 from google.cloud import ndb
 
 from backend.lib.permissions import require_roles
-from backend.models.region import Region
 from backend.models.province import Province
+from backend.models.region import Region
 from backend.models.user import Roles
 
 bp = Blueprint("provinces", __name__)

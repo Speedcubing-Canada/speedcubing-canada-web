@@ -2,21 +2,20 @@ import datetime
 import logging
 import os
 import sys
+from urllib.parse import urljoin
 
+import google.cloud.logging
 from authlib.integrations.flask_client import OAuth
 from dotenv import load_dotenv
 from flask import Flask
 from flask_cors import CORS
-from urllib.parse import urljoin
-import google.cloud.logging
 
 from backend.handlers.admin import bp as admin_bp
 from backend.handlers.auth import create_bp as create_auth_bp
 from backend.handlers.champions_table import bp as champions_table_bp
-from backend.handlers.regional import bp as regional_bp
 from backend.handlers.province_rankings import bp as province_rankings_bp
+from backend.handlers.regional import bp as regional_bp
 from backend.handlers.user import bp as user_bp
-
 from backend.lib.secrets import get_secret
 
 env_path = os.path.join(os.path.dirname(__file__), "../../.env")

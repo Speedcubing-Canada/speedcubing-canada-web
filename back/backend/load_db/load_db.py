@@ -1,8 +1,6 @@
 import csv
 
-from absl import app
-from absl import flags
-from absl import logging
+from absl import app, flags, logging
 from google.cloud import ndb
 
 from backend.load_db.update_champions import update_champions
@@ -16,8 +14,7 @@ from backend.models.wca.event import Event
 from backend.models.wca.export import set_latest_export
 from backend.models.wca.format import Format
 from backend.models.wca.person import Person
-from backend.models.wca.rank import RankAverage
-from backend.models.wca.rank import RankSingle
+from backend.models.wca.rank import RankAverage, RankSingle
 from backend.models.wca.result import Result
 from backend.models.wca.round import RoundType
 

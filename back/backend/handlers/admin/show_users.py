@@ -1,10 +1,11 @@
 from json import loads
+
 from flask import Blueprint, jsonify, request
 from google.cloud import ndb
 
-from backend.models.wca.person import Person
 from backend.lib.permissions import require_roles
-from backend.models.user import User, Roles
+from backend.models.user import Roles, User
+from backend.models.wca.person import Person
 
 bp = Blueprint("show_users", __name__)
 client = ndb.Client()

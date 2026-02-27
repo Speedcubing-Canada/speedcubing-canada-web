@@ -1,9 +1,7 @@
-import shutil
 import os
+import shutil
 
-from absl import app
-from absl import flags
-from absl import logging
+from absl import app, flags, logging
 from google.cloud import ndb
 
 from backend.models.wca.export import get_latest_export

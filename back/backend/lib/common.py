@@ -3,9 +3,9 @@ import os
 
 from flask import request
 
-from backend.lib import formatters, auth, secrets
-from backend.models.region import Region
+from backend.lib import auth, formatters, secrets
 from backend.models.province import Province
+from backend.models.region import Region
 from backend.models.wca.event import Event
 from backend.models.wca.export import get_latest_export
 

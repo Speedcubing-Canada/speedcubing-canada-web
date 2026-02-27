@@ -3,9 +3,9 @@ import re
 
 from google.cloud import ndb
 
-from backend.models.region import Region
-from backend.models.province import Province
 from backend.models.championship import Championship
+from backend.models.province import Province
+from backend.models.region import Region
 from backend.models.wca.competition import Competition
 
 
