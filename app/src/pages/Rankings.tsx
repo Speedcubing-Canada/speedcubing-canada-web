@@ -45,7 +45,7 @@ export const Rankings = () => {
   };
 
   const handleProvinceChange = (
-    event: any,
+    event: React.SyntheticEvent,
     newValue: React.SetStateAction<Province | null>,
   ) => {
     setProvince(newValue);
@@ -61,7 +61,7 @@ export const Rankings = () => {
     setEventId(newEvent);
   };
   const handleEventChangeMobile = (
-    event: any,
+    event: React.SyntheticEvent,
     newValue: React.SetStateAction<EventID | null>,
   ) => {
     if (newValue == null) {
