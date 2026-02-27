@@ -38,7 +38,7 @@ const dataProvider: DataProvider = {
     };
     const url = `${apiUrl}/admin/get_users?${stringify(query)}`;
 
-    return httpClient(url).then(({ headers, json }) => {
+    return httpClient(url).then(({ json }) => {
       localStorage.setItem("cursor", json.cursor);
       return convertResponseToDataProviderFormat(json);
     });
@@ -80,7 +80,7 @@ const dataProvider: DataProvider = {
     };
     const url = `${apiUrl}/${resource}?${stringify(query)}`;
 
-    return httpClient(url).then(({ headers, json }) =>
+    return httpClient(url).then(({ json }) =>
       Promise.resolve(convertResponseToDataProviderFormat(json)),
     );
   },

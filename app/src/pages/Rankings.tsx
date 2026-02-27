@@ -2,11 +2,9 @@ import { useTranslation } from "react-i18next";
 import {
   Box,
   Container,
-  Theme,
   ToggleButton,
   ToggleButtonGroup,
   Typography,
-  useMediaQuery,
 } from "@mui/material";
 import * as React from "react";
 import { useEffect, useState } from "react";

@@ -1,6 +1,6 @@
 import React from "react";
 import { DataGrid, GridColDef, frFR, enUS } from "@mui/x-data-grid";
-import { Link, Theme, useMediaQuery } from "@mui/material";
+import { Link } from "@mui/material";
 import { Ranking } from "./types";
 import { useTranslation } from "react-i18next";
 import { getLocaleOrFallback, SAVED_LOCALE } from "../locale";
