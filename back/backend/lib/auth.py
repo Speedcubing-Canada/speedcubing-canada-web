@@ -13,5 +13,4 @@ def user():
 
     wca_account_number = session["wca_account_number"]
 
-    user = User.get_by_id(wca_account_number)
-    return user
+    return User.get_by_id(wca_account_number)
