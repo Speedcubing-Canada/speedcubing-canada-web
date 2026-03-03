@@ -21,7 +21,6 @@ import { API_BASE_URL, signIn, signOut } from "../components/api";
 import {
   AlertAction,
   ChipColor,
-  ChipData,
   Province,
   AlertState,
   User,
@@ -60,7 +59,6 @@ export const Account = () => {
   const isSmall = UseResponsiveQuery("sm");
 
   const [province, setProvince] = useState<Province | null>(null);
-  const [chipData, setChipData] = useState<readonly ChipData[]>([]);
 
   const [alertState, alertDispatch] = useReducer(reducer, initialState);
 
@@ -100,15 +98,11 @@ export const Account = () => {
     })();
   }, []);
 
-  useEffect(() => {
-    if (user?.roles) {
-      const chipData = user.roles.map((role, index) => ({
-        key: index,
-        label: role,
-      }));
-      setChipData(chipData);
-    }
-  }, [user?.roles]);
+  const chipData =
+    user?.roles?.map((role, index) => ({
+      key: index,
+      label: role,
+    })) || [];
 
   const ListItem = styled("li")(({ theme }) => ({
     margin: theme.spacing(0.5),
