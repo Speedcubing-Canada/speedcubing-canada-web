@@ -81,14 +81,13 @@ export const Rankings = () => {
 
       let response: HttpResponse<Ranking[], unknown>;
       if (!PRODUCTION) {
+        const params = new URLSearchParams({
+          event: eventId,
+          province: province?.id || "",
+          use_average: use_average_str,
+        });
         response = await httpClient.get<Ranking[]>(
-          API_BASE_URL +
-            "/test_rankings?event=" +
-            eventId +
-            "&province=" +
-            province?.id +
-            "&use_average=" +
-            use_average_str,
+          `${API_BASE_URL}/test_rankings?${params.toString()}`,
         ); //allows to not have the WCA DB locally
       } else {
         response = await httpClient.get<Ranking[]>(
