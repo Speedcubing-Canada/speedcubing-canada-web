@@ -17,11 +17,7 @@ export default defineConfig({
             "@emotion/react",
             "@emotion/styled",
           ],
-          "vendor-admin": [
-            "react-admin",
-            "ra-data-simple-rest",
-            "ra-language-french",
-          ],
+          "vendor-admin": ["react-admin", "ra-language-french"],
         },
       },
     },
