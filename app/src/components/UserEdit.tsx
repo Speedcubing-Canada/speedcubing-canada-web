@@ -20,7 +20,7 @@ export const UserEdit = () => {
           label="Province"
           source="province"
           choices={provinces}
-          optionText={(option) => t("translation.provinces." + option.id)}
+          optionText={(option) => t(`translation.provinces.${option.id}`)}
           optionValue="id"
           validate={validateProvince}
         />
@@ -29,7 +29,7 @@ export const UserEdit = () => {
           source="roles"
           choices={roles}
           optionValue="id"
-          optionText={(option) => t("translation.account.role." + option.id)}
+          optionText={(option) => t(`translation.account.role.${option.id}`)}
         />
       </SimpleForm>
     </Edit>
