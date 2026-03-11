@@ -7,19 +7,6 @@ export default defineConfig({
     port: 2003,
   },
   build: {
-    rollupOptions: {
-      output: {
-        manualChunks: {
-          "vendor-react": ["react", "react-dom", "react-router-dom"],
-          "vendor-mui": [
-            "@mui/material",
-            "@mui/icons-material",
-            "@emotion/react",
-            "@emotion/styled",
-          ],
-          "vendor-admin": ["react-admin", "ra-language-french"],
-        },
-      },
-    },
+    chunkSizeWarningLimit: 1000,
   },
 });
