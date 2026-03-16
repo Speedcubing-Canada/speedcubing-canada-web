@@ -1,18 +1,43 @@
+import * as React from "react";
 import i18n from "i18next";
 import { initReactI18next } from "react-i18next";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { red } from "@mui/material/colors";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
-import { Base } from "./components/Base";
+import { Base as NavBar, ROUTE_NAMES } from "./components/Base";
 import { getLocaleOrFallback, resources, SAVED_LOCALE } from "./locale";
-import { Home } from "./pages/Home";
-import { About } from "./pages/About";
-import { Organization } from "./pages/Organization";
-import { FAQ } from "./pages/FAQ";
-import { Series } from "./pages/Series";
-import { Quebec } from "./pages/Quebec";
-import { Competition } from "./pages/Competition";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+
+const Home = React.lazy(() =>
+  import("./pages/Home").then((m) => ({ default: m.Home })),
+);
+const About = React.lazy(() =>
+  import("./pages/About").then((m) => ({ default: m.About })),
+);
+const Organization = React.lazy(() =>
+  import("./pages/Organization").then((m) => ({ default: m.Organization })),
+);
+const FAQ = React.lazy(() =>
+  import("./pages/FAQ").then((m) => ({ default: m.FAQ })),
+);
+const Series = React.lazy(() =>
+  import("./pages/Series").then((m) => ({ default: m.Series })),
+);
+const Rankings = React.lazy(() =>
+  import("./pages/Rankings").then((m) => ({ default: m.Rankings })),
+);
+const Account = React.lazy(() =>
+  import("./pages/Account").then((m) => ({ default: m.Account })),
+);
+const AdminPage = React.lazy(() =>
+  import("./pages/AdminPage").then((m) => ({ default: m.AdminPage })),
+);
+const Quebec = React.lazy(() =>
+  import("./pages/Quebec").then((m) => ({ default: m.Quebec })),
+);
+const Competition = React.lazy(() =>
+  import("./pages/Competition").then((m) => ({ default: m.Competition })),
+);
 
 i18n.use(initReactI18next).init({
   resources,
@@ -43,31 +68,38 @@ const App = () => {
     <QueryClientProvider client={queryClient}>
       <ThemeProvider theme={theme}>
         <BrowserRouter>
-          <Routes>
-            {/* Normal pages */}
-            <Route element={<Base />}>
-              <Route path=":locale/">
-                <Route index element={<Home />} />
-                <Route path="about" element={<About />} />
-                <Route path="organization" element={<Organization />} />
-                <Route path="faq" element={<FAQ />} />
-                <Route
-                  path="competitions/series/:seriesid"
-                  element={<Series />}
-                />
-                <Route path="competitions/:compid" element={<Competition />} />
-                <Route path="quebec" element={<Quebec />} />
+          <React.Suspense fallback={null}>
+            <Routes>
+              <Route path="/admin/*" element={<AdminPage />} />
+              <Route element={<NavBar />}>
+                <Route path=":locale/">
+                  <Route index element={<Home />} />
+                  <Route path="about" element={<About />} />
+                  <Route path="organization" element={<Organization />} />
+                  <Route path="faq" element={<FAQ />} />
+                  <Route
+                    path="competitions/series/:seriesid"
+                    element={<Series />}
+                  />
+                  <Route
+                    path="competitions/:compid"
+                    element={<Competition />}
+                  />
+                  <Route path="rankings" element={<Rankings />} />
+                  <Route path="account" element={<Account />} />
+                  <Route path="quebec" element={<Quebec />} />
+                </Route>
+                {ROUTE_NAMES.map((route) => (
+                  <Route
+                    key={route}
+                    path={route}
+                    element={<Navigate to={`/${locale}/${route}`} replace />}
+                  />
+                ))}
+                <Route path="*" element={<Navigate to={locale} replace />} />
               </Route>
-              {["about", "organization", "faq", "quebec"].map((route) => (
-                <Route
-                  key={route}
-                  path={route}
-                  element={<Navigate to={`/${locale}/${route}`} replace />}
-                />
-              ))}
-              <Route path="*" element={<Navigate to={locale} replace />} />
-            </Route>
-          </Routes>
+            </Routes>
+          </React.Suspense>
         </BrowserRouter>
       </ThemeProvider>
     </QueryClientProvider>

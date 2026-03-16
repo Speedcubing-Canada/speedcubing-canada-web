@@ -7,6 +7,8 @@ const QUESTIONS = [
   "when-is-the-next-wca-competition-in-my-area",
   "im-going-to-my-first-wca-competition-what-do-i-need-to-know",
   "who-are-the-wca-delegates-in-my-area",
+  "why-doesnt-my-name-appear-on-the-rankings",
+  "why-does-this-person-appear-in-my-province",
   "how-can-i-volunteer-with-speedcubing-canada",
   "affiliated-with-the-wca",
   "why-the-change-from-canadiancubing-to-speedcubing-canada",
@@ -35,6 +37,12 @@ export const FAQ = () => {
     },
     "who-are-the-wca-delegates-in-my-area": {
       delegates: <ExternalLink to={LINKS.WCA.DELEGATES} />,
+    },
+    "why-doesnt-my-name-appear-on-the-rankings": {
+      wca: <ExternalLink to={LINKS.WCA.HOME} />,
+    },
+    "why-does-this-person-appear-in-my-province": {
+      report: <ExternalLink to={LINKS.REPORT} />,
     },
     "how-can-i-volunteer-with-speedcubing-canada": {},
     "affiliated-with-the-wca": {

@@ -1,0 +1,28 @@
+# Ruff configuration for Speedcubing Canada project
+
+# Exclude specific folders from analysis
+extend-exclude = ["scc", "exports"]
+
+# Line length limit
+line-length = 125
+
+[lint]
+# Rules to check
+select = [
+    "E",  # pycodestyle errors
+    "W",  # pycodestyle warnings
+    "F",  # pyflakes
+]
+
+# Per-file ignores
+[lint.per-file-ignores]
+# F841: Intentional unused variables for code clarity
+"**/backend/load_db/update_champions.py" = ["F841"]
+# is not None (otherwise causing a bug with ndb that expects a type filter node and not a bool)
+"**/backend/load_db/load_db.py" = ["E711"]
+
+[format]
+# Format configuration
+quote-style = "double"
+indent-style = "space"
+line-ending = "auto"

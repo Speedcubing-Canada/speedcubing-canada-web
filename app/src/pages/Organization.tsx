@@ -14,6 +14,7 @@ import {
 import { useTranslation } from "react-i18next";
 import { ExternalLink } from "../components/ExternalLink";
 import { DOCUMENT_TYPES, DOCUMENTS } from "./documents";
+import { LINKS } from "./links";
 
 const DIRECTORS = [
   { name: "Kristopher De Asis", wcaId: "2008ASIS01" },
@@ -21,7 +22,7 @@ const DIRECTORS = [
   { name: "Alex Mutch", wcaId: "2014MUTC01" },
 ] as const;
 
-const WCA_PROFILE_URL = "https://www.worldcubeassociation.org/persons/";
+const WCA_PROFILE_URL = LINKS.WCA.PROFILE;
 
 export const Organization = () => {
   const { t } = useTranslation();

@@ -71,6 +71,10 @@ export const DOCUMENTS = {
   ],
   policies: [
     {
+      name: "Speedcubing Canada Privacy Policy",
+      id: "privacy-policy",
+    },
+    {
       name: "Speedcubing Canada Logo Usage Policy",
       id: "Speedcubing-Canada-Logo-Usage-Policy",
     },

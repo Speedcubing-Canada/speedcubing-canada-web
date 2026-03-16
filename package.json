@@ -13,6 +13,11 @@
     "prettier": "3.0.3"
   },
   "lint-staged": {
-    "**/*": "prettier --write --ignore-unknown"
+    "back/**/*.py": [
+      "uvx ruff check --fix --config back/ruff.toml",
+      "uvx ruff format --config back/ruff.toml"
+    ],
+    "app/**/*": "prettier --write --ignore-unknown",
+    "*.{json,md,yml,yaml,sh}": "prettier --write --ignore-unknown"
   }
 }
