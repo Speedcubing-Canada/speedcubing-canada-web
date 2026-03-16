@@ -91,9 +91,7 @@ export const Account = () => {
       const response = await httpClient.get<User>(API_BASE_URL + "/user_info");
       if (response.ok && response.data) {
         setUser(response.data);
-      } else {
-        // Expected when user is not logged in (401)
-      }
+      } // the else case is expected when user is not logged in (401)
       setLoading(false);
     })();
   }, []);
