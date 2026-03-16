@@ -25,11 +25,13 @@ while getopts "psfbv:" opt; do
       PROJECT="$PROD_PROJECT"
       IS_PROD=1
       DISPATCH_FILE="dispatch.prod.yaml"
+      API_FILE="back/api.prod.yaml"
       ;;
     s)
       PROJECT="$STAGING_PROJECT"
       IS_PROD=0
       DISPATCH_FILE="dispatch.staging.yaml"
+      API_FILE="back/api.staging.yaml"
       ;;
     f)
       FRONTEND_ONLY=1
@@ -84,7 +86,7 @@ fi
 if [ $BACKEND_ONLY -eq 1 ]
 then
   echo "Deploying backend only."
-  CMD="gcloud app deploy back/api.yaml --project $PROJECT"
+  CMD="gcloud app deploy $API_FILE --project $PROJECT"
   if [ ! -z "$VERSION" ]
   then
     CMD="$CMD --version $VERSION"
@@ -116,7 +118,7 @@ then
   CMD="gcloud app deploy app/app.yaml --project $PROJECT"
 else
   echo "Deploying to App Engine."
-  CMD="gcloud app deploy app/app.yaml dispatch.yaml back/api.yaml --project $PROJECT"
+  CMD="gcloud app deploy app/app.yaml dispatch.yaml $API_FILE --project $PROJECT"
 fi
 
 if [ ! -z "$VERSION" ]
