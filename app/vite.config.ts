@@ -3,6 +3,14 @@ import react from "@vitejs/plugin-react";
 
 export default defineConfig({
   plugins: [react()],
+  resolve: {
+    alias: [
+      {
+        find: /^@mui\/icons-material\/(.*)$/,
+        replacement: "@mui/icons-material/esm/$1",
+      },
+    ],
+  },
   server: {
     port: 2003,
   },
