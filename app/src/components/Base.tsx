@@ -26,15 +26,8 @@ import {
   AccountCircle,
   Leaderboard,
 } from "@mui/icons-material";
-import { flushSync } from "react-dom";
 
-import {
-  Link,
-  Outlet,
-  useLocation,
-  useParams,
-  useNavigate,
-} from "react-router-dom";
+import { Link, Outlet, useLocation, useParams } from "react-router-dom";
 import { getLocaleOrFallback, SAVED_LOCALE } from "../locale";
 import { useScrollbarWidth } from "../helpers/scrollbarWidth";
 import { useBodyScrollable } from "../helpers/useBodyScrollable";
@@ -86,7 +79,6 @@ export const Base = () => {
   const locale = getLocaleOrFallback(params.locale as string);
   const theme = useTheme();
   const isSmall = useMediaQuery<Theme>((theme) => theme.breakpoints.down("sm"));
-  const navigate = useNavigate();
 
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
