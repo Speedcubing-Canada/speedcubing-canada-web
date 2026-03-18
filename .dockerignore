@@ -1,6 +1,6 @@
-app/node_modules
-app/npm-debug.log
-app/build
+front/node_modules
+front/npm-debug.log
+front/build
 node_modules
 npm-debug.log
 back/venv
