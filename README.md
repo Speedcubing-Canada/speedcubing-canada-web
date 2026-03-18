@@ -20,7 +20,7 @@ First option, in the project root directory, you can run:
 Runs the app and an nginx server. The app is available at [http://localhost/](http://localhost/).
 
 Second option:
-Move into the `app` directory.
+Move into the `front` directory.
 
 ### `npm start`
 

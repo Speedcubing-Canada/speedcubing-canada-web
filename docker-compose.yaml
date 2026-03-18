@@ -1,11 +1,11 @@
 services:
-  app:
+  front:
     container_name: frontend-dev
     build:
       context: .
       target: development
     volumes:
-      - ./app:/app
+      - ./front:/app
     env_file: ./.env
     ports:
       - ${NODE_LOCAL_PORT}:${NODE_DOCKER_PORT}
@@ -38,7 +38,7 @@ services:
     networks:
       - frontend
     depends_on:
-      - app
+      - front
 
 networks:
   frontend:
