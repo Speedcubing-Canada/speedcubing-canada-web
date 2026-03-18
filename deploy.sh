@@ -97,8 +97,8 @@ then
 fi
 
 echo "Recompiling react."
-rm -rf app/dist
-cd app
+rm -rf front/dist
+cd front
 if [ "$IS_PROD" == "0" ]
 then
   echo "Setting VITE_API_BASE_URL to staging."
@@ -115,10 +115,10 @@ cp "$DISPATCH_FILE" dispatch.yaml
 if [ $FRONTEND_ONLY -eq 1 ]
 then
   echo "Deploying frontend only."
-  CMD="gcloud app deploy app/app.yaml --project $PROJECT"
+  CMD="gcloud app deploy front/app.yaml --project $PROJECT"
 else
   echo "Deploying to App Engine."
-  CMD="gcloud app deploy app/app.yaml dispatch.yaml $API_FILE --project $PROJECT"
+  CMD="gcloud app deploy front/app.yaml dispatch.yaml $API_FILE --project $PROJECT"
 fi
 
 if [ ! -z "$VERSION" ]

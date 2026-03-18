@@ -2,7 +2,7 @@
   "name": "speedcubing-canada-web",
   "version": "1.0.0",
   "workspaces": [
-    "app"
+    "front"
   ],
   "scripts": {
     "prepare": "husky install"
@@ -17,7 +17,7 @@
       "uvx ruff check --fix --config back/ruff.toml",
       "uvx ruff format --config back/ruff.toml"
     ],
-    "app/**/*": "prettier --write --ignore-unknown",
+    "front/**/*": "prettier --write --ignore-unknown",
     "*.{json,md,yml,yaml,sh}": "prettier --write --ignore-unknown"
   }
 }
