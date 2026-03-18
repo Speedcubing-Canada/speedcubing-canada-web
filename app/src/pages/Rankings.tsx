@@ -14,10 +14,21 @@ import Stack from "@mui/material/Stack";
 import Switch from "@mui/material/Switch";
 import CircularProgress from "@mui/material/CircularProgress";
 
-import { EventID, Province, Ranking, ACTIVE_EVENTS } from "../components/types";
+import {
+  EventID,
+  Province,
+  Ranking,
+  ACTIVE_EVENTS,
+  User,
+} from "../components/types";
 import { getProvinces } from "../components/provinces";
 import { API_BASE_URL, PRODUCTION } from "../components/api";
 import httpClient, { HttpResponse } from "../httpClient";
+import {
+  getCachedRankingsPreferredProvinceId,
+  removeCachedRankingsPreferredProvinceId,
+  setCachedRankingsPreferredProvinceId,
+} from "../helpers/rankingsProvinceCache";
 import { RankList } from "../components/RankList";
 import { MyCubingIcon } from "../components/MyCubingIcon";
 import UseResponsiveQuery from "../components/UseResponsiveQuery";
@@ -25,11 +36,19 @@ import UseResponsiveQuery from "../components/UseResponsiveQuery";
 const provinces: Province[] = getProvinces();
 const events = ACTIVE_EVENTS;
 
+const getProvinceById = (provinceId: string | null): Province | null => {
+  if (!provinceId) {
+    return null;
+  }
+  return provinces.find(({ id }) => id === provinceId) || null;
+};
+
 export const Rankings = () => {
   const { t } = useTranslation();
   const isSmall = UseResponsiveQuery("sm");
 
-  const [province, setProvince] = useState<Province | null>(provinces[0]);
+  const [province, setProvince] = useState<Province | null>(null);
+  const [provinceInitialized, setProvinceInitialized] = useState(false);
   const [eventId, setEventId] = useState<EventID>("333");
   const [usingAverage, setUsingAverage] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -44,9 +63,14 @@ export const Rankings = () => {
 
   const handleProvinceChange = (
     event: React.SyntheticEvent,
-    newValue: React.SetStateAction<Province | null>,
+    newValue: Province | null,
   ) => {
     setProvince(newValue);
+    if (newValue?.id) {
+      setCachedRankingsPreferredProvinceId(newValue.id);
+    } else {
+      removeCachedRankingsPreferredProvinceId();
+    }
   };
 
   const handleEventChange = (
@@ -60,15 +84,63 @@ export const Rankings = () => {
   };
   const handleEventChangeMobile = (
     event: React.SyntheticEvent,
-    newValue: React.SetStateAction<EventID | null>,
+    newValue: EventID | null,
   ) => {
     if (newValue == null) {
       return;
     }
-    setEventId(newValue as EventID);
+    setEventId(newValue);
   };
 
   useEffect(() => {
+    let mounted = true;
+
+    (async () => {
+      let defaultProvince: Province | null = provinces[0] || null;
+
+      const storedProvinceId = getCachedRankingsPreferredProvinceId();
+      const storedProvince = getProvinceById(storedProvinceId);
+
+      if (storedProvinceId && !storedProvince) {
+        removeCachedRankingsPreferredProvinceId();
+      }
+
+      if (storedProvince) {
+        if (!mounted) {
+          return;
+        }
+        setProvince(storedProvince);
+        setProvinceInitialized(true);
+        return;
+      }
+
+      const response = await httpClient.get<User>(API_BASE_URL + "/user_info");
+      if (response.ok && response.data?.province) {
+        const userProvince = getProvinceById(response.data.province);
+        if (userProvince) {
+          defaultProvince = userProvince;
+          setCachedRankingsPreferredProvinceId(userProvince.id);
+        }
+      }
+
+      if (!mounted) {
+        return;
+      }
+
+      setProvince(defaultProvince);
+      setProvinceInitialized(true);
+    })();
+
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!provinceInitialized) {
+      return;
+    }
+
     setLoading(true);
     setRanking(null);
     const use_average_str = usingAverage ? "1" : "0";
@@ -108,7 +180,7 @@ export const Rankings = () => {
       }
       setLoading(false);
     })();
-  }, [eventId, province, usingAverage]);
+  }, [eventId, province, usingAverage, provinceInitialized]);
 
   return (
     <Container maxWidth="md">
