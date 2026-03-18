@@ -5,7 +5,12 @@ import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { red } from "@mui/material/colors";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import { Base as NavBar, ROUTE_NAMES } from "./components/Base";
-import { getLocaleOrFallback, resources, SAVED_LOCALE } from "./locale";
+import {
+  DEFAULT_LOCALE,
+  getLocaleOrFallback,
+  resources,
+  SAVED_LOCALE,
+} from "./locale";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 const Home = React.lazy(() =>
@@ -39,8 +44,25 @@ const Competition = React.lazy(() =>
   import("./pages/Competition").then((m) => ({ default: m.Competition })),
 );
 
+const getInitialLocale = () => {
+  if (typeof window === "undefined") {
+    return DEFAULT_LOCALE;
+  }
+
+  const pathLocale = window.location.pathname.split("/")[1];
+  if (pathLocale) {
+    return getLocaleOrFallback(pathLocale);
+  }
+
+  const savedLocale = localStorage.getItem(SAVED_LOCALE) ?? "";
+  return getLocaleOrFallback(savedLocale);
+};
+
 i18n.use(initReactI18next).init({
   resources,
+  lng: getInitialLocale(),
+  fallbackLng: DEFAULT_LOCALE,
+  supportedLngs: Object.keys(resources),
   interpolation: {
     escapeValue: false,
   },
