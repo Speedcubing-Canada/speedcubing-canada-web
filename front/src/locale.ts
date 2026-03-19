@@ -5,7 +5,7 @@ export const LOCALES = { en: "en", fr: "fr" } as const;
 export const INVERTED_LOCALES = { en: "fr", fr: "en" } as const;
 export const LOCALE_TO_LANGUAGE = { en: "English", fr: "Français" } as const;
 export const DEFAULT_LOCALE = LOCALES.en;
-export const SAVED_LOCALE = "savedLocale";
+export const SAVED_LOCALE_KEY = "savedLocale";
 
 const SUPPORTED_LOCALES = new Set<string>(Object.values(LOCALES));
 

@@ -9,7 +9,7 @@ import {
   DEFAULT_LOCALE,
   getLocaleOrFallback,
   resources,
-  SAVED_LOCALE,
+  SAVED_LOCALE_KEY,
 } from "./locale";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
@@ -45,16 +45,12 @@ const Competition = React.lazy(() =>
 );
 
 const getInitialLocale = () => {
-  if (typeof window === "undefined") {
-    return DEFAULT_LOCALE;
-  }
-
   const pathLocale = window.location.pathname.split("/")[1];
   if (pathLocale) {
     return getLocaleOrFallback(pathLocale);
   }
 
-  const savedLocale = localStorage.getItem(SAVED_LOCALE) ?? "";
+  const savedLocale = localStorage.getItem(SAVED_LOCALE_KEY) ?? "";
   return getLocaleOrFallback(savedLocale);
 };
 
@@ -83,7 +79,7 @@ const theme = createTheme({
 const queryClient = new QueryClient();
 
 const App = () => {
-  const savedLocale = localStorage.getItem(SAVED_LOCALE) as string;
+  const savedLocale = localStorage.getItem(SAVED_LOCALE_KEY) as string;
   const locale = getLocaleOrFallback(savedLocale);
 
   return (

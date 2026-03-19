@@ -3,14 +3,14 @@ import { DataGrid, GridColDef, frFR, enUS } from "@mui/x-data-grid";
 import { Link } from "@mui/material";
 import { Ranking } from "./types";
 import { useTranslation } from "react-i18next";
-import { getLocaleOrFallback, SAVED_LOCALE } from "../locale";
+import { getLocaleOrFallback, SAVED_LOCALE_KEY } from "../locale";
 import useResponsiveQuery from "./UseResponsiveQuery";
 
 export const RankList: React.FC<{ data: Ranking[] }> = ({ data }) => {
   const { t } = useTranslation();
   const isSmall = useResponsiveQuery("sm");
 
-  const savedLocale = localStorage.getItem(SAVED_LOCALE) as string;
+  const savedLocale = localStorage.getItem(SAVED_LOCALE_KEY) as string;
   const locale = getLocaleOrFallback(savedLocale);
 
   const columns: GridColDef[] = [
