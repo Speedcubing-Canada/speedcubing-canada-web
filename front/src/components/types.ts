@@ -4,14 +4,14 @@ export interface User {
   id: number;
   name: string;
   roles: string[];
-  province: string;
+  province: ProvinceID;
   wca_id: string;
   dob: string;
   email: string;
 }
 
 export interface ProfileEditData {
-  province: string;
+  province: ProvinceID;
 }
 
 export interface ChipData {
