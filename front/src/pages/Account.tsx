@@ -18,13 +18,7 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import dayjs from "dayjs";
 
 import { API_BASE_URL, signIn, signOut } from "../components/api";
-import {
-  AlertAction,
-  ChipColor,
-  Province,
-  AlertState,
-  User,
-} from "../components/types";
+import { AlertAction, ChipColor, Province, AlertState, User } from "../types";
 import httpClient from "../httpClient";
 import { getProvincesWithNA, getNAProvince } from "../components/provinces";
 import { isAdmin } from "../components/roles";

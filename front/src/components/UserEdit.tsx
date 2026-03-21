@@ -6,7 +6,7 @@ import {
   SimpleForm,
   useTranslate,
 } from "react-admin";
-import { Province, ProvinceID } from "./types";
+import { Province, ProvinceID } from "../types";
 import { getProvincesWithNA } from "./provinces";
 import { roles } from "./roles";
 

@@ -2,7 +2,7 @@ import "../cubingicon.css";
 import React from "react";
 import { Icon, Tooltip } from "@mui/material";
 import { useTranslation } from "react-i18next";
-import { EventID, IconSize } from "./types";
+import { EventID, IconSize } from "../types";
 
 export const MyCubingIcon: React.FC<{
   event: EventID;
