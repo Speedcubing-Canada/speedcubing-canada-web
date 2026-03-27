@@ -15,21 +15,25 @@ import Switch from "@mui/material/Switch";
 import CircularProgress from "@mui/material/CircularProgress";
 
 import { EventID, Province, Ranking, ACTIVE_EVENTS } from "../types";
-import { getProvinces } from "../components/provinces";
 import { API_BASE_URL, PRODUCTION } from "../components/api";
 import httpClient, { HttpResponse } from "../httpClient";
+import {
+  removeCachedRankingsPreferredProvinceId,
+  setCachedRankingsPreferredProvinceId,
+} from "../helpers/rankingsProvinceCache";
 import { RankList } from "../components/RankList";
 import { MyCubingIcon } from "../components/MyCubingIcon";
 import UseResponsiveQuery from "../components/UseResponsiveQuery";
+import { useProvincePreference } from "../helpers/useProvincePreference";
 
-const provinces: Province[] = getProvinces();
 const events = ACTIVE_EVENTS;
 
 export const Rankings = () => {
   const { t } = useTranslation();
   const isSmall = UseResponsiveQuery("sm");
 
-  const [province, setProvince] = useState<Province | null>(provinces[0]);
+  const { provinces, province, setProvince, provinceInitialized } =
+    useProvincePreference();
   const [eventId, setEventId] = useState<EventID>("333");
   const [usingAverage, setUsingAverage] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -44,9 +48,14 @@ export const Rankings = () => {
 
   const handleProvinceChange = (
     event: React.SyntheticEvent,
-    newValue: React.SetStateAction<Province | null>,
+    newValue: Province | null,
   ) => {
     setProvince(newValue);
+    if (newValue?.id) {
+      setCachedRankingsPreferredProvinceId(newValue.id);
+    } else {
+      removeCachedRankingsPreferredProvinceId();
+    }
   };
 
   const handleEventChange = (
@@ -60,15 +69,19 @@ export const Rankings = () => {
   };
   const handleEventChangeMobile = (
     event: React.SyntheticEvent,
-    newValue: React.SetStateAction<EventID | null>,
+    newValue: EventID | null,
   ) => {
     if (newValue == null) {
       return;
     }
-    setEventId(newValue as EventID);
+    setEventId(newValue);
   };
 
   useEffect(() => {
+    if (!provinceInitialized) {
+      return;
+    }
+
     setLoading(true);
     setRanking(null);
     const use_average_str = usingAverage ? "1" : "0";
@@ -108,7 +121,7 @@ export const Rankings = () => {
       }
       setLoading(false);
     })();
-  }, [eventId, province, usingAverage]);
+  }, [eventId, province, usingAverage, provinceInitialized]);
 
   return (
     <Container maxWidth="md">
@@ -159,7 +172,7 @@ export const Rankings = () => {
           spacing={2}
           alignItems="center"
         >
-          <Autocomplete
+          <Autocomplete<Province, false, false, false>
             disablePortal
             id="combo-box-demo"
             options={provinces}

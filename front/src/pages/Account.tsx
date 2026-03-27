@@ -23,6 +23,11 @@ import httpClient from "../httpClient";
 import { getProvincesWithNA, getNAProvince } from "../components/provinces";
 import { isAdmin } from "../components/roles";
 import UseResponsiveQuery from "../components/UseResponsiveQuery";
+import {
+  isValidProvinceId,
+  removeCachedRankingsPreferredProvinceId,
+  setCachedRankingsPreferredProvinceId,
+} from "../helpers/rankingsProvinceCache";
 import { useNavigate } from "react-router-dom";
 
 const initialState: AlertState = {
@@ -84,7 +89,12 @@ export const Account = () => {
     (async () => {
       const response = await httpClient.get<User>(API_BASE_URL + "/user_info");
       if (response.ok && response.data) {
-        setUser(response.data);
+        const userData = response.data;
+        setUser(userData);
+
+        if (isValidProvinceId(userData.province)) {
+          setCachedRankingsPreferredProvinceId(userData.province);
+        }
       } // the else case is expected when user is not logged in (401)
       setLoading(false);
     })();
@@ -102,10 +112,27 @@ export const Account = () => {
 
   const handleSaveProfile = async () => {
     hideAlert();
+    const selectedProvince = province || defaultProvince;
+
     const response = await httpClient.post(API_BASE_URL + "/edit", {
-      province: province ? province.id : "na",
+      province: selectedProvince.id,
     });
+
     if (response.ok) {
+      if (isValidProvinceId(selectedProvince.id)) {
+        setCachedRankingsPreferredProvinceId(selectedProvince.id);
+      } else {
+        removeCachedRankingsPreferredProvinceId();
+      }
+
+      setUser((previousUser) =>
+        previousUser
+          ? {
+              ...previousUser,
+              province: selectedProvince.id,
+            }
+          : previousUser,
+      );
       showAlert("success", t("account.success"));
     } else {
       console.log(response.error);
