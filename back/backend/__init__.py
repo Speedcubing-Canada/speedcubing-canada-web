@@ -22,9 +22,11 @@ env_path = os.path.join(os.path.dirname(__file__), "../../.env")
 if os.path.exists(env_path):
     load_dotenv(env_path)
 
+app = Flask(__name__)
 if os.environ.get("ENV") == "PROD":
     client = google.cloud.logging.Client()
     client.setup_logging()
+    app.config["SESSION_COOKIE_SECURE"] = True
 elif os.environ.get("ENV") == "DEV" and "gunicorn" in sys.argv[0]:
     logger = logging.getLogger()
     logger.setLevel(logging.DEBUG)
@@ -33,11 +35,17 @@ elif os.environ.get("ENV") == "DEV" and "gunicorn" in sys.argv[0]:
     handler.setFormatter(formatter)
     logger.addHandler(handler)
 
-app = Flask(__name__)
 app.secret_key = get_secret("SESSION_SECRET_KEY")
 app.permanent_session_lifetime = datetime.timedelta(days=7)
 address = get_secret("FRONT_ADDRESS")
 CORS(app, origins=[address], supports_credentials=True)
+
+
+@app.after_request
+def set_security_headers(response):
+    if os.environ.get("ENV") != "DEV":
+        response.headers["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains"
+    return response
 
 
 wca_host = os.environ.get("WCA_HOST")
