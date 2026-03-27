@@ -4,7 +4,7 @@ import {
   REGIONS,
   PROVINCES_DATA,
   NA_PROVINCE_DATA,
-} from "./types";
+} from "../types";
 
 export const getRegionName = (regionId: RegionID): string => REGIONS[regionId];
 

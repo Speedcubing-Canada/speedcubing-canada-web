@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { Province, User } from "../components/types";
+import { Province, User } from "../types";
 import { API_BASE_URL } from "../components/api";
 import { getProvinces } from "../components/provinces";
 import httpClient from "../httpClient";

@@ -18,7 +18,7 @@ import { UserList } from "../components/UserList";
 import dataProvider from "../dataProvider";
 import httpClient from "../httpClient";
 import { API_BASE_URL } from "../components/api";
-import { User } from "../components/types";
+import { User } from "../types";
 import { AdminDashboard } from "../components/AdminDashboard";
 import { UserEdit } from "../components/UserEdit";
 import { UserShow } from "../components/UserShow";

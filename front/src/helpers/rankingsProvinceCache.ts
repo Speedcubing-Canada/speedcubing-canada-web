@@ -1,8 +1,4 @@
-import {
-  ProvinceID,
-  PROVINCES_DATA,
-  NA_PROVINCE_DATA,
-} from "../components/types";
+import { ProvinceID, PROVINCES_DATA, NA_PROVINCE_DATA } from "../types";
 
 const PREFERRED_PROVINCE_STORAGE_KEY = "rankings_preferred_province";
 

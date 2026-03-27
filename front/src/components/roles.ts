@@ -1,4 +1,4 @@
-import { User, ROLES_DATA } from "./types";
+import { User, ROLES_DATA } from "../types";
 
 export const roles = [...ROLES_DATA];
 
