@@ -15,7 +15,6 @@ import Switch from "@mui/material/Switch";
 import CircularProgress from "@mui/material/CircularProgress";
 
 import { EventID, Province, Ranking, ACTIVE_EVENTS } from "../components/types";
-import { getProvinces } from "../components/provinces";
 import { API_BASE_URL, PRODUCTION } from "../components/api";
 import httpClient, { HttpResponse } from "../httpClient";
 import {
@@ -27,15 +26,14 @@ import { MyCubingIcon } from "../components/MyCubingIcon";
 import UseResponsiveQuery from "../components/UseResponsiveQuery";
 import { useProvincePreference } from "../helpers/useProvincePreference";
 
-const provinces: Province[] = getProvinces();
 const events = ACTIVE_EVENTS;
 
 export const Rankings = () => {
   const { t } = useTranslation();
   const isSmall = UseResponsiveQuery("sm");
 
-  const { province, setProvince, provinceInitialized } =
-    useProvincePreference(provinces);
+  const { provinces, province, setProvince, provinceInitialized } =
+    useProvincePreference();
   const [eventId, setEventId] = useState<EventID>("333");
   const [usingAverage, setUsingAverage] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -174,7 +172,7 @@ export const Rankings = () => {
           spacing={2}
           alignItems="center"
         >
-          <Autocomplete
+          <Autocomplete<Province, false, false, false>
             disablePortal
             id="combo-box-demo"
             options={provinces}

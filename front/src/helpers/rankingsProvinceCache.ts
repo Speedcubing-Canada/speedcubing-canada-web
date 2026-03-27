@@ -6,7 +6,7 @@ import {
 
 const PREFERRED_PROVINCE_STORAGE_KEY = "rankings_preferred_province";
 
-const isValidProvinceId = (value: unknown): value is ProvinceID => {
+export const isValidProvinceId = (value: unknown): value is ProvinceID => {
   if (typeof value !== "string") return false;
 
   const validIds = [

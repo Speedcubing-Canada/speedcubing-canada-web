@@ -26,14 +26,11 @@ import {
   User,
 } from "../components/types";
 import httpClient from "../httpClient";
-import {
-  getProvinces,
-  getProvincesWithNA,
-  getNAProvince,
-} from "../components/provinces";
+import { getProvincesWithNA, getNAProvince } from "../components/provinces";
 import { isAdmin } from "../components/roles";
 import UseResponsiveQuery from "../components/UseResponsiveQuery";
 import {
+  isValidProvinceId,
   removeCachedRankingsPreferredProvinceId,
   setCachedRankingsPreferredProvinceId,
 } from "../helpers/rankingsProvinceCache";
@@ -71,7 +68,6 @@ export const Account = () => {
   const [alertState, alertDispatch] = useReducer(reducer, initialState);
 
   const provinces: Province[] = getProvincesWithNA();
-  const rankingsProvinces: Province[] = getProvinces();
 
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
@@ -102,7 +98,7 @@ export const Account = () => {
         const userData = response.data;
         setUser(userData);
 
-        if (rankingsProvinces.some(({ id }) => id === userData.province)) {
+        if (isValidProvinceId(userData.province)) {
           setCachedRankingsPreferredProvinceId(userData.province);
         }
       } // the else case is expected when user is not logged in (401)
@@ -129,7 +125,7 @@ export const Account = () => {
     });
 
     if (response.ok) {
-      if (rankingsProvinces.some(({ id }) => id === selectedProvince.id)) {
+      if (isValidProvinceId(selectedProvince.id)) {
         setCachedRankingsPreferredProvinceId(selectedProvince.id);
       } else {
         removeCachedRankingsPreferredProvinceId();

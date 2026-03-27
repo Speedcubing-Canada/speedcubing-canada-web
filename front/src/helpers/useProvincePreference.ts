@@ -1,6 +1,7 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Province, User } from "../components/types";
 import { API_BASE_URL } from "../components/api";
+import { getProvinces } from "../components/provinces";
 import httpClient from "../httpClient";
 import {
   getCachedRankingsPreferredProvinceId,
@@ -18,7 +19,8 @@ const getProvinceById = (
   return provinces.find(({ id }) => id === provinceId) || null;
 };
 
-export const useProvincePreference = (provinces: Province[]) => {
+export const useProvincePreference = () => {
+  const provinces: Province[] = useMemo(() => getProvinces(), []);
   const [province, setProvince] = useState<Province | null>(null);
   const [provinceInitialized, setProvinceInitialized] = useState(false);
 
@@ -68,5 +70,5 @@ export const useProvincePreference = (provinces: Province[]) => {
     };
   }, [provinces]);
 
-  return { province, setProvince, provinceInitialized };
+  return { provinces, province, setProvince, provinceInitialized };
 };
