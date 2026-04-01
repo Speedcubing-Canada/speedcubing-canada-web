@@ -1,6 +1,6 @@
 import React from "react";
 import { DataGrid, GridColDef, frFR, enUS } from "@mui/x-data-grid";
-import { Link } from "@mui/material";
+import { Box, Link } from "@mui/material";
 import { Ranking } from "../types";
 import { useTranslation } from "react-i18next";
 import { getLocaleOrFallback, SAVED_LOCALE } from "../locale";
@@ -41,7 +41,7 @@ export const RankList: React.FC<{ data: Ranking[] }> = ({ data }) => {
   }));
 
   return (
-    <div style={{ height: 400, width: "100%" }}>
+    <Box sx={{ height: 400, width: "100%" }}>
       <DataGrid
         rows={rows}
         columns={columns}
@@ -51,6 +51,6 @@ export const RankList: React.FC<{ data: Ranking[] }> = ({ data }) => {
             : enUS.components.MuiDataGrid.defaultProps.localeText
         }
       />
-    </div>
+    </Box>
   );
 };

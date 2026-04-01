@@ -5,8 +5,17 @@ services:
       context: .
       target: development
     volumes:
-      - ./front:/app
+      - ./front/src:/app/src
+      - ./front/public:/app/public
+      - ./front/index.html:/app/index.html
+      - ./front/server.js:/app/server.js
+      - ./front/tsconfig.json:/app/tsconfig.json
+      - ./front/vite-env.d.ts:/app/vite-env.d.ts
+      - ./front/vite.config.ts:/app/vite.config.ts
     env_file: ./.env
+    environment:
+      - PORT=${NODE_DOCKER_PORT}
+      - VITE_APP_ENV=development
     ports:
       - ${NODE_LOCAL_PORT}:${NODE_DOCKER_PORT}
     networks:

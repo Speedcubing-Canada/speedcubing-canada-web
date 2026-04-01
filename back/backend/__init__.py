@@ -38,7 +38,21 @@ elif os.environ.get("ENV") == "DEV" and "gunicorn" in sys.argv[0]:
 app.secret_key = get_secret("SESSION_SECRET_KEY")
 app.permanent_session_lifetime = datetime.timedelta(days=7)
 address = get_secret("FRONT_ADDRESS")
-CORS(app, origins=[address], supports_credentials=True)
+
+allowed_origins = [address]
+if os.environ.get("ENV") == "DEV":
+    allowed_origins.extend(
+        [
+            "http://localhost",
+            "http://127.0.0.1",
+            "http://localhost:80",
+            "http://127.0.0.1:80",
+            "http://localhost:2003",
+            "http://127.0.0.1:2003",
+        ]
+    )
+
+CORS(app, origins=allowed_origins, supports_credentials=True)
 
 
 @app.after_request

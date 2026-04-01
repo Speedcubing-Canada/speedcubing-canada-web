@@ -5,7 +5,7 @@ export const PageNotFound = () => {
   const { t } = useTranslation();
 
   return (
-    <Container maxWidth="xl" style={{ textAlign: "center" }}>
+    <Container maxWidth="xl" sx={{ textAlign: "center" }}>
       <Box marginTop="4rem">
         <Typography component="h1" variant="h5" fontWeight="bold" gutterBottom>
           {t("competition.error")}

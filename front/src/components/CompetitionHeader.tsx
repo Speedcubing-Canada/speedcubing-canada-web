@@ -28,7 +28,7 @@ export const CompetitionHeader = ({
       <Typography gutterBottom sx={{ maxWidth: "md", margin: "0 auto" }}>
         {isSeries ? t("competition.series") : ""}
       </Typography>
-      <Typography gutterBottom style={{ textAlign: "center" }}>
+      <Typography gutterBottom sx={{ textAlign: "center" }}>
         <Trans>
           <>
             {hasRegistrationOpened
