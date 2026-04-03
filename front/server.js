@@ -54,7 +54,6 @@ function buildCsp(nonce) {
     "object-src 'none'",
     "script-src 'self' 'nonce-" + nonce + "'",
     "script-src-attr 'none'",
-    "require-trusted-types-for 'script'",
     "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
     "style-src-attr 'unsafe-inline'",
     "font-src 'self' https://fonts.gstatic.com data:",

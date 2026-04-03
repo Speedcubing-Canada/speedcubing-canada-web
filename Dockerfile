@@ -1,5 +1,6 @@
 FROM node:24-slim AS development
 ENV NODE_ENV=development
+ENV VITE_BUILD_MODE=production
 
 WORKDIR /app
 
@@ -12,4 +13,4 @@ COPY front/ .
 
 EXPOSE 2003
 
-CMD ["sh", "-c", "npm run build && npm run start"]
+CMD ["sh", "-c", "npm run build -- --mode ${VITE_BUILD_MODE} && npm run start"]

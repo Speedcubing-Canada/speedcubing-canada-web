@@ -1,12 +1,5 @@
-export const PRODUCTION = import.meta.env.MODE === "production";
-
-const defaultApiBaseUrl =
-  import.meta.env.MODE === "staging"
-    ? "https://api.staging.speedcubingcanada.org"
-    : "https://api.speedcubingcanada.org";
-
 export const API_BASE_URL =
-  import.meta.env.VITE_API_BASE_URL || defaultApiBaseUrl;
+  import.meta.env.VITE_API_BASE_URL || "https://api.speedcubingcanada.org";
 
 export const signIn = () => {
   window.location.assign(new URL("/login", API_BASE_URL));
