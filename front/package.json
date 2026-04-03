@@ -28,7 +28,9 @@
   "scripts": {
     "dev": "vite",
     "start": "node server.js",
-    "build": "vite build",
+    "build": "vite build --mode production",
+    "build:staging": "vite build --mode staging",
+    "gcp-build": "echo \"Skipping Cloud build; using prebuilt dist\"",
     "preview": "vite preview"
   },
   "eslintConfig": {
