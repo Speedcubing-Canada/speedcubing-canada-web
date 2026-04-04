@@ -24,19 +24,21 @@ services:
       - frontend
       - backend
 
-  #backend:
-  #  container_name: backend-dev
-  #  build:
-  #    context: back
-  #    target: builder
-  #  restart: always
-  #  env_file: ./.env
-  #  extra_hosts:
-  #    - "host.docker.internal:host-gateway"
-  #  networks:
-  #    - backend
-  #  ports:
-  #    - ${FLASK_LOCAL_PORT}:${FLASK_DOCKER_PORT}
+  backend:
+    container_name: backend-dev
+    build:
+      context: back
+      target: builder
+    restart: always
+    env_file: ./.env
+    environment:
+      - DATASTORE_EMULATOR_HOST=host.docker.internal:8081
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    networks:
+      - backend
+    ports:
+      - ${FLASK_LOCAL_PORT}:${FLASK_DOCKER_PORT}
 
   nginx:
     container_name: nginx-server
