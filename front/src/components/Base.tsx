@@ -28,7 +28,7 @@ import {
 } from "@mui/icons-material";
 
 import { Link, Outlet, useLocation, useParams } from "react-router-dom";
-import { getLocaleOrFallback, SAVED_LOCALE } from "../locale";
+import { getLocaleOrFallback, SAVED_LOCALE_KEY } from "../locale";
 import { useScrollbarWidth } from "../helpers/scrollbarWidth";
 import { useBodyScrollable } from "../helpers/useBodyScrollable";
 
@@ -83,7 +83,7 @@ export const Base = () => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
   useEffect(() => {
-    localStorage.setItem(SAVED_LOCALE, locale);
+    localStorage.setItem(SAVED_LOCALE_KEY, locale);
     i18n.changeLanguage(locale);
   }, [locale]);
 
