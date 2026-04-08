@@ -3,21 +3,23 @@ import { Box, Container, Typography } from "@mui/material";
 import { ExternalLink } from "../components/ExternalLink";
 import { LINKS } from "./links";
 import { useEffect } from "react";
-export const Quebec = () => {
+
+export const BritishColumbia = () => {
   const { t } = useTranslation();
+
   useEffect(() => {
-    window.location.replace(LINKS.DISCORD_QC);
+    window.location.replace(LINKS.GOOGLE_DOC_BC);
   }, []);
 
   return (
     <Container maxWidth="md">
       <Box marginY="4rem">
         <Typography component="h1" variant="h3" fontWeight="bold" gutterBottom>
-          {t("provinces.qc")}
+          {t("provinces.bc")}
         </Typography>
         <Typography gutterBottom>{t("province_redirect.body")}</Typography>
         <Typography>
-          <ExternalLink to={LINKS.DISCORD_QC}>Discord</ExternalLink>
+          <ExternalLink to={LINKS.GOOGLE_DOC_BC}>Google Doc</ExternalLink>
         </Typography>
       </Box>
     </Container>
