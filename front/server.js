@@ -40,7 +40,7 @@ function sendIndex(res) {
     }
 
     const nonce = res.locals.cspNonce;
-    const patchedHtml = html.split(CSP_NONCE_PLACEHOLDER).join(nonce);
+    const patchedHtml = html.replaceAll(CSP_NONCE_PLACEHOLDER, nonce);
 
     res
       .status(200)
@@ -81,7 +81,7 @@ app.use(
         ],
         "style-src-attr": ["'unsafe-inline'"],
         "font-src": ["'self'", "https://fonts.gstatic.com", "data:"],
-        "img-src": ["'self'", "data:", "https:"],
+        "img-src": ["'self'", "data:"],
         "connect-src": buildConnectSrc(),
         "manifest-src": ["'self'"],
         "frame-src": ["'none'"],
@@ -92,9 +92,17 @@ app.use(
 );
 
 app.use(
-  express.static(DIST_DIR, {
+  "/assets",
+  express.static(path.join(DIST_DIR, "assets"), {
     immutable: true,
     maxAge: "1y",
+    index: false,
+  }),
+);
+
+app.use(
+  express.static(DIST_DIR, {
+    maxAge: 0,
     index: false,
   }),
 );
@@ -111,6 +119,12 @@ app.use((req, res) => {
   sendIndex(res);
 });
 
-app.listen(PORT, () => {
+const server = app.listen(PORT, () => {
   console.log("Frontend server listening on port " + PORT);
+});
+
+process.on("SIGTERM", () => {
+  server.close(() => {
+    console.log("Process terminated");
+  });
 });
