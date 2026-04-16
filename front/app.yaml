@@ -1,12 +1,2 @@
 runtime: nodejs24
-
-handlers:
-  # Serve all static files with url ending with a file extension
-  - url: /(.*\..+)$
-    static_files: dist/\1
-    upload: dist/(.*\..+)$
-
-  # Catch all handler to index.html
-  - url: /.*
-    static_files: dist/index.html
-    upload: dist/index.html
+entrypoint: node server.js

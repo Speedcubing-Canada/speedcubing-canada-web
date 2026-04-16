@@ -101,11 +101,11 @@ rm -rf front/dist
 cd front
 if [ "$IS_PROD" == "0" ]
 then
-  echo "Setting VITE_API_BASE_URL to staging."
-  VITE_API_BASE_URL="https://api.staging.speedcubingcanada.org" npm run build
+  echo "Building in staging mode."
+  npm run build:staging
 else
-  echo "Setting VITE_API_BASE_URL to prod."
-  VITE_API_BASE_URL="https://api.speedcubingcanada.org" npm run build
+  echo "Building in production mode."
+  npm run build
 fi
 cd ..
 

@@ -5,27 +5,40 @@ services:
       context: .
       target: development
     volumes:
-      - ./front:/app
+      - ./front/src:/app/src
+      - ./front/public:/app/public
+      - ./front/index.html:/app/index.html
+      - ./front/server.js:/app/server.js
+      - ./front/tsconfig.json:/app/tsconfig.json
+      - ./front/vite-env.d.ts:/app/vite-env.d.ts
+      - ./front/vite.config.ts:/app/vite.config.ts
     env_file: ./.env
+    environment:
+      - PORT=${NODE_DOCKER_PORT}
+      - VITE_BUILD_MODE=development
+      - VITE_API_BASE_URL=http://localhost:8000
+
     ports:
       - ${NODE_LOCAL_PORT}:${NODE_DOCKER_PORT}
     networks:
       - frontend
       - backend
 
-  #backend:
-  #  container_name: backend-dev
-  #  build:
-  #    context: back
-  #    target: builder
-  #  restart: always
-  #  env_file: ./.env
-  #  extra_hosts:
-  #    - "host.docker.internal:host-gateway"
-  #  networks:
-  #    - backend
-  #  ports:
-  #    - ${FLASK_LOCAL_PORT}:${FLASK_DOCKER_PORT}
+  backend:
+    container_name: backend-dev
+    build:
+      context: back
+      target: builder
+    restart: always
+    env_file: ./.env
+    environment:
+      - DATASTORE_EMULATOR_HOST=host.docker.internal:8081
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    networks:
+      - backend
+    ports:
+      - ${FLASK_LOCAL_PORT}:${FLASK_DOCKER_PORT}
 
   nginx:
     container_name: nginx-server

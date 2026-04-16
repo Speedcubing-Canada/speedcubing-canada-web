@@ -15,7 +15,7 @@ import Switch from "@mui/material/Switch";
 import CircularProgress from "@mui/material/CircularProgress";
 
 import { EventID, Province, Ranking, ACTIVE_EVENTS } from "../types";
-import { API_BASE_URL, PRODUCTION } from "../components/api";
+import { API_BASE_URL } from "../components/api";
 import httpClient, { HttpResponse } from "../httpClient";
 import {
   removeCachedRankingsPreferredProvinceId,
@@ -93,7 +93,7 @@ export const Rankings = () => {
       }
 
       let response: HttpResponse<Ranking[], unknown>;
-      if (!PRODUCTION) {
+      if (import.meta.env.MODE === "development") {
         const params = new URLSearchParams({
           event: eventId,
           province: province?.id || "",

@@ -1,8 +1,13 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 
+const CSP_NONCE_PLACEHOLDER = "__CSP_NONCE__";
+
 export default defineConfig({
   plugins: [react()],
+  html: {
+    cspNonce: CSP_NONCE_PLACEHOLDER,
+  },
   resolve: {
     alias: [
       {
@@ -16,5 +21,6 @@ export default defineConfig({
   },
   build: {
     chunkSizeWarningLimit: 1000,
+    assetsInlineLimit: 0, // Disable inlining for stricter CSP
   },
 });
