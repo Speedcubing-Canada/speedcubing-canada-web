@@ -27,6 +27,6 @@ export const LINKS = {
   COMP_BASICS_FR: "https://youtu.be/LH3QG7krdgc",
   DISCORD_QC: "https://discord.gg/BTwYPg4qcJ",
   GOOGLE_DOC_BC:
-    "https://docs.google.com/document/d/1ufNHCLll9U3Tz1cZWlcc3pW-6-m0ElCy-8dfKAOugDA/edit?usp=sharing",
+    "https://docs.google.com/document/d/1ufNHCLll9U3Tz1cZWlcc3pW-6-m0ElCy-8dfKAOugDA",
   REPORT: "mailto:software@speedcubingcanada.org",
 } as const;
