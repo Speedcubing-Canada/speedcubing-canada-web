@@ -1,25 +1,12 @@
-import { useTranslation } from "react-i18next";
-import { Box, Container, Typography } from "@mui/material";
-import { ExternalLink } from "../components/ExternalLink";
+import { ProvinceRedirect } from "../components/ProvinceRedirect";
 import { LINKS } from "./links";
-import { useEffect } from "react";
-export const Quebec = () => {
-  const { t } = useTranslation();
-  useEffect(() => {
-    window.location.replace(LINKS.DISCORD_QC);
-  }, []);
 
+export const Quebec = () => {
   return (
-    <Container maxWidth="md">
-      <Box marginY="4rem">
-        <Typography component="h1" variant="h3" fontWeight="bold" gutterBottom>
-          {t("provinces.qc")}
-        </Typography>
-        <Typography gutterBottom>{t("province_redirect.body")}</Typography>
-        <Typography>
-          <ExternalLink to={LINKS.DISCORD_QC}>Discord</ExternalLink>
-        </Typography>
-      </Box>
-    </Container>
+    <ProvinceRedirect
+      province="qc"
+      redirectUrl={LINKS.DISCORD_QC}
+      linkTitle="Discord"
+    />
   );
 };
