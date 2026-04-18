@@ -76,16 +76,24 @@ export const Base = () => {
   const { pathname } = useLocation();
   const pathWithoutLocale = pathname.split("/").at(-1);
   const params = useParams();
-  const locale = getLocaleOrFallback(params.locale as string);
+  const savedLocale = localStorage.getItem(SAVED_LOCALE_KEY) ?? "";
+  const hasLocaleParam = Boolean(params.locale);
+  const locale = hasLocaleParam
+    ? getLocaleOrFallback(params.locale as string)
+    : getLocaleOrFallback(savedLocale);
   const theme = useTheme();
   const isSmall = useMediaQuery<Theme>((theme) => theme.breakpoints.down("sm"));
 
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
   useEffect(() => {
+    if (!hasLocaleParam) {
+      return;
+    }
+
     localStorage.setItem(SAVED_LOCALE_KEY, locale);
     i18n.changeLanguage(locale);
-  }, [locale]);
+  }, [hasLocaleParam, locale]);
 
   useEffect(() => {
     window.scrollTo(0, 0);

@@ -40,13 +40,18 @@ const AdminPage = React.lazy(() =>
 const Quebec = React.lazy(() =>
   import("./pages/Quebec").then((m) => ({ default: m.Quebec })),
 );
+const BritishColumbia = React.lazy(() =>
+  import("./pages/BritishColumbia").then((m) => ({
+    default: m.BritishColumbia,
+  })),
+);
 const Competition = React.lazy(() =>
   import("./pages/Competition").then((m) => ({ default: m.Competition })),
 );
 
 const getInitialLocale = () => {
   const pathLocale = window.location.pathname.split("/")[1];
-  if (pathLocale) {
+  if (Object.keys(resources).includes(pathLocale)) {
     return getLocaleOrFallback(pathLocale);
   }
 
@@ -105,8 +110,11 @@ const App = () => {
                   />
                   <Route path="rankings" element={<Rankings />} />
                   <Route path="account" element={<Account />} />
-                  <Route path="quebec" element={<Quebec />} />
                 </Route>
+                <Route path="qc" element={<Quebec />} />
+                <Route path="quebec" element={<Quebec />} />
+                <Route path="bc" element={<BritishColumbia />} />
+                <Route path="british-columbia" element={<BritishColumbia />} />
                 {ROUTE_NAMES.map((route) => (
                   <Route
                     key={route}

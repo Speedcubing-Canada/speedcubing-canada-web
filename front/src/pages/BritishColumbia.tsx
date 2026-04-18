@@ -1,12 +1,12 @@
 import { ProvinceRedirect } from "../components/ProvinceRedirect";
 import { LINKS } from "./links";
 
-export const Quebec = () => {
+export const BritishColumbia = () => {
   return (
     <ProvinceRedirect
-      province="qc"
-      redirectUrl={LINKS.DISCORD_QC}
-      linkTitle="Discord"
+      province="bc"
+      redirectUrl={LINKS.GOOGLE_DOC_BC}
+      linkTitle="Google Doc"
     />
   );
 };

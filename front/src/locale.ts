@@ -246,7 +246,7 @@ export const resources = {
         _555bf: "5x5x5 Blindfolded",
         _333mbf: "3x3x3 Multi-Blind",
       },
-      quebec: {
+      province_redirect: {
         body: "If you are not redirected automatically, click the link below.",
       },
     },
@@ -504,7 +504,7 @@ export const resources = {
         _555bf: "5x5x5 à l'aveugle",
         _333mbf: "3x3x3 Multi-Blind",
       },
-      quebec: {
+      province_redirect: {
         body: "Si vous n'êtes pas redirigés, cliquez sur le lien ci-dessous.",
       },
     },
