@@ -71,6 +71,10 @@ export const DOCUMENTS = {
   ],
   policies: [
     {
+      name: "Test Policy",
+      id: "test-policy",
+    },
+    {
       name: "Speedcubing Canada Privacy Policy",
       id: "privacy-policy",
     },
@@ -134,6 +138,7 @@ export const DOCUMENTS = {
       name: "Speedcubing Canada Membership Policy (v1.0)",
       id: "membership-policy-v1.0",
     },
+    { name: "Test Policy (v2.10)", id: "test-policy-v2.10" },
   ],
   corporate: [
     {
