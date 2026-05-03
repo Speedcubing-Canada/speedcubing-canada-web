@@ -134,6 +134,7 @@ export const DOCUMENTS = {
       name: "Speedcubing Canada Membership Policy (v1.0)",
       id: "membership-policy-v1.0",
     },
+    { name: "Speedcubing Canada Membership Policy (v1.1)", id: "membership-policy-v1.1" },
   ],
   corporate: [
     {
