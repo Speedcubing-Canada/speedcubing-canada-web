@@ -1,8 +1,3 @@
-"""Pure-Python logic for classifying competition names into championships.
-
-Kept in its own module so it can be unit-tested without GCP dependencies.
-"""
-
 import re
 
 # Maps raw extracted area names (lowercased) to canonical province/region names.
