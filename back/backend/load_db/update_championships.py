@@ -28,8 +28,10 @@ def update_championships():
         is_national, area_name, is_pbq = classify_competition(competition.name, national_years)
 
         if is_national:
-            championship = Championship(id=Championship.nationals_id(competition.year))
+            is_fmc = area_name == "fmc"
+            championship = Championship(id=Championship.nationals_id(competition.year, is_fmc=is_fmc))
             championship.national_championship = True
+            championship.is_fmc = is_fmc
             championship.competition = competition.key
             if championship.key.id() not in championships_used:
                 logging.info("Assigning national championship " + competition.key.id() + " " + championship.key.id())

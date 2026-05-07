@@ -96,7 +96,7 @@ _KNOWN_NATIONAL_YEARS = {2019, 2023, 2025}
 def test_fmc_canada_championship_year_is_national(name):
     is_national, area, is_pbq = classify_competition(name, national_years=_KNOWN_NATIONAL_YEARS)
     assert is_national, f"Expected national: {name!r}"
-    assert area is None
+    assert area == "fmc", f"Expected area='fmc' to signal FMC national, got {area!r}"
     assert not is_pbq
 
 
