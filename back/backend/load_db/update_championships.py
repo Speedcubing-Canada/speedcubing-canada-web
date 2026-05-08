@@ -9,7 +9,7 @@ from backend.models.region import Region
 from backend.models.wca.competition import Competition
 
 
-def update_championships():
+def update_championships() -> None:
     competitions_used = set([championship.competition.id() for championship in Championship.query().iter()])
     championships_used = set([championship.key.id() for championship in Championship.query().iter()])
     provinces = {province.name: province for province in Province.query().iter()}

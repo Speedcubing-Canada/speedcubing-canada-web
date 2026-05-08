@@ -2,7 +2,7 @@ import re
 
 # Maps raw extracted area names (lowercased) to canonical province/region names.
 # Covers French adjective forms, abbreviations, and "Canadian X" regional prefixes.
-AREA_NAME_MAP = {
+AREA_NAME_MAP: dict[str, str] = {
     "québécois": "Quebec",
     "québécoise": "Quebec",
     "ontarien": "Ontario",
@@ -23,7 +23,7 @@ _FRENCH_RE = re.compile(r"Championnat\s+(.+?)\s+(\d{4})", re.IGNORECASE)
 _ENGLISH_RE = re.compile(r"(.+?)\s+Championship\s+(\d{4})", re.IGNORECASE)
 
 
-def classify_competition(name, national_years=None):
+def classify_competition(name: str, national_years: set[int] | None = None) -> tuple[bool, str | None, bool]:
     """Returns (is_national, area_name, is_pbq) for a competition name.
 
     area_name is the normalized province/region name for regional/provincial
