@@ -28,10 +28,8 @@ def classify_competition(name: str, national_years: set[int] | None = None) -> t
 
     area_name is the normalized province/region name for regional/provincial
     championships, or None for regular national championships.
-    For FMC national championships area_name is "fmc" — a signal to the caller
-    to set is_fmc on the Championship entity and append "_fmc" to the ID.
-    national_years: set of int years that have a national championship. When
-    provided, "FMC Canada YYYY" is classified as national for years in the set.
+    For FMC national championships area_name is "fmc".
+    national_years: set of int years that have a national championship.
     """
     if _NATIONAL_RE.search(name):
         return True, None, False
