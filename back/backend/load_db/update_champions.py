@@ -14,7 +14,7 @@ from backend.models.wca.event import Event
 from backend.models.wca.result import Result, RoundType
 
 
-def ComputeEligibleCompetitors(championship, competition, results):
+def compute_eligible_competitors(championship, competition, results):
     if championship.national_championship:
         return set([r.person.id() for r in results if r.person_country == ndb.Key(Country, "Canada")])
 
@@ -84,7 +84,7 @@ def ComputeEligibleCompetitors(championship, competition, results):
     return eligible_competitors
 
 
-def UpdateChampions():
+def update_champions():
     champions_to_write = []
     champions_to_delete = []
     final_round_keys = set(r.key for r in RoundType.query(RoundType.is_final).iter())
@@ -112,7 +112,7 @@ def UpdateChampions():
         if not results:
             logging.info("Results are not uploaded yet.  Not computing champions yet.")
             continue
-        eligible_competitors = ComputeEligibleCompetitors(championship, competition, results)
+        eligible_competitors = compute_eligible_competitors(championship, competition, results)
         champions = collections.defaultdict(list)
         events_held_with_successes = set()
         for result in results:
