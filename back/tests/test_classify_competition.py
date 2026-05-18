@@ -26,7 +26,7 @@ from backend.load_db.championship_classifier import classify_competition
 )
 def test_national_championships(name):
     is_national, area, is_pbq = classify_competition(name)
-    assert is_national, f"Expected national: {name!r}"
+    assert is_national, f"Expected national: {name}"
     assert area is None
     assert not is_pbq
 
@@ -55,8 +55,8 @@ def test_national_championships(name):
 )
 def test_regional_championships(name, expected_area):
     is_national, area, is_pbq = classify_competition(name)
-    assert not is_national, f"Should not be national: {name!r}"
-    assert area == expected_area, f"Wrong area for {name!r}: got {area!r}"
+    assert not is_national, f"Should not be national: {name}"
+    assert area == expected_area, f"Wrong area for {name}: got {area}"
     assert not is_pbq
 
 
@@ -75,7 +75,7 @@ def test_regional_championships(name, expected_area):
 )
 def test_canadian_regional_not_national(name):
     is_national, _, _ = classify_competition(name)
-    assert not is_national, f"Regional championship misclassified as national: {name!r}"
+    assert not is_national, f"Regional championship misclassified as national: {name}"
 
 
 # ---------------------------------------------------------------------------
@@ -95,8 +95,8 @@ _KNOWN_NATIONAL_YEARS = {2019, 2023, 2025}
 )
 def test_fmc_canada_championship_year_is_national(name):
     is_national, area, is_pbq = classify_competition(name, national_years=_KNOWN_NATIONAL_YEARS)
-    assert is_national, f"Expected national: {name!r}"
-    assert area == "fmc", f"Expected area='fmc' to signal FMC national, got {area!r}"
+    assert is_national, f"Expected national: {name}"
+    assert area == "fmc", f"Expected area='fmc' to signal FMC national, got {area}"
     assert not is_pbq
 
 
@@ -109,7 +109,7 @@ def test_fmc_canada_championship_year_is_national(name):
 )
 def test_fmc_canada_non_championship_year_is_not_matched(name):
     is_national, area, _ = classify_competition(name, national_years=_KNOWN_NATIONAL_YEARS)
-    assert not is_national, f"Should not be national: {name!r}"
+    assert not is_national, f"Should not be national: {name}"
     assert area is None
 
 
@@ -124,8 +124,8 @@ def test_fmc_other_competitions_not_caught():
     # Only "FMC Canada YYYY" is the national FMC; other FMC comps must not match
     for name in ("FMC and What Calgary 2024", "FMC à Montréal 2025"):
         is_national, area, _ = classify_competition(name, national_years=_KNOWN_NATIONAL_YEARS)
-        assert not is_national, f"Should not be national: {name!r}"
-        assert area is None, f"Should not have area: {name!r}"
+        assert not is_national, f"Should not be national: {name}"
+        assert area is None, f"Should not have area: {name}"
 
 
 # ---------------------------------------------------------------------------
@@ -146,5 +146,5 @@ def test_fmc_other_competitions_not_caught():
 )
 def test_non_championships_not_matched(name):
     is_national, area, _ = classify_competition(name)
-    assert not is_national, f"Should not be national: {name!r}"
-    assert area is None, f"Should not have area: {name!r} (got {area!r})"
+    assert not is_national, f"Should not be national: {name}"
+    assert area is None, f"Should not have area: {name} (got {area})"
