@@ -139,4 +139,5 @@ venv
 back/exports/WCA_export*
 back/venv
 back/scc
+back/backend/load_db/canadian_test_comps.csv
 dispatch.yaml

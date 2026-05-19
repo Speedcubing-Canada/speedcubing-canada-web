@@ -1,62 +1,42 @@
 import logging
-import re
 
 from google.cloud import ndb
 
+from backend.load_db.championship_classifier import classify_competition
 from backend.models.championship import Championship
 from backend.models.province import Province
 from backend.models.region import Region
 from backend.models.wca.competition import Competition
 
 
-def update_championships():
+def update_championships() -> None:
     competitions_used = set([championship.competition.id() for championship in Championship.query().iter()])
     championships_used = set([championship.key.id() for championship in Championship.query().iter()])
     provinces = {province.name: province for province in Province.query().iter()}
     regions = {region.championship_name: region for region in Region.query().iter()}
 
-    # Get all competitions
-    competitions = [comp for comp in Competition.query() if comp.key.id() not in competitions_used]
+    all_competitions = list(Competition.query())
+    # Scan every competition (including already-processed ones) so that FMC Canada
+    # is correctly classified even when the main national comp was persisted in a
+    # prior run and is no longer in the "new" batch.
+    national_years = {comp.year for comp in all_competitions if classify_competition(comp.name)[0]}
+    competitions = [comp for comp in all_competitions if comp.key.id() not in competitions_used]
 
     to_write = []
 
     for competition in competitions:
-        if "Canada" in competition.name or "Canadian" in competition.name:
-            championship = Championship(id=Championship.nationals_id(competition.year))
+        is_national, area_name, is_pbq = classify_competition(competition.name, national_years)
+
+        if is_national:
+            is_fmc = area_name == "fmc"
+            championship = Championship(id=Championship.nationals_id(competition.year, is_fmc=is_fmc))
             championship.national_championship = True
+            championship.is_fmc = is_fmc
             championship.competition = competition.key
             if championship.key.id() not in championships_used:
                 logging.info("Assigning national championship " + competition.key.id() + " " + championship.key.id())
                 to_write.append(championship)
             continue
-
-        # PBQ pattern (English only)
-        pbq_re = re.compile(r"(.*?) (PBQ|Quiet|FMC) Championship (\d{4})", re.IGNORECASE)
-        french_re = re.compile(r"Championnat (.+?) (\d{4})", re.IGNORECASE)
-        english_re = re.compile(r"(.+?) Championship (\d{4})", re.IGNORECASE)
-
-        pbq_match = pbq_re.match(competition.name)
-        area_name = None
-        is_pbq = False
-
-        if pbq_match:
-            area_name = pbq_match.group(1).strip()
-            is_pbq = True
-        else:
-            french_match = french_re.match(competition.name)
-            if french_match:
-                area_name = french_match.group(1).strip()
-                # Handle French adjective forms -> base province name
-                if area_name.lower() in ["québécois", "québécoise"]:
-                    area_name = "Quebec"
-                elif area_name.lower() in ["ontarien", "ontarienne"]:
-                    area_name = "Ontario"
-                is_pbq = False
-            else:
-                english_match = english_re.match(competition.name)
-                if english_match:
-                    area_name = english_match.group(1).strip()
-                    is_pbq = False
 
         if area_name:
             championship = None

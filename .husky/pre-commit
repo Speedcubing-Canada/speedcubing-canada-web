@@ -2,3 +2,16 @@
 . "$(dirname -- "$0")/_/husky.sh"
 
 npx lint-staged
+
+# Reject staged text files missing a trailing newline
+staged=$(git diff --cached --name-only --diff-filter=ACM)
+fail=0
+for file in $staged; do
+  [ -f "$file" ] || continue
+  file --mime "$file" | grep -q "charset=binary" && continue
+  if [ -s "$file" ] && [ "$(tail -c1 "$file" | wc -c)" -eq 0 ]; then
+    echo "missing trailing newline: $file"
+    fail=1
+  fi
+done
+[ "$fail" -eq 0 ] || { echo "Add a newline at the end of the file(s) above and re-stage."; exit 1; }

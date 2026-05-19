@@ -12,6 +12,7 @@ class Championship(ndb.Model):
 
     competition = ndb.KeyProperty(kind=Competition)
     is_pbq = ndb.BooleanProperty()
+    is_fmc = ndb.BooleanProperty()
 
     year = ndb.ComputedProperty(lambda self: self.competition.get().year)
 
@@ -19,20 +20,21 @@ class Championship(ndb.Model):
     residency_timezone = ndb.StringProperty()
 
     @staticmethod
-    def nationals_id(year):
-        return str(year)
+    def nationals_id(year: int, is_fmc: bool = False) -> str:
+        suffix = "_fmc" if is_fmc else ""
+        return f"{year}{suffix}"
 
     @staticmethod
-    def regionals_id(year, region, is_pbq=False):
+    def regionals_id(year: int, region: Region, is_pbq: bool = False) -> str:
         suffix = "_pbq" if is_pbq else ""
         return f"{region.key.id()}_{year}{suffix}"
 
     @staticmethod
-    def province_championship_id(year, province, is_pbq=False):
+    def province_championship_id(year: int, province: Province, is_pbq: bool = False) -> str:
         suffix = "_pbq" if is_pbq else ""
         return f"{province.key.id()}_{year}{suffix}"
 
-    def get_eligible_province_keys(self):
+    def get_eligible_province_keys(self) -> list[ndb.Key] | None:
         if self.province:
             return [self.province]
         if self.region:

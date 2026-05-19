@@ -7,7 +7,7 @@ from google.cloud import ndb
 
 from backend.models.champion import Champion
 from backend.models.championship import Championship
-from backend.models.eligibility import LockedResidency, ProvinceChampionshipEligibility, RegionalChampionshipEligibility
+from backend.models.eligibility import ProvinceChampionshipEligibility, RegionalChampionshipEligibility
 from backend.models.user import User
 from backend.models.wca.country import Country
 from backend.models.wca.event import Event
@@ -16,33 +16,17 @@ from backend.models.wca.result import Result, RoundType
 
 def compute_eligible_competitors(championship, competition, results):
     if championship.national_championship:
-        # We don't save this in the datastore because it's easy enough to compute.
         return set([r.person.id() for r in results if r.person_country == ndb.Key(Country, "Canada")])
-    competitors = set([r.person for r in results])
-    users = User.query(User.wca_person.IN(competitors)).fetch()
-    user_keys = [user.key for user in users]
-
-    # Load the saved eligibilities, so that one person can't be eligible for two
-    # championships of the same type.
-    if championship.region:
-        eligibility_class = RegionalChampionshipEligibility
-
-        def eligibility_field(user):
-            if not user.regional_eligibilities:
-                user.regional_eligibilities = []
-            return user.regional_eligibilities
-    else:
-        eligibility_class = ProvinceChampionshipEligibility
-
-        def eligibility_field(user):
-            if not user.province_eligibilities:
-                user.province_eligibilities = []
-            return user.province_eligibilities
 
     valid_province_keys = championship.get_eligible_province_keys()
     residency_deadline = championship.residency_deadline or datetime.datetime.combine(
         competition.start_date, datetime.time(0, 0, 0)
     )
+
+    competitors = set([r.person for r in results])
+    users = User.query(User.wca_person.IN(competitors)).fetch()
+
+    is_regional = bool(championship.region)
 
     eligible_competitors = set()
     competitors_to_put = []
@@ -54,16 +38,24 @@ def compute_eligible_competitors(championship, competition, results):
 
     for user in users:
         resolution = Resolution.UNRESOLVED
-        # Check if user has a locked residency for this year
-        for locked_residency in user.locked_residencies or []:
-            if locked_residency.year != championship.year:
-                continue
-            if locked_residency.province in valid_province_keys:
-                resolution = Resolution.ELIGIBLE
-            else:
-                resolution = Resolution.INELIGIBLE
 
-        # If the competitor hasn't already used their eligibility, check their province.
+        existing_eligibilities = user.regional_eligibilities if is_regional else user.province_eligibilities
+
+        for eligibility in existing_eligibilities:
+            if eligibility.year != championship.year:
+                continue
+            if is_regional:
+                if eligibility.region == championship.region:
+                    resolution = Resolution.ELIGIBLE
+                else:
+                    resolution = Resolution.INELIGIBLE
+            else:
+                if eligibility.province in valid_province_keys:
+                    resolution = Resolution.ELIGIBLE
+                else:
+                    resolution = Resolution.INELIGIBLE
+            break
+
         if resolution == Resolution.UNRESOLVED:
             province = None
             for update in user.updates or []:
@@ -72,19 +64,22 @@ def compute_eligible_competitors(championship, competition, results):
             if not user.updates:
                 province = user.province
             if province and province in valid_province_keys:
-                # This competitor is eligible, so save this on their User.
                 resolution = Resolution.ELIGIBLE
-                locked_residency = LockedResidency()
-                locked_residency.year = championship.year
-                locked_residency.province = province
-                if not user.locked_residencies:
-                    user.locked_residencies = []
-                user.locked_residencies.append(locked_residency)
+                if is_regional:
+                    eligibility = RegionalChampionshipEligibility()
+                    eligibility.championship = championship.key
+                    user.regional_eligibilities.append(eligibility)
+                else:
+                    eligibility = ProvinceChampionshipEligibility()
+                    eligibility.championship = championship.key
+                    user.province_eligibilities.append(eligibility)
                 competitors_to_put.append(user)
             else:
                 resolution = Resolution.INELIGIBLE
+
         if resolution == Resolution.ELIGIBLE:
             eligible_competitors.add(user.wca_person.id())
+
     ndb.put_multi(competitors_to_put)
     return eligible_competitors
 
@@ -92,15 +87,15 @@ def compute_eligible_competitors(championship, competition, results):
 def update_champions():
     champions_to_write = []
     champions_to_delete = []
-    final_round_keys = set(r.key for r in RoundType.query(RoundType.is_final).iter())
+    final_round_keys = set(r.key for r in RoundType.query(RoundType.is_final == True).iter())  # noqa: E712
     all_event_keys = set(e.key for e in Event.query().iter())
     championships_already_computed = set()
     for champion in Champion.query().iter():
         championships_already_computed.add(champion.championship.id())
     for championship in Championship.query().iter():
         if not championship.national_championship and os.environ.get("ENV") == "DEV":
-            # Don't try to compute regional champions on dev, since we don't have
-            # location data.
+            # Don't try to compute regional/provincial champions on dev, since
+            # we don't have location data.
             continue
         competition = championship.competition.get()
         # Only recompute champions from the last 2 weeks, in case there are result updates.

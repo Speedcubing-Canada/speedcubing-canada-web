@@ -1,6 +1,6 @@
 FROM python:3.12 AS builder
 
-ENV FLASK_APP=backend
+ENV FLASK_APP=backend.app
 ENV FLASK_DEBUG=1
 ENV FLASK_RUN_PORT=8000
 ENV FLASK_RUN_HOST=0.0.0.0
@@ -17,4 +17,4 @@ COPY . .
 EXPOSE 8000
 
 ENTRYPOINT ["gunicorn"]
-CMD ["-b", "0.0.0.0:8000", "backend:app"]
+CMD ["-b", "0.0.0.0:8000", "backend.app:app"]
