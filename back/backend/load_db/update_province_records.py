@@ -29,7 +29,7 @@ def update_province_records():
     to_remove = []
 
     for rank_cls in (RankSingle, RankAverage):
-        for record in rank_cls.query(rank_cls.is_province_record).iter():
+        for record in rank_cls.query(rank_cls.is_province_record == True).iter():  # noqa: E712
             if record.key not in province_record_keys:
                 record.is_province_record = False
                 to_remove += [record]
