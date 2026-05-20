@@ -9,3 +9,12 @@ export const isAdmin = (user: User | null) => {
     user?.roles.includes("WEBMASTER")
   );
 };
+
+export const isDelegate = (user: User | null) => {
+  return (
+    user?.roles.includes("SENIOR_DELEGATE") ||
+    user?.roles.includes("DELEGATE") ||
+    user?.roles.includes("CANDIDATE_DELEGATE") ||
+    isAdmin(user)
+  );
+};
