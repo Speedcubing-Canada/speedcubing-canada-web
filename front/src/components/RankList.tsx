@@ -20,7 +20,11 @@ export const RankList: React.FC<{ data: Ranking[] }> = ({ data }) => {
       headerName: t("ranklist.name"),
       width: isSmall ? 210 : 300,
       renderCell: (params) => (
-        <Link href={params.row.url} target="_blank" rel="noopener noreferrer">
+        <Link
+          href={`https://worldcubeassociation.org/persons/${params.row.wca_id}`}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
           {params.value}
         </Link>
       ),
@@ -37,7 +41,7 @@ export const RankList: React.FC<{ data: Ranking[] }> = ({ data }) => {
     rank: person.rank,
     name: person.name,
     time: person.time,
-    url: person.url,
+    wca_id: person.wca_id,
   }));
 
   return (

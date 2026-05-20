@@ -40,7 +40,6 @@ interface ChampionshipSummary {
 interface Competitor {
   name: string;
   wca_id: string;
-  url: string;
   eligible: boolean | null;
   events: string[];
 }
@@ -205,7 +204,11 @@ export const ChampionshipEligibility = () => {
       flex: 2,
       minWidth: 160,
       renderCell: (params) => (
-        <Link href={params.row.url} target="_blank" rel="noopener noreferrer">
+        <Link
+          href={`https://worldcubeassociation.org/persons/${params.row.wca_id}`}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
           {params.value}
         </Link>
       ),
@@ -238,7 +241,6 @@ export const ChampionshipEligibility = () => {
     id: i,
     name: c.name,
     wca_id: c.wca_id,
-    url: c.url,
     eligible: c.eligible,
   }));
 
