@@ -140,7 +140,6 @@ def _eligibility_national(registered):
         {
             "name": p["name"],
             "wca_id": p["wca_id"],
-            "url": f"https://worldcubeassociation.org/persons/{p['wca_id']}",
             "eligible": p["country_iso2"] == "CA",
             "events": p["events"],
         }
@@ -172,7 +171,6 @@ def _eligibility_regional_or_provincial(championship, competition, registered):
             {
                 "name": p["name"],
                 "wca_id": p["wca_id"],
-                "url": f"https://worldcubeassociation.org/persons/{p['wca_id']}",
                 "eligible": eligible,
                 "events": p["events"],
             }
