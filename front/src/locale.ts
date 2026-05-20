@@ -209,6 +209,7 @@ export const resources = {
         dob: "Date of Birth",
         region: "Region",
         admin: "Admin Section",
+        eligibility: "Championship Eligibility",
         email: "Email",
       },
       rankings: {
@@ -248,6 +249,25 @@ export const resources = {
       },
       province_redirect: {
         body: "If you are not redirected automatically, click the link below.",
+      },
+      eligibility: {
+        title: "Championship Eligibility",
+        subtitle:
+          "Shows registered competitors and their eligibility for championship titles. Delegates only.",
+        unauthorized: "You must be a delegate or admin to access this page.",
+        championship: "Championship",
+        event: "Event",
+        exportCsv: "Export CSV",
+        eligible: "Eligible",
+        ineligible: "Ineligible",
+        unknown: "Unknown",
+        name: "Name",
+        eligibleCount: "Eligible: {{count}}",
+        ineligibleCount: "Ineligible: {{count}}",
+        unknownCount: "Unknown: {{count}}",
+        noRegistrations:
+          "No accepted registrations found for this championship.",
+        loadError: "Failed to load eligibility data.",
       },
     },
     ...englishMessages,
@@ -467,6 +487,7 @@ export const resources = {
         dob: "Date de naissance",
         region: "Région",
         admin: "Section d'administration",
+        eligibility: "Éligibilité aux championnats",
         email: "Courriel",
       },
       rankings: {
@@ -506,6 +527,26 @@ export const resources = {
       },
       province_redirect: {
         body: "Si vous n'êtes pas redirigés, cliquez sur le lien ci-dessous.",
+      },
+      eligibility: {
+        title: "Éligibilité aux championnats",
+        subtitle:
+          "Affiche les compétiteurs inscrits et leur éligibilité aux titres de championnat. Délégués uniquement.",
+        unauthorized:
+          "Vous devez être délégué ou administrateur pour accéder à cette page.",
+        championship: "Championnat",
+        event: "Épreuve",
+        exportCsv: "Exporter CSV",
+        eligible: "Éligible",
+        ineligible: "Non éligible",
+        unknown: "Inconnu",
+        name: "Nom",
+        eligibleCount: "Éligible : {{count}}",
+        ineligibleCount: "Non éligible : {{count}}",
+        unknownCount: "Inconnu : {{count}}",
+        noRegistrations:
+          "Aucune inscription acceptée trouvée pour ce championnat.",
+        loadError: "Échec du chargement des données d'éligibilité.",
       },
     },
     ...frenchMessages,
