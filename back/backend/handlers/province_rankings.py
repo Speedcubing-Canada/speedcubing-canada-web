@@ -19,67 +19,67 @@ def test_rankings():
                 "name": "Kevin Matthews",
                 "rank": 1,
                 "time": "21",
-                "url": "https://worldcubeassociation.org/persons/2010MATT02",
+                "wca_id": "2010MATT02",
             },
             {
                 "name": "Wilson Alvis (\u9648\u667a\u80dc)",
                 "rank": 2,
                 "time": "22",
-                "url": "https://worldcubeassociation.org/persons/2011ALVI01",
+                "wca_id": "2011ALVI01",
             },
             {
                 "name": "Jonathan Esparaz",
                 "rank": 3,
                 "time": "27",
-                "url": "https://worldcubeassociation.org/persons/2013ESPA01",
+                "wca_id": "2013ESPA01",
             },
             {
                 "name": "Sarah Strong",
                 "rank": 4,
                 "time": "31",
-                "url": "https://worldcubeassociation.org/persons/2007STRO01",
+                "wca_id": "2007STRO01",
             },
             {
                 "name": "Abdullah Gulab",
                 "rank": 4,
                 "time": "31",
-                "url": "https://worldcubeassociation.org/persons/2014GULA02",
+                "wca_id": "2014GULA02",
             },
             {
                 "name": "Kristopher De Asis",
                 "rank": 6,
                 "time": "36",
-                "url": "https://worldcubeassociation.org/persons/2008ASIS01",
+                "wca_id": "2008ASIS01",
             },
             {
                 "name": "Daniel Daoust",
                 "rank": 7,
                 "time": "39",
-                "url": "https://worldcubeassociation.org/persons/2017DAOU01",
+                "wca_id": "2017DAOU01",
             },
             {
                 "name": "Nicholas McKee",
                 "rank": 8,
                 "time": "40",
-                "url": "https://worldcubeassociation.org/persons/2015MCKE02",
+                "wca_id": "2015MCKE02",
             },
             {
                 "name": "Michael Zheng",
                 "rank": 8,
                 "time": "40",
-                "url": "https://worldcubeassociation.org/persons/2015ZHEN17",
+                "wca_id": "2015ZHEN17",
             },
             {
                 "name": "Liam Orovec",
                 "rank": 10,
                 "time": "42",
-                "url": "https://worldcubeassociation.org/persons/2014OROV01",
+                "wca_id": "2014OROV01",
             },
             {
                 "name": "Alyssa Esparaz",
                 "rank": 11,
                 "time": "45",
-                "url": "https://worldcubeassociation.org/persons/2014ESPA01",
+                "wca_id": "2014ESPA01",
             },
         ]
     else:
@@ -88,49 +88,49 @@ def test_rankings():
                 "name": "Jonathan Esparaz",
                 "rank": 1,
                 "time": "5.52",
-                "url": "https://worldcubeassociation.org/persons/2013ESPA01",
+                "wca_id": "2013ESPA01",
             },
             {
                 "name": "Wilson Alvis (\u9648\u667a\u80dc)",
                 "rank": 2,
                 "time": "7.10",
-                "url": "https://worldcubeassociation.org/persons/2011ALVI01",
+                "wca_id": "2011ALVI01",
             },
             {
                 "name": "Sarah Strong",
                 "rank": 3,
                 "time": "9.18",
-                "url": "https://worldcubeassociation.org/persons/2007STRO01",
+                "wca_id": "2007STRO01",
             },
             {
                 "name": "Alexandre Ondet",
                 "rank": 4,
                 "time": "9.84",
-                "url": "https://worldcubeassociation.org/persons/2017ONDE01",
+                "wca_id": "2017ONDE01",
             },
             {
                 "name": "Abdullah Gulab",
                 "rank": 5,
                 "time": "10.86",
-                "url": "https://worldcubeassociation.org/persons/2014GULA02",
+                "wca_id": "2014GULA02",
             },
             {
                 "name": "Nicholas McKee",
                 "rank": 6,
                 "time": "11.30",
-                "url": "https://worldcubeassociation.org/persons/2015MCKE02",
+                "wca_id": "2015MCKE02",
             },
             {
                 "name": "Alyssa Esparaz",
                 "rank": 7,
                 "time": "16.11",
-                "url": "https://worldcubeassociation.org/persons/2014ESPA01",
+                "wca_id": "2014ESPA01",
             },
             {
                 "name": "Daniel Daoust",
                 "rank": 8,
                 "time": "23.40",
-                "url": "https://worldcubeassociation.org/persons/2017DAOU01",
+                "wca_id": "2017DAOU01",
             },
         ]
     return jsonify(data)
@@ -160,16 +160,18 @@ def province_rankings_table(event_id, province_id, use_average):
         output = []
         last_time = 0
         rank = 0
+        formatter = common.Common().formatters
         for i in range(len(rankings)):
             if rankings[i].best != last_time:
                 rank = i + 1
                 last_time = rankings[i].best
+            person = rankings[i].person.get()
             output.append(
                 {
                     "rank": rank,
-                    "name": rankings[i].person.get().name,
-                    "url": rankings[i].person.get().get_wca_link(),
-                    "time": common.Common().formatters.format_time(rankings[i].best, rankings[i].event, use_average == "1"),
+                    "name": person.name,
+                    "wca_id": person.key.id(),
+                    "time": formatter.format_time(rankings[i].best, rankings[i].event, use_average == "1"),
                 }
             )
         return jsonify(output)

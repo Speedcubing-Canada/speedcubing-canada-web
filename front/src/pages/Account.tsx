@@ -21,7 +21,7 @@ import { API_BASE_URL, signIn, signOut } from "../components/api";
 import { AlertAction, ChipColor, Province, AlertState, User } from "../types";
 import httpClient from "../httpClient";
 import { getProvincesWithNA, getNAProvince } from "../components/provinces";
-import { isAdmin } from "../components/roles";
+import { isAdmin, isDelegate } from "../components/roles";
 import UseResponsiveQuery from "../components/UseResponsiveQuery";
 import {
   isValidProvinceId,
@@ -149,7 +149,16 @@ export const Account = () => {
     navigate("/admin");
   };
 
+  const handleEligibility = () => {
+    navigate(
+      `/${
+        localStorage.getItem("savedLocale") ?? "en"
+      }/championship-eligibility`,
+    );
+  };
+
   const admin = isAdmin(user);
+  const delegate = isDelegate(user);
 
   return (
     <Container maxWidth="md">
@@ -313,6 +322,15 @@ export const Account = () => {
             {admin && (
               <Button variant="outlined" component="span" onClick={handleAdmin}>
                 {t("account.admin")}
+              </Button>
+            )}
+            {delegate && (
+              <Button
+                variant="outlined"
+                component="span"
+                onClick={handleEligibility}
+              >
+                {t("account.eligibility")}
               </Button>
             )}
             <Button variant="outlined" component="span" onClick={signOut}>

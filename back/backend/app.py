@@ -13,6 +13,7 @@ from flask_cors import CORS
 from backend.handlers.admin import bp as admin_bp
 from backend.handlers.auth import create_bp as create_auth_bp
 from backend.handlers.champions_table import bp as champions_table_bp
+from backend.handlers.championship_eligibility import bp as championship_eligibility_bp
 from backend.handlers.province_rankings import bp as province_rankings_bp
 from backend.handlers.regional import bp as regional_bp
 from backend.handlers.user import bp as user_bp
@@ -80,6 +81,7 @@ oauth.register(
 app.register_blueprint(admin_bp)
 app.register_blueprint(create_auth_bp(oauth))
 app.register_blueprint(champions_table_bp)
+app.register_blueprint(championship_eligibility_bp)
 app.register_blueprint(regional_bp)
 app.register_blueprint(province_rankings_bp)
 app.register_blueprint(user_bp)
