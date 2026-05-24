@@ -20,11 +20,16 @@ smoke-test (two steps)
   └─ api       GET https://api.staging.speedcubingcanada.org/test_rankings
     │           Flask returns hardcoded JSON (province_rankings.py, no DB/auth) → expect 2xx
     │
-    ▼ (blocks here if either check fails)
-[manual approval]               (GitHub Environment: production)
-    │
-    ▼
-deploy-production               (./deploy.sh -p)
+    ├─────────────────────────────────┐
+    ▼                                 ▼
+cleanup-staging                 [manual approval]       (GitHub Environment: production)
+(keep 5 newest, both services)        │
+                                      ▼
+                                deploy-production       (./deploy.sh -p)
+                                      │
+                                      ▼
+                                cleanup-production
+                                (keep 5 newest, both services)
 ```
 
 ---
@@ -216,24 +221,30 @@ GitHub notification and can approve or reject from the Actions run page.
 
 ---
 
-## Staging version cleanup
+## Version cleanup
 
-Each CI run deploys a uniquely versioned staging version
-(`ci-<8-char-sha>`). Old versions accumulate and incur small storage costs.
-Clean them up periodically:
+Cleanup is automated by the pipeline: after every successful staging smoke test
+and every production deploy, a cleanup job runs and deletes all but the 5 most
+recent versions of each App Engine service (`default` and `api`). The job is
+marked `continue-on-error` so a cleanup failure never blocks the pipeline.
+
+**5 versions** gives you enough rollback history without significant storage
+cost. If you want to adjust the number, change the `KEEP` env var in the two
+cleanup jobs in `deploy.yml`.
+
+If you ever need to clean up manually (e.g. after a failed pipeline left
+orphaned versions):
 
 ```bash
-# List all staging versions
-gcloud app versions list --project scc-staging-391105
+# List versions for a project / service
+gcloud app versions list --project scc-staging-391105 --service default
+gcloud app versions list --project scc-staging-391105 --service api
 
-# Delete a specific version (repeat for each service)
+# Delete a specific version
 gcloud app versions delete ci-abc12345 \
-  --project scc-staging-391105 \
-  --service default
-
+  --project scc-staging-391105 --service default --quiet
 gcloud app versions delete ci-abc12345 \
-  --project scc-staging-391105 \
-  --service api
+  --project scc-staging-391105 --service api --quiet
 ```
 
 ---

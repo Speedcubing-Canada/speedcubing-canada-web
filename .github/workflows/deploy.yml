@@ -14,6 +14,11 @@ on:
   push:
     branches: [main]
 
+# WIF authentication requires permission to mint a short-lived OIDC token.
+permissions:
+  contents: read
+  id-token: write
+
 jobs:
   # ── 1. Deploy to staging ──────────────────────────────────────────────────
   deploy-staging:
@@ -159,3 +164,109 @@ jobs:
 
       - name: Deploy to production
         run: ./deploy.sh -p
+
+  # ── 4. Clean up old staging versions ─────────────────────────────────────
+  # Runs after a successful smoke test, in parallel with the approval wait,
+  # keeping only the 5 most recent versions of each App Engine service.
+  # continue-on-error ensures a cleanup failure never blocks production.
+  cleanup-staging:
+    name: Cleanup old staging versions
+    needs: smoke-test
+    runs-on: ubuntu-latest
+    continue-on-error: true
+
+    steps:
+      - name: Authenticate to Google Cloud (staging SA)
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ vars.WIF_PROVIDER_STAGING }}
+          service_account: ${{ vars.WIF_SA_STAGING }}
+
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: Delete old staging versions (keep newest 5)
+        env:
+          PROJECT: scc-staging-391105
+          KEEP: "5"
+        run: |
+          for service in default api; do
+            echo "=== ${service} service ==="
+
+            all=$(gcloud app versions list \
+              --project="${PROJECT}" \
+              --service="${service}" \
+              --sort-by="~version.createTime" \
+              --format="value(version.id)" 2>/dev/null || true)
+
+            [ -z "${all}" ] && echo "  No versions found — skipping" && continue
+
+            to_delete=$(echo "${all}" | tail -n +$((KEEP + 1)))
+
+            [ -z "${to_delete}" ] && \
+              echo "  $(echo "${all}" | wc -l | tr -d ' ') version(s) present — nothing to remove" && \
+              continue
+
+            echo "  Removing: $(echo "${to_delete}" | tr '\n' ' ')"
+            while IFS= read -r v; do
+              gcloud app versions delete "${v}" \
+                --project="${PROJECT}" \
+                --service="${service}" \
+                --quiet \
+                && echo "  ✓ deleted ${v}" \
+                || echo "  ✗ could not delete ${v} (skipping)"
+            done <<< "${to_delete}"
+          done
+
+  # ── 5. Clean up old production versions ──────────────────────────────────
+  # Same logic as cleanup-staging but for the production project.
+  # Production versions are auto-named by gcloud (timestamp-based) since
+  # deploy.sh -p does not pass --version.
+  cleanup-production:
+    name: Cleanup old production versions
+    needs: deploy-production
+    runs-on: ubuntu-latest
+    continue-on-error: true
+
+    steps:
+      - name: Authenticate to Google Cloud (production SA)
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ vars.WIF_PROVIDER_PROD }}
+          service_account: ${{ vars.WIF_SA_PROD }}
+
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: Delete old production versions (keep newest 5)
+        env:
+          PROJECT: scc-production-398617
+          KEEP: "5"
+        run: |
+          for service in default api; do
+            echo "=== ${service} service ==="
+
+            all=$(gcloud app versions list \
+              --project="${PROJECT}" \
+              --service="${service}" \
+              --sort-by="~version.createTime" \
+              --format="value(version.id)" 2>/dev/null || true)
+
+            [ -z "${all}" ] && echo "  No versions found — skipping" && continue
+
+            to_delete=$(echo "${all}" | tail -n +$((KEEP + 1)))
+
+            [ -z "${to_delete}" ] && \
+              echo "  $(echo "${all}" | wc -l | tr -d ' ') version(s) present — nothing to remove" && \
+              continue
+
+            echo "  Removing: $(echo "${to_delete}" | tr '\n' ' ')"
+            while IFS= read -r v; do
+              gcloud app versions delete "${v}" \
+                --project="${PROJECT}" \
+                --service="${service}" \
+                --quiet \
+                && echo "  ✓ deleted ${v}" \
+                || echo "  ✗ could not delete ${v} (skipping)"
+            done <<< "${to_delete}"
+          done
