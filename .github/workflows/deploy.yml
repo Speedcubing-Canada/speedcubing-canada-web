@@ -1,9 +1,11 @@
 # Deployment pipeline: staging → smoke test → production (manual gate)
 #
 # Triggered on every push to main (including Dependabot merges).
-# Secrets required:
-#   GCP_SA_KEY_STAGING  – service account JSON key for scc-staging-391105
-#   GCP_SA_KEY_PROD     – service account JSON key for scc-production-398617
+# Repository variables required (Settings → Secrets and variables → Variables):
+#   WIF_PROVIDER_STAGING  – Workload Identity provider resource name (staging)
+#   WIF_PROVIDER_PROD     – Workload Identity provider resource name (prod)
+#   WIF_SA_STAGING        – Service account email for staging deploys
+#   WIF_SA_PROD           – Service account email for production deploys
 # See .github/workflows/README.md for setup instructions.
 
 name: Deploy
@@ -44,7 +46,8 @@ jobs:
       - name: Authenticate to Google Cloud (staging SA)
         uses: google-github-actions/auth@v2
         with:
-          credentials_json: ${{ secrets.GCP_SA_KEY_STAGING }}
+          workload_identity_provider: ${{ vars.WIF_PROVIDER_STAGING }}
+          service_account: ${{ vars.WIF_SA_STAGING }}
 
       - name: Set up Cloud SDK
         uses: google-github-actions/setup-gcloud@v2
@@ -148,7 +151,8 @@ jobs:
       - name: Authenticate to Google Cloud (production SA)
         uses: google-github-actions/auth@v2
         with:
-          credentials_json: ${{ secrets.GCP_SA_KEY_PROD }}
+          workload_identity_provider: ${{ vars.WIF_PROVIDER_PROD }}
+          service_account: ${{ vars.WIF_SA_PROD }}
 
       - name: Set up Cloud SDK
         uses: google-github-actions/setup-gcloud@v2

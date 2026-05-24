@@ -29,24 +29,38 @@ deploy-production               (./deploy.sh -p)
 
 ---
 
-## 1. Create GCP service accounts
+## Authentication — Workload Identity Federation
 
-The pipeline uses **two separate service accounts** — one per environment — so
-that a compromised staging credential cannot be used to push to production.
+The pipeline authenticates to GCP using **Workload Identity Federation (WIF)**
+rather than long-lived JSON key files. GitHub Actions presents a short-lived
+OIDC token; GCP verifies it and issues temporary credentials scoped to a
+specific service account. No secrets are stored in GitHub.
 
-### Staging service account
+There are four steps per GCP project: create the service account, grant it
+deployment roles, create a WIF pool + provider, then allow the pool to
+impersonate the service account.
+
+### Variables used in the commands below
+
+```bash
+REPO="Speedcubing-Canada/speedcubing-canada-web"
+```
+
+---
+
+### Staging project
+
+```bash
+PROJECT="scc-staging-391105"
+SA="github-actions-staging@${PROJECT}.iam.gserviceaccount.com"
+```
+
+**1. Create the service account and grant deployment roles**
 
 ```bash
 gcloud iam service-accounts create github-actions-staging \
   --display-name "GitHub Actions – Staging" \
-  --project scc-staging-391105
-```
-
-Grant the roles it needs to deploy App Engine services:
-
-```bash
-SA="github-actions-staging@scc-staging-391105.iam.gserviceaccount.com"
-PROJECT="scc-staging-391105"
+  --project "${PROJECT}"
 
 for role in \
   roles/appengine.deployer \
@@ -54,9 +68,9 @@ for role in \
   roles/cloudbuild.builds.editor \
   roles/storage.admin \
   roles/iam.serviceAccountUser; do
-  gcloud projects add-iam-policy-binding "$PROJECT" \
+  gcloud projects add-iam-policy-binding "${PROJECT}" \
     --member="serviceAccount:${SA}" \
-    --role="$role"
+    --role="${role}"
 done
 ```
 
@@ -64,26 +78,65 @@ done
 > internally submits a Cloud Build job that runs as the App Engine default
 > service account; your SA must be allowed to impersonate it.
 
-Generate and download the JSON key:
+**2. Create the Workload Identity Pool and provider**
 
 ```bash
-gcloud iam service-accounts keys create staging-sa-key.json \
-  --iam-account "$SA" \
-  --project "$PROJECT"
+gcloud iam workload-identity-pools create "github-actions" \
+  --project="${PROJECT}" \
+  --location="global" \
+  --display-name="GitHub Actions"
+
+gcloud iam workload-identity-pools providers create-oidc "github" \
+  --project="${PROJECT}" \
+  --location="global" \
+  --workload-identity-pool="github-actions" \
+  --display-name="GitHub" \
+  --issuer-uri="https://token.actions.githubusercontent.com" \
+  --attribute-mapping="google.subject=assertion.sub,attribute.repository=assertion.repository" \
+  --attribute-condition="assertion.repository=='${REPO}'"
 ```
 
-### Production service account
+The `attribute-condition` locks the provider to this repository only — tokens
+from any other repo are rejected by GCP before they reach the service account.
 
-Repeat the same steps for the production project, substituting
-`scc-production-398617`:
+**3. Allow the pool to impersonate the staging SA**
 
 ```bash
+POOL=$(gcloud iam workload-identity-pools describe "github-actions" \
+  --project="${PROJECT}" \
+  --location="global" \
+  --format="value(name)")
+
+gcloud iam service-accounts add-iam-policy-binding "${SA}" \
+  --project="${PROJECT}" \
+  --role="roles/iam.workloadIdentityUser" \
+  --member="principalSet://iam.googleapis.com/${POOL}/attribute.repository/${REPO}"
+```
+
+**4. Note the provider resource name** (you'll need it in step 3 below)
+
+```bash
+gcloud iam workload-identity-pools providers describe "github" \
+  --project="${PROJECT}" \
+  --location="global" \
+  --workload-identity-pool="github-actions" \
+  --format="value(name)"
+# → projects/PROJECT_NUMBER/locations/global/workloadIdentityPools/github-actions/providers/github
+```
+
+---
+
+### Production project
+
+Repeat the same four steps for the production project:
+
+```bash
+PROJECT="scc-production-398617"
+SA="github-actions-prod@${PROJECT}.iam.gserviceaccount.com"
+
 gcloud iam service-accounts create github-actions-prod \
   --display-name "GitHub Actions – Production" \
-  --project scc-production-398617
-
-SA="github-actions-prod@scc-production-398617.iam.gserviceaccount.com"
-PROJECT="scc-production-398617"
+  --project "${PROJECT}"
 
 for role in \
   roles/appengine.deployer \
@@ -91,33 +144,57 @@ for role in \
   roles/cloudbuild.builds.editor \
   roles/storage.admin \
   roles/iam.serviceAccountUser; do
-  gcloud projects add-iam-policy-binding "$PROJECT" \
+  gcloud projects add-iam-policy-binding "${PROJECT}" \
     --member="serviceAccount:${SA}" \
-    --role="$role"
+    --role="${role}"
 done
 
-gcloud iam service-accounts keys create prod-sa-key.json \
-  --iam-account "$SA" \
-  --project "$PROJECT"
+gcloud iam workload-identity-pools create "github-actions" \
+  --project="${PROJECT}" \
+  --location="global" \
+  --display-name="GitHub Actions"
+
+gcloud iam workload-identity-pools providers create-oidc "github" \
+  --project="${PROJECT}" \
+  --location="global" \
+  --workload-identity-pool="github-actions" \
+  --display-name="GitHub" \
+  --issuer-uri="https://token.actions.githubusercontent.com" \
+  --attribute-mapping="google.subject=assertion.sub,attribute.repository=assertion.repository" \
+  --attribute-condition="assertion.repository=='${REPO}'"
+
+POOL=$(gcloud iam workload-identity-pools describe "github-actions" \
+  --project="${PROJECT}" \
+  --location="global" \
+  --format="value(name)")
+
+gcloud iam service-accounts add-iam-policy-binding "${SA}" \
+  --project="${PROJECT}" \
+  --role="roles/iam.workloadIdentityUser" \
+  --member="principalSet://iam.googleapis.com/${POOL}/attribute.repository/${REPO}"
+
+gcloud iam workload-identity-pools providers describe "github" \
+  --project="${PROJECT}" \
+  --location="global" \
+  --workload-identity-pool="github-actions" \
+  --format="value(name)"
+# → projects/PROJECT_NUMBER/locations/global/workloadIdentityPools/github-actions/providers/github
 ```
 
 ---
 
-## 2. Add secrets to the GitHub repository
+## 2. Add repository variables to GitHub
 
-Go to **Settings → Secrets and variables → Actions → New repository secret**
-and add the following two secrets.
+Go to **Settings → Secrets and variables → Actions → Variables tab → New repository variable**
+and add the following four variables. These are not secrets — WIF provider
+names and service account emails are not sensitive.
 
-| Secret name          | Value                                  |
-| -------------------- | -------------------------------------- |
-| `GCP_SA_KEY_STAGING` | Full contents of `staging-sa-key.json` |
-| `GCP_SA_KEY_PROD`    | Full contents of `prod-sa-key.json`    |
-
-Delete the local key files after uploading:
-
-```bash
-rm staging-sa-key.json prod-sa-key.json
-```
+| Variable name          | Value                                                               |
+| ---------------------- | ------------------------------------------------------------------- |
+| `WIF_PROVIDER_STAGING` | Provider resource name from the staging `describe` command above    |
+| `WIF_SA_STAGING`       | `github-actions-staging@scc-staging-391105.iam.gserviceaccount.com` |
+| `WIF_PROVIDER_PROD`    | Provider resource name from the production `describe` command above |
+| `WIF_SA_PROD`          | `github-actions-prod@scc-production-398617.iam.gserviceaccount.com` |
 
 ---
 
@@ -149,7 +226,7 @@ Clean them up periodically:
 # List all staging versions
 gcloud app versions list --project scc-staging-391105
 
-# Delete a specific version (frontend + API service)
+# Delete a specific version (repeat for each service)
 gcloud app versions delete ci-abc12345 \
   --project scc-staging-391105 \
   --service default
@@ -161,11 +238,16 @@ gcloud app versions delete ci-abc12345 \
 
 ---
 
-## Optional: Workload Identity Federation (passwordless auth)
+## Manual deploys
 
-The workflow above uses long-lived JSON key files. For higher security,
-[Workload Identity Federation](https://cloud.google.com/iam/docs/workload-identity-federation)
-lets GitHub Actions authenticate without any stored credentials. If you migrate
-to WIF, replace the `credentials_json` input in `deploy.yml` with
-`workload_identity_provider` and `service_account` parameters as described in
-the [`google-github-actions/auth` README](https://github.com/google-github-actions/auth).
+The `deploy.sh` script at the repo root is unchanged and can still be used
+for one-off manual deployments. It requires `gcloud` to be authenticated
+locally (e.g. via `gcloud auth login` or `gcloud auth application-default login`):
+
+```bash
+# Staging
+./deploy.sh -s -v my-test-version
+
+# Production
+./deploy.sh -p
+```
