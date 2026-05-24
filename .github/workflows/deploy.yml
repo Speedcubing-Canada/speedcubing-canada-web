@@ -1,0 +1,157 @@
+# Deployment pipeline: staging → smoke test → production (manual gate)
+#
+# Triggered on every push to main (including Dependabot merges).
+# Secrets required:
+#   GCP_SA_KEY_STAGING  – service account JSON key for scc-staging-391105
+#   GCP_SA_KEY_PROD     – service account JSON key for scc-production-398617
+# See .github/workflows/README.md for setup instructions.
+
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  # ── 1. Deploy to staging ──────────────────────────────────────────────────
+  deploy-staging:
+    name: Deploy → Staging
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.slug.outputs.version }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      # App Engine version names must be lowercase letters, digits, or hyphens
+      # and start with a letter. "ci-<8-char-sha>" satisfies all constraints.
+      - name: Compute version slug
+        id: slug
+        run: echo "version=ci-${GITHUB_SHA::8}" >> "$GITHUB_OUTPUT"
+
+      # deploy.sh builds the frontend locally before uploading.
+      # The App Engine runtime (nodejs24) and the devDependencies agree on
+      # Node 24, so use the same version here for build consistency.
+      - name: Set up Node.js 24
+        uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+
+      - name: Install frontend dependencies
+        run: npm install
+        working-directory: front
+
+      - name: Authenticate to Google Cloud (staging SA)
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY_STAGING }}
+
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: Deploy to staging
+        run: ./deploy.sh -s -v "${{ steps.slug.outputs.version }}"
+
+  # ── 2. Smoke test against the freshly deployed staging version ────────────
+  #
+  # Two checks are run independently so a failure message names the culprit:
+  #
+  #  Frontend  GET /   → Express (server.js) serves index.html from dist/.
+  #                      Confirms the Node runtime started and the Vite build
+  #                      was uploaded correctly.
+  #
+  #  API       GET /test_rankings
+  #                    → Flask returns hardcoded ranking JSON (province_rankings.py:13).
+  #                      No database or auth required, so this is a pure liveness
+  #                      check: gunicorn started, the app initialised, and the
+  #                      blueprint was registered.
+  #
+  # Checks run against the live staging domain so they exercise the full
+  # request path including dispatch rules and the custom domain certificate.
+  smoke-test:
+    name: Smoke Test (staging)
+    needs: deploy-staging
+    runs-on: ubuntu-latest
+
+    steps:
+      # App Engine versions can take a few seconds to serve traffic after the
+      # deploy command returns. Give the runtime a moment before probing.
+      - name: Wait for App Engine warm-up
+        run: sleep 15
+
+      - name: Smoke test — frontend (GET /)
+        run: |
+          url="https://staging.speedcubingcanada.org/"
+          echo "Probing frontend: ${url}"
+
+          for attempt in 1 2 3; do
+            status=$(curl -s -o /dev/null -w "%{http_code}" --max-time 30 "${url}")
+            if [ "${status}" -ge 200 ] && [ "${status}" -lt 400 ]; then
+              echo "Frontend OK — HTTP ${status} (attempt ${attempt})"
+              exit 0
+            fi
+            echo "HTTP ${status} (attempt ${attempt}/3); retrying in 15 s…"
+            sleep 15
+          done
+
+          echo "::error::Frontend smoke test failed — GET ${url} never returned 2xx/3xx"
+          exit 1
+
+      - name: Smoke test — API (GET /test_rankings)
+        run: |
+          url="https://api.staging.speedcubingcanada.org/test_rankings"
+          echo "Probing API: ${url}"
+
+          for attempt in 1 2 3; do
+            body=$(curl -s --max-time 30 -w "\n%{http_code}" "${url}")
+            status=$(echo "${body}" | tail -1)
+            if [ "${status}" -ge 200 ] && [ "${status}" -lt 400 ]; then
+              echo "API OK — HTTP ${status} (attempt ${attempt})"
+              # Sanity-check that the response looks like the expected JSON array.
+              if echo "${body}" | head -1 | grep -q '"name"'; then
+                echo "Response body contains expected ranking data."
+              else
+                echo "::warning::Response did not contain expected JSON shape — check /test_rankings output."
+              fi
+              exit 0
+            fi
+            echo "HTTP ${status} (attempt ${attempt}/3); retrying in 15 s…"
+            sleep 15
+          done
+
+          echo "::error::API smoke test failed — GET ${url} never returned 2xx/3xx"
+          exit 1
+
+  # ── 3. Production deploy (gated behind manual approval) ───────────────────
+  #
+  # The 'production' GitHub environment must have required reviewers configured.
+  # This job blocks until a reviewer approves from the Actions UI.
+  # See .github/workflows/README.md → "Create the production environment".
+  deploy-production:
+    name: Deploy → Production
+    needs: smoke-test # only runs if smoke test passed
+    runs-on: ubuntu-latest
+    environment: production # pauses here for manual approval
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node.js 24
+        uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+
+      - name: Install frontend dependencies
+        run: npm install
+        working-directory: front
+
+      - name: Authenticate to Google Cloud (production SA)
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY_PROD }}
+
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: Deploy to production
+        run: ./deploy.sh -p
