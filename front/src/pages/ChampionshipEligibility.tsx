@@ -191,7 +191,7 @@ export const ChampionshipEligibility = () => {
       c.events.includes(currentEvent ?? ""),
     ) ?? [];
 
-  const sortedCompetitors = [...competitors].sort((a, b) => {
+  const sortedCompetitors = competitors.toSorted((a, b) => {
     const order = (e: boolean | null) => (e === true ? 0 : e === false ? 1 : 2);
     const diff = order(a.eligible) - order(b.eligible);
     return diff !== 0 ? diff : a.name.localeCompare(b.name);
