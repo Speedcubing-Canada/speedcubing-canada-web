@@ -21,7 +21,7 @@ import { API_BASE_URL, signIn, signOut } from "../components/api";
 import { AlertAction, ChipColor, Province, AlertState, User } from "../types";
 import httpClient from "../httpClient";
 import { getProvincesWithNA, getNAProvince } from "../components/provinces";
-import { isAdmin, isDelegate } from "../components/roles";
+import { isAdmin, isDelegateOrAdmin } from "../components/roles";
 import UseResponsiveQuery from "../components/UseResponsiveQuery";
 import {
   isValidProvinceId,
@@ -158,7 +158,7 @@ export const Account = () => {
   };
 
   const admin = isAdmin(user);
-  const delegate = isDelegate(user);
+  const delegate = isDelegateOrAdmin(user);
 
   return (
     <Container maxWidth="md">

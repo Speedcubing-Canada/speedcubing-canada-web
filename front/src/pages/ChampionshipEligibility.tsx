@@ -20,7 +20,7 @@ import DownloadIcon from "@mui/icons-material/Download";
 
 import { API_BASE_URL } from "../components/api";
 import httpClient from "../httpClient";
-import { isDelegate } from "../components/roles";
+import { isDelegateOrAdmin } from "../components/roles";
 import { User, ACTIVE_EVENTS, EventID } from "../types";
 import { MyCubingIcon } from "../components/MyCubingIcon";
 import UseResponsiveQuery from "../components/UseResponsiveQuery";
@@ -113,7 +113,7 @@ export const ChampionshipEligibility = () => {
   }, []);
 
   useEffect(() => {
-    if (!isDelegate(user)) return;
+    if (!isDelegateOrAdmin(user)) return;
     setChampLoading(true);
     (async () => {
       const resp = await httpClient.get<ChampionshipSummary[]>(
@@ -166,7 +166,7 @@ export const ChampionshipEligibility = () => {
     );
   }
 
-  if (!isDelegate(user)) {
+  if (!isDelegateOrAdmin(user)) {
     return (
       <Container maxWidth="md">
         <Box marginY="4rem">
@@ -265,7 +265,7 @@ export const ChampionshipEligibility = () => {
           value={selected}
           onChange={(_, newValue) => setSelected(newValue)}
           getOptionLabel={(c) =>
-            c.is_pbq ? `${c.competition_name} (PBQ)` : c.competition_name
+            c.is_pbq ? `${c.competition_name} (Quiet)` : c.competition_name
           }
           isOptionEqualToValue={(a, b) => a.id === b.id}
           renderInput={(params) => (
@@ -299,7 +299,7 @@ export const ChampionshipEligibility = () => {
             <Typography variant="subtitle1" fontWeight="bold">
               {eligibility.competition_name}
               {eligibility.is_pbq && (
-                <Chip label="PBQ" size="small" sx={{ ml: 1 }} />
+                <Chip label="Quiet" size="small" sx={{ ml: 1 }} />
               )}
             </Typography>
             <Button
