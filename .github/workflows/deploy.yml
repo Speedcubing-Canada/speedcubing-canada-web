@@ -10,9 +10,6 @@
 
 name: Deploy
 
-env:
-  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
-
 on:
   push:
     branches: [main]
@@ -31,7 +28,7 @@ jobs:
       version: ${{ steps.slug.outputs.version }}
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       # App Engine version names must be lowercase letters, digits, or hyphens
       # and start with a letter. "ci-<8-char-sha>" satisfies all constraints.
@@ -43,13 +40,12 @@ jobs:
       # The App Engine runtime (nodejs24) and the devDependencies agree on
       # Node 24, so use the same version here for build consistency.
       - name: Set up Node.js 24
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version: "24"
 
       - name: Install frontend dependencies
-        run: npm install
-        working-directory: front
+        run: npm ci
 
       - name: Authenticate to Google Cloud (staging SA)
         uses: google-github-actions/auth@v2
@@ -145,16 +141,15 @@ jobs:
     environment: production # pauses here for manual approval
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Set up Node.js 24
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version: "24"
 
       - name: Install frontend dependencies
-        run: npm install
-        working-directory: front
+        run: npm ci
 
       - name: Authenticate to Google Cloud (production SA)
         uses: google-github-actions/auth@v2
