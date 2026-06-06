@@ -1,5 +1,4 @@
-import * as React from "react";
-import { useEffect, useState } from "react";
+import { useEffect, useState, MouseEvent, SyntheticEvent } from "react";
 import { useTranslation } from "react-i18next";
 import {
   Alert,
@@ -9,18 +8,18 @@ import {
   Chip,
   CircularProgress,
   Container,
+  Link,
   TextField,
   ToggleButton,
   ToggleButtonGroup,
   Typography,
 } from "@mui/material";
 import { DataGrid, GridColDef, frFR, enUS } from "@mui/x-data-grid";
-import { Link } from "@mui/material";
 import DownloadIcon from "@mui/icons-material/Download";
 
 import { API_BASE_URL } from "../components/api";
 import httpClient from "../httpClient";
-import { isDelegateOrAdmin } from "../components/roles";
+import { hasDelegateOrAdminRole } from "../components/roles";
 import { User, ACTIVE_EVENTS, EventID } from "../types";
 import { MyCubingIcon } from "../components/MyCubingIcon";
 import UseResponsiveQuery from "../components/UseResponsiveQuery";
@@ -113,7 +112,7 @@ export const ChampionshipEligibility = () => {
   }, []);
 
   useEffect(() => {
-    if (!isDelegateOrAdmin(user)) return;
+    if (!hasDelegateOrAdminRole(user)) return;
     setChampLoading(true);
     (async () => {
       const resp = await httpClient.get<ChampionshipSummary[]>(
@@ -143,14 +142,14 @@ export const ChampionshipEligibility = () => {
   }, [selected]);
 
   const handleEventChange = (
-    _: React.MouseEvent<HTMLElement>,
+    _: MouseEvent<HTMLElement>,
     newEvent: EventID | null,
   ) => {
     if (newEvent != null) setEventId(newEvent);
   };
 
   const handleEventChangeMobile = (
-    _: React.SyntheticEvent,
+    _: SyntheticEvent,
     newValue: EventID | null,
   ) => {
     if (newValue != null) setEventId(newValue);
@@ -166,7 +165,7 @@ export const ChampionshipEligibility = () => {
     );
   }
 
-  if (!isDelegateOrAdmin(user)) {
+  if (!hasDelegateOrAdminRole(user)) {
     return (
       <Container maxWidth="md">
         <Box marginY="4rem">
@@ -237,8 +236,8 @@ export const ChampionshipEligibility = () => {
     },
   ];
 
-  const rows = sortedCompetitors.map((c, i) => ({
-    id: i,
+  const rows = sortedCompetitors.map((c) => ({
+    id: c.wca_id,
     name: c.name,
     wca_id: c.wca_id,
     eligible: c.eligible,

@@ -10,7 +10,7 @@ export const isAdmin = (user: User | null) => {
   );
 };
 
-export const isDelegateOrAdmin = (user: User | null) => {
+export const hasDelegateOrAdminRole = (user: User | null) => {
   return (
     user?.roles.includes("SENIOR_DELEGATE") ||
     user?.roles.includes("DELEGATE") ||

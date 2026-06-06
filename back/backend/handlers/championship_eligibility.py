@@ -28,12 +28,17 @@ def list_championships():
     championships = list(Championship.query().iter())
     competitions = ndb.get_multi([c.competition for c in championships])
 
+    region_keys = [c.region for c in championships if c.region]
+    province_keys = [c.province for c in championships if c.province]
+    regions = {r.key: r for r in ndb.get_multi(region_keys) if r}
+    provinces = {p.key: p for p in ndb.get_multi(province_keys) if p}
+
     result = []
     for championship, competition in zip(championships, competitions):
         if not competition:
             continue
 
-        champ_type, area = _championship_type_and_area(championship)
+        champ_type, area = _championship_type_and_area(championship, regions, provinces)
 
         result.append(
             {
@@ -97,17 +102,17 @@ def championship_eligibility(championship_id):
     )
 
 
-def _championship_type_and_area(championship):
+def _championship_type_and_area(championship, regions=None, provinces=None):
     if championship.national_championship:
         champ_type = "national_fmc" if championship.is_fmc else "national"
         return champ_type, None
 
     if championship.region:
-        region = championship.region.get()
+        region = regions.get(championship.region) if regions is not None else championship.region.get()
         return "regional", region.championship_name if region else None
 
     if championship.province:
-        province = championship.province.get()
+        province = provinces.get(championship.province) if provinces is not None else championship.province.get()
         return "provincial", province.name if province else None
 
     return "unknown", None
