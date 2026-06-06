@@ -87,8 +87,7 @@ gcloud iam service-accounts create github-actions-staging \
   --project "${PROJECT}"
 
 for role in \
-  roles/appengine.deployer \
-  roles/appengine.serviceAdmin \
+  roles/appengine.appAdmin \
   roles/cloudbuild.builds.editor \
   roles/storage.admin \
   roles/iam.serviceAccountUser; do
@@ -98,6 +97,10 @@ for role in \
 done
 ```
 
+> **`roles/appengine.appAdmin`** (not the narrower `deployer`/`serviceAdmin`) is required
+> because deploying `dispatch.yaml` calls `appengine.applications.update`, which only
+> `appAdmin` covers.
+>
 > **`roles/iam.serviceAccountUser`** is required because `gcloud app deploy`
 > internally submits a Cloud Build job that runs as the App Engine default
 > service account; your SA must be allowed to impersonate it.
@@ -163,8 +166,7 @@ gcloud iam service-accounts create github-actions-prod \
   --project "${PROJECT}"
 
 for role in \
-  roles/appengine.deployer \
-  roles/appengine.serviceAdmin \
+  roles/appengine.appAdmin \
   roles/cloudbuild.builds.editor \
   roles/storage.admin \
   roles/iam.serviceAccountUser; do
