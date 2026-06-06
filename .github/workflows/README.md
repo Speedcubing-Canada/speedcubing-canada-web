@@ -53,6 +53,25 @@ REPO="Speedcubing-Canada/speedcubing-canada-web"
 
 ---
 
+### Enable required APIs (both projects)
+
+```bash
+gcloud services enable \
+  appengine.googleapis.com \
+  iamcredentials.googleapis.com \
+  --project scc-staging-391105
+
+gcloud services enable \
+  appengine.googleapis.com \
+  iamcredentials.googleapis.com \
+  --project scc-production-398617
+```
+
+`iamcredentials.googleapis.com` is required by Workload Identity Federation to mint
+short-lived tokens when impersonating the service account.
+
+---
+
 ### Staging project
 
 ```bash
