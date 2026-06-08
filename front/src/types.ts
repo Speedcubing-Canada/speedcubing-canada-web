@@ -65,7 +65,7 @@ export interface Ranking {
   name: string;
   rank: number;
   time: string;
-  url: string;
+  wca_id: string;
 }
 
 export interface AlertState {

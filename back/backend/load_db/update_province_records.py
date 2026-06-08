@@ -1,3 +1,5 @@
+import logging
+
 from google.cloud import ndb
 
 from backend.models.province import Province
@@ -6,10 +8,6 @@ from backend.models.wca.rank import RankAverage, RankSingle
 
 
 def update_province_records():
-    """Update province records for all events and provinces.
-    This function identifies the best single and average results
-    for each province in each event and marks them as province records.
-    """
     province_records = []
     for rank_cls in (RankSingle, RankAverage):
         for evt in Event.query().fetch(keys_only=True):
@@ -29,11 +27,13 @@ def update_province_records():
     to_remove = []
 
     for rank_cls in (RankSingle, RankAverage):
-        for record in rank_cls.query(rank_cls.is_province_record).iter():
+        for record in rank_cls.query(rank_cls.is_province_record == True).iter():  # noqa: E712
             if record.key not in province_record_keys:
                 record.is_province_record = False
                 to_remove += [record]
 
+    logging.info("Marking %d province records", len(province_records))
+    logging.info("Clearing %d stale province records", len(to_remove))
     ndb.put_multi(province_records + to_remove)
 
 

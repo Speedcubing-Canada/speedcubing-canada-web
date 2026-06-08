@@ -48,6 +48,11 @@ const BritishColumbia = React.lazy(() =>
 const Competition = React.lazy(() =>
   import("./pages/Competition").then((m) => ({ default: m.Competition })),
 );
+const ChampionshipEligibility = React.lazy(() =>
+  import("./pages/ChampionshipEligibility").then((m) => ({
+    default: m.ChampionshipEligibility,
+  })),
+);
 
 const getInitialLocale = () => {
   const pathLocale = window.location.pathname.split("/")[1];
@@ -110,6 +115,10 @@ const App = () => {
                   />
                   <Route path="rankings" element={<Rankings />} />
                   <Route path="account" element={<Account />} />
+                  <Route
+                    path="championship-eligibility"
+                    element={<ChampionshipEligibility />}
+                  />
                 </Route>
                 <Route path="qc" element={<Quebec />} />
                 <Route path="quebec" element={<Quebec />} />
