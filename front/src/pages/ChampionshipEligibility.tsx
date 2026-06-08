@@ -62,6 +62,9 @@ const eligibilityColor = (
   return "default";
 };
 
+const eligibilityOrder = (e: boolean | null) =>
+  e === true ? 0 : e === false ? 1 : 2;
+
 const exportCSV = (data: EligibilityData) => {
   const header = ["Name", "WCA ID", "Events", "Eligible"];
   const rows = data.competitors.map((c) => [
@@ -191,8 +194,7 @@ export const ChampionshipEligibility = () => {
     ) ?? [];
 
   const sortedCompetitors = competitors.toSorted((a, b) => {
-    const order = (e: boolean | null) => (e === true ? 0 : e === false ? 1 : 2);
-    const diff = order(a.eligible) - order(b.eligible);
+    const diff = eligibilityOrder(a.eligible) - eligibilityOrder(b.eligible);
     return diff !== 0 ? diff : a.name.localeCompare(b.name);
   });
 
@@ -223,14 +225,22 @@ export const ChampionshipEligibility = () => {
       width: 140,
       renderCell: (params) => {
         const val = params.value as boolean | null;
-        const label =
-          val === true
-            ? t("eligibility.eligible")
-            : val === false
-            ? t("eligibility.ineligible")
-            : t("eligibility.unknown");
+        if (val === null)
+          return (
+            <Chip
+              size="small"
+              label={t("eligibility.unknown")}
+              color="default"
+            />
+          );
         return (
-          <Chip size="small" label={label} color={eligibilityColor(val)} />
+          <Chip
+            size="small"
+            label={
+              val ? t("eligibility.eligible") : t("eligibility.ineligible")
+            }
+            color={eligibilityColor(val)}
+          />
         );
       },
     },
