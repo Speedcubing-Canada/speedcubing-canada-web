@@ -13,6 +13,80 @@ from backend.models.wca.country import Country
 from backend.models.wca.event import Event
 from backend.models.wca.result import Result, RoundType
 
+# Datastore/Firestore caps an ``IN`` filter at 30 values.
+_IN_QUERY_LIMIT = 30
+
+
+class Resolution:
+    ELIGIBLE = 0
+    INELIGIBLE = 1
+    UNRESOLVED = 2
+
+
+def fetch_users_for_competitors(competitors):
+    """Fetch the Users for a set of person keys, batching around the IN-query cap.
+
+    ``competitors`` is the set of every ``Result.person`` key for a championship,
+    which is routinely larger than the 30-value ``IN`` limit, so we query in chunks.
+    """
+    competitors = list(competitors)
+    users = []
+    for start in range(0, len(competitors), _IN_QUERY_LIMIT):
+        chunk = competitors[start : start + _IN_QUERY_LIMIT]
+        users.extend(User.query(User.wca_person.IN(chunk)).fetch())
+    return users
+
+
+def resolve_residency(user, residency_deadline):
+    """Return the province key the user resided in at ``residency_deadline``.
+
+    The latest location update before the deadline wins. If the user has never
+    had a location update, fall back to their current province. Returns ``None``
+    when residency at the deadline is unknown.
+    """
+    province = None
+    for update in user.updates or []:
+        if update.update_time < residency_deadline:
+            province = update.province
+    if not user.updates:
+        province = user.province
+    return province
+
+
+def resolve_eligibility(user, championship, valid_province_keys, residency_deadline, is_regional):
+    """Decide whether ``user`` is eligible for ``championship`` and lock them in.
+
+    Eligibility is residency-based with per-tier, per-year locking: once a user has
+    been found eligible for a championship of a given tier in a year, that choice is
+    cached on the user (``regional_eligibilities`` / ``province_eligibilities``) and a
+    different championship of the same tier/year will not also crown them.
+
+    Returns ``(is_eligible, user_modified)`` where ``user_modified`` indicates a new
+    eligibility was appended and the user needs to be persisted.
+    """
+    existing_eligibilities = user.regional_eligibilities if is_regional else user.province_eligibilities
+
+    for eligibility in existing_eligibilities:
+        if eligibility.year != championship.year:
+            continue
+        if is_regional:
+            return eligibility.region == championship.region, False
+        return eligibility.province in valid_province_keys, False
+
+    province = resolve_residency(user, residency_deadline)
+    if province and province in valid_province_keys:
+        if is_regional:
+            eligibility = RegionalChampionshipEligibility()
+            eligibility.championship = championship.key
+            user.regional_eligibilities.append(eligibility)
+        else:
+            eligibility = ProvinceChampionshipEligibility()
+            eligibility.championship = championship.key
+            user.province_eligibilities.append(eligibility)
+        return True, True
+
+    return False, False
+
 
 def compute_eligible_competitors(championship, competition, results):
     if championship.national_championship:
@@ -24,64 +98,58 @@ def compute_eligible_competitors(championship, competition, results):
     )
 
     competitors = set([r.person for r in results])
-    users = User.query(User.wca_person.IN(competitors)).fetch()
+    users = fetch_users_for_competitors(competitors)
 
     is_regional = bool(championship.region)
 
     eligible_competitors = set()
     competitors_to_put = []
 
-    class Resolution:
-        ELIGIBLE = 0
-        INELIGIBLE = 1
-        UNRESOLVED = 2
-
     for user in users:
-        resolution = Resolution.UNRESOLVED
-
-        existing_eligibilities = user.regional_eligibilities if is_regional else user.province_eligibilities
-
-        for eligibility in existing_eligibilities:
-            if eligibility.year != championship.year:
-                continue
-            if is_regional:
-                if eligibility.region == championship.region:
-                    resolution = Resolution.ELIGIBLE
-                else:
-                    resolution = Resolution.INELIGIBLE
-            else:
-                if eligibility.province in valid_province_keys:
-                    resolution = Resolution.ELIGIBLE
-                else:
-                    resolution = Resolution.INELIGIBLE
-            break
-
-        if resolution == Resolution.UNRESOLVED:
-            province = None
-            for update in user.updates or []:
-                if update.update_time < residency_deadline:
-                    province = update.province
-            if not user.updates:
-                province = user.province
-            if province and province in valid_province_keys:
-                resolution = Resolution.ELIGIBLE
-                if is_regional:
-                    eligibility = RegionalChampionshipEligibility()
-                    eligibility.championship = championship.key
-                    user.regional_eligibilities.append(eligibility)
-                else:
-                    eligibility = ProvinceChampionshipEligibility()
-                    eligibility.championship = championship.key
-                    user.province_eligibilities.append(eligibility)
-                competitors_to_put.append(user)
-            else:
-                resolution = Resolution.INELIGIBLE
-
-        if resolution == Resolution.ELIGIBLE:
+        eligible, modified = resolve_eligibility(user, championship, valid_province_keys, residency_deadline, is_regional)
+        if modified:
+            competitors_to_put.append(user)
+        if eligible:
             eligible_competitors.add(user.wca_person.id())
 
     ndb.put_multi(competitors_to_put)
     return eligible_competitors
+
+
+def select_champions(results, eligible_competitors, final_round_keys, year):
+    """Pick the champion Result(s) per event from a championship's final-round results.
+
+    ``results`` must be ordered by ``Result.pos``. Skips DNFs (``best < 0``) and
+    non-final rounds, maps the pre-2009 multi-blind event ``333mbo`` onto ``333mbf``,
+    keeps only the top *eligible* finisher per event, and preserves ties (multiple
+    Results sharing the winning position). Returns ``{event_key: [Result, ...]}``.
+    """
+    champions = collections.defaultdict(list)
+    events_held_with_successes = set()
+    for result in results:
+        if result.best < 0:
+            continue
+        if result.round_type not in final_round_keys:
+            continue
+        this_event = result.event
+        # For multi blind, we only recognize pre-2009 champions in 333mbo, since
+        # that was the multi-blind event held those years.  For clarity in the
+        # champions listings, we list those champions as the 333mbf champions for
+        # those years.
+        if year < 2009:
+            if result.event.id() == "333mbo":
+                this_event = ndb.Key(Event, "333mbf")
+            elif result.event.id() == "333mbf":
+                continue
+        events_held_with_successes.add(this_event)
+        if this_event in champions and champions[this_event][0].pos < result.pos:
+            continue
+        if result.person.id() not in eligible_competitors:
+            continue
+        champions[this_event].append(result)
+        if result.pos > 1 and len(champions) >= len(events_held_with_successes):
+            break
+    return champions
 
 
 def update_champions():
@@ -113,31 +181,7 @@ def update_champions():
             logging.info("Results are not uploaded yet.  Not computing champions yet.")
             continue
         eligible_competitors = compute_eligible_competitors(championship, competition, results)
-        champions = collections.defaultdict(list)
-        events_held_with_successes = set()
-        for result in results:
-            if result.best < 0:
-                continue
-            if result.round_type not in final_round_keys:
-                continue
-            this_event = result.event
-            # For multi blind, we only recognize pre-2009 champions in 333mbo, since
-            # that was the multi-blind event held those years.  For clarity in the
-            # champions listings, we list those champions as the 333mbf champions for
-            # those years.
-            if championship.competition.get().year < 2009:
-                if result.event.id() == "333mbo":
-                    this_event = ndb.Key(Event, "333mbf")
-                elif result.event.id() == "333mbf":
-                    continue
-            events_held_with_successes.add(this_event)
-            if this_event in champions and champions[this_event][0].pos < result.pos:
-                continue
-            if result.person.id() not in eligible_competitors:
-                continue
-            champions[this_event].append(result)
-            if result.pos > 1 and len(champions) >= len(events_held_with_successes):
-                break
+        champions = select_champions(results, eligible_competitors, final_round_keys, competition.year)
         for event_key in all_event_keys:
             champion_id = Champion.id(championship.key.id(), event_key.id())
             if event_key in champions:
