@@ -42,6 +42,11 @@ export type CompetitionSeries = {
   competitionIds: string[];
 };
 
+export interface LocationUpdate {
+  province: string | null;
+  update_time: string;
+}
+
 export interface User {
   id: number;
   name: string;
@@ -50,6 +55,7 @@ export interface User {
   wca_id: string;
   dob: string;
   email: string;
+  updates?: LocationUpdate[];
 }
 
 export interface ProfileEditData {

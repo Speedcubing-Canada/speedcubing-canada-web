@@ -61,6 +61,13 @@ class User(ndb.Model):
         return bool(set(self.roles) & set(roles))
 
     def to_json(self):
+        # Residency history (province changes), most-recent-first, so an admin can
+        # debug championship eligibility (resolved as of a deadline) from the UI.
+        updates = sorted(
+            (u for u in self.updates if u.update_time),
+            key=lambda u: u.update_time,
+            reverse=True,
+        )
         return {
             "id": self.key.id(),
             "name": self.name,
@@ -69,6 +76,13 @@ class User(ndb.Model):
             "province": self.province.id() if self.province else None,
             "wca_id": self.wca_person.id() if self.wca_person else None,
             "email": self.email,
+            "updates": [
+                {
+                    "province": u.province.id() if u.province else None,
+                    "update_time": u.update_time.isoformat(),
+                }
+                for u in updates
+            ],
         }
 
 

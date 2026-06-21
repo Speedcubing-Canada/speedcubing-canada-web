@@ -3,6 +3,7 @@ import {
   ChipField,
   DateField,
   EmailField,
+  Labeled,
   Show,
   SimpleShowLayout,
   TextField,
@@ -10,8 +11,17 @@ import {
   useRecordContext,
   useTranslate,
 } from "react-admin";
-import { Link } from "@mui/material";
+import {
+  Link,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableRow,
+  Typography,
+} from "@mui/material";
 import { LINKS } from "../pages/links";
+import { LocationUpdate } from "../types";
 
 const WCA_PROFILE_URL = LINKS.WCA.PROFILE;
 
@@ -27,9 +37,49 @@ export const UserShow = () => (
       <DateField source="dob" />
       <WcaProfileUrlField source="wca_id" />
       <EmailField source="email" />
+      <ResidencyHistoryField source="updates" />
     </SimpleShowLayout>
   </Show>
 );
+
+// Province change history (newest first), to debug residency-based championship
+// eligibility (residency is resolved as of a championship's deadline).
+const ResidencyHistoryField = ({ source }: { source: string }) => {
+  const t = useTranslate();
+  const record = useRecordContext();
+  if (!record) return null;
+  const updates = (record[source] as LocationUpdate[] | undefined) ?? [];
+  return (
+    <Labeled label={t("translation.residency.history")}>
+      {updates.length === 0 ? (
+        <Typography variant="body2" color="textSecondary">
+          {t("translation.residency.none")}
+        </Typography>
+      ) : (
+        <Table size="small">
+          <TableHead>
+            <TableRow>
+              <TableCell>{t("translation.residency.date")}</TableCell>
+              <TableCell>{t("translation.residency.province")}</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {updates.map((update, index) => (
+              <TableRow key={index}>
+                <TableCell>
+                  {new Date(update.update_time).toLocaleString()}
+                </TableCell>
+                <TableCell>
+                  {t(`translation.provinces.${update.province}`)}
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      )}
+    </Labeled>
+  );
+};
 
 export const UserRoleChip = () => {
   const t = useTranslate();

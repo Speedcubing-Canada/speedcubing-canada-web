@@ -6,9 +6,9 @@ import {
   FunctionField,
   List,
   NumberField,
+  SearchInput,
   SimpleList,
   TextField,
-  TextInput,
   useTranslate,
 } from "react-admin";
 
@@ -18,7 +18,7 @@ export const ChampionshipList = () => {
   const typeLabel = (type: string) =>
     type ? translate(`resources.ChampionshipsAdmin.types.${type}`) : "";
 
-  const filters = [<TextInput source="q" label="Search" alwaysOn />];
+  const filters = [<SearchInput source="q" alwaysOn />];
 
   return (
     <List filters={filters} sort={{ field: "year", order: "DESC" }}>

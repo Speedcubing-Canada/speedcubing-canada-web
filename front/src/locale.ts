@@ -67,6 +67,7 @@ export const resources = {
         noPastTitle: "No past editions yet",
         noPastBody:
           "Champions will appear here once this region hosts its first championship.",
+        close: "Close",
         regions: {
           bc: "British Columbia",
           pr: "Prairies",
@@ -314,6 +315,12 @@ export const resources = {
           "No accepted registrations found for this championship.",
         loadError: "Failed to load eligibility data.",
       },
+      residency: {
+        history: "Residency history",
+        date: "Date",
+        province: "Province",
+        none: "No recorded province changes.",
+      },
     },
     ...englishMessages,
     resources: {
@@ -419,6 +426,7 @@ export const resources = {
         noPastTitle: "Aucune édition passée",
         noPastBody:
           "Les champions apparaîtront ici une fois que cette région aura accueilli son premier championnat.",
+        close: "Fermer",
         regions: {
           bc: "Colombie-Britannique",
           pr: "Prairies",
@@ -668,6 +676,12 @@ export const resources = {
         noRegistrations:
           "Aucune inscription acceptée trouvée pour ce championnat.",
         loadError: "Échec du chargement des données d'éligibilité.",
+      },
+      residency: {
+        history: "Historique de résidence",
+        date: "Date",
+        province: "Province",
+        none: "Aucun changement de province enregistré.",
       },
     },
     ...frenchMessages,

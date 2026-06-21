@@ -143,7 +143,11 @@ export const RegionPanel: React.FC<RegionPanelProps> = ({
             {regionName}
           </Typography>
         </Box>
-        <IconButton onClick={onClose} aria-label="Close" sx={{ mt: -0.5 }}>
+        <IconButton
+          onClick={onClose}
+          aria-label={t("championships.close")}
+          sx={{ mt: -0.5 }}
+        >
           <CloseRoundedIcon />
         </IconButton>
       </Stack>

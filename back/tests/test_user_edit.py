@@ -4,8 +4,50 @@ import datetime
 from unittest.mock import MagicMock
 
 from backend.lib.residency import PROVINCE_CHANGE_WINDOW, recent_location_change
+from backend.models.user import User
 
 NOW = datetime.datetime(2026, 6, 20, 12, 0, 0)
+
+
+def _location_update(province_id, when):
+    u = MagicMock()
+    u.update_time = when
+    u.province = None if province_id is None else MagicMock()
+    if province_id is not None:
+        u.province.id.return_value = province_id
+    return u
+
+
+def _user(updates):
+    user = MagicMock()
+    user.key.id.return_value = 1
+    user.name = "Test"
+    user.roles = []
+    user.dob = None
+    user.province = None
+    user.wca_person = None
+    user.email = None
+    user.updates = updates
+    return user
+
+
+def test_to_json_includes_updates_most_recent_first():
+    older = _location_update("on", NOW - datetime.timedelta(days=400))
+    newer = _location_update("qc", NOW - datetime.timedelta(days=10))
+    result = User.to_json(_user([older, newer]))
+    assert [u["province"] for u in result["updates"]] == ["qc", "on"]
+    assert result["updates"][0]["update_time"] == newer.update_time.isoformat()
+
+
+def test_to_json_updates_handles_none_province_and_skips_missing_timestamp():
+    no_province = _location_update(None, NOW - datetime.timedelta(days=5))
+    no_time = _location_update("ab", None)
+    result = User.to_json(_user([no_time, no_province]))
+    assert result["updates"] == [{"province": None, "update_time": no_province.update_time.isoformat()}]
+
+
+def test_to_json_empty_updates():
+    assert User.to_json(_user([]))["updates"] == []
 
 
 def _update(when):
