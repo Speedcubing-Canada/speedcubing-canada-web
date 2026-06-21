@@ -264,7 +264,7 @@ def test_ties_at_winning_position_all_kept():
 def test_finalist_beats_no_average_cutoff_competitor():
     # Quebec 2024, 5x5: Alexandre reached the final (pos 10) while Charles-Olivier only did the
     # combined first round, missed the cutoff (no average -> placed last, pos 19) but posted a valid
-    # single. The champion must be the finalist, not the better-known name stuck in an earlier round.
+    # single. The champion must be the finalist, not someone stuck in an earlier round.
     event = _key("555")
     alex_first = _result("alex", pos=8, event=event, round_type="first")
     alex_final = _result("alex", pos=10, event=event, round_type="final")
