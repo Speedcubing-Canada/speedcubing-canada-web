@@ -22,6 +22,8 @@ LATEST_EXPORT=$(curl https://www.worldcubeassociation.org/export/results \
 if [ "$SAVED_EXPORT" == "$LATEST_EXPORT" ]
 then
   echo "Already have latest export $LATEST_EXPORT; returning."
+  /usr/sbin/shutdown -h now
+  exit 0
 fi
 
 if [ "$SAVED_EXPORT" != "$LATEST_EXPORT" ]

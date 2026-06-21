@@ -3,6 +3,7 @@ import csv
 from absl import app, flags, logging
 from google.cloud import ndb
 
+from backend.load_db.setup_geography import setup_regions_and_provinces
 from backend.load_db.update_champions import update_champions
 from backend.load_db.update_championships import update_championships
 from backend.load_db.update_province_records import update_province_records
@@ -183,6 +184,9 @@ def main(argv):
     client = ndb.Client()
     with client.context():
         if do_everything or FLAGS.only_update_championships:
+            # Regions/provinces must be canonical and present before classification,
+            # which matches competitions to regions by championship_name.
+            setup_regions_and_provinces()
             update_championships()
         if do_everything or FLAGS.only_update_champions:
             update_champions()

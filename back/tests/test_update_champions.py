@@ -64,11 +64,16 @@ def test_residency_uses_latest_update_before_deadline():
     assert resolve_residency(user, datetime.datetime(2026, 1, 1)) == "SK"
 
 
-def test_residency_unknown_when_all_updates_after_deadline():
+def test_residency_falls_back_to_earliest_update_when_all_after_deadline():
+    # The deadline precedes every recorded update (e.g. a past championship for a user
+    # who only set their province recently) -> use the earliest known residency.
     user = MagicMock()
     user.province = "BC"
-    user.updates = [_update("AB", datetime.datetime(2027, 1, 1))]
-    assert resolve_residency(user, datetime.datetime(2026, 1, 1)) is None
+    user.updates = [
+        _update("AB", datetime.datetime(2027, 1, 1)),
+        _update("SK", datetime.datetime(2028, 1, 1)),
+    ]
+    assert resolve_residency(user, datetime.datetime(2026, 1, 1)) == "AB"
 
 
 # ---------------------------------------------------------------------------
@@ -201,14 +206,14 @@ def test_province_and_regional_tiers_lock_independently():
 # select_champions
 # ---------------------------------------------------------------------------
 
-FINAL = "final"
-FINAL_KEYS = {FINAL}
+# Round-type keys -> rank (higher = closer to the final), as in the WCA round_types table.
+ROUND_RANKS = {"final": 99, "semi": 79, "first": 29}
 
 
 def test_top_eligible_finisher_is_champion():
     event = _key("333")
     results = [_result("alice", pos=1, event=event), _result("bob", pos=2, event=event)]
-    champions = select_champions(results, {"alice", "bob"}, FINAL_KEYS, year=2026)
+    champions = select_champions(results, {"alice", "bob"}, ROUND_RANKS, year=2026)
     assert champions[event] == [results[0]]
 
 
@@ -216,7 +221,7 @@ def test_ineligible_winner_skipped_for_next_eligible():
     event = _key("333")
     winner = _result("ineligible", pos=1, event=event)
     runner_up = _result("eligible", pos=2, event=event)
-    champions = select_champions([winner, runner_up], {"eligible"}, FINAL_KEYS, year=2026)
+    champions = select_champions([winner, runner_up], {"eligible"}, ROUND_RANKS, year=2026)
     assert champions[event] == [runner_up]
 
 
@@ -224,14 +229,27 @@ def test_dnf_results_are_skipped():
     event = _key("333")
     dnf = _result("alice", pos=1, best=-1, event=event)
     real = _result("bob", pos=2, best=900, event=event)
-    champions = select_champions([dnf, real], {"alice", "bob"}, FINAL_KEYS, year=2026)
+    champions = select_champions([dnf, real], {"alice", "bob"}, ROUND_RANKS, year=2026)
     assert champions[event] == [real]
 
 
-def test_non_final_rounds_are_skipped():
-    semi = _result("alice", pos=1, round_type="semi")
-    champions = select_champions([semi], {"alice"}, FINAL_KEYS, year=2026)
-    assert champions == {}
+def test_falls_back_to_previous_round_when_no_eligible_in_final():
+    # No eligible competitor reached the final -> champion is the best eligible from
+    # the latest round they did reach (the semi-final here).
+    event = _key("333")
+    semi = _result("alice", pos=1, event=event, round_type="semi")
+    champions = select_champions([semi], {"alice"}, ROUND_RANKS, year=2026)
+    assert champions[event] == [semi]
+
+
+def test_final_preferred_over_earlier_round():
+    # An eligible competitor in the final wins even if another eligible competitor won
+    # an earlier round.
+    event = _key("333")
+    semi_winner = _result("alice", pos=1, event=event, round_type="semi")
+    finalist = _result("bob", pos=5, event=event, round_type="final")
+    champions = select_champions([semi_winner, finalist], {"alice", "bob"}, ROUND_RANKS, year=2026)
+    assert champions[event] == [finalist]
 
 
 def test_ties_at_winning_position_all_kept():
@@ -239,8 +257,31 @@ def test_ties_at_winning_position_all_kept():
     t1 = _result("alice", pos=1, event=event)
     t2 = _result("bob", pos=1, event=event)
     loser = _result("carol", pos=3, event=event)
-    champions = select_champions([t1, t2, loser], {"alice", "bob", "carol"}, FINAL_KEYS, year=2026)
+    champions = select_champions([t1, t2, loser], {"alice", "bob", "carol"}, ROUND_RANKS, year=2026)
     assert set(champions[event]) == {t1, t2}
+
+
+def test_finalist_beats_no_average_cutoff_competitor():
+    # Quebec 2024, 5x5: Alexandre reached the final (pos 10) while Charles-Olivier only did the
+    # combined first round, missed the cutoff (no average -> placed last, pos 19) but posted a valid
+    # single. The champion must be the finalist, not the better-known name stuck in an earlier round.
+    event = _key("555")
+    alex_first = _result("alex", pos=8, event=event, round_type="first")
+    alex_final = _result("alex", pos=10, event=event, round_type="final")
+    charles_first = _result("charles", pos=19, best=10084, event=event, round_type="first")
+    champions = select_champions([alex_final, alex_first, charles_first], {"alex", "charles"}, ROUND_RANKS, year=2024)
+    assert champions[event] == [alex_final]
+
+
+def test_no_average_cutoff_competitor_loses_to_average_holder_in_fallback():
+    # No eligible competitor reached the final, so we fall back to the combined first round. A
+    # competitor who missed the cutoff (no average -> placed last) must not outrank one who posted an
+    # average: WCA pos already ranks no-average results below everyone with an average.
+    event = _key("555")
+    with_avg = _result("alex", pos=8, event=event, round_type="first")
+    no_avg = _result("charles", pos=19, best=10084, event=event, round_type="first")
+    champions = select_champions([with_avg, no_avg], {"alex", "charles"}, ROUND_RANKS, year=2024)
+    assert champions[event] == [with_avg]
 
 
 @patch(f"{BASE}.ndb")
@@ -249,7 +290,7 @@ def test_pre_2009_mbo_mapped_to_mbf(mock_ndb):
     mock_ndb.Key.return_value = mbf_key
     mbo = _result("alice", pos=1, event_id="333mbo")
     mbf = _result("bob", pos=1, event_id="333mbf")
-    champions = select_champions([mbo, mbf], {"alice", "bob"}, FINAL_KEYS, year=2008)
+    champions = select_champions([mbo, mbf], {"alice", "bob"}, ROUND_RANKS, year=2008)
     # The 333mbo champion is recorded under the 333mbf key; the real 333mbf result is dropped.
     assert champions[mbf_key] == [mbo]
     assert len(champions) == 1

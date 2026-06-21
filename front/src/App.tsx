@@ -53,6 +53,9 @@ const ChampionshipEligibility = React.lazy(() =>
     default: m.ChampionshipEligibility,
   })),
 );
+const Championships = React.lazy(() =>
+  import("./pages/Championships").then((m) => ({ default: m.Championships })),
+);
 
 const getInitialLocale = () => {
   const pathLocale = window.location.pathname.split("/")[1];
@@ -114,6 +117,7 @@ const App = () => {
                     element={<Competition />}
                   />
                   <Route path="rankings" element={<Rankings />} />
+                  <Route path="championships" element={<Championships />} />
                   <Route path="account" element={<Account />} />
                   <Route
                     path="championship-eligibility"

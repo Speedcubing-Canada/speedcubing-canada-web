@@ -114,7 +114,11 @@ export const Account = () => {
     hideAlert();
     const selectedProvince = province || defaultProvince;
 
-    const response = await httpClient.post(API_BASE_URL + "/edit", {
+    const response = await httpClient.post<
+      { province: string },
+      unknown,
+      { code?: string; next_allowed?: string }
+    >(API_BASE_URL + "/edit", {
       province: selectedProvince.id,
     });
 
@@ -136,7 +140,17 @@ export const Account = () => {
       showAlert("success", t("account.success"));
     } else {
       console.log(response.error);
-      showAlert("error", t("account.error"));
+      if (response.error?.code === "province_change_rate_limited") {
+        const nextAllowed = response.error.next_allowed;
+        showAlert(
+          "error",
+          t("account.provinceChangeLimited", {
+            date: nextAllowed ? dayjs(nextAllowed).format("DD-MM-YYYY") : "",
+          }),
+        );
+      } else {
+        showAlert("error", t("account.error"));
+      }
     }
   };
 

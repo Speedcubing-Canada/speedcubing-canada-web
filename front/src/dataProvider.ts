@@ -28,6 +28,22 @@ const dataProvider: DataProvider = {
   getList: (resource, params) => {
     const { page, perPage } = params.pagination;
     const { field, order } = params.sort;
+
+    if (resource === "ChampionshipsAdmin") {
+      const query = {
+        page,
+        per_page: perPage,
+        sort_field: field,
+        sort_order: order,
+        q: params.filter?.q ?? "",
+      };
+      const url = `${apiUrl}/admin/get_championships?${stringify(query)}`;
+      return httpClient(url).then(({ json }) => ({
+        data: json.data,
+        total: json.total,
+      }));
+    }
+
     const query = {
       sort_field: JSON.stringify(field),
       sort_order: JSON.stringify(order),
@@ -44,12 +60,25 @@ const dataProvider: DataProvider = {
     });
   },
 
-  getOne: (resource, params) =>
-    httpClient(`${apiUrl}/user_info/${params.id}`).then(({ json }) => ({
+  getOne: (resource, params) => {
+    if (resource === "ChampionshipsAdmin") {
+      return httpClient(`${apiUrl}/admin/championship/${params.id}`).then(
+        ({ json }) => ({
+          data: json,
+        }),
+      );
+    }
+    return httpClient(`${apiUrl}/user_info/${params.id}`).then(({ json }) => ({
       data: json,
-    })),
+    }));
+  },
 
   getMany: (resource, params) => {
+    if (resource === "ChampionshipsAdmin") {
+      const query = { ids: JSON.stringify(params.ids) };
+      const url = `${apiUrl}/admin/get_championships_by_id?${stringify(query)}`;
+      return httpClient(url).then(({ json }) => ({ data: json.data }));
+    }
     const query = {
       filter: JSON.stringify({ ids: params.ids }),
     };
@@ -88,19 +117,33 @@ const dataProvider: DataProvider = {
   create: (
     resource: any,
     params: { data: any }, //not setup
-  ) =>
-    httpClient(`${apiUrl}/${resource}`, {
+  ) => {
+    if (resource === "ChampionshipsAdmin") {
+      return httpClient(`${apiUrl}/admin/championships`, {
+        method: "POST",
+        body: JSON.stringify(params.data),
+      }).then(({ json }) => ({ data: json }));
+    }
+    return httpClient(`${apiUrl}/${resource}`, {
       method: "POST",
       body: JSON.stringify(params.data),
     }).then(({ json }) => ({
       data: { ...params.data, id: json.id },
-    })),
+    }));
+  },
 
-  update: (resource, params) =>
-    httpClient(`${apiUrl}/edit/${params.id}`, {
+  update: (resource, params) => {
+    if (resource === "ChampionshipsAdmin") {
+      return httpClient(`${apiUrl}/admin/championships/${params.id}`, {
+        method: "POST",
+        body: JSON.stringify(params.data),
+      }).then(({ json }) => ({ data: json }));
+    }
+    return httpClient(`${apiUrl}/edit/${params.id}`, {
       method: "POST",
       body: JSON.stringify(params.data),
-    }).then(({ json }) => ({ data: json })),
+    }).then(({ json }) => ({ data: json }));
+  },
 
   updateMany: (resource: any, params: { ids: any; data: any }) => {
     //not setup
@@ -113,10 +156,16 @@ const dataProvider: DataProvider = {
     }).then(({ json }) => ({ data: json }));
   },
 
-  delete: (resource, params) =>
-    httpClient(`${apiUrl}/${resource}/${params.id}`, {
+  delete: (resource, params) => {
+    if (resource === "ChampionshipsAdmin") {
+      return httpClient(`${apiUrl}/admin/championships/${params.id}`, {
+        method: "DELETE",
+      }).then(({ json }) => ({ data: json.data ?? { id: params.id } }));
+    }
+    return httpClient(`${apiUrl}/${resource}/${params.id}`, {
       method: "DELETE",
-    }).then(({ json }) => ({ data: json })),
+    }).then(({ json }) => ({ data: json }));
+  },
 
   deleteMany: (resource, params) => {
     const query = {

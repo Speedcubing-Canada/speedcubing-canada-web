@@ -5,6 +5,7 @@ import os
 
 from google.cloud import ndb
 
+from backend.lib.residency import resolve_residency
 from backend.models.champion import Champion
 from backend.models.championship import Championship
 from backend.models.eligibility import ProvinceChampionshipEligibility, RegionalChampionshipEligibility
@@ -35,22 +36,6 @@ def fetch_users_for_competitors(competitors):
         chunk = competitors[start : start + _IN_QUERY_LIMIT]
         users.extend(User.query(User.wca_person.IN(chunk)).fetch())
     return users
-
-
-def resolve_residency(user, residency_deadline):
-    """Return the province key the user resided in at ``residency_deadline``.
-
-    The latest location update before the deadline wins. If the user has never
-    had a location update, fall back to their current province. Returns ``None``
-    when residency at the deadline is unknown.
-    """
-    province = None
-    for update in user.updates or []:
-        if update.update_time < residency_deadline:
-            province = update.province
-    if not user.updates:
-        province = user.province
-    return province
 
 
 def resolve_eligibility(user, championship, valid_province_keys, residency_deadline, is_regional):
@@ -116,46 +101,50 @@ def compute_eligible_competitors(championship, competition, results):
     return eligible_competitors
 
 
-def select_champions(results, eligible_competitors, final_round_keys, year):
-    """Pick the champion Result(s) per event from a championship's final-round results.
+def select_champions(results, eligible_competitors, round_ranks, year):
+    """Pick the champion Result(s) per event for a championship.
 
-    ``results`` must be ordered by ``Result.pos``. Skips DNFs (``best < 0``) and
-    non-final rounds, maps the pre-2009 multi-blind event ``333mbo`` onto ``333mbf``,
-    keeps only the top *eligible* finisher per event, and preserves ties (multiple
-    Results sharing the winning position). Returns ``{event_key: [Result, ...]}``.
+    For each event the champion is the eligible competitor who reached the
+    most-final round (ranked by ``round_ranks``: higher = closer to the final), and
+    within that round placed best by ``Result.pos``. This means the final winner when
+    an eligible competitor is in the final, and otherwise the best eligible competitor
+    from the latest round any eligible competitor reached (e.g. the semi-final). Ties
+    at the winning position are all kept.
+
+    Skips DNF/DNS results (``best <= 0``) and non-eligible competitors, and maps the
+    pre-2009 multi-blind event ``333mbo`` onto ``333mbf``. ``round_ranks`` maps a
+    ``RoundType`` key to its rank. Returns ``{event_key: [Result, ...]}``.
     """
-    champions = collections.defaultdict(list)
-    events_held_with_successes = set()
+    results_by_event = collections.defaultdict(list)
     for result in results:
-        if result.best < 0:
+        if result.best is None or result.best <= 0:
             continue
-        if result.round_type not in final_round_keys:
+        if result.person.id() not in eligible_competitors:
             continue
         this_event = result.event
-        # For multi blind, we only recognize pre-2009 champions in 333mbo, since
-        # that was the multi-blind event held those years.  For clarity in the
-        # champions listings, we list those champions as the 333mbf champions for
-        # those years.
+        # For multi blind, we only recognize pre-2009 champions in 333mbo, since that
+        # was the multi-blind event held those years.  For clarity in the champions
+        # listings, we list those champions as the 333mbf champions for those years.
         if year < 2009:
             if result.event.id() == "333mbo":
                 this_event = ndb.Key(Event, "333mbf")
             elif result.event.id() == "333mbf":
                 continue
-        events_held_with_successes.add(this_event)
-        if this_event in champions and champions[this_event][0].pos < result.pos:
-            continue
-        if result.person.id() not in eligible_competitors:
-            continue
-        champions[this_event].append(result)
-        if result.pos > 1 and len(champions) >= len(events_held_with_successes):
-            break
+        results_by_event[this_event].append(result)
+
+    champions = {}
+    for event_key, event_results in results_by_event.items():
+        furthest_rank = max(round_ranks.get(r.round_type, -1) for r in event_results)
+        finalists = [r for r in event_results if round_ranks.get(r.round_type, -1) == furthest_rank]
+        best_pos = min(r.pos for r in finalists)
+        champions[event_key] = [r for r in finalists if r.pos == best_pos]
     return champions
 
 
-def update_champions():
+def update_champions(recompute_all=False):
     champions_to_write = []
     champions_to_delete = []
-    final_round_keys = set(r.key for r in RoundType.query(RoundType.is_final == True).iter())  # noqa: E712
+    round_ranks = {r.key: r.rank for r in RoundType.query().iter()}
     all_event_keys = set(e.key for e in Event.query().iter())
     championships_already_computed = set()
     for champion in Champion.query().iter():
@@ -166,9 +155,11 @@ def update_champions():
             # we don't have location data.
             continue
         competition = championship.competition.get()
-        # Only recompute champions from the last 2 weeks, in case there are result updates.
+        # Only recompute champions from the last 2 weeks, in case there are result updates,
+        # unless a full recompute was requested (e.g. after a champion-logic change).
         if (
-            championship.key.id() in championships_already_computed
+            not recompute_all
+            and championship.key.id() in championships_already_computed
             and datetime.date.today() - competition.end_date > datetime.timedelta(days=14)
         ):
             continue
@@ -181,7 +172,7 @@ def update_champions():
             logging.info("Results are not uploaded yet.  Not computing champions yet.")
             continue
         eligible_competitors = compute_eligible_competitors(championship, competition, results)
-        champions = select_champions(results, eligible_competitors, final_round_keys, competition.year)
+        champions = select_champions(results, eligible_competitors, round_ranks, competition.year)
         for event_key in all_event_keys:
             champion_id = Champion.id(championship.key.id(), event_key.id())
             if event_key in champions:
