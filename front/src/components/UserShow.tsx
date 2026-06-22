@@ -64,8 +64,8 @@ const ResidencyHistoryField = ({ source }: { source: string }) => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {updates.map((update, index) => (
-              <TableRow key={index}>
+            {updates.map((update) => (
+              <TableRow key={update.update_time}>
                 <TableCell>
                   {new Date(update.update_time).toLocaleString()}
                 </TableCell>
@@ -86,10 +86,10 @@ export const UserRoleChip = () => {
   const { data } = useListContext();
   return (
     <div>
-      {data.map((roleId, index) => {
+      {data.map((roleId) => {
         const roleName = t(`translation.account.role.${roleId}`);
         return (
-          <ChipField key={index} record={{ name: roleName }} source="name" />
+          <ChipField key={roleId} record={{ name: roleName }} source="name" />
         );
       })}
     </div>

@@ -3,13 +3,18 @@ import {
   Container,
   Drawer,
   Stack,
+  SxProps,
+  Theme,
   Typography,
   useMediaQuery,
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { CanadaRegionMap } from "../components/championships/CanadaRegionMap";
+import {
+  CanadaRegionMap,
+  COLORS,
+} from "../components/championships/CanadaRegionMap";
 import { RegionPanel } from "../components/championships/RegionPanel";
 import {
   fallbackRegion,
@@ -93,8 +98,9 @@ export const Championships: React.FC = () => {
               fontWeight: 800,
               lineHeight: 1.05,
               mb: 1,
+              // textWrap isn't in the installed csstype yet; scope the cast to SxProps.
               textWrap: "balance",
-            } as any
+            } as SxProps<Theme>
           }
         >
           {t("championships.title")}
@@ -114,13 +120,13 @@ export const Championships: React.FC = () => {
           useFlexGap
         >
           <LegendSwatch
-            color="#e7a19c"
-            border="#c0392b"
+            color={COLORS.announced}
+            border={COLORS.announcedBorder}
             label={t("championships.legendAnnounced")}
           />
           <LegendSwatch
-            color="#e6ddd9"
-            border="#cdbdb7"
+            color={COLORS.quiet}
+            border={COLORS.quietBorder}
             label={t("championships.legendQuiet")}
           />
         </Stack>

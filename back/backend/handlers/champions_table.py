@@ -115,7 +115,6 @@ def champions_by_region(region_id, year):
         if not region:
             return jsonify({"error": "Unrecognized region id %s" % region_id}), 404
 
-        champions = []
-        for championship in region_championships(region, year_int):
-            champions.extend(Champion.query(Champion.championship == championship.key).fetch())
+        championship_keys = [c.key for c in region_championships(region, year_int)]
+        champions = Champion.query(Champion.championship.IN(championship_keys)).fetch() if championship_keys else []
         return jsonify(serialize_champions(champions))

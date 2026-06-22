@@ -5,7 +5,7 @@ from google.cloud import ndb
 
 from backend.lib import auth, permissions
 from backend.lib.permissions import require_auth
-from backend.lib.residency import PROVINCE_CHANGE_WINDOW, recent_location_change
+from backend.lib.residency import PROVINCE_CHANGE_WINDOW, most_recent_location_change_within_window
 from backend.models.province import Province
 from backend.models.user import User, UserLocationUpdate
 from backend.models.wca.rank import RankAverage, RankSingle
@@ -82,9 +82,9 @@ def edit(user_id=-1):
     if permissions.can_edit_location(user, me) and changed_location:
         # A member may only change their own province once per rolling year (to stop
         # gaming eligibility for more than one region's title). Admins editing another
-        # user from the dashboard (user != me) bypass this.
+        # user from the dashboard (user != me) aren't rate-limited.
         if user.key == me.key:
-            recent = recent_location_change(user, datetime.datetime.now())
+            recent = most_recent_location_change_within_window(user, datetime.datetime.now())
             if recent is not None:
                 next_allowed = recent.update_time + PROVINCE_CHANGE_WINDOW
                 return jsonify(

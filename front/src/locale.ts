@@ -721,7 +721,7 @@ export const resources = {
         },
         form: {
           is_pbq: "Please Be Quiet (PBQ)",
-          is_fmc: "Championnat du moins de coups",
+          is_fmc: "Championnat de FMC",
           competition_id_help:
             "La compétition où se tient ce championnat (p. ex. CanadianChampionship2026)",
           residency_timezone_help: "p. ex. America/Toronto",

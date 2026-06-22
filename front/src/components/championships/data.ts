@@ -5,6 +5,7 @@
 
 import { API_BASE_URL } from "../api";
 import httpClient from "../../httpClient";
+import { ACTIVE_EVENTS } from "../../types";
 
 export type RegionId = "bc" | "pr" | "on" | "qc" | "at" | "te";
 
@@ -27,32 +28,11 @@ export const PROVINCE_REGION: Record<string, RegionId> = {
 
 export const REGION_ORDER: RegionId[] = ["bc", "pr", "on", "qc", "at", "te"];
 
-export interface ChampEvent {
-  id: string;
-  name: string;
-}
-
-// Display order/names for the event picker. The backend champions route is the
-// source of truth for which events actually have champions in a given edition.
-export const EVENTS: ChampEvent[] = [
-  { id: "333", name: "3x3x3" },
-  { id: "222", name: "2x2x2" },
-  { id: "444", name: "4x4x4" },
-  { id: "555", name: "5x5x5" },
-  { id: "666", name: "6x6x6" },
-  { id: "777", name: "7x7x7" },
-  { id: "333bf", name: "3x3 Blind" },
-  { id: "333fm", name: "Fewest Moves" },
-  { id: "333oh", name: "One-Handed" },
-  { id: "clock", name: "Clock" },
-  { id: "minx", name: "Megaminx" },
-  { id: "pyram", name: "Pyraminx" },
-  { id: "skewb", name: "Skewb" },
-  { id: "sq1", name: "Square-1" },
-  { id: "444bf", name: "4x4 Blind" },
-  { id: "555bf", name: "5x5 Blind" },
-  { id: "333mbf", name: "Multi-Blind" },
-];
+// Display order for the event picker: the canonical active-event list from types.ts.
+// Event names are localized at render time via the `events._<id>` i18n keys (the same
+// keys MyCubingIcon uses) — never hardcode them here. The backend champions route is
+// the source of truth for which of these actually have champions in a given edition.
+export const EVENTS = ACTIVE_EVENTS;
 
 export type RegistrationStatus = "not_open" | "open" | "closed" | null;
 

@@ -81,12 +81,26 @@ def test_residency_falls_back_to_earliest_update_when_all_after_deadline():
 # ---------------------------------------------------------------------------
 
 
-def _championship(year=2026, region=None, key="champ"):
+def _championship(year=2026, region=None, province=None, key="champ"):
+    # ``year``/``region``/``province`` are exposed via the championship entity returned
+    # by ``key.get()`` (mirroring how _championship_attrs resolves them in production).
     c = MagicMock()
-    c.year = year
-    c.region = region
-    c.key = key
+    c.key = MagicMock(name=key)
+    attrs = MagicMock()
+    attrs.year, attrs.region, attrs.province = year, region, province
+    c.key.get.return_value = attrs
     return c
+
+
+def _lock(year, region=None, province=None):
+    """An embedded eligibility entity pointing at a prior championship (its attrs are
+    resolved through ``championship.get()``, like the real ComputedProperty lambdas)."""
+    elig = MagicMock()
+    elig.championship = MagicMock()
+    attrs = MagicMock()
+    attrs.year, attrs.region, attrs.province = year, region, province
+    elig.championship.get.return_value = attrs
+    return elig
 
 
 @patch(f"{BASE}.ProvinceChampionshipEligibility")
@@ -98,14 +112,19 @@ def test_provincial_resident_is_eligible_and_locked(MockProvElig):
     champ = _championship(region=None)
 
     eligible, modified = resolve_eligibility(
-        user, champ, valid_province_keys=["AB"], residency_deadline=datetime.datetime(2026, 1, 1), is_regional=False
+        user,
+        champ,
+        valid_province_keys=["AB"],
+        residency_deadline=datetime.datetime(2026, 1, 1),
+        is_regional=False,
+        champ_attr_cache={},
     )
 
     assert eligible is True
     assert modified is True
     # The eligibility was recorded on the user (locking).
     assert len(user.province_eligibilities) == 1
-    assert user.province_eligibilities[0].championship == "champ"
+    assert user.province_eligibilities[0].championship == champ.key
 
 
 def test_provincial_non_resident_is_ineligible_and_not_recorded():
@@ -116,7 +135,12 @@ def test_provincial_non_resident_is_ineligible_and_not_recorded():
     champ = _championship(region=None)
 
     eligible, modified = resolve_eligibility(
-        user, champ, valid_province_keys=["AB"], residency_deadline=datetime.datetime(2026, 1, 1), is_regional=False
+        user,
+        champ,
+        valid_province_keys=["AB"],
+        residency_deadline=datetime.datetime(2026, 1, 1),
+        is_regional=False,
+        champ_attr_cache={},
     )
 
     assert eligible is False
@@ -126,16 +150,18 @@ def test_provincial_non_resident_is_ineligible_and_not_recorded():
 
 def test_regional_lock_blocks_second_region_same_year():
     # User already locked into region "Prairies" for 2026.
-    existing = MagicMock()
-    existing.year = 2026
-    existing.region = "Prairies"
     user = MagicMock()
-    user.regional_eligibilities = [existing]
+    user.regional_eligibilities = [_lock(2026, region="Prairies")]
 
     champ = _championship(year=2026, region="Pacific")
 
     eligible, modified = resolve_eligibility(
-        user, champ, valid_province_keys=["BC"], residency_deadline=datetime.datetime(2026, 1, 1), is_regional=True
+        user,
+        champ,
+        valid_province_keys=["BC"],
+        residency_deadline=datetime.datetime(2026, 1, 1),
+        is_regional=True,
+        champ_attr_cache={},
     )
 
     assert eligible is False
@@ -143,16 +169,18 @@ def test_regional_lock_blocks_second_region_same_year():
 
 
 def test_regional_lock_allows_same_region_recompute():
-    existing = MagicMock()
-    existing.year = 2026
-    existing.region = "Prairies"
     user = MagicMock()
-    user.regional_eligibilities = [existing]
+    user.regional_eligibilities = [_lock(2026, region="Prairies")]
 
     champ = _championship(year=2026, region="Prairies")
 
     eligible, modified = resolve_eligibility(
-        user, champ, valid_province_keys=["AB"], residency_deadline=datetime.datetime(2026, 1, 1), is_regional=True
+        user,
+        champ,
+        valid_province_keys=["AB"],
+        residency_deadline=datetime.datetime(2026, 1, 1),
+        is_regional=True,
+        champ_attr_cache={},
     )
 
     assert eligible is True
@@ -160,19 +188,21 @@ def test_regional_lock_allows_same_region_recompute():
 
 
 def test_lock_from_previous_year_does_not_apply():
-    existing = MagicMock()
-    existing.year = 2025
-    existing.region = "Prairies"
     user = MagicMock()
     user.updates = []
     user.province = "BC"
-    user.regional_eligibilities = [existing]
+    user.regional_eligibilities = [_lock(2025, region="Prairies")]
 
     champ = _championship(year=2026, region="Pacific")
 
     with patch(f"{BASE}.RegionalChampionshipEligibility"):
         eligible, modified = resolve_eligibility(
-            user, champ, valid_province_keys=["BC"], residency_deadline=datetime.datetime(2026, 1, 1), is_regional=True
+            user,
+            champ,
+            valid_province_keys=["BC"],
+            residency_deadline=datetime.datetime(2026, 1, 1),
+            is_regional=True,
+            champ_attr_cache={},
         )
 
     # The 2025 lock is irrelevant; residency in BC (in Pacific) makes them eligible.
@@ -182,20 +212,22 @@ def test_lock_from_previous_year_does_not_apply():
 
 def test_province_and_regional_tiers_lock_independently():
     # A provincial lock must not affect regional eligibility resolution.
-    prov_lock = MagicMock()
-    prov_lock.year = 2026
-    prov_lock.province = "AB"
     user = MagicMock()
     user.updates = []
     user.province = "AB"
-    user.province_eligibilities = [prov_lock]
+    user.province_eligibilities = [_lock(2026, province="AB")]
     user.regional_eligibilities = []
 
     champ = _championship(year=2026, region="Prairies")
 
     with patch(f"{BASE}.RegionalChampionshipEligibility"):
         eligible, modified = resolve_eligibility(
-            user, champ, valid_province_keys=["AB"], residency_deadline=datetime.datetime(2026, 1, 1), is_regional=True
+            user,
+            champ,
+            valid_province_keys=["AB"],
+            residency_deadline=datetime.datetime(2026, 1, 1),
+            is_regional=True,
+            champ_attr_cache={},
         )
 
     assert eligible is True

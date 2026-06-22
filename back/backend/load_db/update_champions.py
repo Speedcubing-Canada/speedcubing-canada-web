@@ -18,12 +18,6 @@ from backend.models.wca.result import Result, RoundType
 _IN_QUERY_LIMIT = 30
 
 
-class Resolution:
-    ELIGIBLE = 0
-    INELIGIBLE = 1
-    UNRESOLVED = 2
-
-
 def fetch_users_for_competitors(competitors):
     """Fetch the Users for a set of person keys, batching around the IN-query cap.
 
@@ -38,7 +32,24 @@ def fetch_users_for_competitors(competitors):
     return users
 
 
-def resolve_eligibility(user, championship, valid_province_keys, residency_deadline, is_regional):
+def _championship_attrs(championship_key, cache):
+    """Return ``(year, region_key, province_key)`` for a championship, memoized.
+
+    ``RegionalChampionshipEligibility``/``ProvinceChampionshipEligibility`` expose
+    ``year``/``region``/``province`` as ``ComputedProperty`` lambdas that each run
+    ``self.championship.get()`` on every access. Reading them inside the per-user
+    eligibility loop would be a datastore round-trip per access; caching the resolved
+    tuple per championship key collapses that to one ``.get()`` per championship.
+    """
+    attrs = cache.get(championship_key)
+    if attrs is None:
+        champ = championship_key.get()
+        attrs = (champ.year, champ.region, champ.province)
+        cache[championship_key] = attrs
+    return attrs
+
+
+def resolve_eligibility(user, championship, valid_province_keys, residency_deadline, is_regional, champ_attr_cache):
     """Decide whether ``user`` is eligible for ``championship`` and lock them in.
 
     Eligibility is residency-based with per-tier, per-year locking: once a user has
@@ -46,17 +57,21 @@ def resolve_eligibility(user, championship, valid_province_keys, residency_deadl
     cached on the user (``regional_eligibilities`` / ``province_eligibilities``) and a
     different championship of the same tier/year will not also crown them.
 
-    Returns ``(is_eligible, user_modified)`` where ``user_modified`` indicates a new
-    eligibility was appended and the user needs to be persisted.
+    ``champ_attr_cache`` memoizes the ``(year, region, province)`` lookups across users
+    (see ``_championship_attrs``). Returns ``(is_eligible, user_modified)`` where
+    ``user_modified`` indicates a new eligibility was appended and the user needs to be
+    persisted.
     """
+    target_year, target_region, _ = _championship_attrs(championship.key, champ_attr_cache)
     existing_eligibilities = user.regional_eligibilities if is_regional else user.province_eligibilities
 
     for eligibility in existing_eligibilities:
-        if eligibility.year != championship.year:
+        elig_year, elig_region, elig_province = _championship_attrs(eligibility.championship, champ_attr_cache)
+        if elig_year != target_year:
             continue
         if is_regional:
-            return eligibility.region == championship.region, False
-        return eligibility.province in valid_province_keys, False
+            return elig_region == target_region, False
+        return elig_province in valid_province_keys, False
 
     province = resolve_residency(user, residency_deadline)
     if province and province in valid_province_keys:
@@ -89,9 +104,14 @@ def compute_eligible_competitors(championship, competition, results):
 
     eligible_competitors = set()
     competitors_to_put = []
+    # Seed the cache with the target championship's attrs (we already hold the entity)
+    # so neither the target nor any repeated lock lookup re-fetches it per user.
+    champ_attr_cache = {championship.key: (championship.year, championship.region, championship.province)}
 
     for user in users:
-        eligible, modified = resolve_eligibility(user, championship, valid_province_keys, residency_deadline, is_regional)
+        eligible, modified = resolve_eligibility(
+            user, championship, valid_province_keys, residency_deadline, is_regional, champ_attr_cache
+        )
         if modified:
             competitors_to_put.append(user)
         if eligible:

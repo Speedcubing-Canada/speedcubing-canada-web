@@ -1,11 +1,12 @@
 import datetime
 
-# A member may change their own province at most once per rolling year. Admin-initiated
-# changes (editing another user from the dashboard) bypass this — see handlers/user.py.
+# A member may change their own province at most once per rolling year. An admin editing
+# another user from the dashboard isn't rate-limited (see handlers/user.py), but the change
+# they make still records a UserLocationUpdate that counts toward that user's window.
 PROVINCE_CHANGE_WINDOW = datetime.timedelta(days=365)
 
 
-def recent_location_change(user, now):
+def most_recent_location_change_within_window(user, now):
     """Return the most recent ``UserLocationUpdate`` within the rate-limit window, else None.
 
     ``user.updates`` only gets an entry on an actual province change, so any in-window entry

@@ -89,7 +89,9 @@ export const RegionPanel: React.FC<RegionPanelProps> = ({
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
+    // Reset to the latest edition only when the region itself changes.
     setEdition(region.editions[0] ?? null);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [region.id]);
 
   // Fetch the champions for the selected edition.
@@ -119,7 +121,7 @@ export const RegionPanel: React.FC<RegionPanelProps> = ({
 
   // Events that actually have champions in this edition, in canonical EVENTS order.
   const availableEvents = EVENTS.filter((ev) =>
-    champions.some((c) => c.event_id === ev.id),
+    champions.some((c) => c.event_id === ev),
   );
   const selectedEvent = champions.find((c) => c.event_id === eventId);
 
@@ -363,12 +365,12 @@ export const RegionPanel: React.FC<RegionPanelProps> = ({
               </Typography>
               <Stack direction="row" spacing={1} useFlexGap flexWrap="wrap">
                 {availableEvents.map((ev) => {
-                  const sel = ev.id === eventId;
+                  const sel = ev === eventId;
                   return (
                     <IconButton
-                      key={ev.id}
-                      onClick={() => setEventId(ev.id)}
-                      title={ev.name}
+                      key={ev}
+                      onClick={() => setEventId(ev)}
+                      title={t(`events._${ev}`)}
                       sx={{
                         width: 48,
                         height: 48,
@@ -380,7 +382,7 @@ export const RegionPanel: React.FC<RegionPanelProps> = ({
                           : "background.paper",
                       }}
                     >
-                      <EventIcon id={ev.id} selected={sel} />
+                      <EventIcon id={ev} selected={sel} />
                     </IconButton>
                   );
                 })}
@@ -390,13 +392,14 @@ export const RegionPanel: React.FC<RegionPanelProps> = ({
                 variant="subtitle1"
                 sx={{ fontWeight: 700, mt: 3, mb: 1.5 }}
               >
-                {regionName} {edition} {"·"} {selectedEvent?.event_name ?? ""}
+                {regionName} {edition} {"·"}{" "}
+                {eventId ? t(`events._${eventId}`) : ""}
               </Typography>
 
               <Stack spacing={1.25}>
-                {(selectedEvent?.champions ?? []).map((champ, idx) => (
+                {(selectedEvent?.champions ?? []).map((champ) => (
                   <Box
-                    key={`${champ.wca_id}-${idx}`}
+                    key={`${champ.wca_id ?? champ.name}-${champ.pos}`}
                     sx={{
                       display: "flex",
                       alignItems: "center",

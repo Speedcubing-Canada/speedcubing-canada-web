@@ -31,10 +31,14 @@ const FULL = { x: 0, y: 0, w: VBW, h: VBH };
 // Territories only peek in at the top.
 const SOUTH: RegionId[] = ["bc", "pr", "on", "qc", "at"];
 
-const COLORS = {
+// Shared region palette. Exported so the page legend (Championships.tsx) draws the
+// exact same announced/quiet colours as the map and can't drift out of sync.
+export const COLORS = {
   announced: "#e7a19c",
+  announcedBorder: "#c0392b",
   announcedHover: "#dd8983",
   quiet: "#e6ddd9",
+  quietBorder: "#cdbdb7",
   quietHover: "#dccfca",
   selected: "#d32f2f",
   stroke: "#ffffff",

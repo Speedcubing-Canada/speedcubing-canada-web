@@ -1,9 +1,9 @@
-"""Tests for the once-a-year province change limit (recent_location_change)."""
+"""Tests for the once-a-year province change limit (most_recent_location_change_within_window)."""
 
 import datetime
 from unittest.mock import MagicMock
 
-from backend.lib.residency import PROVINCE_CHANGE_WINDOW, recent_location_change
+from backend.lib.residency import PROVINCE_CHANGE_WINDOW, most_recent_location_change_within_window
 from backend.models.user import User
 
 NOW = datetime.datetime(2026, 6, 20, 12, 0, 0)
@@ -60,14 +60,14 @@ def test_no_updates_is_allowed():
     # First-ever province set: no prior updates -> not rate limited.
     user = MagicMock()
     user.updates = []
-    assert recent_location_change(user, NOW) is None
+    assert most_recent_location_change_within_window(user, NOW) is None
 
 
 def test_change_older_than_a_year_is_allowed():
     # The only change was more than 365 days ago -> allowed to change again.
     user = MagicMock()
     user.updates = [_update(NOW - PROVINCE_CHANGE_WINDOW - datetime.timedelta(days=1))]
-    assert recent_location_change(user, NOW) is None
+    assert most_recent_location_change_within_window(user, NOW) is None
 
 
 def test_recent_change_is_blocked():
@@ -75,7 +75,7 @@ def test_recent_change_is_blocked():
     user = MagicMock()
     recent = _update(NOW - datetime.timedelta(days=30))
     user.updates = [recent]
-    assert recent_location_change(user, NOW) is recent
+    assert most_recent_location_change_within_window(user, NOW) is recent
 
 
 def test_returns_most_recent_in_window_update():
@@ -84,11 +84,11 @@ def test_returns_most_recent_in_window_update():
     older = _update(NOW - datetime.timedelta(days=200))
     newer = _update(NOW - datetime.timedelta(days=10))
     user.updates = [older, newer]
-    assert recent_location_change(user, NOW) is newer
+    assert most_recent_location_change_within_window(user, NOW) is newer
 
 
 def test_ignores_updates_without_a_timestamp():
     # Legacy entries with no update_time must not crash or count.
     user = MagicMock()
     user.updates = [_update(None)]
-    assert recent_location_change(user, NOW) is None
+    assert most_recent_location_change_within_window(user, NOW) is None

@@ -7,14 +7,18 @@ than spinning up the Flask app / a datastore emulator.
 import datetime
 from unittest.mock import MagicMock, patch
 
-from backend.handlers.admin.edit_championships import _derive_id, filter_and_sort
+import pytest
+from google.cloud import ndb
+
+from backend.handlers.admin.edit_championships import _apply_fields, _derive_id, filter_and_sort
 from backend.handlers.champions_table import (
     _format_champion_result,
     _serialize_champion_result,
     region_championships,
     serialize_champions,
 )
-from backend.handlers.regional import _upcoming_championship, display_region_key, registration_status
+from backend.handlers.regional import _upcoming_championship, display_region_key, fetch_registration, registration_status
+from backend.lib.residency import resolve_residency
 from backend.models.championship import Championship
 
 # ---------------------------------------------------------------------------
@@ -251,6 +255,118 @@ def test_derive_id_national_fmc():
     competition = MagicMock()
     competition.year = 2026
     assert _derive_id({"type": "national_fmc"}, competition) == "2026_fmc"
+
+
+# ---------------------------------------------------------------------------
+# edit_championships._apply_fields (residency-deadline tz normalization)
+# ---------------------------------------------------------------------------
+
+# _apply_fields assigns to a real Championship's ndb properties (a naive
+# DateTimeProperty and a Competition KeyProperty), so these tests run inside an
+# in-memory ndb context — no datastore I/O, just property validation.
+_ndb_client = ndb.Client()
+
+
+@pytest.fixture
+def ndb_context():
+    with _ndb_client.context():
+        yield
+
+
+def _competition(comp_id="WorldChamp2026", year=2026):
+    comp = MagicMock()
+    comp.key = ndb.Key("Competition", comp_id)
+    comp.year = year
+    return comp
+
+
+def test_apply_fields_normalizes_utc_z_deadline_to_naive(ndb_context):
+    # Regression: residency_deadline is a naive DateTimeProperty, so a tz-aware value
+    # raises BadValueError on assignment. The frontend DateTimeInput sends a "Z"-suffixed
+    # UTC string; _apply_fields must store it as naive-UTC.
+    champ = Championship()
+    data = {
+        "type": "national",
+        "residency_deadline": "2026-08-01T05:00:00Z",
+        "residency_timezone": "America/Toronto",
+    }
+    _apply_fields(champ, data, _competition())  # must not raise
+    assert champ.residency_deadline == datetime.datetime(2026, 8, 1, 5, 0, 0)
+    assert champ.residency_deadline.tzinfo is None
+    assert champ.residency_timezone == "America/Toronto"
+
+
+def test_apply_fields_converts_offset_deadline_to_utc(ndb_context):
+    champ = Championship()
+    _apply_fields(champ, {"type": "national", "residency_deadline": "2026-08-01T00:00:00-04:00"}, _competition())
+    # 00:00 at -04:00 == 04:00 UTC, stored naive.
+    assert champ.residency_deadline == datetime.datetime(2026, 8, 1, 4, 0, 0)
+    assert champ.residency_deadline.tzinfo is None
+
+
+def test_apply_fields_clears_deadline_when_absent(ndb_context):
+    champ = Championship()
+    _apply_fields(champ, {"type": "national"}, _competition())
+    assert champ.residency_deadline is None
+    assert champ.residency_timezone is None
+
+
+def test_apply_fields_deadline_is_comparable_in_resolve_residency(ndb_context):
+    # Ties the write path (_apply_fields) to the read path (resolve_residency): both
+    # sides must be naive so the comparison doesn't raise "can't compare offset-naive
+    # and offset-aware datetimes".
+    champ = Championship()
+    _apply_fields(champ, {"type": "national", "residency_deadline": "2026-01-01T00:00:00Z"}, _competition())
+
+    older, newer = MagicMock(), MagicMock()
+    older.province, older.update_time = "AB", datetime.datetime(2025, 6, 1)
+    newer.province, newer.update_time = "ON", datetime.datetime(2027, 1, 1)
+    user = MagicMock()
+    user.province = "BC"
+    user.updates = [older, newer]
+
+    assert resolve_residency(user, champ.residency_deadline) == "AB"
+
+
+# ---------------------------------------------------------------------------
+# regional.fetch_registration
+# ---------------------------------------------------------------------------
+
+REG_NOW = datetime.datetime(2026, 6, 20, tzinfo=datetime.timezone.utc)
+
+
+@patch("backend.handlers.regional.requests")
+def test_fetch_registration_derives_status(mock_requests):
+    resp = MagicMock()
+    resp.status_code = 200
+    resp.json.return_value = {
+        "registration_open": "2026-01-01T00:00:00Z",
+        "registration_close": "2026-12-01T00:00:00Z",
+    }
+    mock_requests.get.return_value = resp
+
+    out = fetch_registration("WorldChamp2026", now=REG_NOW)
+
+    assert out["registration_open"] == "2026-01-01T00:00:00Z"
+    assert out["registration_close"] == "2026-12-01T00:00:00Z"
+    assert out["registration_status"] == "open"
+
+
+@patch("backend.handlers.regional.requests")
+def test_fetch_registration_returns_none_on_http_error(mock_requests):
+    resp = MagicMock()
+    resp.status_code = 404
+    mock_requests.get.return_value = resp
+    assert fetch_registration("Nope2026", now=REG_NOW) is None
+
+
+@patch("backend.handlers.regional.requests")
+def test_fetch_registration_returns_none_on_request_exception(mock_requests):
+    import requests as real_requests
+
+    mock_requests.RequestException = real_requests.RequestException
+    mock_requests.get.side_effect = real_requests.RequestException("boom")
+    assert fetch_registration("Boom2026", now=REG_NOW) is None
 
 
 # ---------------------------------------------------------------------------

@@ -22,7 +22,7 @@ export const ChampionshipList = () => {
     [translate],
   );
 
-  const filters = [<SearchInput source="q" alwaysOn />];
+  const filters = [<SearchInput key="q" source="q" alwaysOn />];
 
   return (
     <List filters={filters} sort={{ field: "year", order: "DESC" }}>

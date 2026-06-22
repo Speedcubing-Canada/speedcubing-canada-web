@@ -113,7 +113,14 @@ def _apply_fields(championship, data, competition):
     championship.province = province.key if province else None
 
     deadline = data.get("residency_deadline")
-    championship.residency_deadline = datetime.datetime.fromisoformat(deadline.replace("Z", "+00:00")) if deadline else None
+    if deadline:
+        # The frontend sends a UTC ISO string (``...Z``). ``residency_deadline`` is a
+        # naive ``DateTimeProperty`` (presumed UTC, like the rest of the codebase), so
+        # normalize to UTC and drop the tzinfo before storing.
+        parsed = datetime.datetime.fromisoformat(deadline.replace("Z", "+00:00"))
+        championship.residency_deadline = parsed.astimezone(datetime.timezone.utc).replace(tzinfo=None)
+    else:
+        championship.residency_deadline = None
     championship.residency_timezone = data.get("residency_timezone") or None
 
 
