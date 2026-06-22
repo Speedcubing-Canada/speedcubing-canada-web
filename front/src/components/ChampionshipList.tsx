@@ -11,12 +11,16 @@ import {
   TextField,
   useTranslate,
 } from "react-admin";
+import { useCallback } from "react";
 
 export const ChampionshipList = () => {
   const isSmall = useMediaQuery<Theme>((theme) => theme.breakpoints.down("sm"));
   const translate = useTranslate();
-  const typeLabel = (type: string) =>
-    type ? translate(`resources.ChampionshipsAdmin.types.${type}`) : "";
+  const typeLabel = useCallback(
+    (type: string) =>
+      type ? translate(`resources.ChampionshipsAdmin.types.${type}`) : "",
+    [translate],
+  );
 
   const filters = [<SearchInput source="q" alwaysOn />];
 

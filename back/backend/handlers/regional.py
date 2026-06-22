@@ -49,7 +49,7 @@ def fetch_registration(competition_id, now=None):
             logging.warning("WCA competition fetch failed for %s: %s", competition_id, resp.status_code)
             return None
         data = resp.json()
-    except Exception as exc:  # noqa: BLE001 - degrade gracefully on any network/parse error
+    except (requests.RequestException, ValueError) as exc:
         logging.warning("WCA competition fetch error for %s: %s", competition_id, exc)
         return None
 

@@ -151,7 +151,7 @@ def create_championship():
     championship = Championship(id=championship_id)
     _apply_fields(championship, data, competition)
     championship.put()
-    # TODO: if we changed a championship we should recompute champions and eligibilities.
+    # Champion data is not updated automatically. Use /admin/recompute_championships to refresh after manual changes.
     return jsonify(_serialize_all([championship])[0])
 
 
@@ -168,9 +168,20 @@ def update_championship(championship_id):
     if not competition:
         return jsonify({"error": "Unknown competition"}), 400
 
+    new_id = _derive_id(data, competition)
+    if not new_id:
+        return jsonify({"error": "Could not determine championship id (check type/region/province)"}), 400
+    if new_id != championship_id:
+        return jsonify(
+            {
+                "error": f"This change requires a different championship ID ({new_id}). "
+                "Delete this record and create a new one."
+            }
+        ), 400
+
     _apply_fields(championship, data, competition)
     championship.put()
-    # TODO: if we changed a championship we should recompute champions and eligibilities.
+    # Champion data is not updated automatically. Use /admin/recompute_championships to refresh after manual changes.
     return jsonify(_serialize_all([championship])[0])
 
 
@@ -181,7 +192,7 @@ def delete_championship(championship_id):
     if not championship:
         return jsonify({"error": "Championship not found"}), 404
     championship.key.delete()
-    # TODO: if we changed a championship we should recompute champions and eligibilities.
+    # Champion data is not updated automatically. Use /admin/recompute_championships to refresh after manual changes.
     return jsonify({"data": {"id": championship_id}})
 
 
