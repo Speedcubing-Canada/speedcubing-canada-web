@@ -109,11 +109,11 @@ def champions_by_region(region_id, year):
         try:
             year_int = int(year)
         except (TypeError, ValueError):
-            return jsonify({"error": "Invalid year %s" % year}), 400
+            return jsonify({"error": f"Invalid year {year}"}), 400
 
         region = Region.get_by_id(region_id)
         if not region:
-            return jsonify({"error": "Unrecognized region id %s" % region_id}), 404
+            return jsonify({"error": f"Unrecognized region id {region_id}"}), 404
 
         championship_keys = [c.key for c in region_championships(region, year_int)]
         champions = Champion.query(Champion.championship.IN(championship_keys)).fetch() if championship_keys else []

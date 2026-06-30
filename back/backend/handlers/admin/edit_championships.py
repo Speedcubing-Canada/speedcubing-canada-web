@@ -153,7 +153,7 @@ def create_championship():
     if not championship_id:
         return jsonify({"error": "Could not determine championship id (check type/region/province)"}), 400
     if Championship.get_by_id(championship_id):
-        return jsonify({"error": "Championship %s already exists" % championship_id}), 409
+        return jsonify({"error": f"Championship {championship_id} already exists"}), 409
 
     championship = Championship(id=championship_id)
     _apply_fields(championship, data, competition)

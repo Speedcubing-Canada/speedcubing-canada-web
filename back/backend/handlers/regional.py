@@ -12,7 +12,7 @@ from backend.models.region import Region
 bp = Blueprint("regional", __name__)
 client = ndb.Client()
 
-_WCA_COMPETITION_URL = "https://www.worldcubeassociation.org/api/v0/competitions/%s"
+_WCA_COMPETITION_BASE_URL = "https://www.worldcubeassociation.org/api/v0/competitions"
 
 
 def _parse_iso(value):
@@ -44,7 +44,7 @@ def fetch_registration(competition_id, now=None):
     """
     now = now or datetime.datetime.now(datetime.timezone.utc)
     try:
-        resp = requests.get(_WCA_COMPETITION_URL % competition_id, timeout=10)
+        resp = requests.get(f"{_WCA_COMPETITION_BASE_URL}/{competition_id}", timeout=10)
         if resp.status_code != 200:
             logging.warning("WCA competition fetch failed for %s: %s", competition_id, resp.status_code)
             return None
