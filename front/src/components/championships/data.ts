@@ -28,6 +28,17 @@ export const PROVINCE_REGION: Record<string, RegionId> = {
 
 export const REGION_ORDER: RegionId[] = ["bc", "pr", "on", "qc", "at", "te"];
 
+// Inverted lookup: region -> list of province ids (derived from PROVINCE_REGION).
+export const REGION_PROVINCES: Record<RegionId, string[]> = Object.entries(
+  PROVINCE_REGION,
+).reduce(
+  (acc, [province, region]) => {
+    (acc[region] ??= []).push(province);
+    return acc;
+  },
+  {} as Record<RegionId, string[]>,
+);
+
 // Display order for the event picker: the canonical active-event list from types.ts.
 // Event names are localized at render time via the `events._<id>` i18n keys (the same
 // keys MyCubingIcon uses) — never hardcode them here. The backend champions route is
@@ -69,9 +80,7 @@ export function fallbackRegion(id: RegionId): RegionInfo {
     id,
     name: null,
     championship_name: null,
-    provinces: Object.keys(PROVINCE_REGION).filter(
-      (p) => PROVINCE_REGION[p] === id,
-    ),
+    provinces: REGION_PROVINCES[id] ?? [],
     editions: [],
     announced: false,
     upcoming: null,

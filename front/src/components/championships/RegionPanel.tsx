@@ -75,221 +75,149 @@ export interface RegionPanelProps {
   onClose: () => void;
 }
 
-export const RegionPanel: React.FC<RegionPanelProps> = ({
-  region,
-  onClose,
-}) => {
+function NextChampionshipSection({
+  upcoming,
+  hasPast,
+}: {
+  upcoming: import("./data").UpcomingChampionship | null;
+  hasPast: boolean;
+}) {
   const { t, i18n } = useTranslation();
   const locale = i18n.language;
-  const [edition, setEdition] = useState<number | null>(
-    region.editions[0] ?? null,
+  if (upcoming) {
+    return (
+      <Box
+        sx={{
+          borderRadius: 3,
+          p: 2.75,
+          color: "primary.contrastText",
+          background: "linear-gradient(135deg,#d32f2f,#b3261f)",
+          boxShadow: "0 16px 38px rgba(211,47,47,.26)",
+        }}
+      >
+        <Typography
+          variant="overline"
+          sx={{ opacity: 0.85, fontWeight: 700, letterSpacing: 1.2 }}
+        >
+          {t("championships.nextChampionship")}
+        </Typography>
+        <Typography
+          variant="h6"
+          sx={{ fontWeight: 800, lineHeight: 1.15, mb: 1.5 }}
+        >
+          {upcoming.name}
+        </Typography>
+        <Stack spacing={1.1}>
+          <DetailRow
+            icon={<EventOutlinedIcon fontSize="small" />}
+            label={formatDateRange(
+              upcoming.start_date,
+              upcoming.end_date,
+              locale,
+            )}
+          />
+          {upcoming.city && (
+            <DetailRow
+              icon={<PlaceOutlinedIcon fontSize="small" />}
+              label={upcoming.city}
+            />
+          )}
+          <DetailRow
+            icon={<HowToRegOutlinedIcon fontSize="small" />}
+            label={
+              upcoming.registration_status === "open"
+                ? t("championships.registrationOpen")
+                : upcoming.registration_status === "closed"
+                ? t("championships.registrationClosed")
+                : upcoming.registration_status === "not_open" &&
+                  upcoming.registration_open
+                ? t("championships.registrationOpens", {
+                    date: formatDate(upcoming.registration_open, locale),
+                  })
+                : t("championships.registrationTbd")
+            }
+          />
+        </Stack>
+        <Button
+          fullWidth
+          href={upcoming.wca_url}
+          target="_blank"
+          rel="noopener noreferrer"
+          endIcon={<OpenInNewRoundedIcon />}
+          sx={{
+            mt: 2.25,
+            bgcolor: "#fff",
+            color: "primary.main",
+            fontWeight: 700,
+            "&:hover": { bgcolor: "#f3f3f3" },
+          }}
+        >
+          {upcoming.registration_status === "open"
+            ? t("championships.register")
+            : t("championships.viewOnWca")}
+        </Button>
+      </Box>
+    );
+  }
+  return (
+    <Box
+      sx={{
+        borderRadius: 3,
+        p: 2.75,
+        border: "1.5px dashed",
+        borderColor: "divider",
+        bgcolor: "action.hover",
+      }}
+    >
+      <Typography
+        variant="overline"
+        sx={{ color: "text.secondary", fontWeight: 700, letterSpacing: 1.2 }}
+      >
+        {t("championships.nextChampionship")}
+      </Typography>
+      <Typography
+        variant="subtitle1"
+        sx={{ fontWeight: 800, color: "text.secondary", mb: 0.5 }}
+      >
+        {t("championships.notAnnounced")}
+      </Typography>
+      <Typography variant="body2" color="text.secondary">
+        {!hasPast
+          ? t("championships.noChampionshipYet")
+          : t("championships.notAnnouncedBody")}
+      </Typography>
+    </Box>
   );
-  const [eventId, setEventId] = useState<string | null>(null);
-  const [champions, setChampions] = useState<EventChampions[]>([]);
-  const [loading, setLoading] = useState(false);
+}
 
-  useEffect(() => {
-    // Reset to the latest edition only when the region itself changes.
-    setEdition(region.editions[0] ?? null);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [region.id]);
-
-  // Fetch the champions for the selected edition.
-  useEffect(() => {
-    if (edition == null) {
-      setChampions([]);
-      return;
-    }
-    let active = true;
-    setLoading(true);
-    fetchChampions(region.id, edition).then((data) => {
-      if (!active) return;
-      setChampions(data);
-      setEventId(data[0]?.event_id ?? null);
-      setLoading(false);
-    });
-    return () => {
-      active = false;
-    };
-  }, [region.id, edition]);
-
-  const upcoming = region.upcoming;
+function PastChampionsSection({
+  region,
+  edition,
+  setEdition,
+  eventId,
+  setEventId,
+  champions,
+  loading,
+  regionName,
+}: {
+  region: RegionInfo;
+  edition: number | null;
+  setEdition: (e: number | null) => void;
+  eventId: string | null;
+  setEventId: (e: string | null) => void;
+  champions: EventChampions[];
+  loading: boolean;
+  regionName: string;
+}) {
+  const { t } = useTranslation();
   const hasPast = region.editions.length > 0;
-  const regionName = t(`championships.regions.${region.id}`);
-  const year = new Date().getFullYear();
-  const heldThisYear = region.editions.includes(year);
-
-  // Events that actually have champions in this edition, in canonical EVENTS order.
   const availableEvents = EVENTS.filter((ev) =>
     champions.some((c) => c.event_id === ev),
   );
   const selectedEvent = champions.find((c) => c.event_id === eventId);
 
   return (
-    <Box sx={{ p: { xs: 2.5, md: 3.5 }, pb: 6 }}>
-      {/* Header */}
-      <Stack
-        direction="row"
-        alignItems="flex-start"
-        justifyContent="space-between"
-        spacing={1}
-      >
-        <Box>
-          <Typography
-            variant="overline"
-            sx={{ color: "primary.main", fontWeight: 700, letterSpacing: 1.5 }}
-          >
-            {t("championships.org")}
-          </Typography>
-          <Typography variant="h4" sx={{ fontWeight: 800, lineHeight: 1.05 }}>
-            {regionName}
-          </Typography>
-        </Box>
-        <IconButton
-          onClick={onClose}
-          aria-label={t("championships.close")}
-          sx={{ mt: -0.5 }}
-        >
-          <CloseRoundedIcon />
-        </IconButton>
-      </Stack>
-
-      <Box sx={{ mt: 1.5, mb: 3 }}>
-        {region.announced ? (
-          <Chip
-            label={t("championships.statusAnnounced", { year })}
-            color="primary"
-            size="small"
-            sx={{ fontWeight: 700 }}
-          />
-        ) : heldThisYear ? (
-          <Chip
-            label={t("championships.statusHeld", { year })}
-            size="small"
-            sx={{ fontWeight: 700 }}
-          />
-        ) : (
-          <Chip
-            label={
-              !hasPast
-                ? t("championships.statusNone")
-                : t("championships.statusPending", { year })
-            }
-            size="small"
-            variant="outlined"
-            sx={{ fontWeight: 700 }}
-          />
-        )}
-      </Box>
-
-      {/* Next championship */}
-      {upcoming ? (
-        <Box
-          sx={{
-            borderRadius: 3,
-            p: 2.75,
-            color: "primary.contrastText",
-            background: "linear-gradient(135deg,#d32f2f,#b3261f)",
-            boxShadow: "0 16px 38px rgba(211,47,47,.26)",
-          }}
-        >
-          <Typography
-            variant="overline"
-            sx={{ opacity: 0.85, fontWeight: 700, letterSpacing: 1.2 }}
-          >
-            {t("championships.nextChampionship")}
-          </Typography>
-          <Typography
-            variant="h6"
-            sx={{ fontWeight: 800, lineHeight: 1.15, mb: 1.5 }}
-          >
-            {upcoming.name}
-          </Typography>
-          <Stack spacing={1.1}>
-            <DetailRow
-              icon={<EventOutlinedIcon fontSize="small" />}
-              label={formatDateRange(
-                upcoming.start_date,
-                upcoming.end_date,
-                locale,
-              )}
-            />
-            {upcoming.city && (
-              <DetailRow
-                icon={<PlaceOutlinedIcon fontSize="small" />}
-                label={upcoming.city}
-              />
-            )}
-            <DetailRow
-              icon={<HowToRegOutlinedIcon fontSize="small" />}
-              label={
-                upcoming.registration_status === "open"
-                  ? t("championships.registrationOpen")
-                  : upcoming.registration_status === "closed"
-                  ? t("championships.registrationClosed")
-                  : upcoming.registration_status === "not_open" &&
-                    upcoming.registration_open
-                  ? t("championships.registrationOpens", {
-                      date: formatDate(upcoming.registration_open, locale),
-                    })
-                  : t("championships.registrationTbd")
-              }
-            />
-          </Stack>
-          <Button
-            fullWidth
-            href={upcoming.wca_url}
-            target="_blank"
-            rel="noopener noreferrer"
-            endIcon={<OpenInNewRoundedIcon />}
-            sx={{
-              mt: 2.25,
-              bgcolor: "#fff",
-              color: "primary.main",
-              fontWeight: 700,
-              "&:hover": { bgcolor: "#f3f3f3" },
-            }}
-          >
-            {upcoming.registration_status === "open"
-              ? t("championships.register")
-              : t("championships.viewOnWca")}
-          </Button>
-        </Box>
-      ) : (
-        <Box
-          sx={{
-            borderRadius: 3,
-            p: 2.75,
-            border: "1.5px dashed",
-            borderColor: "divider",
-            bgcolor: "action.hover",
-          }}
-        >
-          <Typography
-            variant="overline"
-            sx={{
-              color: "text.secondary",
-              fontWeight: 700,
-              letterSpacing: 1.2,
-            }}
-          >
-            {t("championships.nextChampionship")}
-          </Typography>
-          <Typography
-            variant="subtitle1"
-            sx={{ fontWeight: 800, color: "text.secondary", mb: 0.5 }}
-          >
-            {t("championships.notAnnounced")}
-          </Typography>
-          <Typography variant="body2" color="text.secondary">
-            {!hasPast
-              ? t("championships.noChampionshipYet")
-              : t("championships.notAnnouncedBody")}
-          </Typography>
-        </Box>
-      )}
-
-      {/* Past champions */}
+    <>
       <Divider sx={{ my: 3.5 }} />
       <Typography
         variant="overline"
@@ -476,6 +404,121 @@ export const RegionPanel: React.FC<RegionPanelProps> = ({
           </Typography>
         </Box>
       )}
+    </>
+  );
+}
+
+export const RegionPanel: React.FC<RegionPanelProps> = ({
+  region,
+  onClose,
+}) => {
+  const { t } = useTranslation();
+  const [edition, setEdition] = useState<number | null>(
+    region.editions[0] ?? null,
+  );
+  const [eventId, setEventId] = useState<string | null>(null);
+  const [champions, setChampions] = useState<EventChampions[]>([]);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    // Reset to the latest edition only when the region itself changes.
+    setEdition(region.editions[0] ?? null);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [region.id]);
+
+  // Fetch the champions for the selected edition.
+  useEffect(() => {
+    if (edition == null) {
+      setChampions([]);
+      return;
+    }
+    let active = true;
+    setLoading(true);
+    fetchChampions(region.id, edition).then((data) => {
+      if (!active) return;
+      setChampions(data);
+      setEventId(data[0]?.event_id ?? null);
+      setLoading(false);
+    });
+    return () => {
+      active = false;
+    };
+  }, [region.id, edition]);
+
+  const upcoming = region.upcoming;
+  const hasPast = region.editions.length > 0;
+  const regionName = t(`championships.regions.${region.id}`);
+  const year = new Date().getFullYear();
+  const heldThisYear = region.editions.includes(year);
+
+  return (
+    <Box sx={{ p: { xs: 2.5, md: 3.5 }, pb: 6 }}>
+      <Stack
+        direction="row"
+        alignItems="flex-start"
+        justifyContent="space-between"
+        spacing={1}
+      >
+        <Box>
+          <Typography
+            variant="overline"
+            sx={{ color: "primary.main", fontWeight: 700, letterSpacing: 1.5 }}
+          >
+            {t("championships.org")}
+          </Typography>
+          <Typography variant="h4" sx={{ fontWeight: 800, lineHeight: 1.05 }}>
+            {regionName}
+          </Typography>
+        </Box>
+        <IconButton
+          onClick={onClose}
+          aria-label={t("championships.close")}
+          sx={{ mt: -0.5 }}
+        >
+          <CloseRoundedIcon />
+        </IconButton>
+      </Stack>
+
+      <Box sx={{ mt: 1.5, mb: 3 }}>
+        {region.announced ? (
+          <Chip
+            label={t("championships.statusAnnounced", { year })}
+            color="primary"
+            size="small"
+            sx={{ fontWeight: 700 }}
+          />
+        ) : heldThisYear ? (
+          <Chip
+            label={t("championships.statusHeld", { year })}
+            size="small"
+            sx={{ fontWeight: 700 }}
+          />
+        ) : (
+          <Chip
+            label={
+              !hasPast
+                ? t("championships.statusNone")
+                : t("championships.statusPending", { year })
+            }
+            size="small"
+            variant="outlined"
+            sx={{ fontWeight: 700 }}
+          />
+        )}
+      </Box>
+
+      <NextChampionshipSection upcoming={upcoming} hasPast={hasPast} />
+
+      <PastChampionsSection
+        region={region}
+        edition={edition}
+        setEdition={setEdition}
+        eventId={eventId}
+        setEventId={setEventId}
+        champions={champions}
+        loading={loading}
+        regionName={regionName}
+      />
     </Box>
   );
 };

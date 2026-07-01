@@ -51,7 +51,7 @@ export const resources = {
         notAnnouncedBody:
           "The next edition for this region has not been announced yet. Check back soon.",
         noChampionshipYet:
-          "No championship has been held in this region yet. Speedcubing Canada is working with local organizers to bring one here.",
+          "No championship has been held in this region yet. Speedcubing Canada may be working with local organizers to bring one here.",
         registrationOpen: "Registration is open",
         registrationClosed: "Registration closed",
         registrationOpens: "Registration opens {{date}}",
@@ -346,7 +346,7 @@ export const resources = {
           area: "Region / Province",
           region: "Region",
           province: "Province",
-          is_pbq: "PBQ",
+          is_pbq: "Quiet",
           is_fmc: "FMC",
           residency_deadline: "Residency deadline",
           residency_timezone: "Residency timezone",
@@ -358,7 +358,7 @@ export const resources = {
           provincial: "Provincial",
         },
         form: {
-          is_pbq: "Please Be Quiet (PBQ)",
+          is_pbq: "Quiet championship (Please Be Quiet)",
           is_fmc: "Fewest Moves championship",
           competition_id_help:
             "The competition this championship is held at (e.g. CanadianChampionship2026)",
@@ -409,7 +409,7 @@ export const resources = {
         notAnnouncedBody:
           "La prochaine édition pour cette région n'a pas encore été annoncée. Revenez bientôt.",
         noChampionshipYet:
-          "Aucun championnat n'a encore eu lieu dans cette région. Speedcubing Canada travaille avec des organisateurs locaux pour en organiser un.",
+          "Aucun championnat n'a encore eu lieu dans cette région. Speedcubing Canada travaille peut-être avec des organisateurs locaux pour en organiser un.",
         registrationOpen: "Les inscriptions sont ouvertes",
         registrationClosed: "Inscriptions fermées",
         registrationOpens: "Inscriptions ouvrent le {{date}}",
@@ -708,7 +708,7 @@ export const resources = {
           area: "Région / Province",
           region: "Région",
           province: "Province",
-          is_pbq: "PBQ",
+          is_pbq: "Quiet",
           is_fmc: "FMC",
           residency_deadline: "Date limite de résidence",
           residency_timezone: "Fuseau horaire de résidence",
@@ -720,7 +720,7 @@ export const resources = {
           provincial: "Provincial",
         },
         form: {
-          is_pbq: "Please Be Quiet (PBQ)",
+          is_pbq: "Quiet championship (Please Be Quiet)",
           is_fmc: "Championnat de FMC",
           competition_id_help:
             "La compétition où se tient ce championnat (p. ex. CanadianChampionship2026)",

@@ -118,7 +118,7 @@ export const Account = () => {
       { province: string },
       unknown,
       { code?: string; next_allowed?: string }
-    >(API_BASE_URL + "/edit", {
+    >(`${API_BASE_URL}/edit`, {
       province: selectedProvince.id,
     });
 

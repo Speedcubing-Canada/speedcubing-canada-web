@@ -279,7 +279,7 @@ export const CanadaRegionMap: React.FC<CanadaRegionMapProps> = ({
 
   // Keep every label inside the home view (so the Territories label, whose true
   // centroid is far north, stays visible near the top edge).
-  const labelPos = (rid: RegionId, b: Box4) => {
+  const labelPos = (regionId: RegionId, b: Box4) => {
     const cx = b.x + b.w / 2;
     let cy = b.y + b.h / 2;
     const top = homeView.y + homeView.h * 0.07;
@@ -288,7 +288,7 @@ export const CanadaRegionMap: React.FC<CanadaRegionMapProps> = ({
     if (cy > bottom) cy = bottom;
     // Pull the wide Territories label towards the visible centre horizontally too.
     const cxClamped =
-      rid === "te"
+      regionId === "te"
         ? Math.min(
             Math.max(cx, homeView.x + homeView.w * 0.2),
             homeView.x + homeView.w * 0.8,
@@ -315,41 +315,41 @@ export const CanadaRegionMap: React.FC<CanadaRegionMapProps> = ({
         `}</style>
 
         {LOCATIONS.map((loc) => {
-          const rid = regionOf(loc.id);
-          const isSel = rid && rid === selectedRegion;
+          const regionId = regionOf(loc.id);
+          const isSel = regionId && regionId === selectedRegion;
           const dim = selectedRegion && !isSel ? 0.32 : 1;
           return (
             <path
               key={loc.id}
               d={loc.path}
               data-pid={loc.id}
-              data-region={rid}
-              fill={fillFor(rid)}
+              data-region={regionId}
+              fill={fillFor(regionId)}
               stroke={isSel ? COLORS.strokeSelected : COLORS.stroke}
               strokeWidth={isSel ? 1.4 : 0.8}
               strokeLinejoin="round"
               style={{
-                cursor: rid ? "pointer" : "default",
+                cursor: regionId ? "pointer" : "default",
                 opacity: dim,
                 transition: "fill .25s ease, opacity .45s ease",
               }}
-              onClick={() => rid && onSelect(rid)}
-              onMouseEnter={() => rid && setHovered(rid)}
+              onClick={() => regionId && onSelect(regionId)}
+              onMouseEnter={() => regionId && setHovered(regionId)}
               onMouseLeave={() => setHovered(null)}
             />
           );
         })}
 
         {showLabels &&
-          (Object.keys(boxes) as RegionId[]).map((rid) => {
-            const { cx, cy } = labelPos(rid, boxes[rid]!);
-            const announced = Boolean(announcedRegions[rid]);
+          (Object.keys(boxes) as RegionId[]).map((regionId) => {
+            const { cx, cy } = labelPos(regionId, boxes[regionId]!);
+            const announced = Boolean(announcedRegions[regionId]);
             return (
               <g
-                key={`lbl-${rid}`}
+                key={`lbl-${regionId}`}
                 style={{ cursor: "pointer" }}
-                onClick={() => onSelect(rid)}
-                onMouseEnter={() => setHovered(rid)}
+                onClick={() => onSelect(regionId)}
+                onMouseEnter={() => setHovered(regionId)}
                 onMouseLeave={() => setHovered(null)}
               >
                 {announced && (
@@ -392,7 +392,7 @@ export const CanadaRegionMap: React.FC<CanadaRegionMapProps> = ({
                     strokeLinejoin: "round",
                   }}
                 >
-                  {t(`championships.regions.${rid}`)}
+                  {t(`championships.regions.${regionId}`)}
                 </text>
               </g>
             );

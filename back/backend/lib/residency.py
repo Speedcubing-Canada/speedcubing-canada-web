@@ -14,8 +14,11 @@ def most_recent_location_change_within_window(user, now):
     updates) returns ``None`` and is allowed.
     """
     cutoff = now - PROVINCE_CHANGE_WINDOW
-    recent = [u for u in user.updates if u.update_time and u.update_time > cutoff]
-    return max(recent, key=lambda u: u.update_time) if recent else None
+    return max(
+        (u for u in user.updates if u.update_time and u.update_time > cutoff),
+        key=lambda u: u.update_time,
+        default=None,
+    )
 
 
 def resolve_residency(user, deadline):

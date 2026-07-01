@@ -1,6 +1,28 @@
 from backend.models.province import Province
 from backend.models.region import Region
 
+# Provinces and territories: (id, display name, region id).
+# Provinces and regions standards come from the following source:
+# https://www12.statcan.gc.ca/census-recensement/2021/ref/dict/tab/index-eng.cfm?ID=t1_8
+_PROVINCES = (
+    ("nl", "Newfoundland and Labrador", "at"),
+    ("pe", "Prince Edward Island", "at"),
+    ("ns", "Nova Scotia", "at"),
+    ("nb", "New Brunswick", "at"),
+    ("qc", "Quebec", "qc"),
+    ("on", "Ontario", "on"),
+    ("mb", "Manitoba", "pr"),
+    ("sk", "Saskatchewan", "pr"),
+    ("ab", "Alberta", "pr"),
+    ("bc", "British Columbia", "bc"),
+)
+
+_TERRITORIES = (
+    ("yt", "Yukon", "te"),
+    ("nt", "Northwest Territories", "te"),
+    ("nu", "Nunavut", "te"),
+)
+
 
 def _make_region(region_id, region_name, championship_name, all_regions, futures):
     region = Region.get_by_id(region_id) or Region(id=region_id)
@@ -21,8 +43,6 @@ def _make_province(province_id, province_name, region, is_province, all_province
     return province
 
 
-# Provinces and regions standards come from the following source:
-# https://www12.statcan.gc.ca/census-recensement/2021/ref/dict/tab/index-eng.cfm?ID=t1_8
 def setup_regions_and_provinces():
     """Upsert the canonical SCC regions/provinces and delete any non-canonical ones.
 
@@ -34,38 +54,23 @@ def setup_regions_and_provinces():
     """
     futures = []
     all_regions = {}
-    ATLANTIC = _make_region("at", "Atlantic", "Atlantic", all_regions, futures)
-    QUEBEC = _make_region("qc", "Quebec", "Quebec", all_regions, futures)
-    ONTARIO = _make_region("on", "Ontario", "Ontario", all_regions, futures)
-    PRAIRIES = _make_region("pr", "Prairies", "Prairies", all_regions, futures)
-    BRITISH_COLUMBIA = _make_region("bc", "British Columbia", "British Columbia", all_regions, futures)
-    TERRITORIES = _make_region("te", "Territories", "Territories", all_regions, futures)
+    _make_region("at", "Atlantic", "Atlantic", all_regions, futures)
+    _make_region("qc", "Quebec", "Quebec", all_regions, futures)
+    _make_region("on", "Ontario", "Ontario", all_regions, futures)
+    _make_region("pr", "Prairies", "Prairies", all_regions, futures)
+    _make_region("bc", "British Columbia", "British Columbia", all_regions, futures)
+    _make_region("te", "Territories", "Territories", all_regions, futures)
 
     for future in futures:
         future.wait()
     del futures[:]
 
     all_provinces = {}
-    for province_id, province_name, region in (
-        ("nl", "Newfoundland and Labrador", ATLANTIC),
-        ("pe", "Prince Edward Island", ATLANTIC),
-        ("ns", "Nova Scotia", ATLANTIC),
-        ("nb", "New Brunswick", ATLANTIC),
-        ("qc", "Quebec", QUEBEC),
-        ("on", "Ontario", ONTARIO),
-        ("mb", "Manitoba", PRAIRIES),
-        ("sk", "Saskatchewan", PRAIRIES),
-        ("ab", "Alberta", PRAIRIES),
-        ("bc", "British Columbia", BRITISH_COLUMBIA),
-    ):
-        _make_province(province_id, province_name, region, True, all_provinces, futures)
+    for province_id, province_name, region_id in _PROVINCES:
+        _make_province(province_id, province_name, all_regions[region_id], True, all_provinces, futures)
 
-    for territory_id, territory_name, region in (
-        ("yt", "Yukon", TERRITORIES),
-        ("nt", "Northwest Territories", TERRITORIES),
-        ("nu", "Nunavut", TERRITORIES),
-    ):
-        _make_province(territory_id, territory_name, region, False, all_provinces, futures)
+    for territory_id, territory_name, region_id in _TERRITORIES:
+        _make_province(territory_id, territory_name, all_regions[region_id], False, all_provinces, futures)
 
     for future in futures:
         future.wait()
