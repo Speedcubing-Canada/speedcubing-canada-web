@@ -21,6 +21,11 @@ from backend.models.wca.round import RoundType
 
 FLAGS = flags.FLAGS
 
+# Number of times an old .filtered cache was skipped this run because its
+# columns no longer matched the model. Non-zero means a full reload happened
+# for that table and someone should look into why the schema drifted.
+_stale_cache_count = 0
+
 flags.DEFINE_string("old_export_id", "", "ID of the old export.")
 flags.DEFINE_string("new_export_id", "", "ID of the new export.")
 flags.DEFINE_string("export_base", "", "Base directory of exports.")
@@ -73,6 +78,25 @@ def read_table(path, cls, apply_filter, shard, shards):
     try:
         with open(path) as csvfile:
             reader = csv.DictReader(csvfile, dialect="excel-tab")
+            # Guard against a stale/mismatched cache: if the (old) .filtered file
+            # was written by an older build whose columns differ from what the
+            # current model expects, treat it as empty rather than crashing. The
+            # caller then re-puts every current row (idempotent) for one run, and
+            # a fresh, correctly-formatted cache is written for the next run.
+            required = set(cls.columns_used())
+            if not required.issubset(reader.fieldnames or []):
+                # STALE_CACHE_SKIPPED is a stable marker for log-based alerting.
+                # We degrade to a full reload instead of crashing, but this is an
+                # anomaly (usually a column rename) that must not pass unnoticed.
+                logging.error(
+                    "STALE_CACHE_SKIPPED: ignoring cache with mismatched columns %s (expected %s): %s",
+                    reader.fieldnames,
+                    sorted(required),
+                    path,
+                )
+                global _stale_cache_count
+                _stale_cache_count += 1
+                return out
             for row in reader:
                 # Check if filter_fn exists before calling it
                 if filter_fn is None or filter_fn(row):
@@ -192,6 +216,13 @@ def main(argv):
             update_champions()
         if do_everything or FLAGS.only_update_province_records:
             update_province_records()
+
+    if _stale_cache_count:
+        logging.error(
+            "STALE_CACHE_SKIPPED: %d table(s) fell back to a full reload this run "
+            "due to a mismatched cache; investigate a possible schema/column change.",
+            _stale_cache_count,
+        )
 
 
 if __name__ == "__main__":
