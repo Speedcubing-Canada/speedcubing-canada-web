@@ -6,6 +6,7 @@ from flask import Blueprint, jsonify
 from google.cloud import ndb
 
 from backend.lib.permissions import require_roles
+from backend.lib.residency import resolve_residency
 from backend.models.championship import Championship
 from backend.models.user import Roles, User
 
@@ -38,7 +39,7 @@ def list_championships():
         if not competition:
             continue
 
-        champ_type, area = _championship_type_and_area(championship, regions, provinces)
+        champ_type, area = championship.type_and_area(regions, provinces)
 
         result.append(
             {
@@ -86,7 +87,7 @@ def championship_eligibility(championship_id):
     else:
         competitors = _eligibility_regional_or_provincial(championship, competition, registered)
 
-    champ_type, area = _championship_type_and_area(championship)
+    champ_type, area = championship.type_and_area()
 
     return jsonify(
         {
@@ -100,22 +101,6 @@ def championship_eligibility(championship_id):
             "competitors": competitors,
         }
     )
-
-
-def _championship_type_and_area(championship, regions=None, provinces=None):
-    if championship.national_championship:
-        champ_type = "national_fmc" if championship.is_fmc else "national"
-        return champ_type, None
-
-    if championship.region:
-        region = regions.get(championship.region) if regions is not None else championship.region.get()
-        return "regional", region.championship_name if region else None
-
-    if championship.province:
-        province = provinces.get(championship.province) if provinces is not None else championship.province.get()
-        return "provincial", province.name if province else None
-
-    return "unknown", None
 
 
 def _parse_registrations(wcif):
@@ -169,7 +154,7 @@ def _eligibility_regional_or_provincial(championship, competition, registered):
         if user is None:
             eligible = None
         else:
-            province = _province_at_deadline(user, residency_deadline)
+            province = resolve_residency(user, residency_deadline)
             eligible = bool(province and province in valid_province_keys)
 
         competitors.append(
@@ -181,15 +166,3 @@ def _eligibility_regional_or_provincial(championship, competition, registered):
             }
         )
     return competitors
-
-
-def _province_at_deadline(user, deadline):
-    """Return the user's province key that was current at the deadline."""
-    if not user.updates:
-        return user.province
-
-    province = None
-    for update in user.updates:
-        if update.update_time < deadline:
-            province = update.province
-    return province

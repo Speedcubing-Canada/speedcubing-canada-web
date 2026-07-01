@@ -4,7 +4,7 @@ import {
   List,
   SimpleList,
   TextField,
-  TextInput,
+  SearchInput,
   EditButton,
   ArrayField,
 } from "react-admin";
@@ -13,7 +13,7 @@ import { ProvinceField, UserRoleChip } from "./UserShow";
 export const UserList = () => {
   const isSmall = useMediaQuery<Theme>((theme) => theme.breakpoints.down("sm"));
 
-  const userFilters = [<TextInput source="q" label="Search" alwaysOn />];
+  const userFilters = [<SearchInput source="q" alwaysOn />];
 
   return (
     <List filters={userFilters}>

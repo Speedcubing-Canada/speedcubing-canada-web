@@ -17,7 +17,6 @@ export const UserEdit = () => {
     <Edit>
       <SimpleForm>
         <SelectInput
-          label="Province"
           source="province"
           choices={provinces}
           optionText={(option) => t(`translation.provinces.${option.id}`)}
@@ -38,7 +37,4 @@ export const UserEdit = () => {
 
 const provinces: Province[] = getProvincesWithNA();
 const provincesIds: ProvinceID[] = provinces.map((province) => province.id);
-const validateProvince = choices(
-  provincesIds,
-  "Please choose one of the values",
-);
+const validateProvince = choices(provincesIds);

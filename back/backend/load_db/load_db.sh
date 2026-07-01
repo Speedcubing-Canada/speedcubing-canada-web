@@ -21,7 +21,7 @@ LATEST_EXPORT=$(curl https://www.worldcubeassociation.org/export/results \
 
 if [ "$SAVED_EXPORT" == "$LATEST_EXPORT" ]
 then
-  echo "Already have latest export $LATEST_EXPORT; returning."
+  echo "Already have latest export $LATEST_EXPORT; nothing to download."
 fi
 
 if [ "$SAVED_EXPORT" != "$LATEST_EXPORT" ]
@@ -41,8 +41,7 @@ then
   python3 backend/load_db/load_db.py \
       --old_export_id="$SAVED_EXPORT" \
       --new_export_id="$LATEST_EXPORT" \
-      --export_base=exports/ \
-      --only_load_db
+      --export_base=exports/
 fi
 
 /usr/sbin/shutdown -h now

@@ -25,6 +25,7 @@ import {
   Menu,
   AccountCircle,
   Leaderboard,
+  EmojiEvents,
 } from "@mui/icons-material";
 
 import { Link, Outlet, useLocation, useParams } from "react-router-dom";
@@ -38,6 +39,7 @@ export const ROUTE_NAMES = [
   "organization",
   "faq",
   "rankings",
+  "championships",
   "account",
 ] as const;
 
@@ -48,6 +50,7 @@ const ICONS = {
   faq: QuestionAnswer,
   account: AccountCircle,
   rankings: Leaderboard,
+  championships: EmojiEvents,
 } as const;
 
 const ROUTE_NAME_TO_PATH = {
@@ -56,6 +59,7 @@ const ROUTE_NAME_TO_PATH = {
   organization: "organization",
   faq: "faq",
   rankings: "rankings",
+  championships: "championships",
   account: "account",
 } as const;
 

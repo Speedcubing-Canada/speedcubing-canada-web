@@ -8,6 +8,7 @@ import {
   LayoutProps,
 } from "react-admin";
 import UserIcon from "@mui/icons-material/Group";
+import EmojiEventsIcon from "@mui/icons-material/EmojiEvents";
 import CircularProgress from "@mui/material/CircularProgress";
 import Alert from "@mui/material/Alert";
 import { Box, Container } from "@mui/material";
@@ -15,6 +16,10 @@ import HomeIcon from "@mui/icons-material/Home";
 import { IconButton } from "@mui/material";
 
 import { UserList } from "../components/UserList";
+import { ChampionshipList } from "../components/ChampionshipList";
+import { ChampionshipEdit } from "../components/ChampionshipEdit";
+import { ChampionshipCreate } from "../components/ChampionshipCreate";
+import { ChampionshipShow } from "../components/ChampionshipShow";
 import dataProvider from "../dataProvider";
 import httpClient from "../httpClient";
 import { API_BASE_URL } from "../components/api";
@@ -70,6 +75,24 @@ export const AdminPage = () => {
             edit={UserEdit}
             icon={UserIcon}
             recordRepresentation="name"
+          />
+          {/*
+            Resource name is "ChampionshipsAdmin", not "Championships", on purpose:
+            react-admin derives the URL from the name (/admin/Championships), and
+            react-router would match that case-insensitively against the public
+            /:locale/championships map route (locale="admin"), which outranks
+            /admin/* on specificity — sending the menu click to the map. A distinct
+            token keeps the admin URL out of that collision. The menu label still
+            reads "Championships" via the resources.ChampionshipsAdmin i18n key.
+          */}
+          <Resource
+            name="ChampionshipsAdmin"
+            list={ChampionshipList}
+            show={ChampionshipShow}
+            edit={ChampionshipEdit}
+            create={ChampionshipCreate}
+            icon={EmojiEventsIcon}
+            recordRepresentation="competition_name"
           />
         </Admin>
       ) : (
