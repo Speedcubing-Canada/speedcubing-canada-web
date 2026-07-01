@@ -1,0 +1,17 @@
+{
+  "displayName": "db-loader STALE_CACHE_SKIPPED",
+  "combiner": "OR",
+  "conditions": [
+    {
+      "displayName": "STALE_CACHE_SKIPPED marker logged",
+      "conditionMatchedLog": {
+        "filter": "resource.type=\"gce_instance\" AND (textPayload:\"STALE_CACHE_SKIPPED\" OR jsonPayload.message:\"STALE_CACHE_SKIPPED\")"
+      }
+    }
+  ],
+  "alertStrategy": { "notificationRateLimit": { "period": "3600s" } },
+  "notificationChannels": [
+    "projects/scc-production-398617/notificationChannels/1318609451118476842"
+  ],
+  "severity": "ERROR"
+}
