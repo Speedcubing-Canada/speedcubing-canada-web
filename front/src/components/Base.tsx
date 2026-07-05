@@ -78,10 +78,15 @@ type NavigationBarItem = {
 export const Base = () => {
   const { t } = useTranslation();
   const { pathname } = useLocation();
-  const pathWithoutLocale = pathname.split("/").at(-1);
   const params = useParams();
   const savedLocale = localStorage.getItem(SAVED_LOCALE_KEY) ?? "";
   const hasLocaleParam = Boolean(params.locale);
+  // page path after the locale segment, e.g. "/en/organization/" -> "organization",
+  // "/en" and "/en/" -> "" (Home). Province pages (/qc, /bc, ...) have no locale param.
+  const pathSegments = pathname.split("/").filter(Boolean);
+  const pathWithoutLocale = hasLocaleParam
+    ? pathSegments[1] ?? ""
+    : pathSegments[0] ?? "";
   const locale = hasLocaleParam
     ? getLocaleOrFallback(params.locale as string)
     : getLocaleOrFallback(savedLocale);
@@ -101,7 +106,7 @@ export const Base = () => {
 
   useEffect(() => {
     window.scrollTo(0, 0);
-  }, [pathWithoutLocale]);
+  }, [pathname]);
 
   useEffect(() => {
     setIsDrawerOpen(false);
