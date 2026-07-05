@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import i18n from "i18next";
 import { useTranslation } from "react-i18next";
 import {
@@ -30,6 +30,7 @@ import {
 
 import { Link, Outlet, useLocation, useParams } from "react-router-dom";
 import { getLocaleOrFallback, SAVED_LOCALE_KEY } from "../locale";
+import { LoadingPageLinear } from "./LoadingPageLinear";
 import { useScrollbarWidth } from "../helpers/scrollbarWidth";
 import { useBodyScrollable } from "../helpers/useBodyScrollable";
 
@@ -181,7 +182,9 @@ export const Base = () => {
         </>
       )}
       <Box display="flex" flex={1}>
-        <Outlet />
+        <Suspense fallback={<LoadingPageLinear />}>
+          <Outlet />
+        </Suspense>
       </Box>
       {!isSmall && (
         <Paper
