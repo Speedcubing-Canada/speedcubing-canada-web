@@ -16,7 +16,7 @@ import { ExternalLink } from "../components/ExternalLink";
 import { DOCUMENT_TYPES, DOCUMENTS } from "./documents";
 import { LINKS } from "./links";
 
-const DIRECTORS = [
+export const DIRECTORS = [
   { name: "Kristopher De Asis", wcaId: "2008ASIS01" },
   { name: "Joanne Chew", wcaId: "2024CHEW09" },
   { name: "Alex Mutch", wcaId: "2014MUTC01" },

@@ -10,4 +10,11 @@ describe("Home page", () => {
     // On the English page the toggle links to the French version.
     expect(screen.getByText("FR")).toBeInTheDocument();
   });
+
+  it("toggles to English from the French page", () => {
+    renderWithProviders(<Home />, { route: "/fr" });
+
+    // On the French page the toggle links to the English version.
+    expect(screen.getByText("EN")).toBeInTheDocument();
+  });
 });
