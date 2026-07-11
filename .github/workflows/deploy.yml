@@ -1,6 +1,8 @@
-# Deployment pipeline: staging → smoke test → production (manual gate)
+# CI + deployment pipeline: test → staging → smoke test → production (manual gate)
 #
-# Triggered on every push to main (including Dependabot merges).
+# On pull requests targeting main, only the `test` job runs (no deploy).
+# On push to main (including Dependabot merges), `test` runs and, if it passes,
+# gates the staging → smoke test → production pipeline.
 # Repository variables required (Settings → Secrets and variables → Variables):
 #   WIF_PROVIDER_STAGING  – Workload Identity provider resource name (staging)
 #   WIF_PROVIDER_PROD     – Workload Identity provider resource name (prod)
@@ -13,6 +15,8 @@ name: Deploy
 on:
   push:
     branches: [main]
+  pull_request:
+    branches: [main]
 
 # WIF authentication requires permission to mint a short-lived OIDC token.
 permissions:
@@ -20,9 +24,57 @@ permissions:
   id-token: write
 
 jobs:
+  # ── 0. Tests (frontend + backend) ─────────────────────────────────────────
+  # Runs on every PR and every push to main. On push, the deploy pipeline is
+  # gated behind this job (see deploy-staging → needs: test).
+  test:
+    name: Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v6
+
+      # Frontend — Vitest render tests. Node 24 matches the App Engine runtime
+      # and the frontend devDependencies. `npm ci` at the repo root installs the
+      # `front` workspace.
+      - name: Set up Node.js 24
+        uses: actions/setup-node@v6
+        with:
+          node-version: "24"
+
+      - name: Install frontend dependencies
+        run: npm ci
+
+      - name: Run frontend tests
+        run: npm run test --workspace front
+
+      # Backend — pytest. The tests mock all datastore access, but several
+      # handler modules construct `ndb.Client()` at import time. Setting
+      # DATASTORE_EMULATOR_HOST makes ndb use anonymous credentials, so the
+      # client constructs without real GCP credentials and no emulator process
+      # is actually needed.
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install backend dependencies
+        run: pip install -r back/requirements.txt
+
+      - name: Run backend tests
+        working-directory: back
+        env:
+          DATASTORE_EMULATOR_HOST: "localhost:8081"
+          GOOGLE_CLOUD_PROJECT: "test"
+          DATASTORE_PROJECT_ID: "test"
+        run: pytest
+
   # ── 1. Deploy to staging ──────────────────────────────────────────────────
   deploy-staging:
     name: Deploy → Staging
+    # Gate the deploy pipeline on tests; only deploy on push to main, not on PRs.
+    needs: test
+    if: github.event_name == 'push'
     runs-on: ubuntu-latest
     outputs:
       version: ${{ steps.slug.outputs.version }}

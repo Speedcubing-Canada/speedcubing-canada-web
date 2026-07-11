@@ -1,3 +1,4 @@
+/// <reference types="vitest/config" />
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 
@@ -22,5 +23,11 @@ export default defineConfig({
   build: {
     chunkSizeWarningLimit: 1000,
     assetsInlineLimit: 0, // Disable inlining for stricter CSP
+  },
+  test: {
+    globals: true,
+    environment: "jsdom",
+    setupFiles: "./src/setupTests.ts",
+    css: false,
   },
 });
