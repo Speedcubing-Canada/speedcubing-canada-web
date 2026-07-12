@@ -30,6 +30,8 @@ export const resources = {
         about: "About",
         organization: "Organization",
         faq: "FAQ",
+        information: "Information",
+        delegates: "Delegates",
         account: "Account",
         rankings: "Rankings",
         championships: "Championships",
@@ -112,6 +114,21 @@ export const resources = {
         title: "Directors",
         boardMember: "Board Member",
       },
+      delegates: {
+        title: "Canadian Delegates",
+        intro:
+          "WCA Delegates represent the World Cube Association at competitions and support the cubing community across Canada. Below are the Delegates currently serving the Canadian regions.",
+        regional: "Regional Delegates",
+        empty:
+          "The delegate list is currently unavailable. Please check back soon.",
+        status: {
+          regional: "Regional Delegate",
+          senior: "Senior Delegate",
+          delegate: "Delegate",
+          junior: "Junior Delegate",
+          trainee: "Trainee Delegate",
+        },
+      },
       documents: {
         title: "Documents",
         byLaws: "By-laws",
@@ -131,7 +148,7 @@ export const resources = {
         },
         "who-are-the-wca-delegates-in-my-area": {
           q: "Who are the WCA Delegates in my area?",
-          a: "You can find a list of all <delegates>WCA Delegates</delegates> on the World Cube Association website.",
+          a: "You can find <delegates>the list of Canadian WCA Delegates</delegates> right here on our website.",
         },
         "how-can-i-volunteer-with-speedcubing-canada": {
           q: "How can I volunteer with Speedcubing Canada?",
@@ -388,6 +405,8 @@ export const resources = {
         about: "À propos",
         organization: "Organisation",
         faq: "FAQ",
+        information: "Informations",
+        delegates: "Délégués",
         account: "Compte",
         rankings: "Classements",
         championships: "Championnats",
@@ -471,6 +490,26 @@ export const resources = {
         title: "Directeurs",
         boardMember: "Membre du bureau",
       },
+      delegates: {
+        title: "Délégués canadiens",
+        intro:
+          "Les Délégués de la WCA représentent la World Cube Association lors des compétitions et soutiennent la communauté du cubing partout au Canada. Voici les Délégués qui servent actuellement les régions canadiennes.",
+        regional: "Délégués régionaux",
+        empty:
+          "La liste des délégués est momentanément indisponible. Veuillez réessayer bientôt.",
+        status: {
+          regional: "Délégué régional",
+          regional_female: "Déléguée régionale",
+          senior: "Délégué senior",
+          senior_female: "Déléguée senior",
+          delegate: "Délégué",
+          delegate_female: "Déléguée",
+          junior: "Délégué junior",
+          junior_female: "Déléguée junior",
+          trainee: "Délégué en formation",
+          trainee_female: "Déléguée en formation",
+        },
+      },
       documents: {
         title: "Documents",
         byLaws: "Règlement intérieur",
@@ -490,7 +529,7 @@ export const resources = {
         },
         "who-are-the-wca-delegates-in-my-area": {
           q: "Qui sont les délégués de la WCA dans ma région ?",
-          a: "Vous pouvez trouver une liste de tous les <delegates>Délégués de la WCA</delegates> sur le site de la World Cube Association.",
+          a: "Vous pouvez trouver <delegates>la liste des Délégués canadiens de la WCA</delegates> directement sur notre site web.",
         },
         "how-can-i-volunteer-with-speedcubing-canada": {
           q: "Comment puis-je devenir bénévole pour Speedcubing Canada ?",

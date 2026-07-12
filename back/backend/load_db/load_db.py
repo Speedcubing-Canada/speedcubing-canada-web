@@ -6,6 +6,7 @@ from google.cloud import ndb
 from backend.load_db.setup_geography import setup_regions_and_provinces
 from backend.load_db.update_champions import update_champions
 from backend.load_db.update_championships import update_championships
+from backend.load_db.update_delegates import update_delegates
 from backend.load_db.update_province_records import update_province_records
 from backend.models.user import User
 from backend.models.wca.competition import Competition
@@ -34,6 +35,7 @@ flags.DEFINE_boolean("only_load_db", False, "Whether to only load the new databa
 flags.DEFINE_boolean("only_update_championships", False, "Whether to only update championships.")
 flags.DEFINE_boolean("only_update_champions", False, "Whether to only update champions.")
 flags.DEFINE_boolean("only_update_province_records", False, "Whether to only update province records.")
+flags.DEFINE_boolean("only_update_delegates", False, "Whether to only update delegates.")
 
 
 def get_tables():
@@ -189,6 +191,7 @@ def main(argv):
         and not FLAGS.only_update_champions
         and not FLAGS.only_update_championships
         and not FLAGS.only_update_province_records
+        and not FLAGS.only_update_delegates
     )
 
     if do_everything or FLAGS.only_load_db:
@@ -216,6 +219,8 @@ def main(argv):
             update_champions()
         if do_everything or FLAGS.only_update_province_records:
             update_province_records()
+        if do_everything or FLAGS.only_update_delegates:
+            update_delegates()
 
     if _stale_cache_count:
         logging.error(
