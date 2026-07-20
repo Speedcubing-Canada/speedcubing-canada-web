@@ -14,5 +14,10 @@ export interface Delegate {
 
 export const fetchDelegates = async (): Promise<Delegate[]> => {
   const res = await httpClient.get<Delegate[]>(`${API_BASE_URL}/delegates`);
-  return res.ok && res.data ? res.data : [];
+  if (!res.ok) {
+    throw new Error(
+      typeof res.error === "string" ? res.error : "Failed to load delegates",
+    );
+  }
+  return res.data ?? [];
 };
