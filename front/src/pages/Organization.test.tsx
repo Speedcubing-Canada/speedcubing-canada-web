@@ -4,11 +4,8 @@ import { Organization, DIRECTORS } from "./Organization";
 
 vi.mock("../helpers/fetchWcaPerson", () => ({
   fetchWcaPerson: vi.fn().mockResolvedValue({
-    name: "",
-    avatarUrl: "",
     avatarThumbUrl: "",
     avatarIsDefault: true,
-    delegateStatus: null,
   }),
 }));
 

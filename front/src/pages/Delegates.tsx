@@ -1,9 +1,9 @@
 import { Box, Container, Typography } from "@mui/material";
 import { useTranslation } from "react-i18next";
 import { useQuery } from "@tanstack/react-query";
-import { PersonCard } from "../components/PersonCard";
+import { DelegateCard } from "../components/DelegateCard";
 import { LoadingPageLinear } from "../components/LoadingPageLinear";
-import { fetchDelegates } from "../helpers/fetchDelegates";
+import { fetchDelegates, Delegate } from "../helpers/fetchDelegates";
 import {
   PROVINCE_REGION,
   REGION_ORDER,
@@ -54,6 +54,10 @@ export const Delegates = () => {
       )
       .sort(byName);
 
+  const renderDelegateCard = (delegate: Delegate) => (
+    <DelegateCard key={delegate.wca_id} delegate={delegate} />
+  );
+
   return (
     <Container maxWidth="md">
       <Box marginY="4rem">
@@ -79,23 +83,7 @@ export const Delegates = () => {
               >
                 {t("delegates.regional")}
               </Typography>
-              <CardGrid>
-                {regional.map((delegate) => (
-                  <PersonCard
-                    key={delegate.wca_id}
-                    wcaId={delegate.wca_id}
-                    name={delegate.name}
-                    avatarUrl={delegate.avatar_thumb_url}
-                    status={delegate.status}
-                    gender={delegate.gender}
-                    subtitle={
-                      delegate.province
-                        ? t(`provinces.${delegate.province}`)
-                        : undefined
-                    }
-                  />
-                ))}
-              </CardGrid>
+              <CardGrid>{regional.map(renderDelegateCard)}</CardGrid>
             </Box>
           )}
 
@@ -115,23 +103,7 @@ export const Delegates = () => {
                 >
                   {t(`championships.regions.${region}`)}
                 </Typography>
-                <CardGrid>
-                  {regionDelegates.map((delegate) => (
-                    <PersonCard
-                      key={delegate.wca_id}
-                      wcaId={delegate.wca_id}
-                      name={delegate.name}
-                      avatarUrl={delegate.avatar_thumb_url}
-                      status={delegate.status}
-                      gender={delegate.gender}
-                      subtitle={
-                        delegate.province
-                          ? t(`provinces.${delegate.province}`)
-                          : undefined
-                      }
-                    />
-                  ))}
-                </CardGrid>
+                <CardGrid>{regionDelegates.map(renderDelegateCard)}</CardGrid>
               </Box>
             );
           })}

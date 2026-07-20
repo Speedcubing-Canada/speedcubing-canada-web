@@ -1,22 +1,9 @@
-import { Avatar, Box, Chip, Paper, Typography } from "@mui/material";
+import { Avatar, Box, Paper, Typography } from "@mui/material";
 import { AccountCircle } from "@mui/icons-material";
 import { useQuery } from "@tanstack/react-query";
-import { useTranslation } from "react-i18next";
+import { ReactNode } from "react";
 import { fetchWcaPerson } from "../helpers/fetchWcaPerson";
 import { LINKS } from "../pages/links";
-
-// WCA delegate ranks, most senior first. Encoded on the card as a colored chip:
-// primary/filled (top) -> neutral/filled -> primary/outlined -> neutral/outlined.
-const STATUS_STYLE: Record<
-  string,
-  { key: string; color: "primary" | "default"; variant: "filled" | "outlined" }
-> = {
-  regional_delegate: { key: "regional", color: "primary", variant: "filled" },
-  senior_delegate: { key: "senior", color: "primary", variant: "filled" },
-  delegate: { key: "delegate", color: "default", variant: "filled" },
-  junior_delegate: { key: "junior", color: "primary", variant: "outlined" },
-  trainee_delegate: { key: "trainee", color: "default", variant: "outlined" },
-};
 
 interface PersonCardProps {
   wcaId: string;
@@ -25,10 +12,9 @@ interface PersonCardProps {
   // Delegates pass their avatar (string, or null for the default WCA avatar) from
   // the backend. Directors omit it entirely, so the card fetches from the WCA API.
   avatarUrl?: string | null;
-  // A WCA delegate status; when present, renders a colored rank chip.
-  status?: string;
-  // WCA gender ("f" for the feminine label, e.g. French "déléguée").
-  gender?: string | null;
+  // Optional badge rendered under the name (e.g. a delegate rank chip). Callers
+  // own its content/translation so this card stays purely presentational.
+  chip?: ReactNode;
 }
 
 // A compact, linked avatar tile for a WCA member. The whole card links to the WCA
@@ -40,10 +26,8 @@ export const PersonCard = ({
   name,
   subtitle,
   avatarUrl,
-  status,
-  gender,
+  chip,
 }: PersonCardProps) => {
-  const { t } = useTranslation();
   const shouldFetch = avatarUrl === undefined;
 
   const { data } = useQuery({
@@ -58,8 +42,6 @@ export const PersonCard = ({
       ? data.avatarThumbUrl
       : undefined
     : avatarUrl ?? undefined;
-
-  const statusStyle = status ? STATUS_STYLE[status] : undefined;
 
   return (
     <Paper
@@ -117,16 +99,7 @@ export const PersonCard = ({
           {name}
         </Typography>
 
-        {statusStyle && (
-          <Chip
-            size="small"
-            label={t(`delegates.status.${statusStyle.key}`, {
-              context: gender === "f" ? "female" : undefined,
-            })}
-            color={statusStyle.color}
-            variant={statusStyle.variant}
-          />
-        )}
+        {chip}
 
         {subtitle && (
           <Typography variant="body2" color="text.secondary">
