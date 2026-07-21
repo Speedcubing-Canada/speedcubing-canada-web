@@ -1,4 +1,4 @@
-import { AccountCircle, Download, OpenInNew } from "@mui/icons-material";
+import { Download, OpenInNew } from "@mui/icons-material";
 import {
   ListSubheader,
   ListItemIcon,
@@ -7,22 +7,18 @@ import {
   Container,
   Typography,
   List,
-  ListItem,
   ListItemText,
-  IconButton,
 } from "@mui/material";
 import { useTranslation } from "react-i18next";
 import { ExternalLink } from "../components/ExternalLink";
+import { PersonCard } from "../components/PersonCard";
 import { DOCUMENT_TYPES, DOCUMENTS } from "./documents";
-import { LINKS } from "./links";
 
 export const DIRECTORS = [
   { name: "Kristopher De Asis", wcaId: "2008ASIS01" },
   { name: "Joanne Chew", wcaId: "2024CHEW09" },
   { name: "Alex Mutch", wcaId: "2014MUTC01" },
 ] as const;
-
-const WCA_PROFILE_URL = LINKS.WCA.PROFILE;
 
 export const Organization = () => {
   const { t } = useTranslation();
@@ -39,28 +35,21 @@ export const Organization = () => {
         <Typography component="h2" variant="h4" fontWeight="bold" gutterBottom>
           {t("directors.title")}
         </Typography>
-        <List>
+        <Box
+          display="flex"
+          flexWrap="wrap"
+          gap={3}
+          justifyContent={{ xs: "center", sm: "flex-start" }}
+        >
           {DIRECTORS.map(({ name, wcaId }) => (
-            <ListItem
+            <PersonCard
               key={wcaId}
-              secondaryAction={
-                <IconButton
-                  edge="end"
-                  aria-label="WCA Profile"
-                  component={ExternalLink}
-                  to={WCA_PROFILE_URL + wcaId}
-                >
-                  <AccountCircle />
-                </IconButton>
-              }
-            >
-              <ListItemText
-                primary={name}
-                secondary={t("directors.boardMember")}
-              />
-            </ListItem>
+              wcaId={wcaId}
+              name={name}
+              subtitle={t("directors.boardMember")}
+            />
           ))}
-        </List>
+        </Box>
       </Box>
 
       <Box marginY="4rem">

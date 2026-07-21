@@ -16,6 +16,10 @@ function buildConnectSrc() {
     "'self'",
     "https://api.speedcubingcanada.org",
     "https://api.staging.speedcubingcanada.org",
+    // WCA public API — directors/delegates avatars and competition data are
+    // fetched directly from the browser (see helpers/fetchWcaPerson.ts and
+    // fetchCompetitionData.ts).
+    "https://www.worldcubeassociation.org",
   ];
 
   if (isDev) {
@@ -81,7 +85,11 @@ app.use(
         ],
         "style-src-attr": ["'unsafe-inline'"],
         "font-src": ["'self'", "https://fonts.gstatic.com", "data:"],
-        "img-src": ["'self'", "data:"],
+        "img-src": [
+          "'self'",
+          "data:",
+          "https://avatars.worldcubeassociation.org",
+        ],
         "connect-src": buildConnectSrc(),
         "manifest-src": ["'self'"],
         "frame-src": ["'none'"],

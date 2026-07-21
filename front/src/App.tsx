@@ -25,6 +25,9 @@ const Organization = React.lazy(() =>
 const FAQ = React.lazy(() =>
   import("./pages/FAQ").then((m) => ({ default: m.FAQ })),
 );
+const Delegates = React.lazy(() =>
+  import("./pages/Delegates").then((m) => ({ default: m.Delegates })),
+);
 const Series = React.lazy(() =>
   import("./pages/Series").then((m) => ({ default: m.Series })),
 );
@@ -108,6 +111,7 @@ const App = () => {
                   <Route path="about" element={<About />} />
                   <Route path="organization" element={<Organization />} />
                   <Route path="faq" element={<FAQ />} />
+                  <Route path="delegates" element={<Delegates />} />
                   <Route
                     path="competitions/series/:seriesid"
                     element={<Series />}

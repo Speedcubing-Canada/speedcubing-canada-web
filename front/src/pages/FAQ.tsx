@@ -1,5 +1,6 @@
 import { Box, Container, Typography } from "@mui/material";
 import { useTranslation, Trans } from "react-i18next";
+import { Link } from "react-router-dom";
 import { ExternalLink } from "../components/ExternalLink";
 import { LINKS } from "./links";
 
@@ -36,7 +37,7 @@ export const FAQ = () => {
       ),
     },
     "who-are-the-wca-delegates-in-my-area": {
-      delegates: <ExternalLink to={LINKS.WCA.DELEGATES} />,
+      delegates: <Link to={`/${i18n.language}/delegates`} />,
     },
     "why-doesnt-my-name-appear-on-the-rankings": {
       wca: <ExternalLink to={LINKS.WCA.HOME} />,

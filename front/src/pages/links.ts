@@ -18,6 +18,7 @@ export const LINKS = {
         "https://www.worldcubeassociation.org/api/v0/competitions/",
       COMPETITION_SERIES:
         "https://www.worldcubeassociation.org/api/v0/competition_series/",
+      PERSON: "https://www.worldcubeassociation.org/api/v0/persons/",
     },
     PROFILE: "https://www.worldcubeassociation.org/persons/",
   },
