@@ -4,9 +4,11 @@ Downloading the WCA database uses enough memory that it's difficult to do from A
 
 ## Creating a new VM
 
-You can create a new VM at https://console.cloud.google.com/compute/instancesAdd?project=<your-project>. Most of the settings can use the defaults.
+You can create a new VM at https://console.cloud.google.com/compute/instancesAdd?project=<your-project>. Most of the settings can use the defaults, with the following exceptions:
 
-- **Machine configuration**: We're currently using e2-highmem-2.
+- **Boot disk**: Use the `debian-13` image family (project `debian-cloud`). Don't leave this on the
+  console default — older Debian releases ship a Python 3 too old to run this codebase. This must be pinned explicitly since nothing in this repo declares the image family for you.
+- **Machine configuration**: `e2-medium`.
 - **Identity and API access**: Use the Compute Engine default service account.
 - **Identity and API access**: Allow full access to all Cloud APIs.
 - **Management**: Use the following Startup script:

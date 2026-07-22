@@ -24,7 +24,14 @@ set -euo pipefail
 # These commands can also be used to get a local development server working.
 
 # Install dependencies.
-apt install unzip python3-distutils python3-venv build-essential python3-dev libffi-dev libssl-dev python3-pip python3-virtualenv
+apt install -y unzip python3-venv build-essential python3-dev libffi-dev libssl-dev python3-pip python3-virtualenv
+
+PYTHON_VERSION=$(python3 -c 'import sys; print(f"{sys.version_info[0]}.{sys.version_info[1]}")')
+if ! python3 -c 'import sys; sys.exit(0 if sys.version_info >= (3, 10) else 1)'; then
+  echo "ERROR: python3 is $PYTHON_VERSION, but this codebase requires Python 3.10+." >&2
+  echo "Recreate this VM on the debian-13 image family (see README.md)." >&2
+  exit 1
+fi
 
 # Set up the virtualenv.
 cd back
