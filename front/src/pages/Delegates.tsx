@@ -44,13 +44,13 @@ export const Delegates = () => {
   const regional = list
     .filter((delegate) => PRIORITY_STATUSES.includes(delegate.status))
     .sort(byName);
+  // Regional/senior delegates are also listed in their home region (a second time,
+  // alongside the country-wide top section), so no status exclusion here.
   const delegatesInRegion = (region: RegionId) =>
     list
       .filter(
         (delegate) =>
-          !PRIORITY_STATUSES.includes(delegate.status) &&
-          delegate.province &&
-          PROVINCE_REGION[delegate.province] === region,
+          delegate.province && PROVINCE_REGION[delegate.province] === region,
       )
       .sort(byName);
 
@@ -83,7 +83,15 @@ export const Delegates = () => {
               >
                 {t("delegates.regional")}
               </Typography>
-              <CardGrid>{regional.map(renderDelegateCard)}</CardGrid>
+              <CardGrid>
+                {regional.map((delegate) => (
+                  <DelegateCard
+                    key={delegate.wca_id}
+                    delegate={delegate}
+                    showRegionGroup
+                  />
+                ))}
+              </CardGrid>
             </Box>
           )}
 
