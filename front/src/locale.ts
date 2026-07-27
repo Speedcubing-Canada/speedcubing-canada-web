@@ -128,6 +128,10 @@ export const resources = {
           junior: "Junior Delegate",
           trainee: "Trainee Delegate",
         },
+        regionGroup: {
+          east: "Canada (East)",
+          west: "Canada (West)",
+        },
       },
       documents: {
         title: "Documents",
@@ -508,6 +512,10 @@ export const resources = {
           junior_female: "Déléguée junior",
           trainee: "Délégué en formation",
           trainee_female: "Déléguée en formation",
+        },
+        regionGroup: {
+          east: "Canada (Est)",
+          west: "Canada (Ouest)",
         },
       },
       documents: {

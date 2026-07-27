@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { useQuery } from "@tanstack/react-query";
 import { DelegateCard } from "../components/DelegateCard";
 import { LoadingPageLinear } from "../components/LoadingPageLinear";
-import { fetchDelegates, Delegate } from "../helpers/fetchDelegates";
+import { fetchDelegates } from "../helpers/fetchDelegates";
 import {
   PROVINCE_REGION,
   REGION_ORDER,
@@ -44,19 +44,15 @@ export const Delegates = () => {
   const regional = list
     .filter((delegate) => PRIORITY_STATUSES.includes(delegate.status))
     .sort(byName);
+  // Regional/senior delegates are also listed in their home region (a second time,
+  // alongside the country-wide top section), so no status exclusion here.
   const delegatesInRegion = (region: RegionId) =>
     list
       .filter(
         (delegate) =>
-          !PRIORITY_STATUSES.includes(delegate.status) &&
-          delegate.province &&
-          PROVINCE_REGION[delegate.province] === region,
+          delegate.province && PROVINCE_REGION[delegate.province] === region,
       )
       .sort(byName);
-
-  const renderDelegateCard = (delegate: Delegate) => (
-    <DelegateCard key={delegate.wca_id} delegate={delegate} />
-  );
 
   return (
     <Container maxWidth="md">
@@ -83,7 +79,15 @@ export const Delegates = () => {
               >
                 {t("delegates.regional")}
               </Typography>
-              <CardGrid>{regional.map(renderDelegateCard)}</CardGrid>
+              <CardGrid>
+                {regional.map((delegate) => (
+                  <DelegateCard
+                    key={delegate.wca_id}
+                    delegate={delegate}
+                    showRegionGroup
+                  />
+                ))}
+              </CardGrid>
             </Box>
           )}
 
@@ -103,7 +107,11 @@ export const Delegates = () => {
                 >
                   {t(`championships.regions.${region}`)}
                 </Typography>
-                <CardGrid>{regionDelegates.map(renderDelegateCard)}</CardGrid>
+                <CardGrid>
+                  {regionDelegates.map((delegate) => (
+                    <DelegateCard key={delegate.wca_id} delegate={delegate} />
+                  ))}
+                </CardGrid>
               </Box>
             );
           })}

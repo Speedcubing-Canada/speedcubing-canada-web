@@ -9,7 +9,7 @@ const { SAMPLE } = vi.hoisted(() => ({
       name: "Kristopher De Asis",
       gender: "m",
       status: "regional_delegate",
-      province: null,
+      province: "ab",
       region_group: "Canada (West)",
       avatar_thumb_url: null,
     },
@@ -43,15 +43,25 @@ describe("Delegates page", () => {
     renderWithProviders(<Delegates />);
 
     // Every delegate renders (async — waits for the query to resolve).
-    expect(await screen.findByText("Kristopher De Asis")).toBeInTheDocument();
-    expect(screen.getByText("Alexandre Ondet")).toBeInTheDocument();
+    expect(await screen.findByText("Alexandre Ondet")).toBeInTheDocument();
     expect(screen.getByText("Marco Yang")).toBeInTheDocument();
 
-    // Regional delegates get their own priority section...
+    // The regional delegate appears twice: the country-wide priority section...
+    expect(screen.getAllByText("Kristopher De Asis")).toHaveLength(2);
     expect(
       screen.getByRole("heading", { name: i18n.t("delegates.regional") }),
     ).toBeInTheDocument();
-    // ...and the others are grouped by region.
+    // ...where the subtitle is the region they cover, not their province.
+    expect(
+      screen.getByText(i18n.t("delegates.regionGroup.west")),
+    ).toBeInTheDocument();
+
+    // ...and a second time in their home region, alongside per-region delegates.
+    expect(
+      screen.getByRole("heading", {
+        name: i18n.t("championships.regions.pr"),
+      }),
+    ).toBeInTheDocument();
     expect(
       screen.getByRole("heading", {
         name: i18n.t("championships.regions.qc"),
@@ -63,10 +73,10 @@ describe("Delegates page", () => {
       }),
     ).toBeInTheDocument();
 
-    // Rank chips differentiate status.
+    // Rank chips differentiate status (regional shows on both of his cards).
     expect(
-      screen.getByText(i18n.t("delegates.status.regional")),
-    ).toBeInTheDocument();
+      screen.getAllByText(i18n.t("delegates.status.regional")),
+    ).toHaveLength(2);
     expect(
       screen.getByText(i18n.t("delegates.status.junior")),
     ).toBeInTheDocument();
