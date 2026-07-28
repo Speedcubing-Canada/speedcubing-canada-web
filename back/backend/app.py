@@ -15,8 +15,10 @@ from backend.handlers.auth import create_bp as create_auth_bp
 from backend.handlers.champions_table import bp as champions_table_bp
 from backend.handlers.championship_eligibility import bp as championship_eligibility_bp
 from backend.handlers.delegates import bp as delegates_bp
+from backend.handlers.people import bp as people_bp
 from backend.handlers.province_rankings import bp as province_rankings_bp
 from backend.handlers.regional import bp as regional_bp
+from backend.handlers.teams import bp as teams_bp
 from backend.handlers.user import bp as user_bp
 from backend.lib.secrets import get_secret
 
@@ -84,6 +86,8 @@ app.register_blueprint(create_auth_bp(oauth))
 app.register_blueprint(champions_table_bp)
 app.register_blueprint(championship_eligibility_bp)
 app.register_blueprint(delegates_bp)
+app.register_blueprint(teams_bp)
+app.register_blueprint(people_bp)
 app.register_blueprint(regional_bp)
 app.register_blueprint(province_rankings_bp)
 app.register_blueprint(user_bp)

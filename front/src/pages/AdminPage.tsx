@@ -9,6 +9,9 @@ import {
 } from "react-admin";
 import UserIcon from "@mui/icons-material/Group";
 import EmojiEventsIcon from "@mui/icons-material/EmojiEvents";
+import GroupsIcon from "@mui/icons-material/Groups";
+import GavelIcon from "@mui/icons-material/Gavel";
+import StarIcon from "@mui/icons-material/Star";
 import CircularProgress from "@mui/material/CircularProgress";
 import Alert from "@mui/material/Alert";
 import { Box, Container } from "@mui/material";
@@ -20,6 +23,14 @@ import { ChampionshipList } from "../components/ChampionshipList";
 import { ChampionshipEdit } from "../components/ChampionshipEdit";
 import { ChampionshipCreate } from "../components/ChampionshipCreate";
 import { ChampionshipShow } from "../components/ChampionshipShow";
+import { TeamList } from "../components/TeamList";
+import { TeamEdit } from "../components/TeamEdit";
+import { TeamCreate } from "../components/TeamCreate";
+import { TeamShow } from "../components/TeamShow";
+import { PersonList } from "../components/PersonList";
+import { PersonEdit } from "../components/PersonEdit";
+import { PersonCreate } from "../components/PersonCreate";
+import { PersonShow } from "../components/PersonShow";
 import dataProvider from "../dataProvider";
 import httpClient from "../httpClient";
 import { API_BASE_URL } from "../components/api";
@@ -93,6 +104,35 @@ export const AdminPage = () => {
             create={ChampionshipCreate}
             icon={EmojiEventsIcon}
             recordRepresentation="competition_name"
+          />
+          {/* "…Admin" suffix on every resource name for the same route-collision reason
+              documented above (TeamsAdmin, DirectorsAdmin, FeaturedMembersAdmin). */}
+          <Resource
+            name="TeamsAdmin"
+            list={TeamList}
+            show={TeamShow}
+            edit={TeamEdit}
+            create={TeamCreate}
+            icon={GroupsIcon}
+            recordRepresentation="name_en"
+          />
+          <Resource
+            name="DirectorsAdmin"
+            list={PersonList}
+            show={PersonShow}
+            edit={PersonEdit}
+            create={PersonCreate}
+            icon={GavelIcon}
+            recordRepresentation="name"
+          />
+          <Resource
+            name="FeaturedMembersAdmin"
+            list={PersonList}
+            show={PersonShow}
+            edit={PersonEdit}
+            create={PersonCreate}
+            icon={StarIcon}
+            recordRepresentation="name"
           />
         </Admin>
       ) : (

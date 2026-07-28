@@ -1,0 +1,125 @@
+"""Shared react-admin CRUD for the flat "site person" kinds (Director, FeaturedMember).
+
+Both kinds have the identical shape (see ``models/person.py``), so the list/getMany/getOne/
+create/update/delete handlers are generated once here and instantiated per model, avoiding
+duplicated endpoint code. The URL/response contract matches ``edit_championships.py`` so the
+frontend data provider treats every admin resource the same way.
+"""
+
+from flask import Blueprint, jsonify, request
+from google.cloud import ndb
+
+from backend.lib.permissions import require_roles
+from backend.models.user import Roles
+
+_SORT_FIELDS = ("id", "name", "role_en", "position")
+_PERSON_FIELDS = ("name", "wca_id", "role_en", "role_fr", "bio_en", "bio_fr")
+
+
+def apply_person_fields(record, data):
+    """Set a person record's editable fields from a react-admin payload."""
+    for field in _PERSON_FIELDS:
+        value = data.get(field)
+        setattr(record, field, value.strip() if isinstance(value, str) and value.strip() else None)
+    record.position = int(data.get("position") or 0)
+
+
+def _sort_key(field):
+    def key(record):
+        value = record.get(field)
+        # Keep None values together and comparable against real values.
+        return (value is None, value)
+
+    return key
+
+
+def filter_and_sort(records, q, sort_field, sort_order):
+    """Filter by name substring then sort. Pure helper for testing."""
+    if q:
+        needle = q.lower()
+        records = [r for r in records if needle in (r.get("name") or "").lower()]
+    if sort_field not in _SORT_FIELDS:
+        sort_field = "position"
+    records = sorted(records, key=_sort_key(sort_field), reverse=(sort_order.lower() == "desc"))
+    return records
+
+
+def make_person_blueprint(name, singular, plural, model):
+    """Build a Blueprint exposing the full react-admin CRUD contract for ``model``."""
+    bp = Blueprint(name, __name__)
+
+    @bp.route(f"/get_{plural}")
+    @require_roles(*Roles.AdminRoles())
+    def list_records():
+        page = request.args.get("page", 1, type=int)
+        per_page = request.args.get("per_page", 25, type=int)
+        if page < 1:
+            page = 1
+        if per_page < 1:
+            per_page = 25
+        sort_field = request.args.get("sort_field", "position").strip('"')
+        sort_order = request.args.get("sort_order", "asc").strip('"')
+        q = request.args.get("q", "", type=str).strip('"')
+
+        records = filter_and_sort([r.to_json() for r in model.query().iter()], q, sort_field, sort_order)
+        total = len(records)
+        start = (page - 1) * per_page
+        end = start + per_page
+        return jsonify(
+            {
+                "data": records[start:end],
+                "total": total,
+                "pageInfo": {"hasPreviousPage": page > 1, "hasNextPage": end < total},
+            }
+        )
+
+    @bp.route(f"/get_{plural}_by_id")
+    @require_roles(*Roles.AdminRoles())
+    def get_records_by_id():
+        raw_ids = request.args.get("ids", "[]", type=str).strip("[]").split(",")
+        ids = [i.strip().strip('"') for i in raw_ids if i.strip()]
+        records = [r for r in ndb.get_multi([ndb.Key(model, i) for i in ids]) if r]
+        return jsonify({"data": [r.to_json() for r in records]})
+
+    @bp.route(f"/{singular}/<record_id>")
+    @require_roles(*Roles.AdminRoles())
+    def get_record(record_id):
+        record = model.get_by_id(record_id)
+        if not record:
+            return jsonify({"error": f"{singular} not found"}), 404
+        return jsonify(record.to_json())
+
+    @bp.route(f"/{plural}", methods=["POST"])
+    @require_roles(*Roles.AdminRoles())
+    def create_record():
+        data = request.get_json() or {}
+        record_id = (data.get("id") or "").strip()
+        if not record_id:
+            return jsonify({"error": "An id (slug) is required"}), 400
+        if model.get_by_id(record_id):
+            return jsonify({"error": f"{record_id} already exists"}), 409
+        record = model(id=record_id)
+        apply_person_fields(record, data)
+        record.put()
+        return jsonify(record.to_json())
+
+    @bp.route(f"/{plural}/<record_id>", methods=["POST"])
+    @require_roles(*Roles.AdminRoles())
+    def update_record(record_id):
+        record = model.get_by_id(record_id)
+        if not record:
+            return jsonify({"error": f"{singular} not found"}), 404
+        apply_person_fields(record, request.get_json() or {})
+        record.put()
+        return jsonify(record.to_json())
+
+    @bp.route(f"/{plural}/<record_id>", methods=["DELETE"])
+    @require_roles(*Roles.AdminRoles())
+    def delete_record(record_id):
+        record = model.get_by_id(record_id)
+        if not record:
+            return jsonify({"error": f"{singular} not found"}), 404
+        record.key.delete()
+        return jsonify({"data": {"id": record_id}})
+
+    return bp

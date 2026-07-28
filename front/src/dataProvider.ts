@@ -14,6 +14,18 @@ const httpClient = (url: string, options: RequestInit = {}) => {
   return fetchUtils.fetchJson(url, options);
 };
 
+// Curated admin resources served by the hand-written backend CRUD (edit_teams.py,
+// _person_crud.py). Each maps to a singular getOne segment and a plural collection segment,
+// matching the ChampionshipsAdmin URL contract (get_<plural>, <singular>/<id>, <plural>[/<id>]).
+const ADMIN_RESOURCES: Record<string, { singular: string; plural: string }> = {
+  TeamsAdmin: { singular: "team", plural: "teams" },
+  DirectorsAdmin: { singular: "director", plural: "directors" },
+  FeaturedMembersAdmin: {
+    singular: "featured_member",
+    plural: "featured_members",
+  },
+};
+
 const convertResponseToDataProviderFormat = (response: any) => {
   return {
     data: response.data,
@@ -29,7 +41,11 @@ const dataProvider: DataProvider = {
     const { page, perPage } = params.pagination;
     const { field, order } = params.sort;
 
-    if (resource === "ChampionshipsAdmin") {
+    const adminResource =
+      resource === "ChampionshipsAdmin"
+        ? { plural: "championships" }
+        : ADMIN_RESOURCES[resource];
+    if (adminResource) {
       const query = {
         page,
         per_page: perPage,
@@ -37,7 +53,9 @@ const dataProvider: DataProvider = {
         sort_order: order,
         q: params.filter?.q ?? "",
       };
-      const url = `${apiUrl}/admin/get_championships?${stringify(query)}`;
+      const url = `${apiUrl}/admin/get_${adminResource.plural}?${stringify(
+        query,
+      )}`;
       return httpClient(url).then(({ json }) => ({
         data: json.data,
         total: json.total,
@@ -61,12 +79,16 @@ const dataProvider: DataProvider = {
   },
 
   getOne: (resource, params) => {
-    if (resource === "ChampionshipsAdmin") {
-      return httpClient(`${apiUrl}/admin/championship/${params.id}`).then(
-        ({ json }) => ({
-          data: json,
-        }),
-      );
+    const adminResource =
+      resource === "ChampionshipsAdmin"
+        ? { singular: "championship" }
+        : ADMIN_RESOURCES[resource];
+    if (adminResource) {
+      return httpClient(
+        `${apiUrl}/admin/${adminResource.singular}/${params.id}`,
+      ).then(({ json }) => ({
+        data: json,
+      }));
     }
     return httpClient(`${apiUrl}/user_info/${params.id}`).then(({ json }) => ({
       data: json,
@@ -74,9 +96,15 @@ const dataProvider: DataProvider = {
   },
 
   getMany: (resource, params) => {
-    if (resource === "ChampionshipsAdmin") {
+    const adminResource =
+      resource === "ChampionshipsAdmin"
+        ? { plural: "championships" }
+        : ADMIN_RESOURCES[resource];
+    if (adminResource) {
       const query = { ids: JSON.stringify(params.ids) };
-      const url = `${apiUrl}/admin/get_championships_by_id?${stringify(query)}`;
+      const url = `${apiUrl}/admin/get_${
+        adminResource.plural
+      }_by_id?${stringify(query)}`;
       return httpClient(url).then(({ json }) => ({ data: json.data }));
     }
     const query = {
@@ -118,8 +146,12 @@ const dataProvider: DataProvider = {
     resource: any,
     params: { data: any }, //not setup
   ) => {
-    if (resource === "ChampionshipsAdmin") {
-      return httpClient(`${apiUrl}/admin/championships`, {
+    const adminResource =
+      resource === "ChampionshipsAdmin"
+        ? { plural: "championships" }
+        : ADMIN_RESOURCES[resource];
+    if (adminResource) {
+      return httpClient(`${apiUrl}/admin/${adminResource.plural}`, {
         method: "POST",
         body: JSON.stringify(params.data),
       }).then(({ json }) => ({ data: json }));
@@ -133,11 +165,18 @@ const dataProvider: DataProvider = {
   },
 
   update: (resource, params) => {
-    if (resource === "ChampionshipsAdmin") {
-      return httpClient(`${apiUrl}/admin/championships/${params.id}`, {
-        method: "POST",
-        body: JSON.stringify(params.data),
-      }).then(({ json }) => ({ data: json }));
+    const adminResource =
+      resource === "ChampionshipsAdmin"
+        ? { plural: "championships" }
+        : ADMIN_RESOURCES[resource];
+    if (adminResource) {
+      return httpClient(
+        `${apiUrl}/admin/${adminResource.plural}/${params.id}`,
+        {
+          method: "POST",
+          body: JSON.stringify(params.data),
+        },
+      ).then(({ json }) => ({ data: json }));
     }
     return httpClient(`${apiUrl}/edit/${params.id}`, {
       method: "POST",
@@ -157,10 +196,17 @@ const dataProvider: DataProvider = {
   },
 
   delete: (resource, params) => {
-    if (resource === "ChampionshipsAdmin") {
-      return httpClient(`${apiUrl}/admin/championships/${params.id}`, {
-        method: "DELETE",
-      }).then(({ json }) => ({ data: json.data ?? { id: params.id } }));
+    const adminResource =
+      resource === "ChampionshipsAdmin"
+        ? { plural: "championships" }
+        : ADMIN_RESOURCES[resource];
+    if (adminResource) {
+      return httpClient(
+        `${apiUrl}/admin/${adminResource.plural}/${params.id}`,
+        {
+          method: "DELETE",
+        },
+      ).then(({ json }) => ({ data: json.data ?? { id: params.id } }));
     }
     return httpClient(`${apiUrl}/${resource}/${params.id}`, {
       method: "DELETE",

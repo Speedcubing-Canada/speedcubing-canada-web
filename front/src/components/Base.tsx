@@ -33,6 +33,7 @@ import {
   AccountCircle,
   Leaderboard,
   EmojiEvents,
+  Description,
 } from "@mui/icons-material";
 
 import { Link, Outlet, useLocation, useParams } from "react-router-dom";
@@ -50,6 +51,7 @@ export const ROUTE_NAMES = [
   "organization",
   "faq",
   "delegates",
+  "documents",
   "rankings",
   "championships",
   "account",
@@ -61,6 +63,7 @@ const ICONS = {
   organization: CorporateFare,
   faq: QuestionAnswer,
   delegates: Groups,
+  documents: Description,
   account: AccountCircle,
   rankings: Leaderboard,
   championships: EmojiEvents,
@@ -72,6 +75,7 @@ const ROUTE_NAME_TO_PATH = {
   organization: "organization",
   faq: "faq",
   delegates: "delegates",
+  documents: "documents",
   rankings: "rankings",
   championships: "championships",
   account: "account",
@@ -98,7 +102,7 @@ const NAV_ITEMS: NavItem[] = [
     kind: "group",
     groupName: INFORMATION_GROUP,
     Icon: Segment,
-    children: ["about", "organization", "faq", "delegates"],
+    children: ["about", "organization", "faq", "delegates", "documents"],
   },
   { kind: "leaf", routeName: "rankings" },
   { kind: "leaf", routeName: "championships" },

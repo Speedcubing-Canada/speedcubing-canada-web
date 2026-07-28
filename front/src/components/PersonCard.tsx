@@ -6,7 +6,9 @@ import { fetchWcaPerson } from "../helpers/fetchWcaPerson";
 import { LINKS } from "../pages/links";
 
 interface PersonCardProps {
-  wcaId: string;
+  // Optional: team members / featured people may have no WCA profile. When absent
+  // the card renders un-linked (no href) and shows the generic avatar fallback.
+  wcaId?: string;
   name: string;
   subtitle?: string;
   // Delegates pass their avatar (string, or null for the default WCA avatar) from
@@ -17,10 +19,10 @@ interface PersonCardProps {
   chip?: ReactNode;
 }
 
-// A compact, linked avatar tile for a WCA member. The whole card links to the WCA
-// profile; it lifts on hover. Name/subtitle come from local data; the photo comes
-// either from a passed-in URL (delegates) or a WCA API fetch (directors), falling
-// back to a generic icon while loading, on error, or when there is no photo.
+// A compact avatar tile for a person. When a wcaId is given the whole card links to
+// the WCA profile and lifts on hover; the photo comes either from a passed-in URL
+// (delegates) or a WCA API fetch (directors). Without a wcaId it renders un-linked.
+// Falls back to a generic icon while loading, on error, or when there is no photo.
 export const PersonCard = ({
   wcaId,
   name,
@@ -28,11 +30,11 @@ export const PersonCard = ({
   avatarUrl,
   chip,
 }: PersonCardProps) => {
-  const shouldFetch = avatarUrl === undefined;
+  const shouldFetch = avatarUrl === undefined && !!wcaId;
 
   const { data } = useQuery({
     queryKey: ["wca-person", wcaId],
-    queryFn: () => fetchWcaPerson(wcaId),
+    queryFn: () => fetchWcaPerson(wcaId as string),
     staleTime: 1000 * 60 * 60,
     enabled: shouldFetch,
   });
@@ -46,10 +48,14 @@ export const PersonCard = ({
   return (
     <Paper
       variant="outlined"
-      component="a"
-      href={LINKS.WCA.PROFILE + wcaId}
-      target="_blank"
-      rel="noopener noreferrer"
+      {...(wcaId
+        ? {
+            component: "a",
+            href: LINKS.WCA.PROFILE + wcaId,
+            target: "_blank",
+            rel: "noopener noreferrer",
+          }
+        : {})}
       sx={{
         display: "flex",
         flexDirection: "column",

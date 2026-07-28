@@ -28,6 +28,9 @@ const FAQ = React.lazy(() =>
 const Delegates = React.lazy(() =>
   import("./pages/Delegates").then((m) => ({ default: m.Delegates })),
 );
+const Documents = React.lazy(() =>
+  import("./pages/Documents").then((m) => ({ default: m.Documents })),
+);
 const Series = React.lazy(() =>
   import("./pages/Series").then((m) => ({ default: m.Series })),
 );
@@ -112,6 +115,7 @@ const App = () => {
                   <Route path="organization" element={<Organization />} />
                   <Route path="faq" element={<FAQ />} />
                   <Route path="delegates" element={<Delegates />} />
+                  <Route path="documents" element={<Documents />} />
                   <Route
                     path="competitions/series/:seriesid"
                     element={<Series />}

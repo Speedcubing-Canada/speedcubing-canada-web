@@ -19,6 +19,8 @@ export const LINKS = {
       COMPETITION_SERIES:
         "https://www.worldcubeassociation.org/api/v0/competition_series/",
       PERSON: "https://www.worldcubeassociation.org/api/v0/persons/",
+      SEARCH_USERS:
+        "https://www.worldcubeassociation.org/api/v0/search/users?persons_table=true&q=",
     },
     PROFILE: "https://www.worldcubeassociation.org/persons/",
   },
