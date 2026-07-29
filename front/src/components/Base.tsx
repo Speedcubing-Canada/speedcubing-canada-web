@@ -36,7 +36,7 @@ import {
   Description,
 } from "@mui/icons-material";
 
-import { Link, Outlet, useLocation, useParams } from "react-router-dom";
+import { Link, Outlet, useLocation, useParams } from "react-router";
 import { getLocaleOrFallback, SAVED_LOCALE_KEY } from "../locale";
 import { LoadingPageLinear } from "./LoadingPageLinear";
 import { useScrollbarWidth } from "../helpers/scrollbarWidth";

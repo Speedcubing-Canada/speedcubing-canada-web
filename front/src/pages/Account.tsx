@@ -28,7 +28,7 @@ import {
   removeCachedRankingsPreferredProvinceId,
   setCachedRankingsPreferredProvinceId,
 } from "../helpers/rankingsProvinceCache";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 
 const initialState: AlertState = {
   alert: false,
