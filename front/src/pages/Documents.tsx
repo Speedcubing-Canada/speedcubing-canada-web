@@ -45,7 +45,7 @@ export const Documents = () => {
           <List
             key={documentType}
             subheader={
-              <ListSubheader component="div" id="nested-list-subheader">
+              <ListSubheader component="div">
                 {t(`documents.${documentType}`)}
               </ListSubheader>
             }
