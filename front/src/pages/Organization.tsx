@@ -59,11 +59,17 @@ export const Organization = () => {
         <Typography component="h1" variant="h3" fontWeight="bold" gutterBottom>
           {t("organization.title")}
         </Typography>
+        <Typography color="text.secondary">
+          {t("organization.intro")}
+        </Typography>
       </Box>
 
       {directorsList.length > 0 && (
         <Box marginY="4rem">
           <SectionHeading>{t("directors.title")}</SectionHeading>
+          <Typography color="text.secondary" marginBottom="1rem">
+            {t("directors.intro")}
+          </Typography>
           <CardGrid>
             {directorsList.map((director) => (
               <PersonCard

@@ -1,25 +1,27 @@
-Name,Office(s),Region,WCA ID
-Abdullah Gulab,Events,Ontario,2014GULA02
-Alexander Mutch,Events,British Columbia,2014MUTC01
-Alexandre Ondet,Events,Québec,2017ONDE01
-Alyssa Esparaz,"Communications, Events",Ontario,2014ESPA01
-Ben Bergen,Events,Ontario,2015BERG10
-Cynthia Sun,Communications,British Columbia,2026SUNC01
-DaYeong Kim,Events,British Columbia,2016KIMD05
-Dylan Vaskevicius,Events,Alberta,2017VASK01
-Heewon Hwang,"Communications, Events",British Columbia,2020HWAN01
-Isaac Davies,"Administrative, Events",British Columbia,2017DAVI01
-Joanne Chew,"Communications, Events",British Columbia,2024CHEW09
-Jonathan Esparaz,Events,Ontario,2013ESPA01
-Kevin Matthews,Events,British Columbia,2010MATT02
-Kristopher De Asis,Events,Alberta,2008ASIS01
-Liam Orovec,Events,Ontario,2014OROV01
-Monica Fanning,Communications,Ontario,
-Sarah Strong,Events,Ontario,2007STRO01
-Steven Phang,Communications,Ontario,2023PHAN05
-Tarandeep Mittal,Events,Ontario,2014MITT02
-Vianne Chang,Events,Saskatchewan,2017CHAN47
-Vicky Tremblay,Communications,Québec,2025TREM02
-Wendy Nieuwland,Administrative,Ontario,2023NIEU03
-Winston Chow,Communications,British Columbia,2022CHOW14
-Yvonne Chow,Administrative,Alberta,2016CHOW03
+Name,Office(s),Region,WCA ID,Leads
+Abdullah Gulab,Events,Ontario,2014GULA02,
+Alexander Mutch,"Events, Board",British Columbia,2014MUTC01,
+Alexandre Ondet,"Events, Software",Québec,2017ONDE01,Software
+Alyssa Esparaz,"Communications, Events",Ontario,2014ESPA01,Communications
+Ben Bergen,Events,Ontario,2015BERG10,
+Cynthia Sun,Communications,British Columbia,2026SUNC01,
+DaYeong Kim,Events,British Columbia,2016KIMD05,
+Dylan Vaskevicius,Events,Alberta,2017VASK01,
+Heewon Hwang,"Communications, Events",British Columbia,2020HWAN01,
+Isaac Davies,"Administrative, Events",British Columbia,2017DAVI01,
+Joanne Chew,"Communications, Events, Board",British Columbia,2024CHEW09,
+Jonathan Esparaz,"Events, Software",Ontario,2013ESPA01,
+Kevin Matthews,"Events, Software",British Columbia,2010MATT02,
+Kristopher De Asis,"Events, Board",Alberta,2008ASIS01,
+Liam Orovec,Events,Ontario,2014OROV01,
+Marco Yang,Software,Ontario,2017YANG62,
+Monica Fanning,Communications,Ontario,,
+Nicholas McKee,Software,,2015MCKE02,
+Sarah Strong,Events,Ontario,2007STRO01,
+Steven Phang,Communications,Ontario,2023PHAN05,
+Tarandeep Mittal,Events,Ontario,2014MITT02,
+Vianne Chang,Events,Saskatchewan,2017CHAN47,
+Vicky Tremblay,Communications,Québec,2025TREM02,
+Wendy Nieuwland,Administrative,Ontario,2023NIEU03,
+Winston Chow,Communications,British Columbia,2022CHOW14,
+Yvonne Chow,Administrative,Alberta,2016CHOW03,

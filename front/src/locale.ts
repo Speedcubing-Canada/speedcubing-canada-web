@@ -106,6 +106,8 @@ export const resources = {
       },
       organization: {
         title: "Organization",
+        intro:
+          "Speedcubing Canada is led by a volunteer Board of Directors, which sets our direction and oversees our operations, and organized into teams that handle day-to-day work such as communications, software, administration and events.",
       },
       officers: {
         title: "Officers",
@@ -113,6 +115,8 @@ export const resources = {
       },
       directors: {
         title: "Directors",
+        intro:
+          "The Board of Directors is elected to guide Speedcubing Canada and oversee its operations and finances.",
         boardMember: "Board Member",
       },
       featuredMembers: {
@@ -549,6 +553,8 @@ export const resources = {
       },
       organization: {
         title: "Organisation",
+        intro:
+          "Speedcubing Canada est dirigé par un conseil d'administration bénévole, qui détermine notre orientation et supervise nos activités, et est organisé en équipes qui prennent en charge le travail quotidien : communications, logiciel, administration et événements.",
       },
       officers: {
         title: "Cadres",
@@ -556,6 +562,8 @@ export const resources = {
       },
       directors: {
         title: "Directeurs",
+        intro:
+          "Le conseil d'administration est élu pour orienter Speedcubing Canada et superviser ses activités et ses finances.",
         boardMember: "Membre du bureau",
       },
       featuredMembers: {

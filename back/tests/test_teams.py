@@ -7,7 +7,7 @@ pure helpers, mirroring test_delegates.py.
 from unittest.mock import MagicMock
 
 from backend.handlers.admin.edit_teams import filter_and_sort, parse_members
-from backend.load_db.import_teams import group_rows
+from backend.load_db.import_teams import parse_rows
 from backend.models.team import Team, TeamMember
 
 
@@ -95,43 +95,69 @@ def test_filter_and_sort_defaults_to_position_and_sorts():
     assert [r["id"] for r in out] == ["b", "c", "a"]
 
 
-# group_rows (officers-CSV import transform: one row per person, comma-separated offices)
+# parse_rows (officers-CSV import: one row per person, comma-separated offices + leads + board)
 
 
-def test_group_rows_pivots_offices_into_teams():
+def test_parse_rows_pivots_offices_into_teams():
     rows = [
-        {"Name": "Alyssa", "Office(s)": "Communications, Events", "Region": "Ontario", "WCA ID": "2014ESPA01"},
-        {"Name": "Ben", "Office(s)": "Events", "Region": "Ontario", "WCA ID": ""},
-        {"Name": "Wendy", "Office(s)": "Administrative", "Region": "Ontario", "WCA ID": "2023NIEU03"},
+        {"Name": "Alyssa", "Office(s)": "Communications, Events", "WCA ID": "2014ESPA01", "Leads": ""},
+        {"Name": "Ben", "Office(s)": "Events", "WCA ID": "", "Leads": ""},
+        {"Name": "Wendy", "Office(s)": "Administrative", "WCA ID": "2023NIEU03", "Leads": ""},
+        {"Name": "Alex", "Office(s)": "Software", "WCA ID": "2017ONDE01", "Leads": "Software"},
     ]
 
-    teams = group_rows(rows)
+    teams, directors = parse_rows(rows)
 
-    assert set(teams) == {"communications", "events", "administration"}
+    assert set(teams) == {"communications", "events", "administration", "software"}
+    assert directors == []
     # A multi-office person joins every listed team, carrying their WCA id to each.
     assert [m["name"] for m in teams["communications"]["members"]] == ["Alyssa"]
     assert [m["name"] for m in teams["events"]["members"]] == ["Alyssa", "Ben"]
-    assert teams["communications"]["members"][0]["wca_id"] == "2014ESPA01"
     assert teams["events"]["members"][0]["wca_id"] == "2014ESPA01"
     # Bilingual name + position come from the OFFICE_TEAMS config order.
     assert teams["communications"]["name_en"] == "Communications Team"
     assert teams["communications"]["position"] == 0
-    assert teams["events"]["position"] == 1
+    # Each team also carries a bilingual description sourced from OFFICE_TEAMS.
+    assert teams["communications"]["description_en"]
+    assert teams["communications"]["description_fr"]
+    # Events is intentionally ordered last; Software and Administration fall in between.
+    assert teams["software"]["position"] == 1
     assert teams["administration"]["position"] == 2
-    # A blank WCA ID becomes None; the sheet has no leaders.
+    assert teams["events"]["position"] == 3
+    # A blank WCA ID becomes None; Ben leads nothing, Alex leads Software.
     ben = teams["events"]["members"][1]
-    assert ben["wca_id"] is None
-    assert ben["is_leader"] is False
+    assert ben["wca_id"] is None and ben["is_leader"] is False
+    assert teams["software"]["members"][0]["is_leader"] is True
 
 
-def test_group_rows_skips_blank_names_and_unknown_offices():
+def test_parse_rows_routes_board_office_to_directors():
+    rows = [
+        {"Name": "Kristopher De Asis", "Office(s)": "Events, Board", "WCA ID": "2008ASIS01", "Leads": ""},
+        # A second Board row for the same person must not duplicate the director.
+        {"Name": "Kristopher De Asis", "Office(s)": "Board", "WCA ID": "2008ASIS01", "Leads": ""},
+        {"Name": "Joanne Chew", "Office(s)": "Communications, Board", "WCA ID": "2024CHEW09", "Leads": ""},
+    ]
+
+    teams, directors = parse_rows(rows)
+
+    # Board members still join their operational team...
+    assert [m["name"] for m in teams["events"]["members"]] == ["Kristopher De Asis"]
+    # ...and become Directors, keyed by a name slug, deduped, ordered by first appearance.
+    assert [(d["id"], d["wca_id"], d["position"]) for d in directors] == [
+        ("kristopher-de-asis", "2008ASIS01", 0),
+        ("joanne-chew", "2024CHEW09", 1),
+    ]
+
+
+def test_parse_rows_skips_blank_names_and_unknown_offices():
     rows = [
         {"Name": "", "Office(s)": "Events"},  # no name -> skipped
-        {"Name": "Zed", "Office(s)": "Software"},  # unknown office -> skipped, no team created
+        {"Name": "Zed", "Office(s)": "Marketing"},  # unknown office -> skipped, no team created
         {"Name": "Amy", "Office(s)": "Administrative"},
     ]
 
-    teams = group_rows(rows)
+    teams, directors = parse_rows(rows)
 
     assert set(teams) == {"administration"}
+    assert directors == []
     assert [m["name"] for m in teams["administration"]["members"]] == ["Amy"]

@@ -82,8 +82,10 @@ describe("Organization page", () => {
     expect(
       screen.getByRole("heading", { name: i18n.t("organization.title") }),
     ).toBeInTheDocument();
+    expect(screen.getByText(i18n.t("organization.intro"))).toBeInTheDocument();
 
     // Board (director from the DB, with its role as subtitle).
+    expect(screen.getByText(i18n.t("directors.intro"))).toBeInTheDocument();
     expect(screen.getByText("President")).toBeInTheDocument();
 
     // Featured member with bio.
