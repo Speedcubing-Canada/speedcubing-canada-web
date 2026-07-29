@@ -1,6 +1,7 @@
 import { Box, Container, Typography } from "@mui/material";
 import { useTranslation } from "react-i18next";
 import { useQuery } from "@tanstack/react-query";
+import { CardGrid } from "../components/CardGrid";
 import { DelegateCard } from "../components/DelegateCard";
 import { LoadingPageLinear } from "../components/LoadingPageLinear";
 import { fetchDelegates } from "../helpers/fetchDelegates";
@@ -16,17 +17,6 @@ const PRIORITY_STATUSES = ["regional_delegate", "senior_delegate"];
 
 const byName = (a: { name: string }, b: { name: string }) =>
   a.name.localeCompare(b.name);
-
-const CardGrid = ({ children }: { children: React.ReactNode }) => (
-  <Box
-    display="flex"
-    flexWrap="wrap"
-    gap={3}
-    justifyContent={{ xs: "center", sm: "flex-start" }}
-  >
-    {children}
-  </Box>
-);
 
 export const Delegates = () => {
   const { t } = useTranslation();

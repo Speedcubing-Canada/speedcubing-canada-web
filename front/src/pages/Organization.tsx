@@ -1,23 +1,13 @@
 import { Box, Chip, Container, Typography } from "@mui/material";
 import { useTranslation } from "react-i18next";
 import { useQuery } from "@tanstack/react-query";
+import { CardGrid } from "../components/CardGrid";
 import { PersonCard } from "../components/PersonCard";
 import { FeaturedMemberCard } from "../components/FeaturedMemberCard";
 import { LoadingPageLinear } from "../components/LoadingPageLinear";
 import { fetchDirectors, fetchFeaturedMembers } from "../helpers/fetchPeople";
 import { fetchTeams } from "../helpers/fetchTeams";
 import { localized } from "../helpers/localized";
-
-const CardGrid = ({ children }: { children: React.ReactNode }) => (
-  <Box
-    display="flex"
-    flexWrap="wrap"
-    gap={3}
-    justifyContent={{ xs: "center", sm: "flex-start" }}
-  >
-    {children}
-  </Box>
-);
 
 const SectionHeading = ({ children }: { children: React.ReactNode }) => (
   <Typography component="h2" variant="h4" fontWeight="bold" gutterBottom>
@@ -32,20 +22,26 @@ const leaderFirst = (a: { is_leader: boolean }, b: { is_leader: boolean }) =>
 export const Organization = () => {
   const { t } = useTranslation();
 
-  const { data: directors, isLoading: directorsLoading } = useQuery({
-    queryKey: ["directors"],
-    queryFn: fetchDirectors,
-  });
-  const { data: featured } = useQuery({
+  const {
+    data: directors,
+    isLoading: directorsLoading,
+    isError: directorsError,
+  } = useQuery({ queryKey: ["directors"], queryFn: fetchDirectors });
+  const {
+    data: featured,
+    isLoading: featuredLoading,
+    isError: featuredError,
+  } = useQuery({
     queryKey: ["featured-members"],
     queryFn: fetchFeaturedMembers,
   });
-  const { data: teams, isLoading: teamsLoading } = useQuery({
-    queryKey: ["teams"],
-    queryFn: fetchTeams,
-  });
+  const {
+    data: teams,
+    isLoading: teamsLoading,
+    isError: teamsError,
+  } = useQuery({ queryKey: ["teams"], queryFn: fetchTeams });
 
-  if (directorsLoading || teamsLoading) {
+  if (directorsLoading || featuredLoading || teamsLoading) {
     return <LoadingPageLinear />;
   }
 
@@ -64,12 +60,14 @@ export const Organization = () => {
         </Typography>
       </Box>
 
-      {directorsList.length > 0 && (
-        <Box marginY="4rem">
-          <SectionHeading>{t("directors.title")}</SectionHeading>
-          <Typography color="text.secondary" marginBottom="1rem">
-            {t("directors.intro")}
-          </Typography>
+      <Box marginY="4rem">
+        <SectionHeading>{t("directors.title")}</SectionHeading>
+        <Typography color="text.secondary" marginBottom="1rem">
+          {t("directors.intro")}
+        </Typography>
+        {directorsError || directorsList.length === 0 ? (
+          <Typography color="text.secondary">{t("directors.empty")}</Typography>
+        ) : (
           <CardGrid>
             {directorsList.map((director) => (
               <PersonCard
@@ -82,12 +80,16 @@ export const Organization = () => {
               />
             ))}
           </CardGrid>
-        </Box>
-      )}
+        )}
+      </Box>
 
-      {featuredList.length > 0 && (
-        <Box marginY="4rem">
-          <SectionHeading>{t("featuredMembers.title")}</SectionHeading>
+      <Box marginY="4rem">
+        <SectionHeading>{t("featuredMembers.title")}</SectionHeading>
+        {featuredError || featuredList.length === 0 ? (
+          <Typography color="text.secondary">
+            {t("featuredMembers.empty")}
+          </Typography>
+        ) : (
           <Box
             display="flex"
             flexDirection="column"
@@ -98,13 +100,15 @@ export const Organization = () => {
               <FeaturedMemberCard key={member.id} member={member} />
             ))}
           </Box>
-        </Box>
-      )}
+        )}
+      </Box>
 
-      {teamsList.length > 0 && (
-        <Box marginY="4rem">
-          <SectionHeading>{t("teams.title")}</SectionHeading>
-          {teamsList.map((team) => {
+      <Box marginY="4rem">
+        <SectionHeading>{t("teams.title")}</SectionHeading>
+        {teamsError || teamsList.length === 0 ? (
+          <Typography color="text.secondary">{t("teams.empty")}</Typography>
+        ) : (
+          teamsList.map((team) => {
             const description = localized(team, "description");
             return (
               <Box key={team.id} marginBottom="3rem">
@@ -141,9 +145,9 @@ export const Organization = () => {
                 </CardGrid>
               </Box>
             );
-          })}
-        </Box>
-      )}
+          })
+        )}
+      </Box>
     </Container>
   );
 };

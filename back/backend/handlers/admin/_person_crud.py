@@ -9,6 +9,7 @@ frontend data provider treats every admin resource the same way.
 from flask import Blueprint, jsonify, request
 from google.cloud import ndb
 
+from backend.handlers.admin._list_utils import filter_and_sort as _filter_and_sort
 from backend.lib.permissions import require_roles
 from backend.models.user import Roles
 
@@ -24,24 +25,11 @@ def apply_person_fields(record, data):
     record.position = int(data.get("position") or 0)
 
 
-def _sort_key(field):
-    def key(record):
-        value = record.get(field)
-        # Keep None values together and comparable against real values.
-        return (value is None, value)
-
-    return key
-
-
 def filter_and_sort(records, q, sort_field, sort_order):
     """Filter by name substring then sort. Pure helper for testing."""
-    if q:
-        needle = q.lower()
-        records = [r for r in records if needle in (r.get("name") or "").lower()]
-    if sort_field not in _SORT_FIELDS:
-        sort_field = "position"
-    records = sorted(records, key=_sort_key(sort_field), reverse=(sort_order.lower() == "desc"))
-    return records
+    return _filter_and_sort(
+        records, q, sort_field, sort_order, search_field="name", sort_fields=_SORT_FIELDS, default_sort_field="position"
+    )
 
 
 def make_person_blueprint(name, singular, plural, model):

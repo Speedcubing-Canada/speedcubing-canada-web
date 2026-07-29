@@ -13,9 +13,7 @@ import { useTranslation } from "react-i18next";
 import { ExternalLink } from "../components/ExternalLink";
 import { DOCUMENT_TYPES, DOCUMENTS } from "./documents";
 
-// Downloadable SCC documents plus the external officers spreadsheet. Split out of the
-// Organization page (which now focuses on the board, featured members, and teams) into its
-// own entry in the "information" navigation submenu.
+// Downloadable SCC documents plus the external officers spreadsheet.
 export const Documents = () => {
   const { t } = useTranslation();
 

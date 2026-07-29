@@ -45,17 +45,19 @@ export const PersonCard = ({
       : undefined
     : avatarUrl ?? undefined;
 
+  const linkProps = wcaId
+    ? {
+        href: LINKS.WCA.PROFILE + wcaId,
+        target: "_blank",
+        rel: "noopener noreferrer",
+      }
+    : {};
+
   return (
     <Paper
       variant="outlined"
-      {...(wcaId
-        ? {
-            component: "a",
-            href: LINKS.WCA.PROFILE + wcaId,
-            target: "_blank",
-            rel: "noopener noreferrer",
-          }
-        : {})}
+      component={wcaId ? "a" : "div"}
+      {...linkProps}
       sx={{
         display: "flex",
         flexDirection: "column",
@@ -68,21 +70,23 @@ export const PersonCard = ({
         borderRadius: 3,
         color: "inherit",
         textDecoration: "none",
-        transition: "transform 150ms ease, box-shadow 150ms ease",
-        "&:hover": {
-          transform: "translateY(-3px)",
-          boxShadow: "0 6px 20px rgba(0,0,0,0.10)",
-        },
-        "&:hover .person-card-name": { color: "primary.main" },
-        "&:focus-visible": {
-          outline: "2px solid",
-          outlineColor: "primary.main",
-          outlineOffset: 2,
-        },
-        "@media (prefers-reduced-motion: reduce)": {
-          transition: "none",
-          "&:hover": { transform: "none" },
-        },
+        ...(wcaId && {
+          transition: "transform 150ms ease, box-shadow 150ms ease",
+          "&:hover": {
+            transform: "translateY(-3px)",
+            boxShadow: "0 6px 20px rgba(0,0,0,0.10)",
+          },
+          "&:hover .person-card-name": { color: "primary.main" },
+          "&:focus-visible": {
+            outline: "2px solid",
+            outlineColor: "primary.main",
+            outlineOffset: 2,
+          },
+          "@media (prefers-reduced-motion: reduce)": {
+            transition: "none",
+            "&:hover": { transform: "none" },
+          },
+        }),
       }}
     >
       <Avatar

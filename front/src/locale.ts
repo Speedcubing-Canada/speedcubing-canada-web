@@ -118,6 +118,8 @@ export const resources = {
         intro:
           "The Board of Directors is elected to guide Speedcubing Canada and oversee its operations and finances.",
         boardMember: "Board Member",
+        empty:
+          "The Board of Directors list is currently unavailable. Please check back soon.",
       },
       featuredMembers: {
         title: "Featured Members",
@@ -565,6 +567,8 @@ export const resources = {
         intro:
           "Le conseil d'administration est élu pour orienter Speedcubing Canada et superviser ses activités et ses finances.",
         boardMember: "Membre du bureau",
+        empty:
+          "La liste du conseil d'administration est momentanément indisponible. Veuillez réessayer bientôt.",
       },
       featuredMembers: {
         title: "Membres en vedette",

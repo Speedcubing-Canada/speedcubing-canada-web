@@ -11,7 +11,6 @@ describe("Documents page", () => {
       screen.getByRole("heading", { name: i18n.t("documents.title") }),
     ).toBeInTheDocument();
 
-    // The officers spreadsheet link moved here from the Organization page.
     expect(screen.getByText(i18n.t("officers.list"))).toBeInTheDocument();
 
     // Each document category subheader renders (a category label can coincide with a

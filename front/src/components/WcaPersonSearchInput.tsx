@@ -1,9 +1,11 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Autocomplete, CircularProgress, TextField } from "@mui/material";
 import { useInput, useTranslate } from "react-admin";
 import { useFormContext, useWatch } from "react-hook-form";
 import { useQuery } from "@tanstack/react-query";
 import { searchWcaPersons, WcaSearchResult } from "../helpers/searchWcaPersons";
+
+const SEARCH_DEBOUNCE_MS = 300;
 
 interface Props {
   // The wca_id field path (relative; react-admin scopes it inside an ArrayInput).
@@ -26,10 +28,21 @@ export const WcaPersonSearchInput = ({ source, helperText }: Props) => {
   const currentName = useWatch({ name: nameSource });
 
   const [query, setQuery] = useState("");
+
+  // Debounce so a person typing a name doesn't fire a WCA API request per keystroke.
+  const [debouncedQuery, setDebouncedQuery] = useState(query);
+  useEffect(() => {
+    const timeout = setTimeout(
+      () => setDebouncedQuery(query),
+      SEARCH_DEBOUNCE_MS,
+    );
+    return () => clearTimeout(timeout);
+  }, [query]);
+
   const { data: results = [], isFetching } = useQuery({
-    queryKey: ["wca-search", query.trim()],
-    queryFn: () => searchWcaPersons(query),
-    enabled: query.trim().length >= 3,
+    queryKey: ["wca-search", debouncedQuery.trim()],
+    queryFn: () => searchWcaPersons(debouncedQuery),
+    enabled: debouncedQuery.trim().length >= 3,
     staleTime: 1000 * 60,
   });
 
