@@ -45,8 +45,8 @@ OFFICE_TEAMS = {
         "slug": "software",
         "name_en": "Software Team",
         "name_fr": "Équipe logicielle",
-        "description_en": "Builds and maintains the SCC website and others tools that support the speedcubing "
-        "community accross Canada.",
+        "description_en": "Builds and maintains the SCC website and other tools that support the speedcubing "
+        "community across Canada.",
         "description_fr": "Développe et entretient le site web de SCC ainsi que d'autres outils qui soutiennent "
         "la communauté du speedcubing à travers le Canada.",
     },
