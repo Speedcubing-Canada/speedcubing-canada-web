@@ -6,23 +6,20 @@ import { fetchWcaPerson } from "../helpers/fetchWcaPerson";
 import { LINKS } from "../pages/links";
 
 interface PersonCardProps {
-  // Optional: team members / featured people may have no WCA profile. When absent
-  // the card renders un-linked (no href) and shows the generic avatar fallback.
+  // Omit for people with no WCA profile (e.g. some team members).
   wcaId?: string;
   name: string;
   subtitle?: string;
-  // Delegates pass their avatar (string, or null for the default WCA avatar) from
-  // the backend. Directors omit it entirely, so the card fetches from the WCA API.
+  // Pass an explicit URL (or null for the default avatar) to skip the WCA API fetch by wcaId.
   avatarUrl?: string | null;
-  // Optional badge rendered under the name (e.g. a delegate rank chip). Callers
-  // own its content/translation so this card stays purely presentational.
+  // Optional badge rendered under the name (e.g. a delegate rank chip); content/translation is
+  // the caller's responsibility.
   chip?: ReactNode;
 }
 
-// A compact avatar tile for a person. When a wcaId is given the whole card links to
-// the WCA profile and lifts on hover; the photo comes either from a passed-in URL
-// (delegates) or a WCA API fetch (directors). Without a wcaId it renders un-linked.
-// Falls back to a generic icon while loading, on error, or when there is no photo.
+// A compact avatar tile for a person. Links to the WCA profile and lifts on hover when a
+// wcaId is given, otherwise renders un-linked. Falls back to a generic icon while loading,
+// on error, or when there is no photo.
 export const PersonCard = ({
   wcaId,
   name,

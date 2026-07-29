@@ -33,18 +33,17 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspa
 from absl import app, flags, logging  # noqa: E402
 from google.cloud import ndb  # noqa: E402
 
-from backend.models.person import Director  # noqa: E402
+from backend.models.site_person import Director  # noqa: E402
 from backend.models.team import Team, TeamMember  # noqa: E402
 
 FLAGS = flags.FLAGS
 
 flags.DEFINE_string("csv", "exports/officers.csv", "Path to the officers CSV export.")
 
-# Maps an "Office(s)" value from the sheet to a Team (stable slug + bilingual name). The order
-# here also sets each team's display ``position``. Offices not listed here (other than the
-# special "Board" value) are skipped with a warning.
-# Order here sets each team's display ``position`` (see ``parse_rows``): Events is intentionally
-# listed last since it has the most officers and is the least central to day-to-day operations.
+# Maps an "Office(s)" value from the sheet to a Team (stable slug + bilingual name). Order here
+# sets each team's display ``position`` (see ``parse_rows``); Events is listed last since it has
+# the most officers and is the least central to day-to-day operations. Unlisted offices (other
+# than ``BOARD_OFFICE`` below) are skipped with a warning.
 OFFICE_TEAMS = {
     "Communications": {
         "slug": "communications",
@@ -107,7 +106,7 @@ def parse_rows(rows):
     positions = list(OFFICE_TEAMS)
     teams = {}
     directors = []
-    seen_directors = set()
+    seen_directors = {}  # slug -> wca_id of the first row that produced it
     for row in rows:
         name = (row.get("Name") or "").strip()
         if not name:
@@ -118,9 +117,20 @@ def parse_rows(rows):
         for office in offices:
             if office == BOARD_OFFICE:
                 slug = _slugify(name)
-                if slug not in seen_directors:
-                    seen_directors.add(slug)
-                    directors.append({"id": slug, "name": name, "wca_id": wca_id, "position": len(directors)})
+                if slug in seen_directors:
+                    # A repeated row for the same person (matching WCA id) is expected and
+                    # skipped quietly; a differing WCA id means two people collided, so warn.
+                    if seen_directors[slug] != wca_id:
+                        logging.warning(
+                            "Two different Board members both slugify to %r (%s); "
+                            "keeping the first and dropping %s. Rename one in the sheet.",
+                            slug,
+                            name,
+                            name,
+                        )
+                    continue
+                seen_directors[slug] = wca_id
+                directors.append({"id": slug, "name": name, "wca_id": wca_id, "position": len(directors)})
                 continue
             config = OFFICE_TEAMS.get(office)
             if config is None:

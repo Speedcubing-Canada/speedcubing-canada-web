@@ -2,6 +2,7 @@ from flask import Blueprint, jsonify, request
 from google.cloud import ndb
 
 from backend.handlers.admin._list_utils import filter_and_sort as _filter_and_sort
+from backend.handlers.admin._list_utils import paginate_records
 from backend.lib.permissions import require_roles
 from backend.models.team import Team, TeamMember
 from backend.models.user import Roles
@@ -50,27 +51,8 @@ def _apply_fields(team, data):
 @bp.route("/get_teams")
 @require_roles(*Roles.AdminRoles())
 def get_teams():
-    page = request.args.get("page", 1, type=int)
-    per_page = request.args.get("per_page", 25, type=int)
-    if page < 1:
-        page = 1
-    if per_page < 1:
-        per_page = 25
-    sort_field = request.args.get("sort_field", "position").strip('"')
-    sort_order = request.args.get("sort_order", "asc").strip('"')
-    q = request.args.get("q", "", type=str).strip('"')
-
-    records = filter_and_sort([t.to_json() for t in Team.query().iter()], q, sort_field, sort_order)
-    total = len(records)
-    start = (page - 1) * per_page
-    end = start + per_page
-    return jsonify(
-        {
-            "data": records[start:end],
-            "total": total,
-            "pageInfo": {"hasPreviousPage": page > 1, "hasNextPage": end < total},
-        }
-    )
+    records = [t.to_json() for t in Team.query().iter()]
+    return jsonify(paginate_records(records, filter_and_sort, default_sort_field="position"))
 
 
 @bp.route("/get_teams_by_id")

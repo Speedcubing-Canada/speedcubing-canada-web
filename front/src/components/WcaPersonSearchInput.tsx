@@ -46,9 +46,8 @@ export const WcaPersonSearchInput = ({ source, helperText }: Props) => {
     staleTime: 1000 * 60,
   });
 
-  // Represent the current field value as an option so the box shows the selection when
-  // editing an existing record, and merge it into the option list to avoid MUI's
-  // "value not in options" warning.
+  // Represent the current value as an option so it shows on edit, merged into the option
+  // list to avoid MUI's "value not in options" warning.
   const selected: WcaSearchResult | null = field.value
     ? { wca_id: field.value, name: currentName || field.value, location: null }
     : null;

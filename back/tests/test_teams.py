@@ -149,6 +149,20 @@ def test_parse_rows_routes_board_office_to_directors():
     ]
 
 
+def test_parse_rows_warns_and_drops_second_person_on_slug_collision(caplog):
+    # Two distinct people (different WCA ids) whose names slugify to the same id: the second
+    # must not silently disappear without at least a warning.
+    rows = [
+        {"Name": "Jean Roy", "Office(s)": "Board", "WCA ID": "2015ROYJ01", "Leads": ""},
+        {"Name": "Jean Roy", "Office(s)": "Board", "WCA ID": "2019ROYJ02", "Leads": ""},
+    ]
+
+    teams, directors = parse_rows(rows)
+
+    assert [(d["id"], d["wca_id"]) for d in directors] == [("jean-roy", "2015ROYJ01")]
+    assert any("slugify" in message for message in caplog.messages)
+
+
 def test_parse_rows_skips_blank_names_and_unknown_offices():
     rows = [
         {"Name": "", "Office(s)": "Events"},  # no name -> skipped
