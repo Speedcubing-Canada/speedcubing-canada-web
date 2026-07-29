@@ -64,7 +64,7 @@ export const WcaPersonSearchInput = ({ source, helperText }: Props) => {
       isOptionEqualToValue={(o, v) => o.wca_id === v.wca_id}
       getOptionLabel={(o) => (o ? `${o.name} (${o.wca_id})` : "")}
       onInputChange={(_, value, reason) => {
-        if (reason === "input") {
+        if (reason === "input" || reason === "clear") {
           setQuery(value);
         }
       }}
