@@ -1,22 +1,13 @@
-"""One-off bootstrap: import SCC teams, members, and the Board of Directors from one CSV.
+"""One-off bootstrap: import SCC teams, members, and the Board of Directors from the officers
+CSV export (https://docs.google.com/spreadsheets/d/1qZAEH93FfKqOO3gqJPVNPezUHKgBaM8pg2zetBEE4Js).
+Idempotent upsert-by-slug, so re-running is safe; afterwards everything is human-curated in
+react-admin. Featured members are editorial and entered by hand there, not here.
 
-Export the officers Google Sheet
-(https://docs.google.com/spreadsheets/d/1qZAEH93FfKqOO3gqJPVNPezUHKgBaM8pg2zetBEE4Js)
-to CSV, then run this once to populate the ``Team`` and ``Director`` kinds. Everything is
-human-curated in react-admin afterwards, so this is an idempotent upsert-by-slug (re-running
-is safe) modelled on ``setup_geography.py``. Featured members are editorial and entered by
-hand in react-admin, not here.
+CSV columns: Name, Office(s), Region (unused), WCA ID (optional), Leads.
+``Office(s)`` and ``Leads`` are comma-separated; ``Office(s)`` values map to a team via
+``OFFICE_TEAMS``, except ``Board`` which makes the person a Director.
 
-The CSV has one row per person with columns:
-    Name, Office(s), Region, WCA ID, Leads
-- ``Office(s)`` is a comma-separated list, so a person can belong to several teams. Each value
-  maps to a team via ``OFFICE_TEAMS``; the special value ``Board`` makes the person a Director.
-- ``WCA ID`` is optional (blank for people with no WCA account).
-- ``Leads`` is a comma-separated list of the office(s) that person leads; it marks them as the
-  team leader for those teams (blank for most people).
-- ``Region`` is informational only (not imported).
-
-Run against the local emulator (from the ``back/`` directory, with the ``scc`` venv active):
+Run (from ``back/``, ``scc`` venv active, against the local emulator):
     export DATASTORE_EMULATOR_HOST=localhost:8081 GOOGLE_CLOUD_PROJECT=scc-staging-391105
     python backend/load_db/import_teams.py --csv=exports/officers.csv
 """
@@ -40,10 +31,8 @@ FLAGS = flags.FLAGS
 
 flags.DEFINE_string("csv", "exports/officers.csv", "Path to the officers CSV export.")
 
-# Maps an "Office(s)" value from the sheet to a Team (stable slug + bilingual name). Order here
-# sets each team's display ``position`` (see ``parse_rows``); Events is listed last since it has
-# the most officers and is the least central to day-to-day operations. Unlisted offices (other
-# than ``BOARD_OFFICE`` below) are skipped with a warning.
+# Maps an "Office(s)" value to a Team (stable slug + bilingual name); order sets display
+# position. Unlisted offices (other than BOARD_OFFICE below) are skipped with a warning.
 OFFICE_TEAMS = {
     "Communications": {
         "slug": "communications",
@@ -82,8 +71,7 @@ OFFICE_TEAMS = {
     },
 }
 
-# Special "Office(s)" value routing a person to the Board of Directors (Director kind) instead
-# of a Team.
+# Special "Office(s)" value routing a person to the Board of Directors instead of a Team.
 BOARD_OFFICE = "Board"
 
 
@@ -96,13 +84,7 @@ def _slugify(name):
 
 
 def parse_rows(rows):
-    """Pivot the per-person rows into ``(teams, directors)``. Pure (no datastore); testable.
-
-    Each person's ``Office(s)`` cell is comma-separated: office names map to teams (via
-    ``OFFICE_TEAMS``) and the special ``Board`` office maps to a Director. ``Leads`` lists the
-    office(s) that person leads, marking them the team leader there. Rows without a name, and
-    unknown offices, are skipped.
-    """
+    """Pivot the per-person CSV rows into ``(teams, directors)``. Pure (no datastore); testable."""
     positions = list(OFFICE_TEAMS)
     teams = {}
     directors = []
@@ -118,8 +100,7 @@ def parse_rows(rows):
             if office == BOARD_OFFICE:
                 slug = _slugify(name)
                 if slug in seen_directors:
-                    # A repeated row for the same person (matching WCA id) is expected and
-                    # skipped quietly; a differing WCA id means two people collided, so warn.
+                    # Differing WCA id on a repeated slug means two people collided; warn.
                     if seen_directors[slug] != wca_id:
                         logging.warning(
                             "Two different Board members both slugify to %r (%s); "

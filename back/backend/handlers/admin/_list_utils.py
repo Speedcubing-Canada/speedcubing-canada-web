@@ -1,11 +1,4 @@
-"""Shared filter/sort/paginate helpers for react-admin list endpoints.
-
-Every admin list endpoint (championships, teams, people) does the same thing over its own
-``to_json()`` dicts: substring-filter on one field, then sort by a whitelisted field, falling
-back to a default when the requested one isn't sortable, then parse page/per_page from the
-request and slice into the react-admin list envelope. Only the field names and per-resource
-filter/sort rules differ, so those are the only things each caller needs to supply.
-"""
+"""Shared filter/sort/paginate helpers for react-admin list endpoints."""
 
 from flask import request
 
@@ -30,11 +23,7 @@ def filter_and_sort(records, q, sort_field, sort_order, *, search_field, sort_fi
 
 
 def paginate_records(records, filter_and_sort_fn, *, default_sort_field, default_sort_order="asc"):
-    """Parse page/per_page/sort/q from the current request, then filter/sort/slice ``records``.
-
-    ``filter_and_sort_fn`` is a resource's ``(records, q, sort_field, sort_order)`` wrapper
-    around ``filter_and_sort`` above. Returns the react-admin list envelope, ready to jsonify.
-    """
+    """Parse page/per_page/sort/q from the request, filter/sort/slice, and return the react-admin list envelope."""
     page = request.args.get("page", 1, type=int)
     per_page = request.args.get("per_page", 25, type=int)
     if page < 1:

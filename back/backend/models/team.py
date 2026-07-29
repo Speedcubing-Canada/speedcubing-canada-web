@@ -2,13 +2,7 @@ from google.cloud import ndb
 
 
 class TeamMember(ndb.Model):
-    """A member of an SCC team (nested inside :class:`Team`).
-
-    ``wca_id`` is optional: when present it drives the WCA avatar + profile link on the
-    public Organization page; when absent the member renders as a plain (non-linked) card.
-    ``bio_en``/``bio_fr`` are optional. ``is_leader`` marks the team lead (not every team
-    has one).
-    """
+    """A member of an SCC team (nested inside :class:`Team`). ``wca_id`` is optional."""
 
     name = ndb.StringProperty()
     wca_id = ndb.StringProperty()
@@ -27,13 +21,8 @@ class TeamMember(ndb.Model):
 
 
 class Team(ndb.Model):
-    """An SCC team (Software, Communications, ...) and its members.
-
-    Keyed by an admin-chosen string slug (e.g. ``"software"``) so imports/upserts are
-    idempotent, matching :class:`Championship`'s string-id convention. Human-curated via
-    react-admin (``TeamsAdmin``) and served publicly by ``handlers/teams.py``. Names and
-    descriptions are bilingual; ``position`` orders teams on the page.
-    """
+    """An SCC team (Software, Communications, ...) and its members. Keyed by an admin-chosen
+    string slug (e.g. ``"software"``) so imports/upserts are idempotent."""
 
     name_en = ndb.StringProperty()
     name_fr = ndb.StringProperty()

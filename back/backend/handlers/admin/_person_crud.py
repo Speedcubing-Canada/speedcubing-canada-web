@@ -1,10 +1,4 @@
-"""Shared react-admin CRUD for the flat "site person" kinds (Director, FeaturedMember).
-
-Both kinds have the identical shape (see ``models/person.py``), so the list/getMany/getOne/
-create/update/delete handlers are generated once here and instantiated per model, avoiding
-duplicated endpoint code. The URL/response contract matches ``edit_championships.py`` so the
-frontend data provider treats every admin resource the same way.
-"""
+"""Shared react-admin CRUD for the flat "site person" kinds (see ``models/site_person.py``)."""
 
 from flask import Blueprint, jsonify, request
 from google.cloud import ndb
