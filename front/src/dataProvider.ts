@@ -14,10 +14,12 @@ const httpClient = (url: string, options: RequestInit = {}) => {
   return fetchUtils.fetchJson(url, options);
 };
 
-// Curated admin resources served by the hand-written backend CRUD (edit_teams.py,
-// _person_crud.py). Each maps to a singular getOne segment and a plural collection segment,
-// matching the ChampionshipsAdmin URL contract (get_<plural>, <singular>/<id>, <plural>[/<id>]).
+// Curated admin resources served by the hand-written backend CRUD
+// (edit_championships.py, edit_teams.py, _person_crud.py). Each maps to a singular getOne
+// segment and a plural collection segment, and they all share the same URL contract:
+// get_<plural>, get_<plural>_by_id, <singular>/<id>, <plural>[/<id>].
 const ADMIN_RESOURCES: Record<string, { singular: string; plural: string }> = {
+  ChampionshipsAdmin: { singular: "championship", plural: "championships" },
   TeamsAdmin: { singular: "team", plural: "teams" },
   DirectorsAdmin: { singular: "director", plural: "directors" },
   FeaturedMembersAdmin: {
@@ -25,6 +27,10 @@ const ADMIN_RESOURCES: Record<string, { singular: string; plural: string }> = {
     plural: "featured_members",
   },
 };
+
+// Undefined for anything not in the map (the legacy user resource), which is what the
+// `if (adminResource)` branches below key off of.
+const getAdminResource = (resource: string) => ADMIN_RESOURCES[resource];
 
 const convertResponseToDataProviderFormat = (response: any) => {
   return {
@@ -41,10 +47,7 @@ const dataProvider: DataProvider = {
     const { page, perPage } = params.pagination;
     const { field, order } = params.sort;
 
-    const adminResource =
-      resource === "ChampionshipsAdmin"
-        ? { plural: "championships" }
-        : ADMIN_RESOURCES[resource];
+    const adminResource = getAdminResource(resource);
     if (adminResource) {
       const query = {
         page,
@@ -79,10 +82,7 @@ const dataProvider: DataProvider = {
   },
 
   getOne: (resource, params) => {
-    const adminResource =
-      resource === "ChampionshipsAdmin"
-        ? { singular: "championship" }
-        : ADMIN_RESOURCES[resource];
+    const adminResource = getAdminResource(resource);
     if (adminResource) {
       return httpClient(
         `${apiUrl}/admin/${adminResource.singular}/${params.id}`,
@@ -96,10 +96,7 @@ const dataProvider: DataProvider = {
   },
 
   getMany: (resource, params) => {
-    const adminResource =
-      resource === "ChampionshipsAdmin"
-        ? { plural: "championships" }
-        : ADMIN_RESOURCES[resource];
+    const adminResource = getAdminResource(resource);
     if (adminResource) {
       const query = { ids: JSON.stringify(params.ids) };
       const url = `${apiUrl}/admin/get_${
@@ -146,10 +143,7 @@ const dataProvider: DataProvider = {
     resource: any,
     params: { data: any }, //not setup
   ) => {
-    const adminResource =
-      resource === "ChampionshipsAdmin"
-        ? { plural: "championships" }
-        : ADMIN_RESOURCES[resource];
+    const adminResource = getAdminResource(resource);
     if (adminResource) {
       return httpClient(`${apiUrl}/admin/${adminResource.plural}`, {
         method: "POST",
@@ -165,10 +159,7 @@ const dataProvider: DataProvider = {
   },
 
   update: (resource, params) => {
-    const adminResource =
-      resource === "ChampionshipsAdmin"
-        ? { plural: "championships" }
-        : ADMIN_RESOURCES[resource];
+    const adminResource = getAdminResource(resource);
     if (adminResource) {
       return httpClient(
         `${apiUrl}/admin/${adminResource.plural}/${params.id}`,
@@ -196,10 +187,7 @@ const dataProvider: DataProvider = {
   },
 
   delete: (resource, params) => {
-    const adminResource =
-      resource === "ChampionshipsAdmin"
-        ? { plural: "championships" }
-        : ADMIN_RESOURCES[resource];
+    const adminResource = getAdminResource(resource);
     if (adminResource) {
       return httpClient(
         `${apiUrl}/admin/${adminResource.plural}/${params.id}`,
