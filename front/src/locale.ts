@@ -32,6 +32,7 @@ export const resources = {
         faq: "FAQ",
         information: "Information",
         delegates: "Delegates",
+        documents: "Documents",
         account: "Account",
         rankings: "Rankings",
         championships: "Championships",
@@ -105,6 +106,8 @@ export const resources = {
       },
       organization: {
         title: "Organization",
+        intro:
+          "Speedcubing Canada is led by a volunteer Board of Directors, which sets our direction and oversees our operations, and organized into teams that handle day-to-day work such as communications, software, administration and events.",
       },
       officers: {
         title: "Officers",
@@ -112,7 +115,20 @@ export const resources = {
       },
       directors: {
         title: "Directors",
+        intro:
+          "The Board of Directors is elected to guide Speedcubing Canada and oversee its operations and finances.",
         boardMember: "Board Member",
+        empty:
+          "The Board of Directors list is currently unavailable. Please check back soon.",
+      },
+      featuredMembers: {
+        title: "Featured Members",
+        empty: "No featured members yet.",
+      },
+      teams: {
+        title: "Teams",
+        leader: "Team Lead",
+        empty: "No teams to show yet.",
       },
       delegates: {
         title: "Canadian Delegates",
@@ -386,6 +402,59 @@ export const resources = {
           residency_timezone_help: "e.g. America/Toronto",
         },
       },
+      TeamsAdmin: {
+        name: "Team |||| Teams",
+        fields: {
+          id: "Slug",
+          name_en: "Name (EN)",
+          name_fr: "Name (FR)",
+          description_en: "Description (EN)",
+          description_fr: "Description (FR)",
+          position: "Position",
+          members: "Members",
+          name: "Name",
+          wca_id: "WCA ID",
+          bio_en: "Bio (EN)",
+          bio_fr: "Bio (FR)",
+          is_leader: "Team lead",
+        },
+        form: {
+          id_help:
+            "Short unique slug used as the id (e.g. software). Cannot be changed later.",
+        },
+      },
+      DirectorsAdmin: {
+        name: "Director |||| Board of Directors",
+        fields: {
+          id: "Slug",
+          name: "Name",
+          wca_id: "WCA ID",
+          role_en: "Board title (EN)",
+          role_fr: "Board title (FR)",
+          bio_en: "Bio (EN)",
+          bio_fr: "Bio (FR)",
+          position: "Position",
+        },
+      },
+      FeaturedMembersAdmin: {
+        name: "Featured member |||| Featured Members",
+        fields: {
+          id: "Slug",
+          name: "Name",
+          wca_id: "WCA ID",
+          role_en: "Contribution (EN)",
+          role_fr: "Contribution (FR)",
+          bio_en: "Bio (EN)",
+          bio_fr: "Bio (FR)",
+          position: "Position",
+        },
+      },
+      person: {
+        id_help:
+          "Short unique slug used as the id (e.g. jane-doe). Cannot be changed later.",
+        wca_id_help: "Optional. Links the card to the WCA profile and photo.",
+        wca_search: "Search WCA member (name)",
+      },
     },
     admin: {
       title: "Welcome to the Admin Section",
@@ -411,6 +480,7 @@ export const resources = {
         faq: "FAQ",
         information: "Informations",
         delegates: "Délégués",
+        documents: "Documents",
         account: "Compte",
         rankings: "Classements",
         championships: "Championnats",
@@ -485,6 +555,8 @@ export const resources = {
       },
       organization: {
         title: "Organisation",
+        intro:
+          "Speedcubing Canada est dirigé par un conseil d'administration bénévole, qui détermine notre orientation et supervise nos activités, et est organisé en équipes qui prennent en charge le travail quotidien : communications, logiciel, administration et événements.",
       },
       officers: {
         title: "Cadres",
@@ -492,7 +564,20 @@ export const resources = {
       },
       directors: {
         title: "Directeurs",
+        intro:
+          "Le conseil d'administration est élu pour orienter Speedcubing Canada et superviser ses activités et ses finances.",
         boardMember: "Membre du bureau",
+        empty:
+          "La liste du conseil d'administration est momentanément indisponible. Veuillez réessayer bientôt.",
+      },
+      featuredMembers: {
+        title: "Membres en vedette",
+        empty: "Aucun membre en vedette pour l’instant.",
+      },
+      teams: {
+        title: "Équipes",
+        leader: "Responsable d’équipe",
+        empty: "Aucune équipe à afficher pour l’instant.",
       },
       delegates: {
         title: "Délégués canadiens",
@@ -773,6 +858,59 @@ export const resources = {
             "La compétition où se tient ce championnat (p. ex. CanadianChampionship2026)",
           residency_timezone_help: "p. ex. America/Toronto",
         },
+      },
+      TeamsAdmin: {
+        name: "Équipe |||| Équipes",
+        fields: {
+          id: "Slug",
+          name_en: "Nom (EN)",
+          name_fr: "Nom (FR)",
+          description_en: "Description (EN)",
+          description_fr: "Description (FR)",
+          position: "Position",
+          members: "Membres",
+          name: "Nom",
+          wca_id: "WCA ID",
+          bio_en: "Bio (EN)",
+          bio_fr: "Bio (FR)",
+          is_leader: "Responsable",
+        },
+        form: {
+          id_help:
+            "Court identifiant unique utilisé comme id (p. ex. software). Non modifiable ensuite.",
+        },
+      },
+      DirectorsAdmin: {
+        name: "Directeur |||| Conseil d'administration",
+        fields: {
+          id: "Slug",
+          name: "Nom",
+          wca_id: "WCA ID",
+          role_en: "Titre (EN)",
+          role_fr: "Titre (FR)",
+          bio_en: "Bio (EN)",
+          bio_fr: "Bio (FR)",
+          position: "Position",
+        },
+      },
+      FeaturedMembersAdmin: {
+        name: "Membre en vedette |||| Membres en vedette",
+        fields: {
+          id: "Slug",
+          name: "Nom",
+          wca_id: "WCA ID",
+          role_en: "Contribution (EN)",
+          role_fr: "Contribution (FR)",
+          bio_en: "Bio (EN)",
+          bio_fr: "Bio (FR)",
+          position: "Position",
+        },
+      },
+      person: {
+        id_help:
+          "Court identifiant unique utilisé comme id (p. ex. jane-doe). Non modifiable ensuite.",
+        wca_id_help: "Optionnel. Relie la carte au profil et à la photo WCA.",
+        wca_search: "Rechercher un membre WCA (nom)",
       },
     },
     admin: {

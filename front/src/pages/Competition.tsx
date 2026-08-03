@@ -1,6 +1,6 @@
 import { Box, Container, Typography } from "@mui/material";
 import { Trans, useTranslation } from "react-i18next";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router";
 import { CompetitionCard } from "../components/CompetitionCard";
 import { CompetitionHeader } from "../components/CompetitionHeader";
 import { LoadingPageLinear } from "../components/LoadingPageLinear";

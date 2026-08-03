@@ -3,7 +3,7 @@ import i18n from "i18next";
 import { initReactI18next } from "react-i18next";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { red } from "@mui/material/colors";
-import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Navigate, Route, Routes } from "react-router";
 import { Base as NavBar, ROUTE_NAMES } from "./components/Base";
 import {
   DEFAULT_LOCALE,
@@ -27,6 +27,9 @@ const FAQ = React.lazy(() =>
 );
 const Delegates = React.lazy(() =>
   import("./pages/Delegates").then((m) => ({ default: m.Delegates })),
+);
+const Documents = React.lazy(() =>
+  import("./pages/Documents").then((m) => ({ default: m.Documents })),
 );
 const Series = React.lazy(() =>
   import("./pages/Series").then((m) => ({ default: m.Series })),
@@ -112,6 +115,7 @@ const App = () => {
                   <Route path="organization" element={<Organization />} />
                   <Route path="faq" element={<FAQ />} />
                   <Route path="delegates" element={<Delegates />} />
+                  <Route path="documents" element={<Documents />} />
                   <Route
                     path="competitions/series/:seriesid"
                     element={<Series />}

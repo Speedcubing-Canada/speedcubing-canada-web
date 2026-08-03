@@ -1,27 +1,53 @@
-import { Download, OpenInNew } from "@mui/icons-material";
-import {
-  ListSubheader,
-  ListItemIcon,
-  ListItemButton,
-  Box,
-  Container,
-  Typography,
-  List,
-  ListItemText,
-} from "@mui/material";
+import { Box, Chip, Container, Typography } from "@mui/material";
 import { useTranslation } from "react-i18next";
-import { ExternalLink } from "../components/ExternalLink";
+import { useQuery } from "@tanstack/react-query";
+import { CardGrid } from "../components/CardGrid";
 import { PersonCard } from "../components/PersonCard";
-import { DOCUMENT_TYPES, DOCUMENTS } from "./documents";
+import { FeaturedMemberCard } from "../components/FeaturedMemberCard";
+import { LoadingPageLinear } from "../components/LoadingPageLinear";
+import { fetchDirectors, fetchFeaturedMembers } from "../helpers/fetchPeople";
+import { fetchTeams } from "../helpers/fetchTeams";
+import { localized } from "../helpers/localized";
 
-export const DIRECTORS = [
-  { name: "Kristopher De Asis", wcaId: "2008ASIS01" },
-  { name: "Joanne Chew", wcaId: "2024CHEW09" },
-  { name: "Alex Mutch", wcaId: "2014MUTC01" },
-] as const;
+const SectionHeading = ({ children }: { children: React.ReactNode }) => (
+  <Typography component="h2" variant="h4" fontWeight="bold" gutterBottom>
+    {children}
+  </Typography>
+);
+
+// Leaders first, otherwise stable (backend order).
+const leaderFirst = (a: { is_leader: boolean }, b: { is_leader: boolean }) =>
+  Number(b.is_leader) - Number(a.is_leader);
 
 export const Organization = () => {
   const { t } = useTranslation();
+
+  const {
+    data: directors,
+    isLoading: directorsLoading,
+    isError: directorsError,
+  } = useQuery({ queryKey: ["directors"], queryFn: fetchDirectors });
+  const {
+    data: featured,
+    isLoading: featuredLoading,
+    isError: featuredError,
+  } = useQuery({
+    queryKey: ["featured-members"],
+    queryFn: fetchFeaturedMembers,
+  });
+  const {
+    data: teams,
+    isLoading: teamsLoading,
+    isError: teamsError,
+  } = useQuery({ queryKey: ["teams"], queryFn: fetchTeams });
+
+  if (directorsLoading || featuredLoading || teamsLoading) {
+    return <LoadingPageLinear />;
+  }
+
+  const directorsList = directors ?? [];
+  const featuredList = featured ?? [];
+  const teamsList = teams ?? [];
 
   return (
     <Container maxWidth="md">
@@ -29,71 +55,98 @@ export const Organization = () => {
         <Typography component="h1" variant="h3" fontWeight="bold" gutterBottom>
           {t("organization.title")}
         </Typography>
+        <Typography color="text.secondary">
+          {t("organization.intro")}
+        </Typography>
       </Box>
 
       <Box marginY="4rem">
-        <Typography component="h2" variant="h4" fontWeight="bold" gutterBottom>
-          {t("directors.title")}
+        <SectionHeading>{t("directors.title")}</SectionHeading>
+        <Typography color="text.secondary" marginBottom="1rem">
+          {t("directors.intro")}
         </Typography>
-        <Box
-          display="flex"
-          flexWrap="wrap"
-          gap={3}
-          justifyContent={{ xs: "center", sm: "flex-start" }}
-        >
-          {DIRECTORS.map(({ name, wcaId }) => (
-            <PersonCard
-              key={wcaId}
-              wcaId={wcaId}
-              name={name}
-              subtitle={t("directors.boardMember")}
-            />
-          ))}
-        </Box>
-      </Box>
-
-      <Box marginY="4rem">
-        <Typography component="h2" variant="h4" fontWeight="bold" gutterBottom>
-          {t("officers.title")}
-        </Typography>
-        <ListItemButton
-          component={ExternalLink}
-          to="https://docs.google.com/spreadsheets/d/1qZAEH93FfKqOO3gqJPVNPezUHKgBaM8pg2zetBEE4Js/edit?usp=sharing"
-        >
-          <ListItemIcon>
-            <OpenInNew />
-          </ListItemIcon>
-          <ListItemText primary={t("officers.list")} />
-        </ListItemButton>
-      </Box>
-
-      <Box marginY="4rem">
-        <Typography component="h2" variant="h4" fontWeight="bold" gutterBottom>
-          {t("documents.title")}
-        </Typography>
-        {DOCUMENT_TYPES.map((documentType) => (
-          <List
-            key={documentType}
-            subheader={
-              <ListSubheader component="div" id="nested-list-subheader">
-                {t(`documents.${documentType}`)}
-              </ListSubheader>
-            }
-          >
-            {DOCUMENTS[documentType].map(({ name, id }) => (
-              <ListItemButton
-                key={id}
-                component={ExternalLink}
-                to={`/documents/${id}.pdf`}
-              >
-                <ListItemIcon>
-                  <Download />
-                </ListItemIcon>
-                <ListItemText primary={name} />
-              </ListItemButton>
+        {directorsError || directorsList.length === 0 ? (
+          <Typography color="text.secondary">{t("directors.empty")}</Typography>
+        ) : (
+          <CardGrid>
+            {directorsList.map((director) => (
+              <PersonCard
+                key={director.id}
+                wcaId={director.wca_id ?? undefined}
+                name={director.name ?? ""}
+                subtitle={
+                  localized(director, "role") ?? t("directors.boardMember")
+                }
+              />
             ))}
-          </List>
-        ))}
+          </CardGrid>
+        )}
+      </Box>
+
+      <Box marginY="4rem">
+        <SectionHeading>{t("featuredMembers.title")}</SectionHeading>
+        {featuredError || featuredList.length === 0 ? (
+          <Typography color="text.secondary">
+            {t("featuredMembers.empty")}
+          </Typography>
+        ) : (
+          <Box
+            display="flex"
+            flexDirection="column"
+            gap={2}
+            alignItems="center"
+          >
+            {featuredList.map((member) => (
+              <FeaturedMemberCard key={member.id} member={member} />
+            ))}
+          </Box>
+        )}
+      </Box>
+
+      <Box marginY="4rem">
+        <SectionHeading>{t("teams.title")}</SectionHeading>
+        {teamsError || teamsList.length === 0 ? (
+          <Typography color="text.secondary">{t("teams.empty")}</Typography>
+        ) : (
+          teamsList.map((team) => {
+            const description = localized(team, "description");
+            return (
+              <Box key={team.id} marginBottom="3rem">
+                <Typography
+                  component="h3"
+                  variant="h5"
+                  fontWeight="bold"
+                  gutterBottom
+                >
+                  {localized(team, "name")}
+                </Typography>
+                {description && (
+                  <Typography color="text.secondary" marginBottom="1rem">
+                    {description}
+                  </Typography>
+                )}
+                <CardGrid>
+                  {[...team.members].sort(leaderFirst).map((member, index) => (
+                    <PersonCard
+                      key={member.wca_id ?? `${team.id}-${index}`}
+                      wcaId={member.wca_id ?? undefined}
+                      name={member.name}
+                      chip={
+                        member.is_leader ? (
+                          <Chip
+                            size="small"
+                            color="primary"
+                            label={t("teams.leader")}
+                          />
+                        ) : undefined
+                      }
+                    />
+                  ))}
+                </CardGrid>
+              </Box>
+            );
+          })
+        )}
       </Box>
     </Container>
   );

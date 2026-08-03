@@ -6,7 +6,7 @@ import { render } from "@testing-library/react";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import { red } from "@mui/material/colors";
 import { I18nextProvider } from "react-i18next";
-import { MemoryRouter, Routes, Route } from "react-router-dom";
+import { MemoryRouter, Routes, Route } from "react-router";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import i18n from "./i18n";
 

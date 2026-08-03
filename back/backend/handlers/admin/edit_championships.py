@@ -3,6 +3,8 @@ import datetime
 from flask import Blueprint, jsonify, request
 from google.cloud import ndb
 
+from backend.handlers.admin._list_utils import filter_and_sort as _filter_and_sort
+from backend.handlers.admin._list_utils import paginate_records
 from backend.lib.permissions import require_roles
 from backend.load_db.setup_geography import setup_regions_and_provinces
 from backend.load_db.update_champions import update_champions
@@ -31,54 +33,24 @@ def _serialize_all(championships):
     ]
 
 
-def _sort_key(field):
-    def key(record):
-        value = record.get(field)
-        # Keep None values together and comparable against real values.
-        return (value is None, value)
-
-    return key
-
-
 def filter_and_sort(records, q, sort_field, sort_order):
     """Filter by competition-name substring then sort. Pure helper for testing."""
-    if q:
-        needle = q.lower()
-        records = [r for r in records if needle in (r.get("competition_name") or "").lower()]
-    if sort_field not in _SORT_FIELDS:
-        sort_field = "year"
-    records = sorted(records, key=_sort_key(sort_field), reverse=(sort_order.lower() == "desc"))
-    return records
+    return _filter_and_sort(
+        records,
+        q,
+        sort_field,
+        sort_order,
+        search_field="competition_name",
+        sort_fields=_SORT_FIELDS,
+        default_sort_field="year",
+    )
 
 
 @bp.route("/get_championships")
 @require_roles(*Roles.AdminRoles())
 def get_championships():
-    page = request.args.get("page", 1, type=int)
-    per_page = request.args.get("per_page", 25, type=int)
-    if page < 1:
-        page = 1
-    if per_page < 1:
-        per_page = 25
-    sort_field = request.args.get("sort_field", "year").strip('"')
-    sort_order = request.args.get("sort_order", "desc").strip('"')
-    q = request.args.get("q", "", type=str).strip('"')
-
-    records = filter_and_sort(_serialize_all(list(Championship.query().iter())), q, sort_field, sort_order)
-
-    total = len(records)
-    start = (page - 1) * per_page
-    end = start + per_page
-    return jsonify(
-        {
-            "data": records[start:end],
-            "total": total,
-            "pageInfo": {
-                "hasPreviousPage": page > 1,
-                "hasNextPage": end < total,
-            },
-        }
-    )
+    records = _serialize_all(list(Championship.query().iter()))
+    return jsonify(paginate_records(records, filter_and_sort, default_sort_field="year", default_sort_order="desc"))
 
 
 @bp.route("/get_championships_by_id")
