@@ -1,7 +1,4 @@
-export interface HttpResponse<
-  D extends unknown = undefined,
-  E extends unknown = undefined,
-> {
+export interface HttpResponse<D = undefined, E = undefined> {
   ok: boolean;
   data?: D;
   error?: E;
@@ -11,16 +8,11 @@ class httpClient {
   private static parseBody(response: Response): Promise<unknown> {
     if (response.headers.get("Content-Type")?.includes("application/json")) {
       return response.json();
-    } else {
-      return response.text();
     }
+    return response.text();
   }
 
-  static async request<
-    R extends unknown,
-    D extends unknown,
-    E extends unknown = unknown,
-  >(
+  static async request<R, D, E = unknown>(
     method: "GET" | "POST" | "PUT" | "PATCH" | "DELETE",
     endpoint: string,
     body: R | undefined,
@@ -62,14 +54,14 @@ class httpClient {
       });
   }
 
-  static get<D extends unknown, E extends unknown = unknown>(
+  static get<D, E = unknown>(
     endpoint: string,
     options: Omit<RequestInit, "method" | "body"> = {},
   ): Promise<HttpResponse<D, E>> {
     return this.request<undefined, D, E>("GET", endpoint, undefined, options);
   }
 
-  static post<R, D extends unknown, E extends unknown = unknown>(
+  static post<R, D, E = unknown>(
     endpoint: string,
     data: R,
     options: Omit<RequestInit, "method" | "body"> = {},
@@ -77,7 +69,7 @@ class httpClient {
     return this.request<R, D, E>("POST", endpoint, data, options);
   }
 
-  static put<R, D extends unknown, E extends unknown = unknown>(
+  static put<R, D, E = unknown>(
     endpoint: string,
     data: R,
     options: Omit<RequestInit, "method" | "body"> = {},
@@ -85,7 +77,7 @@ class httpClient {
     return this.request<R, D, E>("PUT", endpoint, data, options);
   }
 
-  static patch<R, D extends unknown, E extends unknown = unknown>(
+  static patch<R, D, E = unknown>(
     endpoint: string,
     data: R,
     options: Omit<RequestInit, "method" | "body"> = {},
@@ -93,7 +85,7 @@ class httpClient {
     return this.request<R, D, E>("PATCH", endpoint, data, options);
   }
 
-  static delete<D extends unknown, E extends unknown = unknown>(
+  static delete<D, E = unknown>(
     endpoint: string,
     options: Omit<RequestInit, "method" | "body"> = {},
   ): Promise<HttpResponse<D, E>> {

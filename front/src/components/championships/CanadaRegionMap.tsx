@@ -120,10 +120,8 @@ export const CanadaRegionMap: React.FC<CanadaRegionMapProps> = ({
   const vbRef = useRef(viewBox);
   vbRef.current = viewBox;
   const aspectRef = useRef(VBW / VBH);
-  const rafRef = useRef<number | undefined>(undefined);
-  const finalizeRef = useRef<ReturnType<typeof setTimeout> | undefined>(
-    undefined,
-  );
+  const rafRef = useRef<number | undefined>();
+  const finalizeRef = useRef<ReturnType<typeof setTimeout> | undefined>();
   // Tracks the previous selection so we can animate the zoom-out on close but
   // snap (no animation) on the initial load and on resize.
   const prevSelRef = useRef<RegionId | null>(null);
@@ -175,7 +173,7 @@ export const CanadaRegionMap: React.FC<CanadaRegionMapProps> = ({
   }, []);
 
   useLayoutEffect(() => {
-    if (Object.keys(boxes).length) recomputeHome(boxes);
+    if (Object.keys(boxes).length > 0) recomputeHome(boxes);
   }, [boxes, recomputeHome]);
 
   useEffect(() => {

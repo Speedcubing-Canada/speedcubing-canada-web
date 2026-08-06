@@ -73,7 +73,7 @@ const getInitialLocale = () => {
   return getLocaleOrFallback(savedLocale);
 };
 
-i18n.use(initReactI18next).init({
+void i18n.use(initReactI18next).init({
   resources,
   lng: getInitialLocale(),
   fallbackLng: DEFAULT_LOCALE,

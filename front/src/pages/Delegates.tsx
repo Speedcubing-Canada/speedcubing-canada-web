@@ -13,7 +13,7 @@ import {
 
 // Regional (and senior) delegates cover the whole country and are shown first,
 // separate from the per-region groups.
-const PRIORITY_STATUSES = ["regional_delegate", "senior_delegate"];
+const PRIORITY_STATUSES = new Set(["regional_delegate", "senior_delegate"]);
 
 const byName = (a: { name: string }, b: { name: string }) =>
   a.name.localeCompare(b.name);
@@ -32,7 +32,7 @@ export const Delegates = () => {
 
   const list = delegates ?? [];
   const regional = list
-    .filter((delegate) => PRIORITY_STATUSES.includes(delegate.status))
+    .filter((delegate) => PRIORITY_STATUSES.has(delegate.status))
     .sort(byName);
   // Regional/senior delegates are also listed in their home region (a second time,
   // alongside the country-wide top section), so no status exclusion here.

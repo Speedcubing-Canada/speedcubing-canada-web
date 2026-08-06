@@ -52,10 +52,10 @@ export const CompetitionCard = (competition: {
               address: competition.data.venue_address,
             })}
             {currentDate > registrationOpen && competition.data.competitor_limit
-              ? `${t("competition.registration.count", {
+              ? t("competition.registration.count", {
                   num: competitorsApproved(competition).toString(),
                   total: competition.data.competitor_limit,
-                })}`
+                })
               : "\n"}
           </>
         </Trans>

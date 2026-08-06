@@ -5,7 +5,7 @@ import { CacheProvider } from "@emotion/react";
 import "./index.css";
 import App from "./App";
 
-const root = ReactDOM.createRoot(document.getElementById("root")!);
+const root = ReactDOM.createRoot(document.querySelector("#root")!);
 
 const nonceMeta =
   document.querySelector('meta[property="csp-nonce"]') ||

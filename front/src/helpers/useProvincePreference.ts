@@ -63,7 +63,7 @@ export const useProvincePreference = () => {
       setProvinceInitialized(true);
     };
 
-    initializeProvince();
+    void initializeProvince();
 
     return () => {
       mounted = false;

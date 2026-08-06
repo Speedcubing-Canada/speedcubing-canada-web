@@ -86,7 +86,7 @@ export const Account = () => {
   };
 
   useEffect(() => {
-    (async () => {
+    void (async () => {
       const response = await httpClient.get<User>(API_BASE_URL + "/user_info");
       if (response.ok && response.data) {
         const userData = response.data;
@@ -154,17 +154,17 @@ export const Account = () => {
     }
   };
 
-  const handleSignIn = async () => {
+  const handleSignIn = () => {
     setLoading(true);
     signIn();
   };
 
   const handleAdmin = () => {
-    navigate("/admin");
+    void navigate("/admin");
   };
 
   const handleEligibility = () => {
-    navigate(
+    void navigate(
       `/${
         localStorage.getItem("savedLocale") ?? "en"
       }/championship-eligibility`,
@@ -183,7 +183,18 @@ export const Account = () => {
       </Box>
       {loading ? (
         <CircularProgress />
-      ) : user != null ? (
+      ) : user == null ? (
+        <div>
+          <Box marginY="2rem">
+            <Typography variant="subtitle1" gutterBottom>
+              <Trans>{t("account.welcome")} </Trans>
+            </Typography>
+            <Button variant="outlined" component="span" onClick={handleSignIn}>
+              {t("account.signin")}
+            </Button>
+          </Box>
+        </div>
+      ) : (
         <div>
           <Box marginY="2rem">
             <Typography
@@ -371,17 +382,6 @@ export const Account = () => {
               </Alert>
             </Box>
           )}
-        </div>
-      ) : (
-        <div>
-          <Box marginY="2rem">
-            <Typography variant="subtitle1" gutterBottom>
-              <Trans>{t("account.welcome")} </Trans>
-            </Typography>
-            <Button variant="outlined" component="span" onClick={handleSignIn}>
-              {t("account.signin")}
-            </Button>
-          </Box>
         </div>
       )}
     </Container>

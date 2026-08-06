@@ -107,7 +107,7 @@ export const ChampionshipEligibility = () => {
   const [eventId, setEventId] = useState<EventID>("333");
 
   useEffect(() => {
-    (async () => {
+    void (async () => {
       const resp = await httpClient.get<User>(API_BASE_URL + "/user_info");
       if (resp.ok && resp.data) setUser(resp.data);
       setUserLoading(false);
@@ -117,7 +117,7 @@ export const ChampionshipEligibility = () => {
   useEffect(() => {
     if (!hasDelegateOrAdminRole(user)) return;
     setChampLoading(true);
-    (async () => {
+    void (async () => {
       const resp = await httpClient.get<ChampionshipSummary[]>(
         API_BASE_URL + "/championships",
       );
@@ -131,7 +131,7 @@ export const ChampionshipEligibility = () => {
     setEligibility(null);
     setEligibilityError(null);
     setEligibilityLoading(true);
-    (async () => {
+    void (async () => {
       const resp = await httpClient.get<EligibilityData>(
         `${API_BASE_URL}/championship_eligibility/${selected.id}`,
       );
@@ -179,9 +179,9 @@ export const ChampionshipEligibility = () => {
   }
 
   const eventsInChampionship: EventID[] = eligibility
-    ? (ACTIVE_EVENTS.filter((e) =>
+    ? ACTIVE_EVENTS.filter((e) =>
         eligibility.competitors.some((c) => c.events.includes(e)),
-      ) as EventID[])
+      )
     : [];
 
   const currentEvent = eventsInChampionship.includes(eventId)
@@ -195,7 +195,7 @@ export const ChampionshipEligibility = () => {
 
   const sortedCompetitors = competitors.toSorted((a, b) => {
     const diff = eligibilityOrder(a.eligible) - eligibilityOrder(b.eligible);
-    return diff !== 0 ? diff : a.name.localeCompare(b.name);
+    return diff === 0 ? a.name.localeCompare(b.name) : diff;
   });
 
   const columns: GridColDef[] = [
@@ -267,7 +267,7 @@ export const ChampionshipEligibility = () => {
       {champLoading ? (
         <CircularProgress size={24} />
       ) : (
-        <Autocomplete<ChampionshipSummary, false, false, false>
+        <Autocomplete<ChampionshipSummary, false, false>
           disablePortal
           options={championships}
           sx={{ maxWidth: 480 }}

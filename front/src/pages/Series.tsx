@@ -28,7 +28,7 @@ export const Series = () => {
   );
 
   if (isError || !data || !hasSCCOrganizer) {
-    navigate("/", { replace: true });
+    void navigate("/", { replace: true });
     return;
   }
 

@@ -150,7 +150,7 @@ export const Base = () => {
     }
 
     localStorage.setItem(SAVED_LOCALE_KEY, locale);
-    i18n.changeLanguage(locale);
+    void i18n.changeLanguage(locale);
   }, [hasLocaleParam, locale]);
 
   useEffect(() => {

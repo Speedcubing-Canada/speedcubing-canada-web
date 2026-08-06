@@ -17,7 +17,7 @@ const CHAMPIONSHIP_TYPE_CHOICES = [
   { id: "provincial" },
 ];
 
-const regionChoices = (Object.keys(REGIONS) as string[])
+const regionChoices = Object.keys(REGIONS)
   .filter((id) => id !== "na")
   .map((id) => ({ id }));
 

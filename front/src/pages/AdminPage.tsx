@@ -46,7 +46,7 @@ export const AdminPage = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    (async () => {
+    void (async () => {
       const response = await httpClient.get<User>(API_BASE_URL + "/user_info");
       if (response.ok && response.data) {
         setUser(response.data);
