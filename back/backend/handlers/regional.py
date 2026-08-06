@@ -2,12 +2,13 @@ import datetime
 import logging
 
 import requests
-from flask import Blueprint, jsonify
-from google.cloud import ndb
-
 from backend.models.championship import Championship
 from backend.models.province import Province
 from backend.models.region import Region
+from flask import Blueprint, jsonify
+from google.cloud import ndb
+
+logger = logging.getLogger(__name__)
 
 bp = Blueprint("regional", __name__)
 client = ndb.Client()
@@ -46,11 +47,11 @@ def fetch_registration(competition_id, now=None):
     try:
         resp = requests.get(f"{_WCA_COMPETITION_BASE_URL}/{competition_id}", timeout=10)
         if resp.status_code != 200:
-            logging.warning("WCA competition fetch failed for %s: %s", competition_id, resp.status_code)
+            logger.warning("WCA competition fetch failed for %s: %s", competition_id, resp.status_code)
             return None
         data = resp.json()
     except (requests.RequestException, ValueError) as exc:
-        logging.warning("WCA competition fetch error for %s: %s", competition_id, exc)
+        logger.warning("WCA competition fetch error for %s: %s", competition_id, exc)
         return None
 
     reg_open = data.get("registration_open")
@@ -66,7 +67,7 @@ def display_region_key(championship, province_region, region_province_count):
     """Return the region key a championship represents on the map, or ``None`` to skip.
 
     Regional championships map to their region. A provincial championship maps to its
-    province's region only when that region has a single province (BC/ON/QC) — otherwise
+    province's region only when that region has a single province (BC/ON/QC) - otherwise
     it is a sub-provincial championship within a multi-province region and is not the
     region's headline championship. National and PBQ championships never appear.
     """
@@ -104,7 +105,7 @@ def championships_overview():
         championships = list(Championship.query().iter())
         competitions = ndb.get_multi([c.competition for c in championships])
         entries_by_region = {}
-        for championship, competition in zip(championships, competitions):
+        for championship, competition in zip(championships, competitions, strict=False):
             region_key = display_region_key(championship, province_region, region_province_count)
             if region_key is not None:
                 entries_by_region.setdefault(region_key, []).append((championship, competition))
@@ -113,7 +114,7 @@ def championships_overview():
         output = []
         for region in regions:
             entries = entries_by_region.get(region.key, [])
-            # Past editions only — a championship that has not happened yet is surfaced
+            # Past editions only - a championship that has not happened yet is surfaced
             # via ``upcoming``, not as a past edition to browse champions for.
             editions = sorted({comp.year for _, comp in entries if comp and comp.end_date < today}, reverse=True)
 
@@ -147,7 +148,7 @@ def championships_overview():
                     "editions": editions,
                     "announced": upcoming_json is not None,
                     "upcoming": upcoming_json,
-                }
+                },
             )
 
         return jsonify(output)

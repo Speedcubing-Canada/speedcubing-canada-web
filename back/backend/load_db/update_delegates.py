@@ -2,10 +2,11 @@ import logging
 import re
 
 import requests
-from google.cloud import ndb
-
 from backend.models.delegate import Delegate
 from backend.models.province import PROVINCE_NAME_TO_ID
+from google.cloud import ndb
+
+logger = logging.getLogger(__name__)
 
 _WCA_USER_ROLES_URL = "https://www.worldcubeassociation.org/api/v0/user_roles"
 
@@ -116,11 +117,11 @@ def _fetch_roles():
                 },
                 timeout=30,
             )
-        except requests.RequestException as exc:
-            logging.error("WCA user_roles fetch failed on page %s: %s", page, exc)
+        except requests.RequestException:
+            logger.exception("WCA user_roles fetch failed on page %s", page)
             return None
         if resp.status_code != 200:
-            logging.error("WCA user_roles fetch returned %s on page %s", resp.status_code, page)
+            logger.error("WCA user_roles fetch returned %s on page %s", resp.status_code, page)
             return None
 
         chunk = resp.json()
@@ -143,13 +144,13 @@ def update_delegates():
     """
     roles = _fetch_roles()
     if roles is None:
-        logging.error("Skipping delegate sync; WCA API unavailable.")
+        logger.error("Skipping delegate sync; WCA API unavailable.")
         return
 
     by_id = _delegates_from_roles(roles)
     if not by_id:
         # Never wipe the roster on an empty/anomalous response.
-        logging.error("Skipping delegate sync; WCA returned no Canada-region delegates.")
+        logger.error("Skipping delegate sync; WCA returned no Canada-region delegates.")
         return
 
     to_write = []
@@ -168,4 +169,4 @@ def update_delegates():
     if stale:
         ndb.delete_multi(stale)
 
-    logging.info("Synced %d delegates (%d pruned).", len(to_write), len(stale))
+    logger.info("Synced %d delegates (%d pruned).", len(to_write), len(stale))

@@ -1,17 +1,18 @@
 import logging
 
-from google.cloud import ndb
-
 from backend.load_db.championship_classifier import classify_competition
 from backend.models.championship import Championship
 from backend.models.province import Province
 from backend.models.region import Region
 from backend.models.wca.competition import Competition
+from google.cloud import ndb
+
+logger = logging.getLogger(__name__)
 
 
 def update_championships() -> None:
-    competitions_used = set([championship.competition.id() for championship in Championship.query().iter()])
-    championships_used = set([championship.key.id() for championship in Championship.query().iter()])
+    competitions_used = {championship.competition.id() for championship in Championship.query().iter()}
+    championships_used = {championship.key.id() for championship in Championship.query().iter()}
     provinces = {province.name: province for province in Province.query().iter()}
     regions = {region.championship_name: region for region in Region.query().iter()}
 
@@ -34,7 +35,7 @@ def update_championships() -> None:
             championship.is_fmc = is_fmc
             championship.competition = competition.key
             if championship.key.id() not in championships_used:
-                logging.info("Assigning national championship " + competition.key.id() + " " + championship.key.id())
+                logger.info("Assigning national championship %s %s", competition.key.id(), championship.key.id())
                 to_write.append(championship)
             continue
 
@@ -42,7 +43,7 @@ def update_championships() -> None:
             championship = None
             if area_name in provinces:
                 championship = Championship(
-                    id=Championship.province_championship_id(competition.year, provinces[area_name], is_pbq)
+                    id=Championship.province_championship_id(competition.year, provinces[area_name], is_pbq),
                 )
                 championship.province = provinces[area_name].key
                 championship.national_championship = False
@@ -51,15 +52,15 @@ def update_championships() -> None:
                 championship.region = regions[area_name].key
                 championship.national_championship = False
             else:
-                logging.info("Failed to match area for: " + competition.name + " (area: " + area_name + ")")
+                logger.info("Failed to match area for: %s (area: %s)", competition.name, area_name)
 
             if championship:
                 championship.is_pbq = is_pbq
                 championship.competition = competition.key
                 if championship.key.id() not in championships_used:
-                    logging.info("Assigning championship " + competition.key.id() + " " + championship.key.id())
+                    logger.info("Assigning championship %s %s", competition.key.id(), championship.key.id())
                     to_write.append(championship)
         else:
-            logging.info("Failed to match " + competition.key.id())
+            logger.info("Failed to match %s", competition.key.id())
 
     ndb.put_multi(to_write)

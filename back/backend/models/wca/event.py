@@ -1,6 +1,5 @@
-from google.cloud import ndb
-
 from backend.models.wca.base import BaseModel
+from google.cloud import ndb
 
 
 class Event(BaseModel):

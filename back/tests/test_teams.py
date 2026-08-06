@@ -10,7 +10,6 @@ from backend.handlers.admin.edit_teams import filter_and_sort, parse_members
 from backend.load_db.import_teams import parse_rows
 from backend.models.team import Team, TeamMember
 
-
 # Team.to_json (mocked self; a keyed ndb entity can't be built without a context, but the
 # unkeyed TeamMember can, so a real member exercises the nested serialization).
 

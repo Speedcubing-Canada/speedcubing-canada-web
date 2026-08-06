@@ -1,7 +1,6 @@
-from google.cloud import ndb
-
 from backend.models.wca.base import BaseModel
 from backend.models.wca.continent import Continent
+from google.cloud import ndb
 
 
 class Country(BaseModel):

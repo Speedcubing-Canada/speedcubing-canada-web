@@ -12,6 +12,12 @@ select = [
     "E",  # pycodestyle errors
     "W",  # pycodestyle warnings
     "F",  # pyflakes
+    "B",  # bugbear
+    "I",  # isort
+    "UP", # pyupgrade
+    "SIM", # simplifications
+    "LOG", # flake8 logging
+    "G" # flake8 logging format
 ]
 
 # Per-file ignores

@@ -76,5 +76,5 @@ def test_setup_is_idempotent_updates_existing_in_place(MockRegion, MockProvince)
 
     MockRegion.assert_not_called()  # never constructed a new Region
     MockProvince.assert_not_called()
-    for (_, _id), entity in existing.items():
+    for entity in existing.values():
         entity.key.delete.assert_not_called()

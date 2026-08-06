@@ -1,10 +1,11 @@
 import logging
 
-from google.cloud import ndb
-
 from backend.models.province import Province
 from backend.models.wca.event import Event
 from backend.models.wca.rank import RankAverage, RankSingle
+from google.cloud import ndb
+
+logger = logging.getLogger(__name__)
 
 
 def update_province_records():
@@ -32,8 +33,8 @@ def update_province_records():
                 record.is_province_record = False
                 to_remove += [record]
 
-    logging.info("Marking %d province records", len(province_records))
-    logging.info("Clearing %d stale province records", len(to_remove))
+    logger.info("Marking %d province records", len(province_records))
+    logger.info("Clearing %d stale province records", len(to_remove))
     ndb.put_multi(province_records + to_remove)
 
 

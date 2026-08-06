@@ -1,8 +1,7 @@
-from google.cloud import ndb
-
 from backend.models.wca.base import BaseModel
 from backend.models.wca.event import Event
 from backend.models.wca.person import Person
+from google.cloud import ndb
 
 
 class RankBase(BaseModel):

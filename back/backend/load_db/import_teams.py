@@ -22,10 +22,9 @@ import sys
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 
 from absl import app, flags, logging  # noqa: E402
-from google.cloud import ndb  # noqa: E402
-
 from backend.models.site_person import Director  # noqa: E402
 from backend.models.team import Team, TeamMember  # noqa: E402
+from google.cloud import ndb  # noqa: E402
 
 FLAGS = flags.FLAGS
 

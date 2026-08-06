@@ -1,11 +1,10 @@
 from json import loads
 
-from flask import Blueprint, jsonify, request
-from google.cloud import ndb
-
 from backend.lib.permissions import require_roles
 from backend.models.user import Roles, User
 from backend.models.wca.person import Person
+from flask import Blueprint, jsonify, request
+from google.cloud import ndb
 
 bp = Blueprint("show_users", __name__)
 client = ndb.Client()
@@ -20,8 +19,7 @@ def get_users():
     cursor = request.args.get("cursor", None, type=str)
     if cursor:
         cursor = ndb.Cursor(urlsafe=cursor)
-    if page < 1:
-        page = 1
+    page = max(page, 1)
     if per_page not in (5, 10, 25, 50):
         per_page = 25
 
@@ -52,7 +50,7 @@ def get_users():
                         User.name_lower < limit,
                     ),
                     User.wca_person == ndb.Key(Person, filter_text),
-                )
+                ),
             )
             .order("name_lower", order_field)
             .fetch(per_page)
@@ -68,7 +66,7 @@ def get_users():
                 "hasPreviousPage": page > 1,
                 "hasNextPage": has_more,
             },
-        }
+        },
     )
 
 
@@ -78,8 +76,8 @@ def get_users_by_id():
     raw_ids = request.args.get("ids", "[]", type=str).strip("[]").split(",")
 
     clean_ids = []
-    for uid in raw_ids:
-        uid = uid.strip()
+    for raw_uid in raw_ids:
+        uid = raw_uid.strip()
         if not uid.isdigit():
             return jsonify({"error": f"Invalid user id: {uid}"}), 400
         clean_ids.append(int(uid))

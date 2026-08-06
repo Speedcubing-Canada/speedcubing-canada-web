@@ -1,11 +1,10 @@
-from flask import Blueprint, jsonify, request
-from google.cloud import ndb
-
 from backend.handlers.admin._list_utils import filter_and_sort as _filter_and_sort
 from backend.handlers.admin._list_utils import paginate_records
 from backend.lib.permissions import require_roles
 from backend.models.team import Team, TeamMember
 from backend.models.user import Roles
+from flask import Blueprint, jsonify, request
+from google.cloud import ndb
 
 bp = Blueprint("edit_teams", __name__)
 

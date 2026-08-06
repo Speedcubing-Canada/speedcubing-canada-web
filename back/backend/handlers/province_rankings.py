@@ -1,10 +1,9 @@
-from flask import Blueprint, jsonify, request
-from google.cloud import ndb
-
 from backend.lib import common
 from backend.models.province import Province
 from backend.models.wca.event import Event
 from backend.models.wca.rank import RankAverage, RankSingle
+from flask import Blueprint, jsonify, request
+from google.cloud import ndb
 
 bp = Blueprint("province_rankings", __name__)
 client = ndb.Client()
@@ -142,16 +141,16 @@ def province_rankings_table(event_id, province_id, use_average):
         ranking_class = RankAverage if use_average == "1" else RankSingle
         province = Province.get_by_id(province_id)
         if not province:
-            return jsonify({"error": "Unrecognized province id %s" % province}), 404
+            return jsonify({"error": f"Unrecognized province id {province}"}), 404
         event = Event.get_by_id(event_id)
         if not event:
-            return jsonify({"error": "Unrecognized event id %s" % event}), 404
+            return jsonify({"error": f"Unrecognized event id {event}"}), 404
         rankings = (
             ranking_class.query(
                 ndb.AND(
                     ranking_class.event == event.key,
                     ranking_class.province == province.key,
-                )
+                ),
             )
             .order(ranking_class.best)
             .fetch(100)
@@ -172,6 +171,6 @@ def province_rankings_table(event_id, province_id, use_average):
                     "name": person.name,
                     "wca_id": person.key.id(),
                     "time": formatter.format_time(rankings[i].best, rankings[i].event, use_average == "1"),
-                }
+                },
             )
         return jsonify(output)

@@ -25,9 +25,9 @@ def resolve_residency(user, deadline):
     """Return the province key the user resided in at ``deadline``.
 
     The latest location update *before* the deadline wins. If no update precedes the
-    deadline — which happens for **past** championships when the user only set their
+    deadline - which happens for **past** championships when the user only set their
     province recently (the edit handler timestamps each ``UserLocationUpdate`` with
-    ``now``) — fall back to the earliest recorded update's province as the baseline for
+    ``now``) - fall back to the earliest recorded update's province as the baseline for
     earlier dates, rather than treating residency as unknown. If the user has no
     location updates at all, fall back to their current province.
     """
