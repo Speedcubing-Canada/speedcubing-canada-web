@@ -24,7 +24,7 @@ export const Competition = () => {
   }
 
   if (isError || !data || !isSpeedcubingCanadaCompetition(data.compData)) {
-    navigate("/", { replace: true });
+    void navigate("/", { replace: true });
     return;
   }
 

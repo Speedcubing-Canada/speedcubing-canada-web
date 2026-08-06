@@ -1,5 +1,3 @@
-from google.cloud import ndb
-
 from backend.models.championship import Championship
 from backend.models.wca.base import BaseModel
 from backend.models.wca.competition import Competition
@@ -8,6 +6,7 @@ from backend.models.wca.event import Event
 from backend.models.wca.format import Format
 from backend.models.wca.person import Person
 from backend.models.wca.round import RoundType
+from google.cloud import ndb
 
 
 class Result(BaseModel):
@@ -47,7 +46,7 @@ class Result(BaseModel):
     @staticmethod
     def Filter():
         # Only include results of championships that are in the datastore.
-        known_competitions = set([championship.competition.id() for championship in Championship.query().iter()])
+        known_competitions = {championship.competition.id() for championship in Championship.query().iter()}
 
         def filter_row(row):
             return row["competition_id"] in known_competitions

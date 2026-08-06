@@ -53,7 +53,7 @@ if os.environ.get("ENV") == "DEV":
             "http://127.0.0.1:80",
             "http://localhost:2003",
             "http://127.0.0.1:2003",
-        ]
+        ],
     )
 
 CORS(app, origins=allowed_origins, supports_credentials=True)

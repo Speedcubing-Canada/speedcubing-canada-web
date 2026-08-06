@@ -1,8 +1,7 @@
-from google.cloud import ndb
-
 from backend.models.province import Province
 from backend.models.region import Region
 from backend.models.wca.competition import Competition
+from google.cloud import ndb
 
 
 class Championship(ndb.Model):

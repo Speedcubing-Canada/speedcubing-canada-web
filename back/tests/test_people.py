@@ -8,7 +8,6 @@ from unittest.mock import MagicMock
 from backend.handlers.admin._person_crud import apply_person_fields, filter_and_sort
 from backend.models.site_person import Director, FeaturedMember
 
-
 # to_json / apply_person_fields use a mocked self: a keyed ndb entity can't be built
 # without an active context, so mirror test_delegates.py and call the methods unbound.
 

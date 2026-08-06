@@ -94,7 +94,8 @@ def _championship(year=2026, region=None, province=None, key="champ"):
 
 def _lock(year, region=None, province=None):
     """An embedded eligibility entity pointing at a prior championship (its attrs are
-    resolved through ``championship.get()``, like the real ComputedProperty lambdas)."""
+    resolved through ``championship.get()``, like the real ComputedProperty lambdas).
+    """
     elig = MagicMock()
     elig.championship = MagicMock()
     attrs = MagicMock()

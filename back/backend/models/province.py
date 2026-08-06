@@ -1,6 +1,5 @@
-from google.cloud import ndb
-
 from backend.models.region import Region
+from google.cloud import ndb
 
 PROVINCE_NAME_TO_ID = {
     # English names

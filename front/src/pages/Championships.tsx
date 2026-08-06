@@ -3,8 +3,6 @@ import {
   Container,
   Drawer,
   Stack,
-  SxProps,
-  Theme,
   Typography,
   useMediaQuery,
 } from "@mui/material";
@@ -64,7 +62,7 @@ export const Championships: React.FC = () => {
 
   useEffect(() => {
     let active = true;
-    fetchOverview().then((list) => {
+    void fetchOverview().then((list) => {
       if (!active) return;
       const byId: Partial<Record<RegionId, RegionInfo>> = {};
       list.forEach((r) => {
@@ -93,15 +91,12 @@ export const Championships: React.FC = () => {
         </Typography>
         <Typography
           variant="h3"
-          sx={
-            {
-              fontWeight: 800,
-              lineHeight: 1.05,
-              mb: 1,
-              // textWrap isn't in the installed csstype yet; scope the cast to SxProps.
-              textWrap: "balance",
-            } as SxProps<Theme>
-          }
+          sx={{
+            fontWeight: 800,
+            lineHeight: 1.05,
+            mb: 1,
+            textWrap: "balance",
+          }}
         >
           {t("championships.title")}
         </Typography>

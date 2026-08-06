@@ -86,7 +86,7 @@ def test_stale_record_is_cleared(MockEvent, MockProvince, MockRankSingle, MockRa
 @patch(f"{BASE}.Event")
 def test_current_record_not_cleared_when_still_best(MockEvent, MockProvince, MockRankSingle, MockRankAverage, mock_ndb):
     best = _rank(500, is_province_record=True)
-    # best appears in both the AND query and the stale query — it must stay True
+    # best appears in both the AND query and the stale query - it must stay True
     _wire(MockEvent, MockProvince, MockRankSingle, MockRankAverage, [best], stale_iter=[best])
 
     update_province_records()

@@ -1,7 +1,6 @@
-from google.cloud import ndb
-
 from backend.models.championship import Championship
 from backend.models.province import Province
+from google.cloud import ndb
 
 
 class RegionalChampionshipEligibility(ndb.Model):

@@ -1,12 +1,12 @@
 """Unit tests for the delegate sync helpers and serialization.
 
 Pure logic only (province parsing, status priority, role collapsing, to_json) with
-mocked ndb/requests, mirroring test_championships_routes.py — no datastore emulator.
+mocked ndb/requests, mirroring test_championships_routes.py - no datastore emulator.
 """
 
 from unittest.mock import MagicMock
 
-from backend.handlers.delegates import Delegate  # noqa: F401 (import smoke-check)
+from backend.handlers.delegates import Delegate
 from backend.load_db.update_delegates import (
     _delegates_from_roles,
     _pick_status,
@@ -66,7 +66,7 @@ def test_delegates_from_roles_filters_and_collapses():
         _role("2008ASIS01", "Kristopher De Asis", "delegate", "Canada (West)", location="Canada (Alberta)"),
         # A non-Canadian-nationality delegate serving Quebec is included.
         _role("2017ONDE01", "Alexandre Ondet", "delegate", "Canada (East)", location="Canada (Quebec)"),
-        # A woman delegate — gender is captured for gendered (French) labels.
+        # A woman delegate - gender is captured for gendered (French) labels.
         _role("2014ESPA01", "Alyssa Esparaz", "delegate", "Canada (East)", location="Canada (Ontario)", gender="f"),
         # Excluded: the "USA & Canada" senior super-region.
         _role("2013SING12", "Abhimanyu Singhal", "senior_delegate", "USA & Canada", location="USA & Canada"),

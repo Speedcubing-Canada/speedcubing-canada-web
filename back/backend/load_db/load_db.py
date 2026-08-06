@@ -1,8 +1,6 @@
 import csv
 
 from absl import app, flags, logging
-from google.cloud import ndb
-
 from backend.load_db.setup_geography import setup_regions_and_provinces
 from backend.load_db.update_champions import update_champions
 from backend.load_db.update_championships import update_championships
@@ -19,6 +17,7 @@ from backend.models.wca.person import Person
 from backend.models.wca.rank import RankAverage, RankSingle
 from backend.models.wca.result import Result
 from backend.models.wca.round import RoundType
+from google.cloud import ndb
 
 FLAGS = flags.FLAGS
 
@@ -120,7 +119,7 @@ def read_table(path, cls, apply_filter, shard, shards):
 
 def write_table(path, rows, cls, shard):
     use_id = False
-    with open(path, "r") as csvfile:
+    with open(path) as csvfile:
         reader = csv.DictReader(csvfile, dialect="excel-tab")
         use_id = "id" in reader.fieldnames
     with open(path + ".filtered", "w" if shard == 0 else "a") as csvfile:
@@ -140,11 +139,11 @@ def process_export(old_export_path, new_export_path):
         logging.info("Processing " + table)
         table_suffix = "/WCA_export_" + table + ".tsv"
         for shard in range(shards):
-            logging.info("Shard %d/%d" % (shard + 1, shards))
+            logging.info("Shard %d/%d", shard + 1, shards)
             old_rows = read_table(old_export_path + table_suffix + ".filtered", cls, False, shard, shards)
             new_rows = read_table(new_export_path + table_suffix, cls, True, shard, shards)
-            logging.info("Old: %d" % len(old_rows))
-            logging.info("New: %d" % len(new_rows))
+            logging.info("Old: %d", len(old_rows))
+            logging.info("New: %d", len(new_rows))
             write_table(new_export_path + table_suffix, new_rows, cls, shard)
 
             objects_to_put = []
@@ -157,30 +156,28 @@ def process_export(old_export_path, new_export_path):
                 row = new_rows[key]
                 if key in old_rows and old_rows[key] == row:
                     continue
-                else:
-                    with client.context():
-                        obj = cls(id=key)
-                        obj.parse_from_dict(row)
-                        if modifier:
-                            modifier(obj)
-                        objects_to_put += [obj]
-            for key, row in old_rows.items():
+                with client.context():
+                    obj = cls(id=key)
+                    obj.parse_from_dict(row)
+                    if modifier:
+                        modifier(obj)
+                    objects_to_put += [obj]
+            for key in old_rows:
                 if key in new_rows:
                     continue
-                else:
-                    with client.context():
-                        keys_to_delete += [ndb.Key(cls, key)]
+                with client.context():
+                    keys_to_delete += [ndb.Key(cls, key)]
 
-            logging.info("Putting %d objects" % len(objects_to_put))
+            logging.info("Putting %d objects", len(objects_to_put))
             while objects_to_put:
                 with client.context():
                     batch_size = 5000
-                    logging.info("%d left" % len(objects_to_put))
+                    logging.info("%d left", len(objects_to_put))
                     subslice = objects_to_put[:batch_size]
                     objects_to_put = objects_to_put[batch_size:]
                     ndb.put_multi(subslice)
 
-            logging.info("Deleting %d objects" % len(keys_to_delete))
+            logging.info("Deleting %d objects", len(keys_to_delete))
             with client.context():
                 ndb.delete_multi(keys_to_delete)
 

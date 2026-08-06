@@ -8,8 +8,6 @@ import datetime
 from unittest.mock import MagicMock, patch
 
 import pytest
-from google.cloud import ndb
-
 from backend.handlers.admin.edit_championships import _apply_fields, _derive_id, filter_and_sort
 from backend.handlers.champions_table import (
     _format_champion_result,
@@ -20,6 +18,7 @@ from backend.handlers.champions_table import (
 from backend.handlers.regional import _upcoming_championship, display_region_key, fetch_registration, registration_status
 from backend.lib.residency import resolve_residency
 from backend.models.championship import Championship
+from google.cloud import ndb
 
 # ---------------------------------------------------------------------------
 # Championship.type_and_area / to_json
@@ -263,7 +262,7 @@ def test_derive_id_national_fmc():
 
 # _apply_fields assigns to a real Championship's ndb properties (a naive
 # DateTimeProperty and a Competition KeyProperty), so these tests run inside an
-# in-memory ndb context — no datastore I/O, just property validation.
+# in-memory ndb context - no datastore I/O, just property validation.
 _ndb_client = ndb.Client()
 
 

@@ -7,11 +7,11 @@ export const useScrollbarWidth = (): number => {
     const outer = document.createElement("div");
     outer.style.visibility = "hidden";
     outer.style.overflow = "scroll"; // Force scrollbar to appear
-    document.body.appendChild(outer);
+    document.body.append(outer);
 
     // Measure inner element
     const inner = document.createElement("div");
-    outer.appendChild(inner);
+    outer.append(inner);
 
     // Calculate difference between container's full width and the child's width
     const width = outer.offsetWidth - inner.offsetWidth;

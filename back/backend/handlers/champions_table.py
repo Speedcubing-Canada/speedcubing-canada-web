@@ -1,11 +1,10 @@
-from flask import Blueprint, jsonify
-from google.cloud import ndb
-
 from backend.lib import formatters
 from backend.models.champion import Champion
 from backend.models.championship import Championship
 from backend.models.province import Province
 from backend.models.region import Region
+from flask import Blueprint, jsonify
+from google.cloud import ndb
 
 bp = Blueprint("champions_table", __name__)
 client = ndb.Client()
@@ -73,7 +72,7 @@ def serialize_champions(champions):
                 "event_name": event.name if event else (champ.event.id() if champ.event else None),
                 "event_rank": event.rank if event else 999,
                 "champions": serialized,
-            }
+            },
         )
     out.sort(key=lambda c: c["event_rank"])
     return out

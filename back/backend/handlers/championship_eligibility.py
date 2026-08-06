@@ -2,13 +2,14 @@ import datetime
 import logging
 
 import requests
-from flask import Blueprint, jsonify
-from google.cloud import ndb
-
 from backend.lib.permissions import require_roles
 from backend.lib.residency import resolve_residency
 from backend.models.championship import Championship
 from backend.models.user import Roles, User
+from flask import Blueprint, jsonify
+from google.cloud import ndb
+
+logger = logging.getLogger(__name__)
 
 bp = Blueprint("championship_eligibility", __name__)
 client = ndb.Client()
@@ -35,7 +36,7 @@ def list_championships():
     provinces = {p.key: p for p in ndb.get_multi(province_keys) if p}
 
     result = []
-    for championship, competition in zip(championships, competitions):
+    for championship, competition in zip(championships, competitions, strict=False):
         if not competition:
             continue
 
@@ -51,7 +52,7 @@ def list_championships():
                 "type": champ_type,
                 "area": area,
                 "is_pbq": bool(championship.is_pbq),
-            }
+            },
         )
 
     result.sort(key=lambda x: (-x["year"], x["competition_name"]))
@@ -73,11 +74,11 @@ def championship_eligibility(championship_id):
     try:
         resp = requests.get(wcif_url, timeout=15)
         if resp.status_code != 200:
-            logging.error("WCIF fetch failed for %s: %s", competition.key.id(), resp.status_code)
+            logger.error("WCIF fetch failed for %s: %s", competition.key.id(), resp.status_code)
             return jsonify({"error": f"Failed to fetch WCIF (HTTP {resp.status_code})"}), 502
         wcif = resp.json()
-    except Exception as exc:
-        logging.error("WCIF fetch error for %s: %s", competition.key.id(), exc)
+    except Exception:
+        logger.exception("WCIF fetch error for %s", competition.key.id())
         return jsonify({"error": "Failed to fetch competition data from WCA"}), 502
 
     registered = _parse_registrations(wcif)
@@ -99,7 +100,7 @@ def championship_eligibility(championship_id):
             "area": area,
             "is_pbq": bool(championship.is_pbq),
             "competitors": competitors,
-        }
+        },
     )
 
 
@@ -120,7 +121,7 @@ def _parse_registrations(wcif):
                 "wca_user_id": person.get("wcaUserId"),
                 "events": reg.get("eventIds", []),
                 "country_iso2": person.get("countryIso2", ""),
-            }
+            },
         )
     return registered
 
@@ -140,7 +141,8 @@ def _eligibility_national(registered):
 def _eligibility_regional_or_provincial(championship, competition, registered):
     valid_province_keys = championship.get_eligible_province_keys()
     residency_deadline = championship.residency_deadline or datetime.datetime.combine(
-        competition.start_date, datetime.time(0, 0, 0)
+        competition.start_date,
+        datetime.time(0, 0, 0),
     )
 
     wca_user_ids = [p["wca_user_id"] for p in registered if p["wca_user_id"]]
@@ -163,6 +165,6 @@ def _eligibility_regional_or_provincial(championship, competition, registered):
                 "wca_id": p["wca_id"],
                 "eligible": eligible,
                 "events": p["events"],
-            }
+            },
         )
     return competitors

@@ -182,9 +182,9 @@ function NextChampionshipSection({
         {t("championships.notAnnounced")}
       </Typography>
       <Typography variant="body2" color="text.secondary">
-        {!hasPast
-          ? t("championships.noChampionshipYet")
-          : t("championships.notAnnouncedBody")}
+        {hasPast
+          ? t("championships.notAnnouncedBody")
+          : t("championships.noChampionshipYet")}
       </Typography>
     </Box>
   );
@@ -434,7 +434,7 @@ export const RegionPanel: React.FC<RegionPanelProps> = ({
     }
     let active = true;
     setLoading(true);
-    fetchChampions(region.id, edition).then((data) => {
+    void fetchChampions(region.id, edition).then((data) => {
       if (!active) return;
       setChampions(data);
       setEventId(data[0]?.event_id ?? null);
@@ -496,9 +496,9 @@ export const RegionPanel: React.FC<RegionPanelProps> = ({
         ) : (
           <Chip
             label={
-              !hasPast
-                ? t("championships.statusNone")
-                : t("championships.statusPending", { year })
+              hasPast
+                ? t("championships.statusPending", { year })
+                : t("championships.statusNone")
             }
             size="small"
             variant="outlined"

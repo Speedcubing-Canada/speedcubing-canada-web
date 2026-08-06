@@ -1,9 +1,7 @@
 """Tests for classify_competition() using real names from canadian_test_comps.csv."""
 
 import pytest
-
 from backend.load_db.championship_classifier import classify_competition
-
 
 # ---------------------------------------------------------------------------
 # National championships
@@ -32,7 +30,7 @@ def test_national_championships(name):
 
 
 # ---------------------------------------------------------------------------
-# Regional championships — all championships are at this single depth.
+# Regional championships - all championships are at this single depth.
 # Some regions group multiple provinces (Atlantic, Prairies, Territories);
 # others map 1:1 to a province (BC, Ontario, Quebec each are their own region).
 # ---------------------------------------------------------------------------
@@ -79,7 +77,7 @@ def test_canadian_regional_not_national(name):
 
 
 # ---------------------------------------------------------------------------
-# FMC Canada — national championship only on years that have a nationals
+# FMC Canada - national championship only on years that have a nationals
 # ---------------------------------------------------------------------------
 
 # Championship years from the CSV: 2019, 2023, 2025
@@ -114,7 +112,7 @@ def test_fmc_canada_non_championship_year_is_not_matched(name):
 
 
 def test_fmc_canada_without_national_years_is_not_matched():
-    # Without the national_years context the classifier cannot know — leaves it unmatched
+    # Without the national_years context the classifier cannot know - leaves it unmatched
     is_national, area, _ = classify_competition("FMC Canada 2025")
     assert not is_national
     assert area is None

@@ -1,6 +1,5 @@
-from flask import session
-
 from backend.models.user import User
+from flask import session
 
 
 def logged_in():
@@ -9,7 +8,7 @@ def logged_in():
 
 def user():
     if not logged_in():
-        return
+        return None
 
     wca_account_number = session["wca_account_number"]
 

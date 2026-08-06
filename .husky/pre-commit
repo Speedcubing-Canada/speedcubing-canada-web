@@ -1,7 +1,9 @@
 #!/usr/bin/env sh
 . "$(dirname -- "$0")/_/husky.sh"
 
-npx lint-staged
+# oxlint --fix and prettier --write both match staged .ts/.tsx files, so the
+# tasks have to run one after another rather than racing on the same file.
+npx lint-staged --concurrent false
 
 # Reject staged text files missing a trailing newline
 staged=$(git diff --cached --name-only --diff-filter=ACM)

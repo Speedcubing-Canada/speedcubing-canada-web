@@ -42,7 +42,7 @@ describe("Delegates page", () => {
   it("renders the regional section, per-region groups and rank chips", async () => {
     renderWithProviders(<Delegates />);
 
-    // Every delegate renders (async — waits for the query to resolve).
+    // Every delegate renders (async - waits for the query to resolve).
     expect(await screen.findByText("Alexandre Ondet")).toBeInTheDocument();
     expect(screen.getByText("Marco Yang")).toBeInTheDocument();
 

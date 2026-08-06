@@ -86,7 +86,7 @@ export const Rankings = () => {
     setRanking(null);
     const use_average_str = usingAverage ? "1" : "0";
 
-    (async () => {
+    void (async () => {
       if (!eventId || !province?.id) {
         setLoading(false);
         return;
@@ -172,7 +172,7 @@ export const Rankings = () => {
           spacing={2}
           alignItems="center"
         >
-          <Autocomplete<Province, false, false, false>
+          <Autocomplete<Province, false, false>
             disablePortal
             id="combo-box-demo"
             options={provinces}

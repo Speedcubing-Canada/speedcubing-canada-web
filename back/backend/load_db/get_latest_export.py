@@ -1,6 +1,5 @@
-from google.cloud import ndb
-
 from backend.models.wca.export import get_latest_export
+from google.cloud import ndb
 
 client = ndb.Client()
 

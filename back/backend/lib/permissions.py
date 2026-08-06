@@ -1,9 +1,8 @@
 from functools import wraps
 
+from backend.models.user import Roles
 from flask import jsonify
 from google.cloud import ndb
-
-from backend.models.user import Roles
 
 client = ndb.Client()
 
@@ -84,7 +83,6 @@ def editable_roles(user, editor):
         return []
     if editor.has_any_of_given_roles([Roles.GLOBAL_ADMIN]):
         return Roles.AllRoles()
-    elif editor.has_any_of_given_roles([Roles.WEBMASTER, Roles.DIRECTOR]):
+    if editor.has_any_of_given_roles([Roles.WEBMASTER, Roles.DIRECTOR]):
         return [Roles.WEBMASTER, Roles.DIRECTOR]
-    else:
-        return []
+    return []

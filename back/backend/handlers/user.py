@@ -1,14 +1,13 @@
 import datetime
 
-from flask import Blueprint, jsonify, request
-from google.cloud import ndb
-
 from backend.lib import auth, permissions
 from backend.lib.permissions import require_auth
 from backend.lib.residency import PROVINCE_CHANGE_WINDOW, most_recent_location_change_within_window
 from backend.models.province import Province
 from backend.models.user import User, UserLocationUpdate
 from backend.models.wca.rank import RankAverage, RankSingle
+from flask import Blueprint, jsonify, request
+from google.cloud import ndb
 
 bp = Blueprint("user", __name__)
 client = ndb.Client()
@@ -37,10 +36,7 @@ _VALID_PROVINCE_IDS = {
 @require_auth
 def user_info(user_id=-1):
     me = auth.user()
-    if user_id == -1:
-        user = me
-    else:
-        user = User.get_by_id(user_id)
+    user = me if user_id == -1 else User.get_by_id(user_id)
     if not user:
         return jsonify({"error": f"Unrecognized user ID {user_id}"}), 404
     if not permissions.can_view_user(user, me):
@@ -62,10 +58,7 @@ def rewrite_ranks(wca_person):
 @require_auth
 def edit(user_id=-1):
     me = auth.user()
-    if user_id == -1:
-        user = me
-    else:
-        user = User.get_by_id(user_id)
+    user = me if user_id == -1 else User.get_by_id(user_id)
     if not user:
         return jsonify({"error": f"Unrecognized user ID {user_id}"}), 404
     if not permissions.can_view_user(user, me):
@@ -97,7 +90,7 @@ def edit(user_id=-1):
                     "error": "You can only change your province once per year.",
                     "code": "province_change_rate_limited",
                     "next_allowed": next_allowed.isoformat(),
-                }
+                },
             ), 403
 
     if changed_location:

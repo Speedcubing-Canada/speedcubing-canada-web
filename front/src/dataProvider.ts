@@ -135,7 +135,7 @@ const dataProvider: DataProvider = {
     const url = `${apiUrl}/${resource}?${stringify(query)}`;
 
     return httpClient(url).then(({ json }) =>
-      Promise.resolve(convertResponseToDataProviderFormat(json)),
+      convertResponseToDataProviderFormat(json),
     );
   },
 

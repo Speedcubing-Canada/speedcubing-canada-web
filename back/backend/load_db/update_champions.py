@@ -3,8 +3,6 @@ import datetime
 import logging
 import os
 
-from google.cloud import ndb
-
 from backend.lib.residency import resolve_residency
 from backend.models.champion import Champion
 from backend.models.championship import Championship
@@ -13,6 +11,9 @@ from backend.models.user import User
 from backend.models.wca.country import Country
 from backend.models.wca.event import Event
 from backend.models.wca.result import Result, RoundType
+from google.cloud import ndb
+
+logger = logging.getLogger(__name__)
 
 # Datastore/Firestore caps an ``IN`` filter at 30 values.
 _IN_QUERY_LIMIT = 30
@@ -90,14 +91,15 @@ def resolve_eligibility(user, championship, valid_province_keys, residency_deadl
 
 def compute_eligible_competitors(championship, competition, results):
     if championship.national_championship:
-        return set([r.person.id() for r in results if r.person_country == ndb.Key(Country, "Canada")])
+        return {r.person.id() for r in results if r.person_country == ndb.Key(Country, "Canada")}
 
     valid_province_keys = championship.get_eligible_province_keys()
     residency_deadline = championship.residency_deadline or datetime.datetime.combine(
-        competition.start_date, datetime.time(0, 0, 0)
+        competition.start_date,
+        datetime.time(0, 0, 0),
     )
 
-    competitors = set([r.person for r in results])
+    competitors = {r.person for r in results}
     users = fetch_users_for_competitors(competitors)
 
     is_regional = bool(championship.region)
@@ -110,7 +112,12 @@ def compute_eligible_competitors(championship, competition, results):
 
     for user in users:
         eligible, modified = resolve_eligibility(
-            user, championship, valid_province_keys, residency_deadline, is_regional, champ_attr_cache
+            user,
+            championship,
+            valid_province_keys,
+            residency_deadline,
+            is_regional,
+            champ_attr_cache,
         )
         if modified:
             competitors_to_put.append(user)
@@ -165,7 +172,7 @@ def update_champions(recompute_all=False):
     champions_to_write = []
     champions_to_delete = []
     round_ranks = {r.key: r.rank for r in RoundType.query().iter()}
-    all_event_keys = set(e.key for e in Event.query().iter())
+    all_event_keys = {e.key for e in Event.query().iter()}
     championships_already_computed = set()
     for champion in Champion.query().iter():
         championships_already_computed.add(champion.championship.id())
@@ -186,10 +193,10 @@ def update_champions(recompute_all=False):
         if competition.end_date > datetime.date.today():
             continue
         competition_id = championship.competition.id()
-        logging.info("Computing champions for %s" % competition_id)
+        logger.info("Computing champions for %s", competition_id)
         results = Result.query(Result.competition == championship.competition).order(Result.pos).fetch()
         if not results:
-            logging.info("Results are not uploaded yet.  Not computing champions yet.")
+            logger.info("Results are not uploaded yet.  Not computing champions yet.")
             continue
         eligible_competitors = compute_eligible_competitors(championship, competition, results)
         champions = select_champions(results, eligible_competitors, round_ranks, competition.year)
