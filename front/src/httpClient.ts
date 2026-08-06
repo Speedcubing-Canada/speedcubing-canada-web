@@ -18,15 +18,20 @@ class httpClient {
     body: R | undefined,
     options: Omit<RequestInit, "method" | "body"> = {},
   ): Promise<HttpResponse<D, E>> {
+    // HeadersInit is a Headers instance, an array of pairs or a plain object.
+    // Spreading it only worked for the last of the three, so go through Headers
+    // and let caller-supplied values win over the JSON default.
+    const headers = new Headers({ "Content-Type": "application/json" });
+    for (const [key, value] of new Headers(options.headers)) {
+      headers.set(key, value);
+    }
+
     return window
       .fetch(endpoint, {
         method: method,
         body: body ? JSON.stringify(body) : undefined,
         ...options,
-        headers: {
-          "Content-Type": "application/json",
-          ...options.headers,
-        },
+        headers,
         credentials: "include",
       })
       .then(async (response) => {
