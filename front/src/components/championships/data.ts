@@ -1,6 +1,6 @@
 // Championship domain data + API fetchers.
 // Region/province geography is static (matches the SVG map + backend Region/Province
-// ids). The dynamic data — announced championships and past champions — is fetched
+// ids). The dynamic data - announced championships and past champions - is fetched
 // from the backend (handlers/regional.py and handlers/champions_table.py).
 
 import { API_BASE_URL } from "../api";
@@ -41,7 +41,7 @@ export const REGION_PROVINCES: Record<RegionId, string[]> = Object.entries(
 
 // Display order for the event picker: the canonical active-event list from types.ts.
 // Event names are localized at render time via the `events._<id>` i18n keys (the same
-// keys MyCubingIcon uses) — never hardcode them here. The backend champions route is
+// keys MyCubingIcon uses) - never hardcode them here. The backend champions route is
 // the source of truth for which of these actually have champions in a given edition.
 export const EVENTS = ACTIVE_EVENTS;
 

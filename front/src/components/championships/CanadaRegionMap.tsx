@@ -152,7 +152,7 @@ export const CanadaRegionMap: React.FC<CanadaRegionMapProps> = ({
   }, []);
 
   // Derive the home view from the southern regions and the container's real aspect.
-  // Only updates homeView/aspect — never touches the live viewBox (the effect below
+  // Only updates homeView/aspect - never touches the live viewBox (the effect below
   // owns viewBox transitions so closing the panel animates instead of snapping).
   const recomputeHome = useCallback((bx: Partial<Record<RegionId, Box4>>) => {
     const svg = svgRef.current;
@@ -207,8 +207,8 @@ export const CanadaRegionMap: React.FC<CanadaRegionMapProps> = ({
   // Zoom to the selected region, or animate back out to the home view on close.
   useEffect(() => {
     if (!selectedRegion) {
-      // Closing the panel (prev was a region) → animate the inverse zoom-out.
-      // Initial mount / resize while already home → snap straight to the home view.
+      // Closing the panel (prev was a region) -> animate the inverse zoom-out.
+      // Initial mount / resize while already home -> snap straight to the home view.
       if (prevSelRef.current) animateTo(homeView);
       else setViewBox(homeView);
       prevSelRef.current = null;

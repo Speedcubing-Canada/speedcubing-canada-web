@@ -92,7 +92,7 @@ export const AdminPage = () => {
             react-admin derives the URL from the name (/admin/Championships), and
             react-router would match that case-insensitively against the public
             /:locale/championships map route (locale="admin"), which outranks
-            /admin/* on specificity — sending the menu click to the map. A distinct
+            /admin/* on specificity - sending the menu click to the map. A distinct
             token keeps the admin URL out of that collision. The menu label still
             reads "Championships" via the resources.ChampionshipsAdmin i18n key.
           */}
