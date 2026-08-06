@@ -1,0 +1,32 @@
+{
+  "ignorePatterns": ["node_modules", "dist"],
+  "options": {
+    "typeAware": true
+  },
+  "categories": {
+    "correctness": "error",
+    "suspicious": "warn",
+    "pedantic": "warn",
+    "perf": "warn"
+  },
+  "rules": {
+    "max-lines-per-function": "off",
+    "max-lines": "off",
+    "no-inline-comments": "off",
+    "require-unicode-regexp": "off",
+    "unicorn/no-array-sort": "off",
+    "typescript/prefer-readonly-parameter-types": "off",
+    "typescript/prefer-nullish-coalescing": "off",
+    "typescript/strict-void-return": "off",
+    "typescript/no-misused-promises": "off",
+    "typescript/no-unsafe-assignment": "off",
+    "typescript/strict-boolean-expressions": "off",
+    "typescript/no-unsafe-type-assertion": "off",
+    "typescript/no-unsafe-call": "off",
+    "typescript/no-unsafe-member-access": "off",
+    "typescript/no-unsafe-argument": "off",
+    "typescript/no-unsafe-return": "off",
+    "typescript/no-confusing-void-expression": "off",
+    "typescript/no-unnecessary-type-parameters": "off"
+  }
+}
