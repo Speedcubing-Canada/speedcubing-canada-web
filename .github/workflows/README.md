@@ -14,10 +14,11 @@ push to main
 deploy-staging                  (./deploy.sh -s -v ci-<sha>)
     │
     ▼
-smoke-test (two steps)
+smoke-test (three steps)
   ├─ frontend  GET https://staging.speedcubingcanada.org/
   │            Express serves dist/index.html → expect 2xx
-  └─ api       GET https://api.staging.speedcubingcanada.org/test_rankings
+  ├─ api       GET https://staging.speedcubingcanada.org/api/test_rankings
+  └─ legacy    GET https://api.staging.speedcubingcanada.org/test_rankings
     │           Flask returns hardcoded JSON (province_rankings.py, no DB/auth) → expect 2xx
     │
     ├─────────────────────────────────┐

@@ -16,7 +16,7 @@ services:
     environment:
       - PORT=${NODE_DOCKER_PORT}
       - VITE_BUILD_MODE=development
-      - VITE_API_BASE_URL=http://localhost:8000
+      - VITE_API_BASE_URL=http://localhost:8000/api
 
     ports:
       - ${NODE_LOCAL_PORT}:${NODE_DOCKER_PORT}

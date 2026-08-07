@@ -9,6 +9,7 @@ from authlib.integrations.flask_client import OAuth
 from dotenv import load_dotenv
 from flask import Flask
 from flask_cors import CORS
+from werkzeug.middleware.dispatcher import DispatcherMiddleware
 
 from backend.handlers.admin import bp as admin_bp
 from backend.handlers.auth import create_bp as create_auth_bp
@@ -91,3 +92,6 @@ app.register_blueprint(people_bp)
 app.register_blueprint(regional_bp)
 app.register_blueprint(province_rankings_bp)
 app.register_blueprint(user_bp)
+
+# Serve every route at both / (legacy api.* domain) and /api (same-origin via dispatch).
+app.wsgi_app = DispatcherMiddleware(app.wsgi_app, {"/api": app.wsgi_app})
