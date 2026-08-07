@@ -159,9 +159,9 @@ jobs:
           echo "::error::Frontend smoke test failed — GET ${url} never returned 2xx/3xx"
           exit 1
 
-      - name: Smoke test — API (GET /test_rankings)
+      - name: Smoke test — API (GET /api/test_rankings)
         run: |
-          url="https://api.staging.speedcubingcanada.org/test_rankings"
+          url="https://staging.speedcubingcanada.org/api/test_rankings"
           echo "Probing API: ${url}"
 
           for attempt in 1 2 3; do
@@ -182,6 +182,26 @@ jobs:
           done
 
           echo "::error::API smoke test failed — GET ${url} never returned 2xx/3xx"
+          exit 1
+
+      # Transition invariant: the legacy api.* host must keep working until the
+      # same-origin migration cleanup removes it (old cached bundles still call it).
+      - name: Smoke test — legacy API host (GET /test_rankings)
+        run: |
+          url="https://api.staging.speedcubingcanada.org/test_rankings"
+          echo "Probing legacy API host: ${url}"
+
+          for attempt in 1 2 3; do
+            status=$(curl -s -o /dev/null -w "%{http_code}" --max-time 30 "${url}")
+            if [ "${status}" -ge 200 ] && [ "${status}" -lt 400 ]; then
+              echo "Legacy API host OK — HTTP ${status} (attempt ${attempt})"
+              exit 0
+            fi
+            echo "HTTP ${status} (attempt ${attempt}/3); retrying in 15 s…"
+            sleep 15
+          done
+
+          echo "::error::Legacy API smoke test failed — GET ${url} never returned 2xx/3xx"
           exit 1
 
   # ── 3. Production deploy (gated behind manual approval) ───────────────────

@@ -118,7 +118,9 @@ then
   CMD="gcloud app deploy front/app.yaml --project $PROJECT"
 else
   echo "Deploying to App Engine."
-  CMD="gcloud app deploy front/app.yaml dispatch.yaml $API_FILE --project $PROJECT"
+  # Order matters: backend first (serves old and new paths), dispatch second
+  # (additive), frontend last so /api is routable before any client calls it.
+  CMD="gcloud app deploy $API_FILE dispatch.yaml front/app.yaml --project $PROJECT"
 fi
 
 if [ ! -z "$VERSION" ]

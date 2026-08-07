@@ -3,6 +3,10 @@ dispatch:
   - url: "api.staging.speedcubingcanada.org/*"
     service: api
 
+  # Same-origin API path on the main domain.
+  - url: "*/api/*"
+    service: api
+
   # Send all other traffic to the default (frontend).
   - url: "*/*"
     service: default
