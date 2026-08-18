@@ -68,7 +68,7 @@ app.use(
     contentSecurityPolicy: {
       useDefaults: false,
       directives: {
-        "default-src": ["'none'"],
+        "default-src": ["'self'"],
         "base-uri": ["'self'"],
         "form-action": ["'self'"],
         "frame-ancestors": ["'none'"],
