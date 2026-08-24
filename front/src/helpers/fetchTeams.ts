@@ -8,6 +8,9 @@ export interface TeamMember {
   bio_en: string | null;
   bio_fr: string | null;
   is_leader: boolean;
+  // Server-synced WCA avatar; "" = synced but default avatar, null = not yet
+  // synced (card falls back to a client-side WCA fetch).
+  avatar_thumb_url: string | null;
 }
 
 export interface Team {
