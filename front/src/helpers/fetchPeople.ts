@@ -11,8 +11,7 @@ export interface PersonRecord {
   bio_en: string | null;
   bio_fr: string | null;
   position: number;
-  // Server-synced WCA avatar; "" = synced but default avatar, null = not yet
-  // synced (card falls back to a client-side WCA fetch).
+  // "" = synced, default avatar; null = not yet synced (card falls back to a WCA fetch).
   avatar_thumb_url: string | null;
 }
 

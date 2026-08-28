@@ -17,9 +17,8 @@ _DELAY_SECONDS = 1
 def _fetch_avatar(wca_id):
     """Fetch a person's avatar thumb URL from the WCA API.
 
-    Returns the URL, "" for a default avatar (synced-but-no-photo sentinel), or
-    None on any failure (meaning "leave the stored value alone" — never downgrade
-    an existing avatar on a transient error).
+    Returns None if fetching fails. Otherwise returns the avatar thumb URL,
+    or "" if the person has the default avatar.
     """
     try:
         resp = requests.get(_WCA_PERSON_URL + wca_id, timeout=30)
@@ -37,12 +36,9 @@ def _fetch_avatar(wca_id):
 
 
 def update_org_avatars():
-    """Sync WCA avatars for Organization-page people (team members, directors,
-    featured members) into the datastore.
+    """Sync WCA avatars for Organization-page people into the datastore.
 
-    Each person is independent: fetch failures skip that person and self-heal on
-    the next nightly run, so there is no all-or-nothing abort. Must run inside an
-    active ``ndb`` context (opened by ``load_db.main``).
+    Fetch failures skip that person. Requires an active ``ndb`` context.
     """
     teams = list(Team.query().iter())
     people = list(Director.query().iter()) + list(FeaturedMember.query().iter())

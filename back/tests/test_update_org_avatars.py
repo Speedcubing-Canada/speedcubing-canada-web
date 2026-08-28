@@ -1,7 +1,4 @@
-"""Unit tests for the Organization-page avatar sync helpers.
-
-Pure logic only (mocked requests), mirroring test_delegates.py - no datastore emulator.
-"""
+"""Unit tests for _fetch_avatar (mocked requests, no datastore emulator)."""
 
 from unittest.mock import MagicMock, patch
 
@@ -14,9 +11,6 @@ def _response(status_code=200, person=None):
     resp.status_code = status_code
     resp.json.return_value = {"person": person}
     return resp
-
-
-# _fetch_avatar
 
 
 @patch("backend.load_db.update_org_avatars.requests.get")
@@ -41,7 +35,7 @@ def test_fetch_avatar_missing_thumb_url_is_empty_string(mock_get):
 
 @patch("backend.load_db.update_org_avatars.requests.get")
 def test_fetch_avatar_non_200_is_none(mock_get):
-    # None = "leave the stored value alone", so a 429/404 never wipes an avatar.
+    # a non-200 must never wipe a stored avatar.
     for status in (404, 429, 500):
         mock_get.return_value = _response(status_code=status)
         assert _fetch_avatar("2017ONDE01") is None

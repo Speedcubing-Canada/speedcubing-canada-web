@@ -11,8 +11,7 @@ import { LINKS } from "../pages/links";
 // "Featured Members" section of the Organization page.
 export const FeaturedMemberCard = ({ member }: { member: FeaturedMember }) => {
   const wcaId = member.wca_id ?? undefined;
-  // Only hit the WCA API for people not yet synced server-side (null); "" means
-  // synced with a default avatar, a URL means synced with a photo.
+  // null = not yet synced server-side; only then fall back to a WCA fetch.
   const shouldFetch = member.avatar_thumb_url == null && !!wcaId;
 
   const { data } = useQuery({

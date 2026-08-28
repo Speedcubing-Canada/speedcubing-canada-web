@@ -14,7 +14,7 @@ const { DIRECTORS, FEATURED, TEAMS } = vi.hoisted(() => ({
       bio_en: null,
       bio_fr: null,
       position: 0,
-      // Synced server-side: rendered directly, no WCA fetch.
+      // synced
       avatar_thumb_url: "https://avatars.example/kris.jpg",
     },
   ],
@@ -46,7 +46,7 @@ const { DIRECTORS, FEATURED, TEAMS } = vi.hoisted(() => ({
           bio_en: null,
           bio_fr: null,
           is_leader: true,
-          // Synced, WCA default avatar: no fetch, generic icon.
+          // synced, default avatar
           avatar_thumb_url: "",
         },
         {
@@ -63,7 +63,7 @@ const { DIRECTORS, FEATURED, TEAMS } = vi.hoisted(() => ({
           bio_en: null,
           bio_fr: null,
           is_leader: false,
-          // Not yet synced: the card falls back to a client-side WCA fetch.
+          // not yet synced
           avatar_thumb_url: null,
         },
       ],
@@ -88,8 +88,7 @@ vi.mock("../helpers/fetchTeams", () => ({
 }));
 
 describe("Organization page", () => {
-  // Both tests render the page (and its one fallback WCA fetch); reset call
-  // history so the per-test call-count assertion stays accurate.
+  // reset call history for the call-count assertion
   beforeEach(() => vi.mocked(fetchWcaPerson).mockClear());
 
   it("renders the board, featured members and teams", async () => {
@@ -128,14 +127,12 @@ describe("Organization page", () => {
   it("uses server-synced avatars and only fetches WCA for unsynced people", async () => {
     renderWithProviders(<Organization />);
 
-    // Synced avatar is rendered straight from the backend field.
     const avatar = await screen.findByRole("img", {
       name: "Kristopher De Asis",
     });
     expect(avatar).toHaveAttribute("src", "https://avatars.example/kris.jpg");
 
-    // Only the not-yet-synced person (null avatar_thumb_url + wca_id) hits WCA;
-    // synced people ("" or URL) and people without a wca_id must not.
+    // only the not-yet-synced person with a wca_id hits WCA
     expect(vi.mocked(fetchWcaPerson)).toHaveBeenCalledTimes(1);
     expect(vi.mocked(fetchWcaPerson)).toHaveBeenCalledWith("2026NEWN01");
   });

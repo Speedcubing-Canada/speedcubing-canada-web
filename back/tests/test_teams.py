@@ -86,7 +86,7 @@ def test_parse_members_maps_fields_and_skips_blank_names():
     assert members[0].bio_fr is None
     assert members[0].is_leader is True
     assert members[1].wca_id is None
-    # avatar_thumb_url round-trips verbatim: "" (synced default avatar) must survive.
+    # "" (synced default) must survive round-trip.
     assert members[0].avatar_thumb_url == "thumb.jpg"
     assert members[1].avatar_thumb_url == ""
 

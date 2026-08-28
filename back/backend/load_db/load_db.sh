@@ -22,8 +22,7 @@ LATEST_EXPORT=$(curl https://www.worldcubeassociation.org/export/results \
 if [ "$SAVED_EXPORT" == "$LATEST_EXPORT" ]
 then
   echo "Already have latest export $LATEST_EXPORT; nothing to download."
-  # Avatars change independently of WCA exports; refresh them (and the delegate
-  # roster) nightly even when there is no new export to load.
+  # Avatars and delegates can change without a new export; refresh nightly.
   python3 backend/load_db/load_db.py --only_update_delegates --only_update_org_avatars
 fi
 
