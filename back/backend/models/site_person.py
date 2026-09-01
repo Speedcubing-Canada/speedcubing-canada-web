@@ -12,6 +12,8 @@ class _PersonRecord(ndb.Model):
     bio_en = ndb.StringProperty()
     bio_fr = ndb.StringProperty()
     position = ndb.IntegerProperty(default=0)
+    # WCA avatar thumbnail synced server-side; "" = synced but default avatar, None = not yet synced.
+    avatar_thumb_url = ndb.StringProperty()
 
     def to_json(self):
         return {
@@ -23,6 +25,7 @@ class _PersonRecord(ndb.Model):
             "bio_en": self.bio_en,
             "bio_fr": self.bio_fr,
             "position": self.position or 0,
+            "avatar_thumb_url": self.avatar_thumb_url,
         }
 
 

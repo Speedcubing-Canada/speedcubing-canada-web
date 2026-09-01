@@ -22,7 +22,16 @@ def test_team_to_json_shape():
     team.description_en = "We build the site."
     team.description_fr = "On construit le site."
     team.position = 2
-    team.members = [TeamMember(name="Alex", wca_id="2017ONDE01", bio_en="Bio", bio_fr="Bio fr", is_leader=True)]
+    team.members = [
+        TeamMember(
+            name="Alex",
+            wca_id="2017ONDE01",
+            bio_en="Bio",
+            bio_fr="Bio fr",
+            is_leader=True,
+            avatar_thumb_url="thumb.jpg",
+        )
+    ]
 
     assert Team.to_json(team) == {
         "id": "software",
@@ -38,6 +47,7 @@ def test_team_to_json_shape():
                 "bio_en": "Bio",
                 "bio_fr": "Bio fr",
                 "is_leader": True,
+                "avatar_thumb_url": "thumb.jpg",
             }
         ],
     }
@@ -57,9 +67,16 @@ def test_team_to_json_defaults_position_and_empty_members():
 
 def test_parse_members_maps_fields_and_skips_blank_names():
     rows = [
-        {"name": "Lead", "wca_id": "2008ASIS01", "bio_en": "b", "bio_fr": "", "is_leader": True},
+        {
+            "name": "Lead",
+            "wca_id": "2008ASIS01",
+            "bio_en": "b",
+            "bio_fr": "",
+            "is_leader": True,
+            "avatar_thumb_url": "thumb.jpg",
+        },
         {"name": "  ", "wca_id": "X", "is_leader": False},  # blank name -> skipped
-        {"name": "Member", "wca_id": "", "is_leader": False},  # empty wca_id -> None
+        {"name": "Member", "wca_id": "", "is_leader": False, "avatar_thumb_url": ""},  # empty wca_id -> None
     ]
 
     members = parse_members(rows)
@@ -69,6 +86,9 @@ def test_parse_members_maps_fields_and_skips_blank_names():
     assert members[0].bio_fr is None
     assert members[0].is_leader is True
     assert members[1].wca_id is None
+    # "" (synced default) must survive round-trip.
+    assert members[0].avatar_thumb_url == "thumb.jpg"
+    assert members[1].avatar_thumb_url == ""
 
 
 def test_parse_members_handles_none():

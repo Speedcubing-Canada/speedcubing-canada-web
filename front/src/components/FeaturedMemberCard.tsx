@@ -11,16 +11,21 @@ import { LINKS } from "../pages/links";
 // "Featured Members" section of the Organization page.
 export const FeaturedMemberCard = ({ member }: { member: FeaturedMember }) => {
   const wcaId = member.wca_id ?? undefined;
+  // null = not yet synced server-side; only then fall back to a WCA fetch.
+  const shouldFetch = member.avatar_thumb_url == null && !!wcaId;
 
   const { data } = useQuery({
     queryKey: ["wca-person", wcaId],
     queryFn: () => fetchWcaPerson(wcaId as string),
     staleTime: 1000 * 60 * 60,
-    enabled: !!wcaId,
+    enabled: shouldFetch,
   });
 
-  const avatar =
-    data && !data.avatarIsDefault ? data.avatarThumbUrl : undefined;
+  const avatar = shouldFetch
+    ? data && !data.avatarIsDefault
+      ? data.avatarThumbUrl
+      : undefined
+    : member.avatar_thumb_url || undefined;
   const name = member.name ?? "";
   const role = localized(member, "role");
   const bio = localized(member, "bio");

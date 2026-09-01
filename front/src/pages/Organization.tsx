@@ -74,6 +74,7 @@ export const Organization = () => {
                 key={director.id}
                 wcaId={director.wca_id ?? undefined}
                 name={director.name ?? ""}
+                avatarUrl={director.avatar_thumb_url ?? undefined}
                 subtitle={
                   localized(director, "role") ?? t("directors.boardMember")
                 }
@@ -131,6 +132,7 @@ export const Organization = () => {
                       key={member.wca_id ?? `${team.id}-${index}`}
                       wcaId={member.wca_id ?? undefined}
                       name={member.name}
+                      avatarUrl={member.avatar_thumb_url ?? undefined}
                       chip={
                         member.is_leader ? (
                           <Chip

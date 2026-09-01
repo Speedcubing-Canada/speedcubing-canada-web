@@ -1,6 +1,7 @@
 import { screen } from "@testing-library/react";
 import { renderWithProviders, i18n } from "../test/renderWithProviders";
 import { Organization } from "./Organization";
+import { fetchWcaPerson } from "../helpers/fetchWcaPerson";
 
 const { DIRECTORS, FEATURED, TEAMS } = vi.hoisted(() => ({
   DIRECTORS: [
@@ -13,6 +14,8 @@ const { DIRECTORS, FEATURED, TEAMS } = vi.hoisted(() => ({
       bio_en: null,
       bio_fr: null,
       position: 0,
+      // synced
+      avatar_thumb_url: "https://avatars.example/kris.jpg",
     },
   ],
   FEATURED: [
@@ -25,6 +28,7 @@ const { DIRECTORS, FEATURED, TEAMS } = vi.hoisted(() => ({
       bio_en: "Started it all.",
       bio_fr: "A tout démarré.",
       position: 0,
+      avatar_thumb_url: null,
     },
   ],
   TEAMS: [
@@ -42,6 +46,8 @@ const { DIRECTORS, FEATURED, TEAMS } = vi.hoisted(() => ({
           bio_en: null,
           bio_fr: null,
           is_leader: true,
+          // synced, default avatar
+          avatar_thumb_url: "",
         },
         {
           name: "Sam Smith",
@@ -49,6 +55,16 @@ const { DIRECTORS, FEATURED, TEAMS } = vi.hoisted(() => ({
           bio_en: null,
           bio_fr: null,
           is_leader: false,
+          avatar_thumb_url: null,
+        },
+        {
+          name: "Nina New",
+          wca_id: "2026NEWN01",
+          bio_en: null,
+          bio_fr: null,
+          is_leader: false,
+          // not yet synced
+          avatar_thumb_url: null,
         },
       ],
     },
@@ -72,6 +88,9 @@ vi.mock("../helpers/fetchTeams", () => ({
 }));
 
 describe("Organization page", () => {
+  // reset call history for the call-count assertion
+  beforeEach(() => vi.mocked(fetchWcaPerson).mockClear());
+
   it("renders the board, featured members and teams", async () => {
     renderWithProviders(<Organization />);
 
@@ -103,5 +122,18 @@ describe("Organization page", () => {
     expect(screen.getByText("Alex Mutch")).toBeInTheDocument();
     expect(screen.getByText("Sam Smith")).toBeInTheDocument();
     expect(screen.getByText(i18n.t("teams.leader"))).toBeInTheDocument();
+  });
+
+  it("uses server-synced avatars and only fetches WCA for unsynced people", async () => {
+    renderWithProviders(<Organization />);
+
+    const avatar = await screen.findByRole("img", {
+      name: "Kristopher De Asis",
+    });
+    expect(avatar).toHaveAttribute("src", "https://avatars.example/kris.jpg");
+
+    // only the not-yet-synced person with a wca_id hits WCA
+    expect(vi.mocked(fetchWcaPerson)).toHaveBeenCalledTimes(1);
+    expect(vi.mocked(fetchWcaPerson)).toHaveBeenCalledWith("2026NEWN01");
   });
 });

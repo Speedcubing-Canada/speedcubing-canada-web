@@ -22,6 +22,7 @@ def test_person_to_json_shape():
     member.bio_en = "Started it all."
     member.bio_fr = "A tout démarré."
     member.position = 1
+    member.avatar_thumb_url = "thumb.jpg"
 
     assert FeaturedMember.to_json(member) == {
         "id": "jane",
@@ -32,6 +33,7 @@ def test_person_to_json_shape():
         "bio_en": "Started it all.",
         "bio_fr": "A tout démarré.",
         "position": 1,
+        "avatar_thumb_url": "thumb.jpg",
     }
 
 

@@ -11,6 +11,8 @@ export interface PersonRecord {
   bio_en: string | null;
   bio_fr: string | null;
   position: number;
+  // "" = synced, default avatar; null = not yet synced (card falls back to a WCA fetch).
+  avatar_thumb_url: string | null;
 }
 
 export type Director = PersonRecord;

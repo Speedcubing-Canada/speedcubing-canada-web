@@ -32,6 +32,8 @@ def parse_members(raw_members):
                 bio_en=(row.get("bio_en") or "").strip() or None,
                 bio_fr=(row.get("bio_fr") or "").strip() or None,
                 is_leader=bool(row.get("is_leader")),
+                # Do not normalize this field: empty string and None have distinct meanings
+                avatar_thumb_url=row.get("avatar_thumb_url"),
             )
         )
     return members
