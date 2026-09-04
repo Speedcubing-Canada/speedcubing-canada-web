@@ -186,6 +186,14 @@ def update_champions(recompute_all=False):
             # we don't have location data.
             continue
         competition = championship.competition.get()
+        if competition is None or competition.end_date is None:
+            logger.warning(
+                "Skipping %s: competition %s is missing or has no end date.",
+                championship.key.id(),
+                championship.competition.id(),
+            )
+            skipped += 1
+            continue
         if (
             not recompute_all
             and championship.key.id() in championships_already_computed

@@ -59,8 +59,10 @@ def get_tables():
 def get_modifier(table):
     if table == "persons":
         id_to_province = {}
-        for user in User.query(User.province != None):
-            if user.wca_person:
+        # Filtered in Python rather than with a != query: the Users table is small,
+        # and the datastore emulator does not implement NOT_EQUAL.
+        for user in User.query():
+            if user.province and user.wca_person:
                 id_to_province[user.wca_person.id()] = user.province
 
         def modify(person):
