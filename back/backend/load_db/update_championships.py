@@ -67,7 +67,5 @@ def update_championships() -> None:
 
     ndb.put_multi(to_write)
     if unmatched_areas:
-        # A name parsed as a championship but its area is in neither Province.name nor
-        # Region.championship_name: a real gap in championship_classifier.AREA_NAME_MAP.
         logger.warning("Unknown championship areas: %s", ", ".join(sorted(unmatched_areas)))
     logger.info("Assigned %d championships (%d competitions are not championships).", len(to_write), not_championships)

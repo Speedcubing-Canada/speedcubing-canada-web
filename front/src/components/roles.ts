@@ -13,7 +13,6 @@ const hasRole = (user: User | null, ...checkRoles: string[]): boolean => {
 export const isAdmin = (user: User | null) =>
   hasRole(user, "GLOBAL_ADMIN", "DIRECTOR", "WEBMASTER");
 
-// Narrower than isAdmin on purpose: /admin/update_provinces excludes DIRECTOR.
 export const canUpdateProvinces = (user: User | null) =>
   hasRole(user, "GLOBAL_ADMIN", "WEBMASTER");
 

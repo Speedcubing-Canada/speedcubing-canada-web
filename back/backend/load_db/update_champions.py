@@ -169,14 +169,7 @@ def select_champions(results, eligible_competitors, round_ranks, year):
 
 
 def update_champions(recompute_all=False):
-    """Recompute champions for championships that ended in the last 2 weeks.
-
-    Eligibility comes from User rows, which can appear long after the competition (a
-    member signs up, links a WCA ID or sets a province years later), and those are *not*
-    picked up here: an already-computed championship outside the window is never
-    revisited. Crowning a late arrival takes a manual /admin/recompute_championships,
-    which passes ``recompute_all``.
-    """
+    """Recompute champions for championships that ended in the last 2 weeks (unless recompute_all is True)."""
     champions_to_write = []
     champions_to_delete = []
     round_ranks = {r.key: r.rank for r in RoundType.query().iter()}
