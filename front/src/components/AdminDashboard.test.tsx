@@ -5,9 +5,9 @@ import { i18nProvider } from "../i18nProvider";
 import { API_BASE_URL } from "./api";
 import { User } from "../types";
 
-const { get } = vi.hoisted(() => ({ get: vi.fn() }));
+const { post } = vi.hoisted(() => ({ post: vi.fn() }));
 
-vi.mock("../httpClient", () => ({ default: { get } }));
+vi.mock("../httpClient", () => ({ default: { post } }));
 
 const user = (...roles: string[]) => ({ roles }) as User;
 
@@ -21,11 +21,14 @@ const renderDashboard = (u: User) =>
 
 describe("AdminDashboard maintenance section", () => {
   beforeEach(() => {
-    get.mockReset();
+    post.mockReset();
   });
 
   it("recomputes championships once confirmed", async () => {
-    get.mockResolvedValue({ ok: true, data: { data: { championships: 152 } } });
+    post.mockResolvedValue({
+      ok: true,
+      data: { data: { championships: 152 } },
+    });
     renderDashboard(user("GLOBAL_ADMIN"));
 
     fireEvent.click(
@@ -34,8 +37,9 @@ describe("AdminDashboard maintenance section", () => {
     fireEvent.click(await screen.findByRole("button", { name: "Confirm" }));
 
     await waitFor(() =>
-      expect(get).toHaveBeenCalledWith(
+      expect(post).toHaveBeenCalledWith(
         API_BASE_URL + "/admin/recompute_championships",
+        undefined,
       ),
     );
   });
@@ -48,7 +52,7 @@ describe("AdminDashboard maintenance section", () => {
     );
     await screen.findByRole("button", { name: "Confirm" });
 
-    expect(get).not.toHaveBeenCalled();
+    expect(post).not.toHaveBeenCalled();
   });
 
   it("disables the provinces action for directors", () => {

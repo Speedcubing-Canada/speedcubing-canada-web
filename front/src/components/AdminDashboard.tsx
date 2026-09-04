@@ -43,7 +43,7 @@ export const AdminDashboard = ({ user }: { user: User | null }) => {
   const run = async (action: Action) => {
     setConfirming(null);
     setRunning(action.key);
-    const response = await httpClient.get<unknown>(
+    const response = await httpClient.post<undefined, unknown>(
       API_BASE_URL + action.endpoint,
     );
     setRunning(null);

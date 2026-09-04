@@ -1,4 +1,5 @@
 import csv
+import os
 
 from absl import app, flags, logging
 from backend.load_db.setup_geography import setup_regions_and_provinces
@@ -59,9 +60,10 @@ def get_tables():
 def get_modifier(table):
     if table == "persons":
         id_to_province = {}
-        # Filtered in Python rather than with a != query: the Users table is small,
-        # and the datastore emulator does not implement NOT_EQUAL.
-        for user in User.query():
+        # The datastore emulator does not implement NOT_EQUAL, so filter in Python
+        # there; the Users table is small enough for a full scan in dev.
+        emulated = os.environ.get("DATASTORE_EMULATOR_HOST")
+        for user in User.query() if emulated else User.query(User.province != None):
             if user.province and user.wca_person:
                 id_to_province[user.wca_person.id()] = user.province
 

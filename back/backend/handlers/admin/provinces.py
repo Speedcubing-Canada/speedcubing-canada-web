@@ -8,7 +8,7 @@ bp = Blueprint("provinces", __name__)
 client = ndb.Client()
 
 
-@bp.route("/update_provinces")
+@bp.route("/update_provinces", methods=["POST"])
 @require_roles(Roles.GLOBAL_ADMIN, Roles.WEBMASTER)
 def update_provinces():
     # require_roles already opens an ndb context.
