@@ -199,7 +199,7 @@ def update_champions(recompute_all=False):
             continue
         if competition.end_date > datetime.date.today():
             continue
-        results = Result.query(Result.competition == championship.competition).order(Result.pos).fetch()
+        results = Result.query(Result.competition == championship.competition).fetch()
         if not results:
             logger.info("Results are not uploaded yet for %s.", championship.competition.id())
             pending += 1

@@ -60,8 +60,6 @@ def get_tables():
 def get_modifier(table):
     if table == "persons":
         id_to_province = {}
-        # The datastore emulator does not implement NOT_EQUAL, so filter in Python
-        # there; the Users table is small enough for a full scan in dev.
         emulated = os.environ.get("DATASTORE_EMULATOR_HOST")
         for user in User.query() if emulated else User.query(User.province != None):
             if user.province and user.wca_person:
