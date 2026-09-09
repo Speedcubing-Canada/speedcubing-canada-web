@@ -130,7 +130,7 @@ def create_championship():
     championship = Championship(id=championship_id)
     _apply_fields(championship, data, competition)
     championship.put()
-    # Champion data is not updated automatically. Use /admin/recompute_championships to refresh after manual changes.
+    # Champion data is not updated automatically. Use the admin dashboard's recompute button after manual changes.
     return jsonify(_serialize_all([championship])[0])
 
 
@@ -160,7 +160,7 @@ def update_championship(championship_id):
 
     _apply_fields(championship, data, competition)
     championship.put()
-    # Champion data is not updated automatically. Use /admin/recompute_championships to refresh after manual changes.
+    # Champion data is not updated automatically. Use the admin dashboard's recompute button after manual changes.
     return jsonify(_serialize_all([championship])[0])
 
 
@@ -171,11 +171,11 @@ def delete_championship(championship_id):
     if not championship:
         return jsonify({"error": "Championship not found"}), 404
     championship.key.delete()
-    # Champion data is not updated automatically. Use /admin/recompute_championships to refresh after manual changes.
+    # Champion data is not updated automatically. Use the admin dashboard's recompute button after manual changes.
     return jsonify({"data": {"id": championship_id}})
 
 
-@bp.route("/recompute_championships")
+@bp.route("/recompute_championships", methods=["POST"])
 @require_roles(*Roles.AdminRoles())
 def recompute_championships():
     """Re-run the geography setup + championship/champion classification on demand.

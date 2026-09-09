@@ -462,6 +462,26 @@ export const resources = {
         "Please note that you can filter users using the start of their first name. If you want to use the family name, you must write the first name first. You may also use exact WCAID to filter.\n" +
         "It's also important to know that you may move pages forward but not backwards. If you want to see a previous results, you need to go back to page one and then move forward again (or just search for the user).\n" +
         "Sorting or removing people does not work currently. If you want to make someone disappear from the rankings, put his/her province to N/A.",
+      maintenance: {
+        title: "Maintenance",
+        warning:
+          "These re-run parts of the nightly data pipeline and delete rows that are no longer valid. Do not press them unless you know exactly what they do.",
+        forbidden: "Global admins and webmasters only.",
+        running: "Running...",
+        error: "Something went wrong. Check the logs.",
+        champions: {
+          label: "Recompute championships",
+          confirm:
+            "Reclassifies every competition and recomputes all champions, including past years. Use this after someone creates an account or changes province and should be crowned. Takes a while.",
+          success: "Recomputed champions for %{count} championships.",
+        },
+        provinces: {
+          label: "Reload provinces and regions",
+          confirm:
+            "Rewrites the canonical provinces and regions, and deletes any that are no longer canonical. Championships pointing at a deleted province would be orphaned.",
+          success: "Provinces and regions reloaded.",
+        },
+      },
     },
   },
   [LOCALES.fr]: {
@@ -919,6 +939,26 @@ export const resources = {
         "Veuillez noter que vous pouvez filtrer les utilisateurs en utilisant le début de leur prénom. Si vous voulez utiliser le nom de famille, vous devez écrire le prénom en premier. Vous pouvez également utiliser le WCAID exact pour filtrer.\n" +
         " Il est également important de savoir que vous pouvez avancer dans les pages mais pas aller en arrière. Si vous voulez voir un résultat précédent, vous devez revenir à la page une et avancer à nouveau (ou simplement rechercher l'utilisateur)." +
         " Il n'est pas possible d'utiliser la fonctionnalité permettant de ranger les colonnes ni de supprimer des utilisateurs. Si vous voulez faire disparaitre un utilisateur des classements, changez sa province pour N/A.",
+      maintenance: {
+        title: "Maintenance",
+        warning:
+          "Ces actions relancent des étapes du traitement de données nocturne et suppriment les entrées devenues invalides. Ne les utilisez pas sans savoir exactement ce qu'elles font.",
+        forbidden: "Réservé aux administrateurs généraux et aux webmestres.",
+        running: "En cours...",
+        error: "Une erreur est survenue. Consultez les journaux.",
+        champions: {
+          label: "Recalculer les championnats",
+          confirm:
+            "Reclassifie toutes les compétitions et recalcule tous les champions, y compris ceux des années passées. À utiliser lorsqu'une personne vient de créer un compte ou de changer de province et devrait être sacrée championne. L'opération est longue.",
+          success: "Champions recalculés pour %{count} championnats.",
+        },
+        provinces: {
+          label: "Recharger les provinces et les régions",
+          confirm:
+            "Réécrit les provinces et régions officielles et supprime celles qui ne le sont plus. Un championnat rattaché à une province supprimée se retrouverait orphelin.",
+          success: "Provinces et régions rechargées.",
+        },
+      },
     },
   },
 };

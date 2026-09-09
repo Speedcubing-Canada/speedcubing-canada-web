@@ -76,7 +76,7 @@ export const AdminPage = () => {
           basename="/admin"
           dataProvider={dataProvider}
           i18nProvider={i18nProvider}
-          dashboard={AdminDashboard}
+          dashboard={() => <AdminDashboard user={user} />}
           layout={MyLayout}
         >
           <Resource

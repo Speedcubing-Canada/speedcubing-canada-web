@@ -169,6 +169,7 @@ def select_champions(results, eligible_competitors, round_ranks, year):
 
 
 def update_champions(recompute_all=False):
+    """Recompute champions for championships that ended in the last 2 weeks (unless recompute_all is True)."""
     champions_to_write = []
     champions_to_delete = []
     round_ranks = {r.key: r.rank for r in RoundType.query().iter()}
@@ -176,28 +177,34 @@ def update_champions(recompute_all=False):
     championships_already_computed = set()
     for champion in Champion.query().iter():
         championships_already_computed.add(champion.championship.id())
+    computed = 0
+    skipped = 0
+    pending = 0
     for championship in Championship.query().iter():
         if not championship.national_championship and os.environ.get("ENV") == "DEV":
             # Don't try to compute regional/provincial champions on dev, since
             # we don't have location data.
             continue
-        competition = championship.competition.get()
-        # Only recompute champions from the last 2 weeks, in case there are result updates,
-        # unless a full recompute was requested (e.g. after a champion-logic change).
+        competition = championship.competition.get() if championship.competition else None
+        if competition is None or competition.end_date is None:
+            logger.warning("Skipping %s: competition is missing or has no end date.", championship.key.id())
+            skipped += 1
+            continue
         if (
             not recompute_all
             and championship.key.id() in championships_already_computed
             and datetime.date.today() - competition.end_date > datetime.timedelta(days=14)
         ):
+            skipped += 1
             continue
         if competition.end_date > datetime.date.today():
             continue
-        competition_id = championship.competition.id()
-        logger.info("Computing champions for %s", competition_id)
         results = Result.query(Result.competition == championship.competition).order(Result.pos).fetch()
         if not results:
-            logger.info("Results are not uploaded yet.  Not computing champions yet.")
+            logger.info("Results are not uploaded yet for %s.", championship.competition.id())
+            pending += 1
             continue
+        computed += 1
         eligible_competitors = compute_eligible_competitors(championship, competition, results)
         champions = select_champions(results, eligible_competitors, round_ranks, competition.year)
         for event_key in all_event_keys:
@@ -212,3 +219,11 @@ def update_champions(recompute_all=False):
                 champions_to_delete.append(ndb.Key(Champion, champion_id))
     ndb.put_multi(champions_to_write)
     ndb.delete_multi(champions_to_delete)
+    logger.info(
+        "Computed champions for %d championships (%d skipped, %d awaiting results, %d titles written, %d cleared).",
+        computed,
+        skipped,
+        pending,
+        len(champions_to_write),
+        len(champions_to_delete),
+    )

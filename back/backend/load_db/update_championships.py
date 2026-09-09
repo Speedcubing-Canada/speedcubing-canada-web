@@ -24,6 +24,8 @@ def update_championships() -> None:
     competitions = [comp for comp in all_competitions if comp.key.id() not in competitions_used]
 
     to_write = []
+    unmatched_areas = set()
+    not_championships = 0
 
     for competition in competitions:
         is_national, area_name, is_pbq = classify_competition(competition.name, national_years)
@@ -52,7 +54,7 @@ def update_championships() -> None:
                 championship.region = regions[area_name].key
                 championship.national_championship = False
             else:
-                logger.info("Failed to match area for: %s (area: %s)", competition.name, area_name)
+                unmatched_areas.add(area_name)
 
             if championship:
                 championship.is_pbq = is_pbq
@@ -61,6 +63,9 @@ def update_championships() -> None:
                     logger.info("Assigning championship %s %s", competition.key.id(), championship.key.id())
                     to_write.append(championship)
         else:
-            logger.info("Failed to match %s", competition.key.id())
+            not_championships += 1
 
     ndb.put_multi(to_write)
+    if unmatched_areas:
+        logger.warning("Unknown championship areas: %s", ", ".join(sorted(unmatched_areas)))
+    logger.info("Assigned %d championships (%d competitions are not championships).", len(to_write), not_championships)

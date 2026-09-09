@@ -29,5 +29,8 @@ export default defineConfig({
     environment: "jsdom",
     setupFiles: "./src/setupTests.ts",
     css: false,
+    // react-admin's dist does `import "@mui/material/styles"`, a directory import
+    // Node's ESM resolver rejects. Inlining lets Vite resolve it as the bundler does.
+    server: { deps: { inline: [/ra-ui-materialui/, /react-admin/] } },
   },
 });

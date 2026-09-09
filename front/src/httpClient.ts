@@ -66,9 +66,10 @@ class httpClient {
     return this.request<undefined, D, E>("GET", endpoint, undefined, options);
   }
 
+  // Body optional: the admin maintenance endpoints POST without one.
   static post<R, D, E = unknown>(
     endpoint: string,
-    data: R,
+    data?: R,
     options: Omit<RequestInit, "method" | "body"> = {},
   ): Promise<HttpResponse<D, E>> {
     return this.request<R, D, E>("POST", endpoint, data, options);
