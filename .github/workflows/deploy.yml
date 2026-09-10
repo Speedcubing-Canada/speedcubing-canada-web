@@ -100,6 +100,11 @@ jobs:
       - name: Install dependencies
         run: pip install -r back/requirements.txt -r back/requirements-dev.txt
 
+      # Dependabot's pip updater moves requirements-dev.txt but not the lint-staged
+      # hook, which would leave CI and the pre-commit hook on different ruff versions.
+      - name: Check the lint-staged ruff pin matches requirements-dev
+        run: grep -q "ruff@$(sed -n 's/^ruff==//p' back/requirements-dev.txt)" package.json
+
       # ruff has always been pinned but only ever ran in the pre-commit hook.
       - name: Lint
         run: |

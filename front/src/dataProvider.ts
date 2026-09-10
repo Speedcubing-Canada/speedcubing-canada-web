@@ -112,21 +112,9 @@ const dataProvider: DataProvider = {
     return httpClient(url).then(({ json }) => ({ data: json }));
   },
 
-  getManyReference: (
-    resource: any,
-    params: {
-      //not setup
-      pagination: { page: any; perPage: any };
-      sort: { field: any; order: any };
-      filter: any;
-      target: any;
-      id: any;
-    },
-  ) => {
-    // react-admin 5 made both optional; these defaults mirror
-    // paginate_records() in back/backend/handlers/admin/_list_utils.py.
-    const { page, perPage } = params.pagination ?? { page: 1, perPage: 25 };
-    const { field, order } = params.sort ?? { field: "id", order: "ASC" };
+  getManyReference: (resource, params) => {
+    const { page, perPage } = params.pagination;
+    const { field, order } = params.sort;
     const query = {
       sort: JSON.stringify([field, order]),
       range: JSON.stringify([(page - 1) * perPage, page * perPage - 1]),
@@ -142,10 +130,7 @@ const dataProvider: DataProvider = {
     );
   },
 
-  create: (
-    resource: any,
-    params: { data: any }, //not setup
-  ) => {
+  create: (resource, params) => {
     const adminResource = getAdminResource(resource);
     if (adminResource) {
       return httpClient(`${apiUrl}/admin/${adminResource.plural}`, {
@@ -178,8 +163,7 @@ const dataProvider: DataProvider = {
     }).then(({ json }) => ({ data: json }));
   },
 
-  updateMany: (resource: any, params: { ids: any; data: any }) => {
-    //not setup
+  updateMany: (resource, params) => {
     const query = {
       filter: JSON.stringify({ id: params.ids }),
     };

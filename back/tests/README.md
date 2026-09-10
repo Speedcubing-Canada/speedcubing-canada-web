@@ -19,7 +19,14 @@ or, with the compose stack:
 docker compose up -d datastore
 ```
 
-Then `cd back && pytest`. `DATASTORE_EMULATOR_HOST` defaults to `localhost:8081`.
+Then, from `back/`:
+
+```sh
+pip install -r requirements.txt -r requirements-dev.txt
+pytest
+```
+
+`DATASTORE_EMULATOR_HOST` defaults to `localhost:8081`.
 
 ## Adding a route test
 

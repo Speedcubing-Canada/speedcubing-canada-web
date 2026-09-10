@@ -6,6 +6,8 @@ rather than calling handler helpers directly. Adding a route here is now just a
 new function; the harness lives in conftest.py.
 """
 
+import pytest
+
 from backend.models.user import Roles
 from tests.conftest import requires_emulator
 
@@ -53,6 +55,20 @@ def test_get_users_allowed_for_an_admin(as_user, make_user):
     assert [u["name"] for u in response.json["data"]] == ["Admin User"]
 
 
-def test_every_route_is_served_at_both_mounts(client):
+@pytest.mark.parametrize("path", ["/test_rankings", "/teams", "/delegates"])
+def test_public_routes_are_served_at_both_mounts(client, path):
     """DispatcherMiddleware serves the legacy api.* paths and the same-origin /api ones."""
-    assert client.get("/test_rankings").json == client.get("/api/test_rankings").json
+    legacy = client.get(path)
+    same_origin = client.get(f"/api{path}")
+    assert legacy.status_code == 200
+    assert same_origin.status_code == 200
+    assert legacy.json == same_origin.json
+
+
+def test_the_session_cookie_works_at_the_api_mount(as_user, make_user):
+    client = as_user(make_user(2, name="Alex Tester"))
+    legacy = client.get("/user_info")
+    same_origin = client.get("/api/user_info")
+    assert legacy.status_code == 200
+    assert same_origin.status_code == 200
+    assert legacy.json == same_origin.json
