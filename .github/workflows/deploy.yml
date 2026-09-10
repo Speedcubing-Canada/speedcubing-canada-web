@@ -12,17 +12,16 @@
 
 name: Deploy
 
+# Push only. A same-repo PR shares its head SHA with the branch push, so those checks
+# already show on the PR; adding a pull_request trigger just fires a second run whose
+# cancelled twin then reads as a failed check there. Fork PRs would get no run.
 on:
   push:
     branches: ["**"]
-  pull_request:
-    branches: [main]
 
-# One run per branch. Both events must resolve to the same bare branch name or the
-# push run and its PR run double-up: ref_name is bare on push, head_ref is bare on
-# pull_request. Superseded feature-branch runs are cancelled; main never is, it deploys.
+# Superseded feature-branch runs are cancelled; main never is, it deploys.
 concurrency:
-  group: ${{ github.workflow }}-${{ github.head_ref || github.ref_name }}
+  group: ${{ github.workflow }}-${{ github.ref_name }}
   cancel-in-progress: ${{ github.ref_name != 'main' }}
 
 # WIF authentication requires permission to mint a short-lived OIDC token.
