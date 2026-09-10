@@ -1,8 +1,8 @@
 # CI + deployment pipeline: test → staging → smoke test → production (manual gate)
 #
-# On pull requests targeting main, only the `test` job runs (no deploy).
-# On push to main (including Dependabot merges), `test` runs and, if it passes,
-# gates the staging → smoke test → production pipeline.
+# On pull requests targeting main, only the `frontend` and `backend` jobs run
+# (no deploy). On push to main (including Dependabot merges) they run and, if both
+# pass, gate the staging → smoke test → production pipeline.
 # Repository variables required (Settings → Secrets and variables → Variables):
 #   WIF_PROVIDER_STAGING  – Workload Identity provider resource name (staging)
 #   WIF_PROVIDER_PROD     – Workload Identity provider resource name (prod)
@@ -24,47 +24,82 @@ permissions:
   id-token: write
 
 jobs:
-  # ── 0. Tests (frontend + backend) ─────────────────────────────────────────
-  # Runs on every PR and every push to main. On push, the deploy pipeline is
-  # gated behind this job (see deploy-staging → needs: test).
-  test:
-    name: Tests
+  # ── 0a. Frontend checks ─────────────────────────────────────────
+  # Node 24 matches the App Engine runtime and the frontend devDependencies.
+  # `npm ci` at the repo root installs the `front` workspace.
+  frontend:
+    name: Frontend
     runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v6
 
-      # Frontend — Vitest render tests. Node 24 matches the App Engine runtime
-      # and the frontend devDependencies. `npm ci` at the repo root installs the
-      # `front` workspace.
       - name: Set up Node.js 24
         uses: actions/setup-node@v6
         with:
           node-version: "24"
 
-      - name: Install frontend dependencies
+      - name: Install dependencies
         run: npm ci
 
-      - name: Lint frontend
+      - name: Lint
         run: npm run lint --workspace front
 
-      - name: Run frontend tests
-        run: npm run test --workspace front
+      # A gate, not advice: the app ships without a compile step, so this is the
+      # only thing standing between a type error and production.
+      - name: Typecheck
+        run: npm run typecheck --workspace front
 
-      # Backend — pytest. The tests mock all datastore access, but several
-      # handler modules construct `ndb.Client()` at import time. Setting
-      # DATASTORE_EMULATOR_HOST makes ndb use anonymous credentials, so the
-      # client constructs without real GCP credentials and no emulator process
-      # is actually needed.
+      - name: Test
+        run: npm run test --workspace front -- --coverage
+
+  # ── 0b. Backend checks ──────────────────────────────────────────
+  # Split from the frontend job so one side failing no longer hides the other.
+  # back/tests/test_routes.py drives the real Flask app against a real Datastore
+  # emulator; those tests skip themselves when none is reachable, so the coverage
+  # floor in back/pytest.ini is what actually catches a dead emulator here.
+  backend:
+    name: Backend
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v6
+
+      # `services:` cannot override a container's command, and this image does not
+      # start the emulator on its own, so run it directly.
+      - name: Start Datastore emulator
+        run: |
+          docker run -d --name datastore -p 8081:8081 google/cloud-sdk:emulators \
+            gcloud beta emulators datastore start \
+            --project=test --host-port=0.0.0.0:8081 --no-store-on-disk
+
+          for attempt in $(seq 1 30); do
+            if curl -sf --max-time 2 http://localhost:8081/ >/dev/null; then
+              echo "Emulator ready after ${attempt} attempt(s)."
+              exit 0
+            fi
+            sleep 2
+          done
+
+          echo "::error::Datastore emulator never became ready"
+          docker logs datastore
+          exit 1
+
       - name: Set up Python 3.12
         uses: actions/setup-python@v6
         with:
           python-version: "3.12"
 
-      - name: Install backend dependencies
-        run: pip install -r back/requirements.txt
+      - name: Install dependencies
+        run: pip install -r back/requirements.txt -r back/requirements-dev.txt
 
-      - name: Run backend tests
+      # ruff has always been pinned but only ever ran in the pre-commit hook.
+      - name: Lint
+        run: |
+          ruff check --config back/ruff.toml back
+          ruff format --check --config back/ruff.toml back
+
+      - name: Test
         working-directory: back
         env:
           DATASTORE_EMULATOR_HOST: "localhost:8081"
@@ -76,7 +111,7 @@ jobs:
   deploy-staging:
     name: Deploy → Staging
     # Gate the deploy pipeline on tests; only deploy on push to main, not on PRs.
-    needs: test
+    needs: [frontend, backend]
     if: github.event_name == 'push'
     runs-on: ubuntu-latest
     outputs:
