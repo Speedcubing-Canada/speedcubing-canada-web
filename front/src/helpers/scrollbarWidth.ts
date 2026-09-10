@@ -17,7 +17,7 @@ export const useScrollbarWidth = (): number => {
     const width = outer.offsetWidth - inner.offsetWidth;
 
     // Remove temporary elements from the DOM
-    outer.parentNode?.removeChild(outer);
+    outer.remove();
 
     return width;
   }, []);
