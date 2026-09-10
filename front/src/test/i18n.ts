@@ -11,4 +11,11 @@ void i18n.use(initReactI18next).init({
   interpolation: { escapeValue: false },
 });
 
+// i18next 21 types t() as TFunctionResult (string | object | null | undefined),
+// which no testing-library matcher accepts. Tests only ever look up keys that
+// exist, so narrow the return once here instead of casting at every call site.
+export type TestI18n = Omit<typeof i18n, "t"> & {
+  t: (key: string, options?: Record<string, unknown>) => string;
+};
+
 export default i18n;

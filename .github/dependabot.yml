@@ -1,0 +1,51 @@
+# Dependency update policy.
+#
+# Before this file existed only Dependabot *security* updates ran, so nothing
+# ever bumped the Python tooling: ruff and pytest sat pinned for months while
+# ruff minors kept adding lint rules. CI now gates on those tools, so they have
+# to stay current.
+#
+# Minor+patch are grouped into one PR per ecosystem to keep the review load sane;
+# majors still arrive individually.
+version: 2
+updates:
+  - package-ecosystem: pip
+    directory: /back
+    schedule:
+      interval: weekly
+    groups:
+      python:
+        update-types: [minor, patch]
+
+  - package-ecosystem: npm
+    # The lockfile lives at the workspace root, not in front/.
+    directory: /
+    schedule:
+      interval: weekly
+    groups:
+      npm:
+        update-types: [minor, patch]
+    ignore:
+      # react-router 8 requires React 19, and react-admin 5 still caps react-router
+      # at ^7. Revisit once react-admin ships a React 19 compatible major.
+      - dependency-name: react-router
+        update-types: [version-update:semver-major]
+      - dependency-name: react
+        update-types: [version-update:semver-major]
+      - dependency-name: react-dom
+        update-types: [version-update:semver-major]
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    groups:
+      actions:
+        update-types: [minor, patch]
+
+  - package-ecosystem: docker
+    directories:
+      - /
+      - /back
+    schedule:
+      interval: weekly

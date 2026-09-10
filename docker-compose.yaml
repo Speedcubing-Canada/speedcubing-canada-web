@@ -24,6 +24,17 @@ services:
       - frontend
       - backend
 
+  datastore:
+    container_name: datastore-emulator
+    image: google/cloud-sdk:emulators
+    command: >
+      gcloud beta emulators datastore start
+      --project=test --host-port=0.0.0.0:8081 --no-store-on-disk
+    ports:
+      - 8081:8081
+    networks:
+      - backend
+
   backend:
     container_name: backend-dev
     build:
@@ -35,6 +46,8 @@ services:
       - DATASTORE_EMULATOR_HOST=host.docker.internal:8081
     extra_hosts:
       - "host.docker.internal:host-gateway"
+    depends_on:
+      - datastore
     networks:
       - backend
     ports:

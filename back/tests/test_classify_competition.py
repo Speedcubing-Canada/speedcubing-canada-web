@@ -1,6 +1,7 @@
 """Tests for classify_competition() using real names from canadian_test_comps.csv."""
 
 import pytest
+
 from backend.load_db.championship_classifier import classify_competition
 
 # ---------------------------------------------------------------------------
@@ -37,7 +38,7 @@ def test_national_championships(name):
 
 
 @pytest.mark.parametrize(
-    "name, expected_area",
+    ("name", "expected_area"),
     [
         # Single-province regions
         ("BC Championship 2024", "British Columbia"),

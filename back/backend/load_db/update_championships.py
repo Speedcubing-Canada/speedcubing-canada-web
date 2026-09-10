@@ -1,11 +1,12 @@
 import logging
 
+from google.cloud import ndb
+
 from backend.load_db.championship_classifier import classify_competition
 from backend.models.championship import Championship
 from backend.models.province import Province
 from backend.models.region import Region
 from backend.models.wca.competition import Competition
-from google.cloud import ndb
 
 logger = logging.getLogger(__name__)
 

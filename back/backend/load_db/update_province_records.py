@@ -1,9 +1,10 @@
 import logging
 
+from google.cloud import ndb
+
 from backend.models.province import Province
 from backend.models.wca.event import Event
 from backend.models.wca.rank import RankAverage, RankSingle
-from google.cloud import ndb
 
 logger = logging.getLogger(__name__)
 

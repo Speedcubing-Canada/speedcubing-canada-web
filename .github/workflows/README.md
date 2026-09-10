@@ -1,4 +1,4 @@
-# Deployment Pipeline — Setup Guide
+# Deployment Pipeline Setup Guide
 
 This document explains the one-time setup required before the
 [`deploy.yml`](deploy.yml) workflow can run successfully.
@@ -35,7 +35,7 @@ cleanup-staging                 [manual approval]       (GitHub Environment: pro
 
 ---
 
-## Authentication — Workload Identity Federation
+## Authentication: Workload Identity Federation
 
 The pipeline authenticates to GCP using **Workload Identity Federation (WIF)**
 rather than long-lived JSON key files. GitHub Actions presents a short-lived
@@ -84,7 +84,7 @@ SA="github-actions-staging@${PROJECT}.iam.gserviceaccount.com"
 
 ```bash
 gcloud iam service-accounts create github-actions-staging \
-  --display-name "GitHub Actions – Staging" \
+  --display-name "GitHub Actions (Staging)" \
   --project "${PROJECT}"
 
 for role in \
@@ -124,7 +124,7 @@ gcloud iam workload-identity-pools providers create-oidc "github" \
   --attribute-condition="assertion.repository=='${REPO}'"
 ```
 
-The `attribute-condition` locks the provider to this repository only — tokens
+The `attribute-condition` locks the provider to this repository only, so tokens
 from any other repo are rejected by GCP before they reach the service account.
 
 **3. Allow the pool to impersonate the staging SA**
@@ -163,7 +163,7 @@ PROJECT="scc-production-398617"
 SA="github-actions-prod@${PROJECT}.iam.gserviceaccount.com"
 
 gcloud iam service-accounts create github-actions-prod \
-  --display-name "GitHub Actions – Production" \
+  --display-name "GitHub Actions (Production)" \
   --project "${PROJECT}"
 
 for role in \
@@ -213,7 +213,7 @@ gcloud iam workload-identity-pools providers describe "github" \
 ## 2. Add repository variables to GitHub
 
 Go to **Settings → Secrets and variables → Actions → Variables tab → New repository variable**
-and add the following four variables. These are not secrets — WIF provider
+and add the following four variables. These are not secrets; WIF provider
 names and service account emails are not sensitive.
 
 | Variable name          | Value                                                               |

@@ -1,12 +1,13 @@
 import datetime
 import os
 
+from flask import request
+
 from backend.lib import auth, formatters, secrets
 from backend.models.province import Province
 from backend.models.region import Region
 from backend.models.wca.event import Event
 from backend.models.wca.export import get_latest_export
-from flask import request
 
 
 class Common:

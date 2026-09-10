@@ -1,5 +1,10 @@
 # Ruff configuration for Speedcubing Canada project
 
+# First-party import root, relative to this file. Without it, isort classifies
+# `backend`/`tests` differently depending on the directory ruff is invoked from,
+# so the pre-commit hook (repo root) and CI (back/) disagree and fight.
+src = ["."]
+
 # Exclude specific folders from analysis
 extend-exclude = ["scc", "exports"]
 
@@ -17,7 +22,11 @@ select = [
     "UP", # pyupgrade
     "SIM", # simplifications
     "LOG", # flake8 logging
-    "G" # flake8 logging format
+    "G",  # flake8 logging format
+    "C4", # comprehensions
+    "RET", # return statements
+    "TID", # tidy imports (no relative imports)
+    "PT", # pytest style
 ]
 
 # Per-file ignores
@@ -26,6 +35,12 @@ select = [
 "**/backend/load_db/update_champions.py" = ["F841"]
 # is not None (otherwise causing a bug with ndb that expects a type filter node and not a bool)
 "**/backend/load_db/load_db.py" = ["E711"]
+
+# Pinned explicitly: auto-detection classifies these differently depending on the
+# directory ruff runs from, so the pre-commit hook (repo root) and CI would each
+# undo the other's import sorting.
+[lint.isort]
+known-first-party = ["backend", "tests"]
 
 [format]
 # Format configuration

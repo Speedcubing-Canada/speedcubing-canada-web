@@ -222,7 +222,7 @@ export const Account = () => {
                 sx={{ width: 330 }}
                 value={province || defaultProvince}
                 defaultValue={defaultProvince}
-                onChange={(event, newValue) => {
+                onChange={(_event, newValue) => {
                   setProvince(newValue);
                   if (newValue?.id === "qc") {
                     console.log("Vive le Québec libre!");

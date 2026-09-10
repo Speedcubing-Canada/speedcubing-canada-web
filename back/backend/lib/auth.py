@@ -1,5 +1,6 @@
-from backend.models.user import User
 from flask import session
+
+from backend.models.user import User
 
 
 def logged_in():
