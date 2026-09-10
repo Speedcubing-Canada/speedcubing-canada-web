@@ -18,12 +18,12 @@ on:
   pull_request:
     branches: [main]
 
-# One run per branch. A push and its PR share a group (head_ref matches the branch
-# name), so the two events do not double-run the same commit. Superseded runs on a
-# feature branch are cancelled; main is never cancelled because it deploys.
+# One run per branch. Both events must resolve to the same bare branch name or the
+# push run and its PR run double-up: ref_name is bare on push, head_ref is bare on
+# pull_request. Superseded feature-branch runs are cancelled; main never is, it deploys.
 concurrency:
-  group: ${{ github.workflow }}-${{ github.head_ref || github.ref }}
-  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+  group: ${{ github.workflow }}-${{ github.head_ref || github.ref_name }}
+  cancel-in-progress: ${{ github.ref_name != 'main' }}
 
 # WIF authentication requires permission to mint a short-lived OIDC token.
 permissions:
