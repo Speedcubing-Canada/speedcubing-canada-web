@@ -25,7 +25,7 @@ export const Competition = () => {
 
   if (isError || !data || !isSpeedcubingCanadaCompetition(data.compData)) {
     void navigate("/", { replace: true });
-    return;
+    return null;
   }
 
   const { compData, wcif } = data;

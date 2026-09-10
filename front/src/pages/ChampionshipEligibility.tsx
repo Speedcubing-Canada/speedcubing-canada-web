@@ -267,7 +267,7 @@ export const ChampionshipEligibility = () => {
       {champLoading ? (
         <CircularProgress size={24} />
       ) : (
-        <Autocomplete<ChampionshipSummary, false, false>
+        <Autocomplete<ChampionshipSummary>
           disablePortal
           options={championships}
           sx={{ maxWidth: 480 }}

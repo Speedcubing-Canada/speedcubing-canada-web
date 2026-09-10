@@ -16,7 +16,6 @@ import {
   MenuItem,
   Collapse,
   useMediaQuery,
-  Theme,
   useTheme,
 } from "@mui/material";
 
@@ -131,7 +130,7 @@ export const Base = () => {
     ? getLocaleOrFallback(params.locale as string)
     : getLocaleOrFallback(savedLocale);
   const theme = useTheme();
-  const isSmall = useMediaQuery<Theme>((theme) => theme.breakpoints.down("sm"));
+  const isSmall = useMediaQuery(theme.breakpoints.down("sm"));
 
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [menuAnchor, setMenuAnchor] = useState<null | HTMLElement>(null);
@@ -322,17 +321,19 @@ export const Base = () => {
             anchorOrigin={{ vertical: "top", horizontal: "center" }}
             transformOrigin={{ vertical: "bottom", horizontal: "center" }}
             MenuListProps={{ sx: { py: 0 } }}
-            PaperProps={{
-              elevation: 0,
-              sx: {
-                mb: 1.25,
-                p: 0.5,
-                minWidth: 208,
-                borderRadius: 2,
-                border: "1px solid",
-                borderColor: "divider",
-                boxShadow: "0 8px 24px rgba(0, 0, 0, 0.12)",
-                overflow: "visible",
+            slotProps={{
+              paper: {
+                elevation: 0,
+                sx: {
+                  mb: 1.25,
+                  p: 0.5,
+                  minWidth: 208,
+                  borderRadius: 2,
+                  border: "1px solid",
+                  borderColor: "divider",
+                  boxShadow: "0 8px 24px rgba(0, 0, 0, 0.12)",
+                  overflow: "visible",
+                },
               },
             }}
           >
