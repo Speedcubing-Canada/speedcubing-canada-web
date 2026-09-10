@@ -29,7 +29,7 @@ export const Series = () => {
 
   if (isError || !data || !hasSCCOrganizer) {
     void navigate("/", { replace: true });
-    return;
+    return null;
   }
 
   const registrationDates = data.map((competition) => ({

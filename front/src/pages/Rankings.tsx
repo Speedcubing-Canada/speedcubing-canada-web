@@ -172,7 +172,7 @@ export const Rankings = () => {
           spacing={2}
           alignItems="center"
         >
-          <Autocomplete<Province, false>
+          <Autocomplete<Province>
             disablePortal
             id="combo-box-demo"
             options={provinces}
