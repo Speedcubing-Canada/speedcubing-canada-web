@@ -1,3 +1,5 @@
+/// <reference types="vitest/globals" />
+
 interface ImportMetaEnv {
   readonly VITE_API_BASE_URL?: string;
   readonly MODE: string;

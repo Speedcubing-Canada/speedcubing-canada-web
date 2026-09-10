@@ -1,7 +1,6 @@
-import { fetchUtils } from "react-admin";
+import { fetchUtils, DataProvider } from "react-admin";
 import { stringify } from "query-string";
 import { API_BASE_URL } from "./components/api";
-import { DataProvider } from "ra-core/dist/cjs/types";
 
 const apiUrl = API_BASE_URL;
 const httpClient = (url: string, options: RequestInit = {}) => {
@@ -44,8 +43,10 @@ const convertResponseToDataProviderFormat = (response: any) => {
 
 const dataProvider: DataProvider = {
   getList: (resource, params) => {
-    const { page, perPage } = params.pagination;
-    const { field, order } = params.sort;
+    // react-admin 5 made both optional; these defaults mirror
+    // paginate_records() in back/backend/handlers/admin/_list_utils.py.
+    const { page, perPage } = params.pagination ?? { page: 1, perPage: 25 };
+    const { field, order } = params.sort ?? { field: "id", order: "ASC" };
 
     const adminResource = getAdminResource(resource);
     if (adminResource) {
@@ -122,8 +123,10 @@ const dataProvider: DataProvider = {
       id: any;
     },
   ) => {
-    const { page, perPage } = params.pagination;
-    const { field, order } = params.sort;
+    // react-admin 5 made both optional; these defaults mirror
+    // paginate_records() in back/backend/handlers/admin/_list_utils.py.
+    const { page, perPage } = params.pagination ?? { page: 1, perPage: 25 };
+    const { field, order } = params.sort ?? { field: "id", order: "ASC" };
     const query = {
       sort: JSON.stringify([field, order]),
       range: JSON.stringify([(page - 1) * perPage, page * perPage - 1]),

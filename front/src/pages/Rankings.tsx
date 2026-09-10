@@ -47,7 +47,7 @@ export const Rankings = () => {
   };
 
   const handleProvinceChange = (
-    event: React.SyntheticEvent,
+    _event: React.SyntheticEvent,
     newValue: Province | null,
   ) => {
     setProvince(newValue);
@@ -59,7 +59,7 @@ export const Rankings = () => {
   };
 
   const handleEventChange = (
-    event: React.MouseEvent<HTMLElement>,
+    _event: React.MouseEvent<HTMLElement>,
     newEvent: EventID | null,
   ) => {
     if (newEvent == null) {
@@ -68,7 +68,7 @@ export const Rankings = () => {
     setEventId(newEvent);
   };
   const handleEventChangeMobile = (
-    event: React.SyntheticEvent,
+    _event: React.SyntheticEvent,
     newValue: EventID | null,
   ) => {
     if (newValue == null) {
@@ -172,7 +172,7 @@ export const Rankings = () => {
           spacing={2}
           alignItems="center"
         >
-          <Autocomplete<Province, false, false>
+          <Autocomplete<Province, false>
             disablePortal
             id="combo-box-demo"
             options={provinces}
