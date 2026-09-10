@@ -145,7 +145,8 @@ def test_parse_rows_pivots_offices_into_teams():
     assert teams["events"]["position"] == 3
     # A blank WCA ID becomes None; Ben leads nothing, Alex leads Software.
     ben = teams["events"]["members"][1]
-    assert ben["wca_id"] is None and ben["is_leader"] is False
+    assert ben["wca_id"] is None
+    assert ben["is_leader"] is False
     assert teams["software"]["members"][0]["is_leader"] is True
 
 

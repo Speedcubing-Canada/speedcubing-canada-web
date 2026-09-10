@@ -20,8 +20,8 @@
   },
   "lint-staged": {
     "back/**/*.py": [
-      "uvx ruff check --fix --config back/ruff.toml",
-      "uvx ruff format --config back/ruff.toml"
+      "uvx ruff@0.16.6 check --fix --config back/ruff.toml",
+      "uvx ruff@0.16.6 format --config back/ruff.toml"
     ],
     "front/**/*.{ts,tsx,js,jsx}": "oxlint --fix --config front/.oxlintrc.json",
     "front/**/*": "prettier --write --ignore-unknown",

@@ -1,0 +1,6 @@
+# Dev-only tooling. Kept out of requirements.txt so it does not ship in the
+# App Engine deploy bundle. Dependabot's pip ecosystem keeps these current;
+# the ruff pin here must match the one in the root package.json lint-staged hook.
+ruff==0.16.6
+pytest==9.1.1
+pytest-cov==7.1.0

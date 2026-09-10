@@ -17,7 +17,11 @@ select = [
     "UP", # pyupgrade
     "SIM", # simplifications
     "LOG", # flake8 logging
-    "G" # flake8 logging format
+    "G",  # flake8 logging format
+    "C4", # comprehensions
+    "RET", # return statements
+    "TID", # tidy imports (no relative imports)
+    "PT", # pytest style
 ]
 
 # Per-file ignores

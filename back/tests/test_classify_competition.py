@@ -37,7 +37,7 @@ def test_national_championships(name):
 
 
 @pytest.mark.parametrize(
-    "name, expected_area",
+    ("name", "expected_area"),
     [
         # Single-province regions
         ("BC Championship 2024", "British Columbia"),
