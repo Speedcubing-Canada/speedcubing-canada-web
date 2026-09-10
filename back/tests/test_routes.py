@@ -7,7 +7,6 @@ new function; the harness lives in conftest.py.
 """
 
 from backend.models.user import Roles
-
 from tests.conftest import requires_emulator
 
 pytestmark = requires_emulator

@@ -7,6 +7,8 @@ than spinning up the Flask app / a datastore emulator.
 import datetime
 from unittest.mock import MagicMock, patch
 
+from google.cloud import ndb
+
 from backend.handlers.admin.edit_championships import _apply_fields, _derive_id, filter_and_sort
 from backend.handlers.champions_table import (
     _format_champion_result,
@@ -17,7 +19,6 @@ from backend.handlers.champions_table import (
 from backend.handlers.regional import _upcoming_championship, display_region_key, fetch_registration, registration_status
 from backend.lib.residency import resolve_residency
 from backend.models.championship import Championship
-from google.cloud import ndb
 
 # ---------------------------------------------------------------------------
 # Championship.type_and_area / to_json

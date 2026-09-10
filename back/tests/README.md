@@ -2,8 +2,8 @@
 
 Two kinds live side by side:
 
-- **Unit tests** — pure helpers with `MagicMock`. No setup, always run.
-- **Route tests** (`test_routes.py`) — the real Flask app against a real Cloud
+- **Unit tests**: pure helpers with `MagicMock`. No setup, always run.
+- **Route tests** (`test_routes.py`): the real Flask app against a real Cloud
   Datastore emulator, via the fixtures in `conftest.py`. They are skipped when no
   emulator is reachable, so `pytest` works with or without one.
 

@@ -1,6 +1,7 @@
 """Tests for classify_competition() using real names from canadian_test_comps.csv."""
 
 import pytest
+
 from backend.load_db.championship_classifier import classify_competition
 
 # ---------------------------------------------------------------------------

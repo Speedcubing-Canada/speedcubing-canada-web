@@ -176,7 +176,7 @@ jobs:
       - name: Wait for App Engine warm-up
         run: sleep 15
 
-      - name: Smoke test — frontend (GET /)
+      - name: Smoke test frontend (GET /)
         run: |
           url="https://staging.speedcubingcanada.org/"
           echo "Probing frontend: ${url}"
@@ -184,17 +184,17 @@ jobs:
           for attempt in 1 2 3; do
             status=$(curl -s -o /dev/null -w "%{http_code}" --max-time 30 "${url}")
             if [ "${status}" -ge 200 ] && [ "${status}" -lt 400 ]; then
-              echo "Frontend OK — HTTP ${status} (attempt ${attempt})"
+              echo "Frontend OK: HTTP ${status} (attempt ${attempt})"
               exit 0
             fi
             echo "HTTP ${status} (attempt ${attempt}/3); retrying in 15 s…"
             sleep 15
           done
 
-          echo "::error::Frontend smoke test failed — GET ${url} never returned 2xx/3xx"
+          echo "::error::Frontend smoke test failed: GET ${url} never returned 2xx/3xx"
           exit 1
 
-      - name: Smoke test — API (GET /api/test_rankings)
+      - name: Smoke test API (GET /api/test_rankings)
         run: |
           url="https://staging.speedcubingcanada.org/api/test_rankings"
           echo "Probing API: ${url}"
@@ -203,12 +203,12 @@ jobs:
             body=$(curl -s --max-time 30 -w "\n%{http_code}" "${url}")
             status=$(echo "${body}" | tail -1)
             if [ "${status}" -ge 200 ] && [ "${status}" -lt 400 ]; then
-              echo "API OK — HTTP ${status} (attempt ${attempt})"
+              echo "API OK: HTTP ${status} (attempt ${attempt})"
               # Sanity-check that the response looks like the expected JSON array.
               if echo "${body}" | head -1 | grep -q '"name"'; then
                 echo "Response body contains expected ranking data."
               else
-                echo "::warning::Response did not contain expected JSON shape — check /test_rankings output."
+                echo "::warning::Response did not contain expected JSON shape; check /test_rankings output."
               fi
               exit 0
             fi
@@ -216,12 +216,12 @@ jobs:
             sleep 15
           done
 
-          echo "::error::API smoke test failed — GET ${url} never returned 2xx/3xx"
+          echo "::error::API smoke test failed: GET ${url} never returned 2xx/3xx"
           exit 1
 
       # Transition invariant: the legacy api.* host must keep working until the
       # same-origin migration cleanup removes it (old cached bundles still call it).
-      - name: Smoke test — legacy API host (GET /test_rankings)
+      - name: Smoke test legacy API host (GET /test_rankings)
         run: |
           url="https://api.staging.speedcubingcanada.org/test_rankings"
           echo "Probing legacy API host: ${url}"
@@ -229,14 +229,14 @@ jobs:
           for attempt in 1 2 3; do
             status=$(curl -s -o /dev/null -w "%{http_code}" --max-time 30 "${url}")
             if [ "${status}" -ge 200 ] && [ "${status}" -lt 400 ]; then
-              echo "Legacy API host OK — HTTP ${status} (attempt ${attempt})"
+              echo "Legacy API host OK: HTTP ${status} (attempt ${attempt})"
               exit 0
             fi
             echo "HTTP ${status} (attempt ${attempt}/3); retrying in 15 s…"
             sleep 15
           done
 
-          echo "::error::Legacy API smoke test failed — GET ${url} never returned 2xx/3xx"
+          echo "::error::Legacy API smoke test failed: GET ${url} never returned 2xx/3xx"
           exit 1
 
   # ── 3. Production deploy (gated behind manual approval) ───────────────────
@@ -307,12 +307,12 @@ jobs:
               --sort-by="~version.createTime" \
               --format="value(version.id)" 2>/dev/null || true)
 
-            [ -z "${all}" ] && echo "  No versions found — skipping" && continue
+            [ -z "${all}" ] && echo "  No versions found, skipping" && continue
 
             to_delete=$(echo "${all}" | tail -n +$((KEEP + 1)))
 
             [ -z "${to_delete}" ] && \
-              echo "  $(echo "${all}" | wc -l | tr -d ' ') version(s) present — nothing to remove" && \
+              echo "  $(echo "${all}" | wc -l | tr -d ' ') version(s) present, nothing to remove" && \
               continue
 
             echo "  Removing: $(echo "${to_delete}" | tr '\n' ' ')"
@@ -360,12 +360,12 @@ jobs:
               --sort-by="~version.createTime" \
               --format="value(version.id)" 2>/dev/null || true)
 
-            [ -z "${all}" ] && echo "  No versions found — skipping" && continue
+            [ -z "${all}" ] && echo "  No versions found, skipping" && continue
 
             to_delete=$(echo "${all}" | tail -n +$((KEEP + 1)))
 
             [ -z "${to_delete}" ] && \
-              echo "  $(echo "${all}" | wc -l | tr -d ' ') version(s) present — nothing to remove" && \
+              echo "  $(echo "${all}" | wc -l | tr -d ' ') version(s) present, nothing to remove" && \
               continue
 
             echo "  Removing: $(echo "${to_delete}" | tr '\n' ' ')"
