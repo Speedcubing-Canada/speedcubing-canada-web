@@ -1,13 +1,14 @@
 import datetime
 
+from flask import Blueprint, jsonify, request
+from google.cloud import ndb
+
 from backend.lib import auth, permissions
 from backend.lib.permissions import require_auth
 from backend.lib.residency import PROVINCE_CHANGE_WINDOW, most_recent_location_change_within_window
 from backend.models.province import Province
 from backend.models.user import User, UserLocationUpdate
 from backend.models.wca.rank import RankAverage, RankSingle
-from flask import Blueprint, jsonify, request
-from google.cloud import ndb
 
 bp = Blueprint("user", __name__)
 client = ndb.Client()

@@ -1,6 +1,7 @@
+from google.cloud import ndb
+
 from backend.models.user import User
 from backend.models.wca.competition import Competition
-from google.cloud import ndb
 
 
 class GroupStatus(ndb.Model):

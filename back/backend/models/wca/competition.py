@@ -1,10 +1,11 @@
 import datetime
 
+from google.cloud import ndb
+
 from backend.models.province import Province
 from backend.models.wca.base import BaseModel
 from backend.models.wca.country import Country
 from backend.models.wca.event import Event
-from google.cloud import ndb
 
 
 class Competition(BaseModel):

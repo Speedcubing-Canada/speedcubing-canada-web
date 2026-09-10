@@ -1,3 +1,5 @@
+from google.cloud import ndb
+
 from backend.models.championship import Championship
 from backend.models.wca.base import BaseModel
 from backend.models.wca.competition import Competition
@@ -6,7 +8,6 @@ from backend.models.wca.event import Event
 from backend.models.wca.format import Format
 from backend.models.wca.person import Person
 from backend.models.wca.round import RoundType
-from google.cloud import ndb
 
 
 class Result(BaseModel):

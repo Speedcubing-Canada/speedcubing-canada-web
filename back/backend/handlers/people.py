@@ -1,6 +1,7 @@
-from backend.models.site_person import Director, FeaturedMember
 from flask import Blueprint, jsonify
 from google.cloud import ndb
+
+from backend.models.site_person import Director, FeaturedMember
 
 bp = Blueprint("people", __name__)
 client = ndb.Client()

@@ -2,8 +2,9 @@ import os
 import shutil
 
 from absl import app, flags, logging
-from backend.models.wca.export import get_latest_export
 from google.cloud import ndb
+
+from backend.models.wca.export import get_latest_export
 
 FLAGS = flags.FLAGS
 

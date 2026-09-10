@@ -2,6 +2,8 @@ import csv
 import os
 
 from absl import app, flags, logging
+from google.cloud import ndb
+
 from backend.load_db.setup_geography import setup_regions_and_provinces
 from backend.load_db.update_champions import update_champions
 from backend.load_db.update_championships import update_championships
@@ -19,7 +21,6 @@ from backend.models.wca.person import Person
 from backend.models.wca.rank import RankAverage, RankSingle
 from backend.models.wca.result import Result
 from backend.models.wca.round import RoundType
-from google.cloud import ndb
 
 FLAGS = flags.FLAGS
 

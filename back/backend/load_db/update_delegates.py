@@ -2,9 +2,10 @@ import logging
 import re
 
 import requests
+from google.cloud import ndb
+
 from backend.models.delegate import Delegate
 from backend.models.province import PROVINCE_NAME_TO_ID
-from google.cloud import ndb
 
 logger = logging.getLogger(__name__)
 
