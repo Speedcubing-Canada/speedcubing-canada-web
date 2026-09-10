@@ -1,22 +1,29 @@
 # CI + deployment pipeline: test → staging → smoke test → production (manual gate)
 #
-# On pull requests targeting main, only the `frontend` and `backend` jobs run
-# (no deploy). On push to main (including Dependabot merges) they run and, if both
-# pass, gate the staging → smoke test → production pipeline.
+# The `frontend` and `backend` jobs run on every push to any branch, so a dev
+# branch goes red before a PR exists. Only main deploys: on a push there, both jobs
+# gate the staging, smoke test and production pipeline.
 # Repository variables required (Settings → Secrets and variables → Variables):
-#   WIF_PROVIDER_STAGING  – Workload Identity provider resource name (staging)
-#   WIF_PROVIDER_PROD     – Workload Identity provider resource name (prod)
-#   WIF_SA_STAGING        – Service account email for staging deploys
-#   WIF_SA_PROD           – Service account email for production deploys
+#   WIF_PROVIDER_STAGING  : Workload Identity provider resource name (staging)
+#   WIF_PROVIDER_PROD     : Workload Identity provider resource name (prod)
+#   WIF_SA_STAGING        : Service account email for staging deploys
+#   WIF_SA_PROD           : Service account email for production deploys
 # See .github/workflows/README.md for setup instructions.
 
 name: Deploy
 
 on:
   push:
-    branches: [main]
+    branches: ["**"]
   pull_request:
     branches: [main]
+
+# One run per branch. A push and its PR share a group (head_ref matches the branch
+# name), so the two events do not double-run the same commit. Superseded runs on a
+# feature branch are cancelled; main is never cancelled because it deploys.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
 
 # WIF authentication requires permission to mint a short-lived OIDC token.
 permissions:
@@ -110,9 +117,10 @@ jobs:
   # ── 1. Deploy to staging ──────────────────────────────────────────────────
   deploy-staging:
     name: Deploy → Staging
-    # Gate the deploy pipeline on tests; only deploy on push to main, not on PRs.
+    # Gate the deploy pipeline on tests. Pushes to any other branch, and PR events,
+    # stop here: the checks above are the only thing that runs for them.
     needs: [frontend, backend]
-    if: github.event_name == 'push'
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     outputs:
       version: ${{ steps.slug.outputs.version }}

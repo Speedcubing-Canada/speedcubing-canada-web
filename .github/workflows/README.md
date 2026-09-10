@@ -84,7 +84,7 @@ SA="github-actions-staging@${PROJECT}.iam.gserviceaccount.com"
 
 ```bash
 gcloud iam service-accounts create github-actions-staging \
-  --display-name "GitHub Actions – Staging" \
+  --display-name "GitHub Actions (Staging)" \
   --project "${PROJECT}"
 
 for role in \
@@ -163,7 +163,7 @@ PROJECT="scc-production-398617"
 SA="github-actions-prod@${PROJECT}.iam.gserviceaccount.com"
 
 gcloud iam service-accounts create github-actions-prod \
-  --display-name "GitHub Actions – Production" \
+  --display-name "GitHub Actions (Production)" \
   --project "${PROJECT}"
 
 for role in \

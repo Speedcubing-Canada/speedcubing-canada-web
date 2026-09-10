@@ -58,7 +58,7 @@ function formatDateRange(
     month: "long",
     day: "numeric",
   });
-  return `${startShort} – ${endDate.toLocaleDateString(locale, long)}`;
+  return `${startShort} - ${endDate.toLocaleDateString(locale, long)}`;
 }
 
 function formatDate(date: string | null, locale: string): string {
