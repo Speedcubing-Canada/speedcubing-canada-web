@@ -1,12 +1,4 @@
-# Dependency update policy.
-#
-# Before this file existed only Dependabot *security* updates ran, so nothing
-# ever bumped the Python tooling: ruff and pytest sat pinned for months while
-# ruff minors kept adding lint rules. CI now gates on those tools, so they have
-# to stay current.
-#
-# Minor+patch are grouped into one PR per ecosystem to keep the review load sane;
-# majors still arrive individually.
+# Minor+patch grouped into one PR per ecosystem; majors arrive individually.
 version: 2
 updates:
   - package-ecosystem: pip

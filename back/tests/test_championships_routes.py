@@ -260,9 +260,7 @@ def test_derive_id_national_fmc():
 # edit_championships._apply_fields (residency-deadline tz normalization)
 # ---------------------------------------------------------------------------
 
-# _apply_fields assigns to a real Championship's ndb properties (a naive
-# DateTimeProperty and a Competition KeyProperty), so these tests take the shared
-# ndb_context fixture from conftest - no datastore I/O, just property validation.
+# _apply_fields assigns real ndb properties, so these need an ndb context, not datastore I/O.
 
 
 def _competition(comp_id="WorldChamp2026", year=2026):

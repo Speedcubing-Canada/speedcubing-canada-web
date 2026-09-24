@@ -1,12 +1,9 @@
 """Shared test fixtures.
 
-Datastore is a real Cloud Datastore emulator, not a mock. An earlier attempt
-(the abandoned ``10_tests`` branch) tried patching a dozen ``google.cloud.ndb``
-symbols and never got past the mocks fighting ndb's own machinery. The emulator
-gives real query, key and property-validation semantics for free.
-
-Run one before invoking pytest -- see tests/README.md. Tests that only exercise
-pure helpers do not need it and keep using plain MagicMock.
+Datastore is a real Cloud Datastore emulator, not a mock: mocks fight ndb's own
+machinery, while the emulator gives real query, key and property-validation
+semantics. Run one before pytest -- see tests/README.md. Tests that only exercise
+pure helpers need none and keep using plain MagicMock.
 """
 
 import datetime
@@ -17,8 +14,7 @@ import requests
 
 EMULATOR_HOST = os.environ.setdefault("DATASTORE_EMULATOR_HOST", "localhost:8081")
 
-# get_secret() reads straight from the environment when ENV=DEV, so the real
-# Secret Manager is never contacted and needs no mocking.
+# ENV=DEV makes get_secret() read the environment, so Secret Manager is never contacted.
 os.environ.setdefault("ENV", "DEV")
 os.environ.setdefault("GOOGLE_CLOUD_PROJECT", "test")
 os.environ.setdefault("DATASTORE_PROJECT_ID", "test")
@@ -94,11 +90,7 @@ def as_user(client):
 
 @pytest.fixture
 def seed(ndb_client, datastore):
-    """Persist an entity inside a throwaway ndb context and return it.
-
-    The context is closed again before the caller gets control back, because the
-    Flask handlers open their own and ndb permits only one per thread.
-    """
+    """Persist an entity inside a throwaway ndb context and return it."""
 
     def _seed(build):
         with ndb_client.context():
@@ -109,10 +101,7 @@ def seed(ndb_client, datastore):
     return _seed
 
 
-# --- entity factories -------------------------------------------------------
-# Each factory writes inside its own short-lived context, so none is left open
-# when the request runs. Only the fields the handlers actually read are set;
-# add more as tests need them.
+# --- entity factories: only the fields the handlers read ---
 
 
 @pytest.fixture
@@ -130,7 +119,7 @@ def make_province(seed, make_region):
     from backend.models.province import Province
 
     def _make(province_id="qc", name="Quebec", region=None):
-        # Resolve the parent before opening a context; ndb allows only one per thread.
+        # Resolve the parent before seed opens its context.
         region_key = (region or make_region()).key
         return seed(lambda: Province(id=province_id, name=name, region=region_key))
 

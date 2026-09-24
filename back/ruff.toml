@@ -1,8 +1,8 @@
 # Ruff configuration for Speedcubing Canada project
 
-# First-party import root, relative to this file. Without it, isort classifies
-# `backend`/`tests` differently depending on the directory ruff is invoked from,
-# so the pre-commit hook (repo root) and CI (back/) disagree and fight.
+# This and known-first-party below are pinned because isort otherwise classifies
+# `backend`/`tests` by the directory ruff runs from, so the pre-commit hook (repo
+# root) and CI (back/) undo each other.
 src = ["."]
 
 # Exclude specific folders from analysis
@@ -36,9 +36,6 @@ select = [
 # is not None (otherwise causing a bug with ndb that expects a type filter node and not a bool)
 "**/backend/load_db/load_db.py" = ["E711"]
 
-# Pinned explicitly: auto-detection classifies these differently depending on the
-# directory ruff runs from, so the pre-commit hook (repo root) and CI would each
-# undo the other's import sorting.
 [lint.isort]
 known-first-party = ["backend", "tests"]
 
