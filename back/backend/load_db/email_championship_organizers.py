@@ -2,8 +2,9 @@ import datetime
 import logging
 
 import requests
-from backend.models.championship import Championship
 from google.cloud import ndb
+
+from backend.models.championship import Championship
 
 logger = logging.getLogger(__name__)
 

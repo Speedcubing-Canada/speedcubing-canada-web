@@ -1,12 +1,13 @@
 import datetime
 import os
 
+from flask import Blueprint, redirect, session, url_for
+from google.cloud import ndb
+
 from backend.lib.secrets import get_secret
 from backend.models.user import Roles, User
 from backend.models.wca.person import Person
 from backend.models.wca.rank import RankAverage, RankSingle
-from flask import Blueprint, redirect, session, url_for
-from google.cloud import ndb
 
 client = ndb.Client()
 

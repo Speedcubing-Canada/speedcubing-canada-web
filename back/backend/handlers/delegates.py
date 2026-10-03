@@ -1,6 +1,7 @@
-from backend.models.delegate import Delegate
 from flask import Blueprint, jsonify
 from google.cloud import ndb
+
+from backend.models.delegate import Delegate
 
 bp = Blueprint("delegates", __name__)
 client = ndb.Client()

@@ -32,5 +32,13 @@ export default defineConfig({
     // react-admin's dist does `import "@mui/material/styles"`, a directory import
     // Node's ESM resolver rejects. Inlining lets Vite resolve it as the bundler does.
     server: { deps: { inline: [/ra-ui-materialui/, /react-admin/] } },
+    coverage: {
+      provider: "v8",
+      reporter: ["text", "lcov"],
+      include: ["src/**"],
+      exclude: ["src/test/**", "src/setupTests.ts", "src/**/*.test.{ts,tsx}"],
+      // A ratchet: raise these as tests land, never lower them.
+      thresholds: { lines: 13, functions: 12, branches: 14, statements: 12 },
+    },
   },
 });

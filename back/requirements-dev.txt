@@ -1,0 +1,5 @@
+# Dev-only tooling, kept out of requirements.txt so it does not ship in the App
+# Engine bundle. CI and the lint-staged hook both resolve their pins from here.
+ruff==0.16.6
+pytest==9.1.1
+pytest-cov==7.1.0

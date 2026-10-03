@@ -3,6 +3,8 @@ import datetime
 import logging
 import os
 
+from google.cloud import ndb
+
 from backend.lib.residency import resolve_residency
 from backend.models.champion import Champion
 from backend.models.championship import Championship
@@ -11,7 +13,6 @@ from backend.models.user import User
 from backend.models.wca.country import Country
 from backend.models.wca.event import Event
 from backend.models.wca.result import Result, RoundType
-from google.cloud import ndb
 
 logger = logging.getLogger(__name__)
 

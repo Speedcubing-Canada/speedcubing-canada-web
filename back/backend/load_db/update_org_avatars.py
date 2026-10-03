@@ -2,9 +2,10 @@ import logging
 import time
 
 import requests
+from google.cloud import ndb
+
 from backend.models.site_person import Director, FeaturedMember
 from backend.models.team import Team
-from google.cloud import ndb
 
 logger = logging.getLogger(__name__)
 

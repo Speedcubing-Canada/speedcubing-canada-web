@@ -1,0 +1,43 @@
+# Minor+patch grouped into one PR per ecosystem; majors arrive individually.
+version: 2
+updates:
+  - package-ecosystem: pip
+    directory: /back
+    schedule:
+      interval: weekly
+    groups:
+      python:
+        update-types: [minor, patch]
+
+  - package-ecosystem: npm
+    # The lockfile lives at the workspace root, not in front/.
+    directory: /
+    schedule:
+      interval: weekly
+    groups:
+      npm:
+        update-types: [minor, patch]
+    ignore:
+      # react-router 8 requires React 19, and react-admin 5 still caps react-router
+      # at ^7. Revisit once react-admin ships a React 19 compatible major.
+      - dependency-name: react-router
+        update-types: [version-update:semver-major]
+      - dependency-name: react
+        update-types: [version-update:semver-major]
+      - dependency-name: react-dom
+        update-types: [version-update:semver-major]
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    groups:
+      actions:
+        update-types: [minor, patch]
+
+  - package-ecosystem: docker
+    directories:
+      - /
+      - /back
+    schedule:
+      interval: weekly
