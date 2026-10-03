@@ -167,6 +167,6 @@ const MyAppBar = () => (
   </AppBar>
 );
 
-const MyLayout = (props: JSX.IntrinsicAttributes & LayoutProps) => (
+const MyLayout = (props: LayoutProps) => (
   <Layout {...props} appBar={MyAppBar} />
 );

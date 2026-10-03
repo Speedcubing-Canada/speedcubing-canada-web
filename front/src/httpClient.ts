@@ -4,104 +4,94 @@ export interface HttpResponse<D = undefined, E = undefined> {
   error?: E;
 }
 
-class httpClient {
-  private static parseBody(response: Response): Promise<unknown> {
-    if (response.headers.get("Content-Type")?.includes("application/json")) {
-      return response.json();
+const parseBody = (response: Response): Promise<unknown> => {
+  if (response.headers.get("Content-Type")?.includes("application/json")) {
+    return response.json();
+  }
+  return response.text();
+};
+
+const request = async <R, D, E = unknown>(
+  method: "GET" | "POST" | "PUT" | "PATCH" | "DELETE",
+  endpoint: string,
+  body: R | undefined,
+  options: Omit<RequestInit, "method" | "body"> = {},
+): Promise<HttpResponse<D, E>> => {
+  // HeadersInit is a Headers instance, an array of pairs or a plain object.
+  // Spreading it only worked for the last of the three, so go through Headers
+  // and let caller-supplied values win over the JSON default.
+  const headers = new Headers({ "Content-Type": "application/json" });
+  for (const [key, value] of new Headers(options.headers)) {
+    headers.set(key, value);
+  }
+
+  try {
+    const response = await window.fetch(endpoint, {
+      method: method,
+      body: body ? JSON.stringify(body) : undefined,
+      ...options,
+      headers,
+      credentials: "include",
+    });
+    const payload = await parseBody(response);
+
+    if (!response.ok) {
+      return {
+        ok: false,
+        error: payload as E,
+        data: undefined,
+      };
     }
-    return response.text();
+    return {
+      ok: true,
+      error: undefined,
+      data: payload as D,
+    };
+  } catch (error) {
+    return {
+      ok: false,
+      data: undefined,
+      error: (error as Error).message as E,
+    };
   }
+};
 
-  static async request<R, D, E = unknown>(
-    method: "GET" | "POST" | "PUT" | "PATCH" | "DELETE",
-    endpoint: string,
-    body: R | undefined,
-    options: Omit<RequestInit, "method" | "body"> = {},
-  ): Promise<HttpResponse<D, E>> {
-    // HeadersInit is a Headers instance, an array of pairs or a plain object.
-    // Spreading it only worked for the last of the three, so go through Headers
-    // and let caller-supplied values win over the JSON default.
-    const headers = new Headers({ "Content-Type": "application/json" });
-    for (const [key, value] of new Headers(options.headers)) {
-      headers.set(key, value);
-    }
+const httpClient = {
+  request,
 
-    return window
-      .fetch(endpoint, {
-        method: method,
-        body: body ? JSON.stringify(body) : undefined,
-        ...options,
-        headers,
-        credentials: "include",
-      })
-      .then(async (response) => {
-        const body = await this.parseBody(response);
-
-        if (!response.ok) {
-          return {
-            ok: false,
-            error: body as E,
-            data: undefined,
-          };
-        }
-        return {
-          ok: true,
-          error: undefined,
-          data: body as D,
-        };
-      })
-      .catch((error) => {
-        return {
-          ok: false,
-          data: undefined,
-          error: error.message as E,
-        };
-      });
-  }
-
-  static get<D, E = unknown>(
+  get: <D, E = unknown>(
     endpoint: string,
     options: Omit<RequestInit, "method" | "body"> = {},
-  ): Promise<HttpResponse<D, E>> {
-    return this.request<undefined, D, E>("GET", endpoint, undefined, options);
-  }
+  ): Promise<HttpResponse<D, E>> =>
+    request<undefined, D, E>("GET", endpoint, undefined, options),
 
   // Body optional: the admin maintenance endpoints POST without one.
-  static post<R, D, E = unknown>(
+  post: <R, D, E = unknown>(
     endpoint: string,
     data?: R,
     options: Omit<RequestInit, "method" | "body"> = {},
-  ): Promise<HttpResponse<D, E>> {
-    return this.request<R, D, E>("POST", endpoint, data, options);
-  }
+  ): Promise<HttpResponse<D, E>> =>
+    request<R, D, E>("POST", endpoint, data, options),
 
-  static put<R, D, E = unknown>(
+  put: <R, D, E = unknown>(
     endpoint: string,
     data: R,
     options: Omit<RequestInit, "method" | "body"> = {},
-  ): Promise<HttpResponse<D, E>> {
-    return this.request<R, D, E>("PUT", endpoint, data, options);
-  }
+  ): Promise<HttpResponse<D, E>> =>
+    request<R, D, E>("PUT", endpoint, data, options),
 
-  static patch<R, D, E = unknown>(
+  patch: <R, D, E = unknown>(
     endpoint: string,
     data: R,
     options: Omit<RequestInit, "method" | "body"> = {},
-  ): Promise<HttpResponse<D, E>> {
-    return this.request<R, D, E>("PATCH", endpoint, data, options);
-  }
+  ): Promise<HttpResponse<D, E>> =>
+    request<R, D, E>("PATCH", endpoint, data, options),
 
-  static delete<D, E = unknown>(
+  delete: <D, E = unknown>(
     endpoint: string,
     options: Omit<RequestInit, "method" | "body"> = {},
-  ): Promise<HttpResponse<D, E>> {
-    return this.request<undefined, D, E>(
-      "DELETE",
-      endpoint,
-      undefined,
-      options,
-    );
-  }
-}
+  ): Promise<HttpResponse<D, E>> =>
+    request<undefined, D, E>("DELETE", endpoint, undefined, options),
+};
 
 export default httpClient;

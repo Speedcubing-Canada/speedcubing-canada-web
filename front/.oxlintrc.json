@@ -10,6 +10,12 @@
     "perf": "warn"
   },
   "rules": {
+    // `x == null` also catches undefined; requiring === would change behaviour
+    // wherever the value can be undefined.
+    "eqeqeq": ["warn", "always", { "null": "ignore" }],
+    // Deprecated stylistic rule; alphabetical order breaks the x0/y0/x1/y1
+    // coordinate pairing in CanadaRegionMap.
+    "sort-vars": "off",
     "max-lines-per-function": "off",
     "max-lines": "off",
     "no-inline-comments": "off",
