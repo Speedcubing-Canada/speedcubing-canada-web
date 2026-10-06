@@ -14,8 +14,6 @@ function buildConnectSrc() {
     process.env.NODE_ENV === "development" || process.env.ENV === "DEV";
   const sources = [
     "'self'",
-    "https://api.speedcubingcanada.org",
-    "https://api.staging.speedcubingcanada.org",
     // WCA public API - directors/delegates avatars and competition data are
     // fetched directly from the browser (see helpers/fetchWcaPerson.ts and
     // fetchCompetitionData.ts).

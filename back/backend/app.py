@@ -9,6 +9,7 @@ from authlib.integrations.flask_client import OAuth
 from dotenv import load_dotenv
 from flask import Flask
 from flask_cors import CORS
+from werkzeug.exceptions import NotFound
 from werkzeug.middleware.dispatcher import DispatcherMiddleware
 
 from backend.handlers.admin import bp as admin_bp
@@ -48,22 +49,19 @@ def create_app():
 
     app.secret_key = get_secret("SESSION_SECRET_KEY")
     app.permanent_session_lifetime = datetime.timedelta(days=7)
-    address = get_secret("FRONT_ADDRESS")
 
-    allowed_origins = [address]
+    # Prod is same-origin via dispatch; only local dev calls the API cross-origin.
     if os.environ.get("ENV") == "DEV":
-        allowed_origins.extend(
-            [
-                "http://localhost",
-                "http://127.0.0.1",
-                "http://localhost:80",
-                "http://127.0.0.1:80",
-                "http://localhost:2003",
-                "http://127.0.0.1:2003",
-            ],
-        )
-
-    CORS(app, origins=allowed_origins, supports_credentials=True)
+        allowed_origins = [
+            get_secret("FRONT_ADDRESS"),
+            "http://localhost",
+            "http://127.0.0.1",
+            "http://localhost:80",
+            "http://127.0.0.1:80",
+            "http://localhost:2003",
+            "http://127.0.0.1:2003",
+        ]
+        CORS(app, origins=allowed_origins, supports_credentials=True)
 
     @app.after_request
     def set_security_headers(response):
@@ -97,8 +95,8 @@ def create_app():
     app.register_blueprint(province_rankings_bp)
     app.register_blueprint(user_bp)
 
-    # Serve every route at both / (legacy api.* domain) and /api (same-origin via dispatch).
-    app.wsgi_app = DispatcherMiddleware(app.wsgi_app, {"/api": app.wsgi_app})
+    # Dispatch routes */api/* here; serve routes under /api only.
+    app.wsgi_app = DispatcherMiddleware(NotFound(), {"/api": app.wsgi_app})
     return app
 
 

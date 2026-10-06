@@ -1,8 +1,4 @@
 dispatch:
-  # Send all api traffic to the backend service.
-  - url: "api.staging.speedcubingcanada.org/*"
-    service: api
-
   # Same-origin API path on the main domain.
   - url: "*/api/*"
     service: api
