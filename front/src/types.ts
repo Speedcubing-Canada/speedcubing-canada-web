@@ -171,8 +171,7 @@ export const NA_PROVINCE_DATA = {
 } as const;
 
 export type Province =
-  | (typeof PROVINCES_DATA)[number]
-  | typeof NA_PROVINCE_DATA;
+  (typeof PROVINCES_DATA)[number] | typeof NA_PROVINCE_DATA;
 
 export type ProvinceID = Province["id"];
 

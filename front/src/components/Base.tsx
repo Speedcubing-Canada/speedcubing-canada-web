@@ -124,8 +124,8 @@ export const Base = () => {
   // "/en" and "/en/" -> "" (Home). Province pages (/qc, /bc, ...) have no locale param.
   const pathSegments = pathname.split("/").filter(Boolean);
   const pathWithoutLocale = hasLocaleParam
-    ? pathSegments[1] ?? ""
-    : pathSegments[0] ?? "";
+    ? (pathSegments[1] ?? "")
+    : (pathSegments[0] ?? "");
   const locale = hasLocaleParam
     ? getLocaleOrFallback(params.locale as string)
     : getLocaleOrFallback(savedLocale);
