@@ -428,18 +428,18 @@ export const RegionPanel: React.FC<RegionPanelProps> = ({
 
   // Fetch the champions for the selected edition.
   useEffect(() => {
+    let active = true;
     if (edition == null) {
       setChampions([]);
-      return;
+    } else {
+      setLoading(true);
+      void fetchChampions(region.id, edition).then((data) => {
+        if (!active) return;
+        setChampions(data);
+        setEventId(data[0]?.event_id ?? null);
+        setLoading(false);
+      });
     }
-    let active = true;
-    setLoading(true);
-    void fetchChampions(region.id, edition).then((data) => {
-      if (!active) return;
-      setChampions(data);
-      setEventId(data[0]?.event_id ?? null);
-      setLoading(false);
-    });
     return () => {
       active = false;
     };
