@@ -2,12 +2,13 @@ import datetime
 import logging
 
 import requests
+from flask import Blueprint, jsonify
+from google.cloud import ndb
+
 from backend.lib.permissions import require_roles
 from backend.lib.residency import resolve_residency
 from backend.models.championship import Championship
 from backend.models.user import Roles, User
-from flask import Blueprint, jsonify
-from google.cloud import ndb
 
 logger = logging.getLogger(__name__)
 

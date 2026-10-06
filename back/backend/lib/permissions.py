@@ -1,8 +1,9 @@
 from functools import wraps
 
-from backend.models.user import Roles
 from flask import jsonify
 from google.cloud import ndb
+
+from backend.models.user import Roles
 
 client = ndb.Client()
 

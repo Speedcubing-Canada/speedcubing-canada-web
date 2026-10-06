@@ -1,7 +1,8 @@
+from google.cloud import ndb
+
 from backend.models.championship import Championship
 from backend.models.wca.event import Event
 from backend.models.wca.result import Result
-from google.cloud import ndb
 
 
 class Champion(ndb.Model):

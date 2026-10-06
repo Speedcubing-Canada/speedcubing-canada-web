@@ -1,11 +1,12 @@
 """Shared react-admin CRUD for the flat "site person" kinds (see ``models/site_person.py``)."""
 
+from flask import Blueprint, jsonify, request
+from google.cloud import ndb
+
 from backend.handlers.admin._list_utils import filter_and_sort as _filter_and_sort
 from backend.handlers.admin._list_utils import paginate_records
 from backend.lib.permissions import require_roles
 from backend.models.user import Roles
-from flask import Blueprint, jsonify, request
-from google.cloud import ndb
 
 _SORT_FIELDS = ("id", "name", "role_en", "position")
 _PERSON_FIELDS = ("name", "wca_id", "role_en", "role_fr", "bio_en", "bio_fr")

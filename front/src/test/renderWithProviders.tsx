@@ -8,7 +8,7 @@ import { red } from "@mui/material/colors";
 import { I18nextProvider } from "react-i18next";
 import { MemoryRouter, Routes, Route } from "react-router";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import i18n from "./i18n";
+import i18n, { type TestI18n } from "./i18n";
 
 const theme = createTheme({ palette: { primary: red } });
 
@@ -37,4 +37,6 @@ export function renderWithProviders(
   );
 }
 
-export { i18n };
+// Same instance, exported with t() narrowed to string so assertions can use it.
+const testI18n = i18n as TestI18n;
+export { testI18n as i18n };

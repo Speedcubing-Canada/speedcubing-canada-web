@@ -77,7 +77,7 @@ export const WcaPersonSearchInput = ({ source, helperText }: Props) => {
       loading={isFetching}
       renderOption={(props, o) => (
         <li {...props} key={o.wca_id}>
-          {o.name} ({o.wca_id}){o.location ? ` — ${o.location}` : ""}
+          {o.name} ({o.wca_id}){o.location ? `, ${o.location}` : ""}
         </li>
       )}
       renderInput={(params) => (

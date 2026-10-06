@@ -1,5 +1,8 @@
 import datetime
 
+from flask import Blueprint, jsonify, request
+from google.cloud import ndb
+
 from backend.handlers.admin._list_utils import filter_and_sort as _filter_and_sort
 from backend.handlers.admin._list_utils import paginate_records
 from backend.lib.permissions import require_roles
@@ -11,8 +14,6 @@ from backend.models.province import Province
 from backend.models.region import Region
 from backend.models.user import Roles
 from backend.models.wca.competition import Competition
-from flask import Blueprint, jsonify, request
-from google.cloud import ndb
 
 bp = Blueprint("edit_championships", __name__)
 client = ndb.Client()

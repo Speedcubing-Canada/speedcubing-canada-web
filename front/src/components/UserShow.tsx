@@ -86,7 +86,7 @@ export const UserRoleChip = () => {
   const { data } = useListContext();
   return (
     <div>
-      {data.map((roleId) => {
+      {data?.map((roleId) => {
         const roleName = t(`translation.account.role.${roleId}`);
         return (
           <ChipField key={roleId} record={{ name: roleName }} source="name" />
@@ -111,6 +111,9 @@ const WcaProfileUrlField = ({ source }: { source: string }) => {
 export const ProvinceField = ({ source }: { source: string }) => {
   const t = useTranslate();
   const record = useRecordContext();
+  if (!record) {
+    return null;
+  }
   const translatedLabel = t(`translation.provinces.${record[source]}`);
 
   return <ChipField record={{ label: translatedLabel }} source="label" />;

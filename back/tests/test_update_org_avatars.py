@@ -3,6 +3,7 @@
 from unittest.mock import MagicMock, patch
 
 import requests
+
 from backend.load_db.update_org_avatars import _fetch_avatar
 
 

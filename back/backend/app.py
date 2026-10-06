@@ -27,71 +27,80 @@ env_path = os.path.join(os.path.dirname(__file__), "../../.env")
 if os.path.exists(env_path):
     load_dotenv(env_path)
 
-app = Flask(__name__)
-if os.environ.get("ENV") == "PROD":
-    client = google.cloud.logging.Client()
-    client.setup_logging()
-    app.config["SESSION_COOKIE_SECURE"] = True
-elif os.environ.get("ENV") == "DEV" and "gunicorn" in sys.argv[0]:
-    logger = logging.getLogger()
-    logger.setLevel(logging.DEBUG)
-    handler = logging.StreamHandler(sys.stdout)
-    formatter = logging.Formatter("[%(asctime)s] [%(levelname)s] %(message)s")
-    handler.setFormatter(formatter)
-    logger.addHandler(handler)
 
-app.secret_key = get_secret("SESSION_SECRET_KEY")
-app.permanent_session_lifetime = datetime.timedelta(days=7)
-address = get_secret("FRONT_ADDRESS")
+def _setup_logging(app):
+    if os.environ.get("ENV") == "PROD":
+        client = google.cloud.logging.Client()
+        client.setup_logging()
+        app.config["SESSION_COOKIE_SECURE"] = True
+    elif os.environ.get("ENV") == "DEV" and "gunicorn" in sys.argv[0]:
+        logger = logging.getLogger()
+        logger.setLevel(logging.DEBUG)
+        handler = logging.StreamHandler(sys.stdout)
+        formatter = logging.Formatter("[%(asctime)s] [%(levelname)s] %(message)s")
+        handler.setFormatter(formatter)
+        logger.addHandler(handler)
 
-allowed_origins = [address]
-if os.environ.get("ENV") == "DEV":
-    allowed_origins.extend(
-        [
-            "http://localhost",
-            "http://127.0.0.1",
-            "http://localhost:80",
-            "http://127.0.0.1:80",
-            "http://localhost:2003",
-            "http://127.0.0.1:2003",
-        ],
+
+def create_app():
+    app = Flask(__name__)
+    _setup_logging(app)
+
+    app.secret_key = get_secret("SESSION_SECRET_KEY")
+    app.permanent_session_lifetime = datetime.timedelta(days=7)
+    address = get_secret("FRONT_ADDRESS")
+
+    allowed_origins = [address]
+    if os.environ.get("ENV") == "DEV":
+        allowed_origins.extend(
+            [
+                "http://localhost",
+                "http://127.0.0.1",
+                "http://localhost:80",
+                "http://127.0.0.1:80",
+                "http://localhost:2003",
+                "http://127.0.0.1:2003",
+            ],
+        )
+
+    CORS(app, origins=allowed_origins, supports_credentials=True)
+
+    @app.after_request
+    def set_security_headers(response):
+        if os.environ.get("ENV") != "DEV":
+            response.headers["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains"
+        return response
+
+    wca_host = os.environ.get("WCA_HOST")
+    oauth = OAuth(app)
+    oauth.register(
+        name="wca",
+        client_id=get_secret("WCA_CLIENT_ID"),
+        client_secret=get_secret("WCA_CLIENT_SECRET"),
+        access_token_url=urljoin(wca_host, "/oauth/token"),
+        access_token_params=None,
+        authorize_url=urljoin(wca_host, "/oauth/authorize"),
+        authorize_params=None,
+        api_base_url=urljoin(wca_host, "/api/v0/"),
+        token_endpoint_auth_method="client_secret_post",
+        client_kwargs={"scope": "public email dob"},
     )
 
-CORS(app, origins=allowed_origins, supports_credentials=True)
+    app.register_blueprint(admin_bp)
+    app.register_blueprint(create_auth_bp(oauth))
+    app.register_blueprint(champions_table_bp)
+    app.register_blueprint(championship_eligibility_bp)
+    app.register_blueprint(delegates_bp)
+    app.register_blueprint(teams_bp)
+    app.register_blueprint(people_bp)
+    app.register_blueprint(regional_bp)
+    app.register_blueprint(province_rankings_bp)
+    app.register_blueprint(user_bp)
+
+    # Serve every route at both / (legacy api.* domain) and /api (same-origin via dispatch).
+    app.wsgi_app = DispatcherMiddleware(app.wsgi_app, {"/api": app.wsgi_app})
+    return app
 
 
-@app.after_request
-def set_security_headers(response):
-    if os.environ.get("ENV") != "DEV":
-        response.headers["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains"
-    return response
-
-
-wca_host = os.environ.get("WCA_HOST")
-oauth = OAuth(app)
-oauth.register(
-    name="wca",
-    client_id=get_secret("WCA_CLIENT_ID"),
-    client_secret=get_secret("WCA_CLIENT_SECRET"),
-    access_token_url=urljoin(wca_host, "/oauth/token"),
-    access_token_params=None,
-    authorize_url=urljoin(wca_host, "/oauth/authorize"),
-    authorize_params=None,
-    api_base_url=urljoin(wca_host, "/api/v0/"),
-    token_endpoint_auth_method="client_secret_post",
-    client_kwargs={"scope": "public email dob"},
-)
-
-app.register_blueprint(admin_bp)
-app.register_blueprint(create_auth_bp(oauth))
-app.register_blueprint(champions_table_bp)
-app.register_blueprint(championship_eligibility_bp)
-app.register_blueprint(delegates_bp)
-app.register_blueprint(teams_bp)
-app.register_blueprint(people_bp)
-app.register_blueprint(regional_bp)
-app.register_blueprint(province_rankings_bp)
-app.register_blueprint(user_bp)
-
-# Serve every route at both / (legacy api.* domain) and /api (same-origin via dispatch).
-app.wsgi_app = DispatcherMiddleware(app.wsgi_app, {"/api": app.wsgi_app})
+# gunicorn entry point (back/Dockerfile, back/api.*.yaml): backend.app:app
+app = create_app()
