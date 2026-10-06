@@ -33,7 +33,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
 
       - name: Set up Node.js 24
         uses: actions/setup-node@v6
@@ -61,7 +61,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
 
       # `services:` cannot override the image's command, and it does not start the emulator itself.
       - name: Start Datastore emulator
@@ -113,7 +113,7 @@ jobs:
       version: ${{ steps.slug.outputs.version }}
 
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
 
       # App Engine version names must be lowercase letters, digits, or hyphens
       # and start with a letter. "ci-<8-char-sha>" satisfies all constraints.
@@ -246,7 +246,7 @@ jobs:
     environment: production # pauses here for manual approval
 
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
 
       - name: Set up Node.js 24
         uses: actions/setup-node@v6
