@@ -1,4 +1,4 @@
-FROM node:24-slim AS development
+FROM node:25-slim AS development
 ENV NODE_ENV=development
 ENV VITE_BUILD_MODE=production
 
