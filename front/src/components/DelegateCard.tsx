@@ -53,8 +53,8 @@ export const DelegateCard = ({
     showRegionGroup && regionGroupKey
       ? t(`delegates.regionGroup.${regionGroupKey}`)
       : delegate.province
-      ? t(`provinces.${delegate.province}`)
-      : undefined;
+        ? t(`provinces.${delegate.province}`)
+        : undefined;
 
   return (
     <PersonCard

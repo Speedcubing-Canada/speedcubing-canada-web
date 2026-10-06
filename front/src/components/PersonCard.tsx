@@ -40,7 +40,7 @@ export const PersonCard = ({
     ? data && !data.avatarIsDefault
       ? data.avatarThumbUrl
       : undefined
-    : avatarUrl ?? undefined;
+    : (avatarUrl ?? undefined);
 
   const linkProps = wcaId
     ? {

@@ -128,13 +128,13 @@ function NextChampionshipSection({
               upcoming.registration_status === "open"
                 ? t("championships.registrationOpen")
                 : upcoming.registration_status === "closed"
-                ? t("championships.registrationClosed")
-                : upcoming.registration_status === "not_open" &&
-                  upcoming.registration_open
-                ? t("championships.registrationOpens", {
-                    date: formatDate(upcoming.registration_open, locale),
-                  })
-                : t("championships.registrationTbd")
+                  ? t("championships.registrationClosed")
+                  : upcoming.registration_status === "not_open" &&
+                      upcoming.registration_open
+                    ? t("championships.registrationOpens", {
+                        date: formatDate(upcoming.registration_open, locale),
+                      })
+                    : t("championships.registrationTbd")
             }
           />
         </Stack>

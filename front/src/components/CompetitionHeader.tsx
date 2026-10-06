@@ -36,12 +36,12 @@ export const CompetitionHeader = ({
                   date: formatDate(registrationOpen),
                 })
               : doSeriesRegistrationsDiffer
-              ? t("competition.registration.differentopen", {
-                  date: formatDate(registrationOpen),
-                })
-              : t("competition.registration.before", {
-                  date: formatDate(registrationOpen),
-                })}
+                ? t("competition.registration.differentopen", {
+                    date: formatDate(registrationOpen),
+                  })
+                : t("competition.registration.before", {
+                    date: formatDate(registrationOpen),
+                  })}
             {hasRegistrationClosed
               ? t("competition.registration.closed", {
                   date: formatDate(registrationClose),
