@@ -15,7 +15,7 @@
     "dayjs": "^1.11.23",
     "express": "^5.1.0",
     "helmet": "^8.3.0",
-    "i18next": "^21.6.16",
+    "i18next": "^26.4.2",
     "ra-i18n-polyglot": "^5.15.4",
     "ra-language-english": "^5.15.4",
     "ra-language-french": "^5.15.4",
