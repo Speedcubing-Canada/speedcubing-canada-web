@@ -48,7 +48,7 @@ def email_championship_organizers():
 
         # Get competition details from WCA API
         try:
-            response = requests.get(f"https://api.worldcubeassociation.org/competitions/{comp.key.id()}/wcif/public")
+            response = requests.get(f"https://api.worldcubeassociation.org/competitions/{comp.key.id()}/wcif/version/2")
             if response.status_code != 200:
                 logger.error("Failed to get WCIF for %s: %s", comp.key.id(), response.status_code)
                 continue

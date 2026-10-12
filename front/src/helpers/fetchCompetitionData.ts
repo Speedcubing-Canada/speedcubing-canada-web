@@ -8,7 +8,7 @@ export const fetchCompetitionData = async (
     fetch(`${LINKS.WCA.API.COMPETITION_INFO}${compId}`).then((response) =>
       response.json(),
     ),
-    fetch(`${LINKS.WCA.API.COMPETITION_INFO}${compId}/wcif/public`).then(
+    fetch(`${LINKS.WCA.API.COMPETITION_INFO}${compId}/wcif/version/2`).then(
       (response) => response.json(),
     ),
   ]);
