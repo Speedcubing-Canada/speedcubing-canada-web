@@ -1,4 +1,4 @@
-# Minor+patch grouped into one PR per ecosystem; majors arrive individually.
+# One PR for minor+patch and one for majors, per ecosystem.
 version: 2
 updates:
   - package-ecosystem: pip
@@ -8,6 +8,8 @@ updates:
     groups:
       python:
         update-types: [minor, patch]
+      python-major:
+        update-types: [major]
 
   - package-ecosystem: npm
     # The lockfile lives at the workspace root, not in front/.
@@ -17,6 +19,8 @@ updates:
     groups:
       npm:
         update-types: [minor, patch]
+      npm-major:
+        update-types: [major]
     ignore:
       # react-router 8 requires React 19, and react-admin 5 still caps react-router
       # at ^7. Revisit once react-admin ships a React 19 compatible major.
@@ -26,6 +30,12 @@ updates:
         update-types: [version-update:semver-major]
       - dependency-name: react-dom
         update-types: [version-update:semver-major]
+      # Tracks the Node runtime major (CI node-version); bump together.
+      - dependency-name: "@types/node"
+        update-types: [version-update:semver-major]
+      # MUI majors (material, x-data-grid, x-date-pickers...) must move together.
+      - dependency-name: "@mui/*"
+        update-types: [version-update:semver-major]
 
   - package-ecosystem: github-actions
     directory: /
@@ -34,6 +44,8 @@ updates:
     groups:
       actions:
         update-types: [minor, patch]
+      actions-major:
+        update-types: [major]
 
   - package-ecosystem: docker
     directories:
@@ -41,3 +53,6 @@ updates:
       - /back
     schedule:
       interval: weekly
+    groups:
+      docker:
+        patterns: ["*"]
