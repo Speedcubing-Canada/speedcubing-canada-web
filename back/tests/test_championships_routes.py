@@ -85,7 +85,7 @@ def test_to_json_shape():
 # regional: registration_status / _upcoming_championship
 # ---------------------------------------------------------------------------
 
-NOW = datetime.datetime(2026, 6, 20, tzinfo=datetime.timezone.utc)
+NOW = datetime.datetime(2026, 6, 20, tzinfo=datetime.UTC)
 
 
 def test_registration_status_unknown_when_no_dates():
@@ -93,19 +93,19 @@ def test_registration_status_unknown_when_no_dates():
 
 
 def test_registration_status_not_open():
-    later = datetime.datetime(2026, 7, 1, tzinfo=datetime.timezone.utc)
+    later = datetime.datetime(2026, 7, 1, tzinfo=datetime.UTC)
     assert registration_status(later, None, NOW) == "not_open"
 
 
 def test_registration_status_closed():
-    opened = datetime.datetime(2026, 1, 1, tzinfo=datetime.timezone.utc)
-    closed = datetime.datetime(2026, 6, 1, tzinfo=datetime.timezone.utc)
+    opened = datetime.datetime(2026, 1, 1, tzinfo=datetime.UTC)
+    closed = datetime.datetime(2026, 6, 1, tzinfo=datetime.UTC)
     assert registration_status(opened, closed, NOW) == "closed"
 
 
 def test_registration_status_open():
-    opened = datetime.datetime(2026, 1, 1, tzinfo=datetime.timezone.utc)
-    closes = datetime.datetime(2026, 12, 1, tzinfo=datetime.timezone.utc)
+    opened = datetime.datetime(2026, 1, 1, tzinfo=datetime.UTC)
+    closes = datetime.datetime(2026, 12, 1, tzinfo=datetime.UTC)
     assert registration_status(opened, closes, NOW) == "open"
 
 
@@ -322,7 +322,7 @@ def test_apply_fields_deadline_is_comparable_in_resolve_residency(ndb_context):
 # regional.fetch_registration
 # ---------------------------------------------------------------------------
 
-REG_NOW = datetime.datetime(2026, 6, 20, tzinfo=datetime.timezone.utc)
+REG_NOW = datetime.datetime(2026, 6, 20, tzinfo=datetime.UTC)
 
 
 @patch("backend.handlers.regional.requests")

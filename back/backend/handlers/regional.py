@@ -44,7 +44,7 @@ def fetch_registration(competition_id, now=None):
     strings, status derived from ``now``), or ``None`` if the WCA API can't be
     reached. Only called for the small set of upcoming championships.
     """
-    now = now or datetime.datetime.now(datetime.timezone.utc)
+    now = now or datetime.datetime.now(datetime.UTC)
     try:
         resp = requests.get(f"{_WCA_COMPETITION_BASE_URL}/{competition_id}", timeout=10)
         if resp.status_code != 200:
