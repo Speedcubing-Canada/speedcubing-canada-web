@@ -11,3 +11,4 @@ interface ImportMeta {
 
 // @svg-maps/canada ships no type declarations; CanadaRegionMap casts the import.
 declare module "@svg-maps/canada";
+declare module "*.css";
