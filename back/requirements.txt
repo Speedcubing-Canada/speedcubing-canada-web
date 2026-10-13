@@ -5,7 +5,7 @@ Authlib==1.8.0
 google-cloud-logging==3.17.0
 google-cloud-ndb==2.7.1
 google-cloud-secret-manager==2.31.0
-absl-py==2.5.0
+absl-py==2.5.1
 flask-cors==6.0.5
 requests==2.34.2
 six==1.17.0
