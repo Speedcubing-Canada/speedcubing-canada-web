@@ -5,7 +5,7 @@
     "front"
   ],
   "scripts": {
-    "prepare": "husky install"
+    "prepare": "husky"
   },
   "overrides": {
     "lodash": "4.18.1",

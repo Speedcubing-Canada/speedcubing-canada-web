@@ -1,6 +1,3 @@
-#!/usr/bin/env sh
-. "$(dirname -- "$0")/_/husky.sh"
-
 # oxlint --fix and prettier --write both match staged .ts/.tsx files, so the
 # tasks have to run one after another rather than racing on the same file.
 npx lint-staged --concurrent false
