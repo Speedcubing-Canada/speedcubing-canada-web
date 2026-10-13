@@ -71,7 +71,7 @@ def championship_eligibility(championship_id):
     if not competition:
         return jsonify({"error": "Competition not found"}), 404
 
-    wcif_url = f"https://api.worldcubeassociation.org/competitions/{competition.key.id()}/wcif/public"
+    wcif_url = f"https://api.worldcubeassociation.org/competitions/{competition.key.id()}/wcif/version/2"
     try:
         resp = requests.get(wcif_url, timeout=15)
         if resp.status_code != 200:
