@@ -56,3 +56,7 @@ updates:
     groups:
       docker:
         patterns: ["*"]
+    ignore:
+      # Node major moves with CI node-version and @types/node.
+      - dependency-name: node
+        update-types: [version-update:semver-major]
