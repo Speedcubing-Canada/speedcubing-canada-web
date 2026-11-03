@@ -108,6 +108,9 @@
 .cubing-icon.event-sq1:before {
   content: "\EA15";
 }
+.cubing-icon.event-fto:before {
+  content: "\EA28";
+}
 .cubing-icon.penalty-10e3:before {
   content: "\EA16";
 }
