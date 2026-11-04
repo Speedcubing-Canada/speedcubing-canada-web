@@ -17,4 +17,4 @@ COPY . .
 EXPOSE 8000
 
 ENTRYPOINT ["gunicorn"]
-CMD ["-b", "0.0.0.0:8000", "backend.app:app"]
+CMD ["-b", "0.0.0.0:8000", "--threads", "4", "--timeout", "600", "backend.app:app"]
