@@ -1,5 +1,4 @@
-import { API_BASE_URL } from "../components/api";
-import httpClient from "../httpClient";
+import { fetchCollection } from "./fetchCollection";
 
 // Shape returned by the backend /teams endpoint (handlers/teams.py).
 export interface TeamMember {
@@ -22,12 +21,5 @@ export interface Team {
   members: TeamMember[];
 }
 
-export const fetchTeams = async (): Promise<Team[]> => {
-  const res = await httpClient.get<Team[]>(`${API_BASE_URL}/teams`);
-  if (!res.ok) {
-    throw new Error(
-      typeof res.error === "string" ? res.error : "Failed to load teams",
-    );
-  }
-  return res.data ?? [];
-};
+export const fetchTeams = (): Promise<Team[]> =>
+  fetchCollection<Team>("/teams", "teams");

@@ -1,10 +1,10 @@
-import { LINKS } from "../pages/links";
+import { formatLink, LINKS } from "../pages/links";
 import { CompetitionSeries } from "../types";
 import { fetchCompetitionData } from "./fetchCompetitionData";
 
 export const fetchSeriesData = async (seriesId: string) => {
   const response = await fetch(
-    `${LINKS.WCA.API.COMPETITION_SERIES}${seriesId}`,
+    formatLink(LINKS.WCA.API.COMPETITION_SERIES, { seriesId }),
   );
   const seriesData: CompetitionSeries = await response.json();
 

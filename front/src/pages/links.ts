@@ -15,14 +15,16 @@ export const LINKS = {
       "https://www.worldcubeassociation.org/competitions/CanadianOpen2007",
     API: {
       COMPETITION_INFO:
-        "https://www.worldcubeassociation.org/api/v0/competitions/",
+        "https://www.worldcubeassociation.org/api/v0/competitions/{compId}",
+      COMPETITION_WCIF:
+        "https://www.worldcubeassociation.org/api/v0/competitions/{compId}/wcif/version/2",
       COMPETITION_SERIES:
-        "https://www.worldcubeassociation.org/api/v0/competition_series/",
-      PERSON: "https://www.worldcubeassociation.org/api/v0/persons/",
+        "https://www.worldcubeassociation.org/api/v0/competition_series/{seriesId}",
+      PERSON: "https://www.worldcubeassociation.org/api/v0/persons/{wcaId}",
       SEARCH_USERS:
-        "https://www.worldcubeassociation.org/api/v0/search/users?persons_table=true&q=",
+        "https://www.worldcubeassociation.org/api/v0/search/users?persons_table=true&q={query}",
     },
-    PROFILE: "https://www.worldcubeassociation.org/persons/",
+    PROFILE: "https://www.worldcubeassociation.org/persons/{wcaId}",
   },
   FIRST_COMP: "https://youtu.be/xK2ycvTfgUY",
   FIRST_COMP_FR: "https://youtu.be/yYZHzTc0GMc",
@@ -33,3 +35,33 @@ export const LINKS = {
     "https://docs.google.com/document/d/1ufNHCLll9U3Tz1cZWlcc3pW-6-m0ElCy-8dfKAOugDA",
   REPORT: "mailto:software@speedcubingcanada.org",
 } as const;
+
+/** Extracts the `{placeholder}` names from a template string. */
+type PlaceholderKeys<T extends string> =
+  T extends `${string}{${infer Key}}${infer Rest}`
+    ? Key | PlaceholderKeys<Rest>
+    : never;
+
+/** The parameter object required to fill a link template. */
+type LinkParams<T extends string> = {
+  [K in PlaceholderKeys<T>]: string | number | boolean;
+};
+
+/** Fills `{placeholder}`s in a `LINKS` template and URL-encodes each value. */
+export function formatLink<T extends string>(
+  template: T,
+  params: LinkParams<T>,
+): string {
+  const values: Record<string, string | number | boolean | null | undefined> =
+    params;
+
+  return template.replaceAll(/\{([^{}]+)\}/g, (_, key: string) => {
+    const value = values[key];
+    if (value == null) {
+      throw new Error(
+        `Missing link parameter "${key}" for template "${template}"`,
+      );
+    }
+    return encodeURIComponent(String(value));
+  });
+}

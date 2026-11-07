@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react";
 import {
   Admin,
   Resource,
@@ -12,11 +11,14 @@ import EmojiEventsIcon from "@mui/icons-material/EmojiEvents";
 import GroupsIcon from "@mui/icons-material/Groups";
 import GavelIcon from "@mui/icons-material/Gavel";
 import StarIcon from "@mui/icons-material/Star";
-import CircularProgress from "@mui/material/CircularProgress";
-import Alert from "@mui/material/Alert";
-import { Box, Container } from "@mui/material";
+import {
+  Alert,
+  Box,
+  CircularProgress,
+  Container,
+  IconButton,
+} from "@mui/material";
 import HomeIcon from "@mui/icons-material/Home";
-import { IconButton } from "@mui/material";
 
 import { UserList } from "../components/UserList";
 import { ChampionshipList } from "../components/ChampionshipList";
@@ -32,28 +34,15 @@ import { PersonEdit } from "../components/PersonEdit";
 import { PersonCreate } from "../components/PersonCreate";
 import { PersonShow } from "../components/PersonShow";
 import dataProvider from "../dataProvider";
-import httpClient from "../httpClient";
-import { API_BASE_URL } from "../components/api";
-import { User } from "../types";
 import { AdminDashboard } from "../components/AdminDashboard";
 import { UserEdit } from "../components/UserEdit";
 import { UserShow } from "../components/UserShow";
 import { i18nProvider } from "../i18nProvider";
 import { isAdmin } from "../components/roles";
+import { useCurrentUser } from "../helpers/useCurrentUser";
 
 export const AdminPage = () => {
-  const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    void (async () => {
-      const response = await httpClient.get<User>(API_BASE_URL + "/user_info");
-      if (response.ok && response.data) {
-        setUser(response.data);
-      } // the else case is expected when user is not logged in (401)
-      setLoading(false);
-    })();
-  }, []);
+  const { user, loading } = useCurrentUser();
 
   const userIsAdmin = isAdmin(user);
 

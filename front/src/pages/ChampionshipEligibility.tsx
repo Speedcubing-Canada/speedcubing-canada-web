@@ -1,4 +1,4 @@
-import { useEffect, useState, MouseEvent, SyntheticEvent } from "react";
+import { useEffect, useState, SyntheticEvent } from "react";
 import { useTranslation } from "react-i18next";
 import {
   Alert,
@@ -14,16 +14,19 @@ import {
   ToggleButtonGroup,
   Typography,
 } from "@mui/material";
-import { DataGrid, GridColDef, frFR, enUS } from "@mui/x-data-grid";
+import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import DownloadIcon from "@mui/icons-material/Download";
 
 import { API_BASE_URL } from "../components/api";
 import httpClient from "../httpClient";
 import { hasDelegateOrAdminRole } from "../components/roles";
-import { User, ACTIVE_EVENTS, EventID } from "../types";
+import { ACTIVE_EVENTS, EventID } from "../types";
 import { MyCubingIcon } from "../components/MyCubingIcon";
-import UseResponsiveQuery from "../components/UseResponsiveQuery";
-import { getLocaleOrFallback, SAVED_LOCALE_KEY } from "../locale";
+import { useResponsiveQuery } from "../components/useResponsiveQuery";
+import { getLocaleOrFallback } from "../locale";
+import { dataGridLocaleText } from "../helpers/dataGridLocale";
+import { useCurrentUser } from "../helpers/useCurrentUser";
+import { formatLink, LINKS } from "./links";
 
 interface ChampionshipSummary {
   id: string;
@@ -74,7 +77,9 @@ const exportCSV = (data: EligibilityData) => {
     c.eligible === true ? "Yes" : c.eligible === false ? "No" : "Unknown",
   ]);
   const csvContent = [header, ...rows]
-    .map((row) => row.map((cell) => `"${cell}"`).join(","))
+    .map((row) =>
+      row.map((cell) => `"${cell.replaceAll('"', '""')}"`).join(","),
+    )
     .join("\n");
 
   const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
@@ -87,14 +92,12 @@ const exportCSV = (data: EligibilityData) => {
 };
 
 export const ChampionshipEligibility = () => {
-  const { t } = useTranslation();
-  const isSmall = UseResponsiveQuery("sm");
-  const locale = getLocaleOrFallback(
-    localStorage.getItem(SAVED_LOCALE_KEY) ?? "",
-  );
+  const { t, i18n } = useTranslation();
+  const isSmall = useResponsiveQuery("sm");
+  const locale = getLocaleOrFallback(i18n.language);
 
-  const [user, setUser] = useState<User | null>(null);
-  const [userLoading, setUserLoading] = useState(true);
+  const { user, loading: userLoading } = useCurrentUser();
+  const isAllowed = hasDelegateOrAdminRole(user);
 
   const [championships, setChampionships] = useState<ChampionshipSummary[]>([]);
   const [champLoading, setChampLoading] = useState(false);
@@ -107,15 +110,7 @@ export const ChampionshipEligibility = () => {
   const [eventId, setEventId] = useState<EventID>("333");
 
   useEffect(() => {
-    void (async () => {
-      const resp = await httpClient.get<User>(API_BASE_URL + "/user_info");
-      if (resp.ok && resp.data) setUser(resp.data);
-      setUserLoading(false);
-    })();
-  }, []);
-
-  useEffect(() => {
-    if (!hasDelegateOrAdminRole(user)) return;
+    if (!isAllowed) return;
     setChampLoading(true);
     void (async () => {
       const resp = await httpClient.get<ChampionshipSummary[]>(
@@ -124,7 +119,7 @@ export const ChampionshipEligibility = () => {
       if (resp.ok && resp.data) setChampionships(resp.data);
       setChampLoading(false);
     })();
-  }, [user]);
+  }, [isAllowed]);
 
   useEffect(() => {
     if (!selected) return;
@@ -144,18 +139,9 @@ export const ChampionshipEligibility = () => {
     })();
   }, [selected]);
 
-  const handleEventChange = (
-    _: MouseEvent<HTMLElement>,
-    newEvent: EventID | null,
-  ) => {
+  // Shared by the desktop toggle group and the mobile autocomplete.
+  const handleEventChange = (_: SyntheticEvent, newEvent: EventID | null) => {
     if (newEvent != null) setEventId(newEvent);
-  };
-
-  const handleEventChangeMobile = (
-    _: SyntheticEvent,
-    newValue: EventID | null,
-  ) => {
-    if (newValue != null) setEventId(newValue);
   };
 
   if (userLoading) {
@@ -168,7 +154,7 @@ export const ChampionshipEligibility = () => {
     );
   }
 
-  if (!hasDelegateOrAdminRole(user)) {
+  if (!isAllowed) {
     return (
       <Container maxWidth="md">
         <Box marginY="4rem">
@@ -198,6 +184,16 @@ export const ChampionshipEligibility = () => {
     return diff === 0 ? a.name.localeCompare(b.name) : diff;
   });
 
+  const counts = competitors.reduce(
+    (acc, competitor) => {
+      if (competitor.eligible === true) acc.eligible += 1;
+      else if (competitor.eligible === false) acc.ineligible += 1;
+      else acc.unknown += 1;
+      return acc;
+    },
+    { eligible: 0, ineligible: 0, unknown: 0 },
+  );
+
   const columns: GridColDef[] = [
     {
       field: "name",
@@ -206,7 +202,9 @@ export const ChampionshipEligibility = () => {
       minWidth: 160,
       renderCell: (params) => (
         <Link
-          href={`https://worldcubeassociation.org/persons/${params.row.wca_id}`}
+          href={formatLink(LINKS.WCA.PROFILE, {
+            wcaId: params.row.wca_id,
+          })}
           target="_blank"
           rel="noopener noreferrer"
         >
@@ -327,7 +325,7 @@ export const ChampionshipEligibility = () => {
               options={eventsInChampionship}
               sx={{ width: 300, mb: 2 }}
               value={currentEvent ?? null}
-              onChange={handleEventChangeMobile}
+              onChange={handleEventChange}
               getOptionLabel={(e) => t("events._" + e)}
               renderInput={(params) => (
                 <TextField {...params} label={t("eligibility.event")} />
@@ -359,23 +357,20 @@ export const ChampionshipEligibility = () => {
                   size="small"
                   color="success"
                   label={t("eligibility.eligibleCount", {
-                    count: competitors.filter((c) => c.eligible === true)
-                      .length,
+                    count: counts.eligible,
                   })}
                 />
                 <Chip
                   size="small"
                   color="error"
                   label={t("eligibility.ineligibleCount", {
-                    count: competitors.filter((c) => c.eligible === false)
-                      .length,
+                    count: counts.ineligible,
                   })}
                 />
                 <Chip
                   size="small"
                   label={t("eligibility.unknownCount", {
-                    count: competitors.filter((c) => c.eligible === null)
-                      .length,
+                    count: counts.unknown,
                   })}
                 />
               </Box>
@@ -390,11 +385,7 @@ export const ChampionshipEligibility = () => {
                   columns={columns}
                   hideFooter={rows.length <= 100}
                   disableRowSelectionOnClick
-                  localeText={
-                    locale === "fr"
-                      ? frFR.components.MuiDataGrid.defaultProps.localeText
-                      : enUS.components.MuiDataGrid.defaultProps.localeText
-                  }
+                  localeText={dataGridLocaleText(locale)}
                 />
               </Box>
             </>

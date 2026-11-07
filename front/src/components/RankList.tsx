@@ -1,17 +1,17 @@
 import React from "react";
-import { DataGrid, GridColDef, frFR, enUS } from "@mui/x-data-grid";
+import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { Box, Link } from "@mui/material";
 import { Ranking } from "../types";
 import { useTranslation } from "react-i18next";
-import { getLocaleOrFallback, SAVED_LOCALE_KEY } from "../locale";
-import useResponsiveQuery from "./UseResponsiveQuery";
+import { getLocaleOrFallback } from "../locale";
+import { dataGridLocaleText } from "../helpers/dataGridLocale";
+import { formatLink, LINKS } from "../pages/links";
+import { useResponsiveQuery } from "./useResponsiveQuery";
 
 export const RankList: React.FC<{ data: Ranking[] }> = ({ data }) => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const isSmall = useResponsiveQuery("sm");
-
-  const savedLocale = localStorage.getItem(SAVED_LOCALE_KEY) as string;
-  const locale = getLocaleOrFallback(savedLocale);
+  const locale = getLocaleOrFallback(i18n.language);
 
   const columns: GridColDef[] = [
     { field: "rank", headerName: t("ranklist.rank"), width: isSmall ? 50 : 90 },
@@ -21,7 +21,9 @@ export const RankList: React.FC<{ data: Ranking[] }> = ({ data }) => {
       width: isSmall ? 210 : 300,
       renderCell: (params) => (
         <Link
-          href={`https://worldcubeassociation.org/persons/${params.row.wca_id}`}
+          href={formatLink(LINKS.WCA.PROFILE, {
+            wcaId: params.row.wca_id,
+          })}
           target="_blank"
           rel="noopener noreferrer"
         >
@@ -49,11 +51,7 @@ export const RankList: React.FC<{ data: Ranking[] }> = ({ data }) => {
       <DataGrid
         rows={rows}
         columns={columns}
-        localeText={
-          locale === "fr"
-            ? frFR.components.MuiDataGrid.defaultProps.localeText
-            : enUS.components.MuiDataGrid.defaultProps.localeText
-        }
+        localeText={dataGridLocaleText(locale)}
       />
     </Box>
   );

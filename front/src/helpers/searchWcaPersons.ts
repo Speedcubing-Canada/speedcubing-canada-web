@@ -1,4 +1,4 @@
-import { LINKS } from "../pages/links";
+import { formatLink, LINKS } from "../pages/links";
 
 export interface WcaSearchResult {
   wca_id: string;
@@ -17,7 +17,7 @@ export const searchWcaPersons = async (
   }
   try {
     const res = await fetch(
-      `${LINKS.WCA.API.SEARCH_USERS}${encodeURIComponent(q)}`,
+      formatLink(LINKS.WCA.API.SEARCH_USERS, { query: q }),
     );
     if (!res.ok) {
       return [];

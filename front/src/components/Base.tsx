@@ -15,7 +15,6 @@ import {
   Menu,
   MenuItem,
   Collapse,
-  useMediaQuery,
   useTheme,
 } from "@mui/material";
 
@@ -40,33 +39,7 @@ import { getLocaleOrFallback, SAVED_LOCALE_KEY } from "../locale";
 import { LoadingPageLinear } from "./LoadingPageLinear";
 import { useScrollbarWidth } from "../helpers/scrollbarWidth";
 import { useBodyScrollable } from "../helpers/useBodyScrollable";
-
-// Flat list of every public leaf route. App.tsx maps over this to generate the
-// locale-less redirects (e.g. "/about" -> "/en/about"), so it must contain
-// every navigable page (but not the "information" grouping, which has no page).
-export const ROUTE_NAMES = [
-  "home",
-  "about",
-  "organization",
-  "faq",
-  "delegates",
-  "documents",
-  "rankings",
-  "championships",
-  "account",
-] as const;
-
-const ICONS = {
-  home: Home,
-  about: Info,
-  organization: CorporateFare,
-  faq: QuestionAnswer,
-  delegates: Groups,
-  documents: Description,
-  account: AccountCircle,
-  rankings: Leaderboard,
-  championships: EmojiEvents,
-} as const;
+import { useResponsiveQuery } from "./useResponsiveQuery";
 
 const ROUTE_NAME_TO_PATH = {
   home: "",
@@ -80,7 +53,24 @@ const ROUTE_NAME_TO_PATH = {
   account: "account",
 } as const;
 
-type RouteName = (typeof ROUTE_NAMES)[number];
+type RouteName = keyof typeof ROUTE_NAME_TO_PATH;
+
+// Flat list of every public leaf route. App.tsx maps over this to generate the
+// locale-less redirects (e.g. "/about" -> "/en/about"), so it must contain
+// every navigable page (but not the "information" grouping, which has no page).
+export const ROUTE_NAMES = Object.keys(ROUTE_NAME_TO_PATH) as RouteName[];
+
+const ICONS = {
+  home: Home,
+  about: Info,
+  organization: CorporateFare,
+  faq: QuestionAnswer,
+  delegates: Groups,
+  documents: Description,
+  account: AccountCircle,
+  rankings: Leaderboard,
+  championships: EmojiEvents,
+} as const;
 
 // The bottom bar / drawer is a shallow tree: mostly single leaves, plus one
 // "information" group that expands to a handful of secondary pages.
@@ -130,7 +120,7 @@ export const Base = () => {
     ? getLocaleOrFallback(params.locale as string)
     : getLocaleOrFallback(savedLocale);
   const theme = useTheme();
-  const isSmall = useMediaQuery(theme.breakpoints.down("sm"));
+  const isSmall = useResponsiveQuery("sm");
 
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [menuAnchor, setMenuAnchor] = useState<null | HTMLElement>(null);

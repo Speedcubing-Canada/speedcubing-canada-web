@@ -1,12 +1,4 @@
-import {
-  Box,
-  Container,
-  Drawer,
-  Stack,
-  Typography,
-  useMediaQuery,
-} from "@mui/material";
-import { useTheme } from "@mui/material/styles";
+import { Box, Container, Drawer, Stack, Typography } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
@@ -20,6 +12,7 @@ import {
   RegionId,
   RegionInfo,
 } from "../components/championships/data";
+import { useResponsiveQuery } from "../components/useResponsiveQuery";
 
 function LegendSwatch({
   color,
@@ -53,8 +46,7 @@ function LegendSwatch({
 
 export const Championships: React.FC = () => {
   const { t } = useTranslation();
-  const theme = useTheme();
-  const isSmall = useMediaQuery(theme.breakpoints.down("md"));
+  const isSmall = useResponsiveQuery("md");
   const [selected, setSelected] = useState<RegionId | null>(null);
   const [regions, setRegions] = useState<Partial<Record<RegionId, RegionInfo>>>(
     {},

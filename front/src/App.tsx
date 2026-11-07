@@ -8,6 +8,7 @@ import { Base as NavBar, ROUTE_NAMES } from "./components/Base";
 import {
   DEFAULT_LOCALE,
   getLocaleOrFallback,
+  isSupportedLocale,
   resources,
   SAVED_LOCALE_KEY,
 } from "./locale";
@@ -65,12 +66,11 @@ const Championships = React.lazy(() =>
 
 const getInitialLocale = () => {
   const pathLocale = window.location.pathname.split("/")[1];
-  if (Object.keys(resources).includes(pathLocale)) {
-    return getLocaleOrFallback(pathLocale);
+  if (isSupportedLocale(pathLocale)) {
+    return pathLocale;
   }
 
-  const savedLocale = localStorage.getItem(SAVED_LOCALE_KEY) ?? "";
-  return getLocaleOrFallback(savedLocale);
+  return getLocaleOrFallback(localStorage.getItem(SAVED_LOCALE_KEY) ?? "");
 };
 
 void i18n.use(initReactI18next).init({
