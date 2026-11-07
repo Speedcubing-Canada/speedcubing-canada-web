@@ -29,7 +29,7 @@ import {
   removeCachedRankingsPreferredProvinceId,
   setCachedRankingsPreferredProvinceId,
 } from "../helpers/rankingsProvinceCache";
-import { useCurrentUser } from "../helpers/useCurrentUser";
+import { CURRENT_USER_KEY, useCurrentUser } from "../helpers/useCurrentUser";
 import { getLocaleOrFallback, SAVED_LOCALE_KEY } from "../locale";
 import { useNavigate } from "react-router";
 
@@ -120,7 +120,7 @@ export const Account = () => {
         removeCachedRankingsPreferredProvinceId();
       }
 
-      queryClient.setQueryData<User | null>(["current-user"], (previousUser) =>
+      queryClient.setQueryData<User | null>(CURRENT_USER_KEY, (previousUser) =>
         previousUser
           ? {
               ...previousUser,
