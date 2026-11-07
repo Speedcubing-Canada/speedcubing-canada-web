@@ -1,7 +1,5 @@
 import CanadaMap from "@svg-maps/canada";
 import { Box } from "@mui/material";
-import useMediaQuery from "@mui/material/useMediaQuery";
-import { useTheme } from "@mui/material/styles";
 import React, {
   useCallback,
   useEffect,
@@ -11,6 +9,7 @@ import React, {
 } from "react";
 import { useTranslation } from "react-i18next";
 import { PROVINCE_REGION, REGION_ORDER, RegionId } from "./data";
+import { useResponsiveQuery } from "../useResponsiveQuery";
 
 interface SvgLocation {
   name: string;
@@ -109,8 +108,7 @@ export const CanadaRegionMap: React.FC<CanadaRegionMapProps> = ({
   announcedRegions,
 }) => {
   const { t } = useTranslation();
-  const theme = useTheme();
-  const isSmall = useMediaQuery(theme.breakpoints.down("md"));
+  const isSmall = useResponsiveQuery("md");
   const svgRef = useRef<SVGSVGElement | null>(null);
   const [hovered, setHovered] = useState<RegionId | null>(null);
   const [viewBox, setViewBox] = useState<Box4>(FULL);

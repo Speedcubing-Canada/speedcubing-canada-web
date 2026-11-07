@@ -19,9 +19,7 @@ export const CompetitionCard = (competition: {
   const registrationOpen = new Date(competition.data.registration_open);
 
   const venueList = competition.wcif.schedule.venues
-    .map((venue: { name: string }) => {
-      return venue.name;
-    })
+    .map((venue) => venue.name)
     .join(", ");
 
   return (

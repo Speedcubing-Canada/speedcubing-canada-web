@@ -18,6 +18,7 @@ import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import "../../cubingicon.css"; // @font-face + .cubing-icon rules (otherwise glyphs don't load here)
 import { EVENTS, EventChampions, fetchChampions, RegionInfo } from "./data";
+import { LINKS } from "../../pages/links";
 
 // Cubing-event glyph (same font classes as MyCubingIcon, so it loads identically),
 // but rendered as a flex box that centres the glyph in its parent square.
@@ -347,7 +348,7 @@ function PastChampionsSection({
                       >
                         {champ.wca_id ? (
                           <a
-                            href={`https://www.worldcubeassociation.org/persons/${champ.wca_id}`}
+                            href={`${LINKS.WCA.PROFILE}${champ.wca_id}`}
                             target="_blank"
                             rel="noopener noreferrer"
                             style={{ color: "inherit", textDecoration: "none" }}

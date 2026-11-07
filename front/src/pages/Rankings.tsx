@@ -23,14 +23,12 @@ import {
 } from "../helpers/rankingsProvinceCache";
 import { RankList } from "../components/RankList";
 import { MyCubingIcon } from "../components/MyCubingIcon";
-import UseResponsiveQuery from "../components/UseResponsiveQuery";
+import { useResponsiveQuery } from "../components/useResponsiveQuery";
 import { useProvincePreference } from "../helpers/useProvincePreference";
-
-const events = ACTIVE_EVENTS;
 
 export const Rankings = () => {
   const { t } = useTranslation();
-  const isSmall = UseResponsiveQuery("sm");
+  const isSmall = useResponsiveQuery("sm");
 
   const { provinces, province, setProvince, provinceInitialized } =
     useProvincePreference();
@@ -39,12 +37,6 @@ export const Rankings = () => {
   const [loading, setLoading] = useState(true);
 
   const [ranking, setRanking] = useState<Ranking[] | null>(null);
-
-  const switchHandler = (event: {
-    target: { checked: boolean | ((prevState: boolean) => boolean) };
-  }) => {
-    setUsingAverage(event.target.checked);
-  };
 
   const handleProvinceChange = (
     _event: React.SyntheticEvent,
@@ -58,23 +50,14 @@ export const Rankings = () => {
     }
   };
 
+  // Shared by the desktop toggle group and the mobile autocomplete.
   const handleEventChange = (
-    _event: React.MouseEvent<HTMLElement>,
+    _event: React.SyntheticEvent,
     newEvent: EventID | null,
   ) => {
-    if (newEvent == null) {
-      return;
+    if (newEvent != null) {
+      setEventId(newEvent);
     }
-    setEventId(newEvent);
-  };
-  const handleEventChangeMobile = (
-    _event: React.SyntheticEvent,
-    newValue: EventID | null,
-  ) => {
-    if (newValue == null) {
-      return;
-    }
-    setEventId(newValue);
   };
 
   useEffect(() => {
@@ -117,7 +100,7 @@ export const Rankings = () => {
       if (response.ok && response.data) {
         setRanking(response.data);
       } else {
-        console.log("Error fetching rankings:", response.error);
+        console.error("Error fetching rankings:", response.error);
       }
       setLoading(false);
     })();
@@ -136,10 +119,10 @@ export const Rankings = () => {
           <Autocomplete
             disablePortal
             id="combo-box-demo"
-            options={events}
+            options={ACTIVE_EVENTS}
             sx={{ width: 300 }}
             value={eventId}
-            onChange={handleEventChangeMobile}
+            onChange={handleEventChange}
             renderInput={(params) => (
               <TextField {...params} label={t("rankings.event")} />
             )}
@@ -151,7 +134,7 @@ export const Rankings = () => {
             exclusive
             onChange={handleEventChange}
           >
-            {events.map((wcaEvent) => (
+            {ACTIVE_EVENTS.map((wcaEvent) => (
               <ToggleButton
                 key={wcaEvent}
                 value={wcaEvent}
@@ -188,7 +171,7 @@ export const Rankings = () => {
             <Typography>{t("rankings.single")}</Typography>
             <Switch
               checked={usingAverage}
-              onChange={switchHandler}
+              onChange={(event) => setUsingAverage(event.target.checked)}
               color="default"
             />
             <Typography>{t("rankings.average")}</Typography>
