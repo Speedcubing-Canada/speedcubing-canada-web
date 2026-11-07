@@ -20,10 +20,8 @@ import {
   TableRow,
   Typography,
 } from "@mui/material";
-import { LINKS } from "../pages/links";
+import { formatLink, LINKS } from "../pages/links";
 import { LocationUpdate } from "../types";
-
-const WCA_PROFILE_URL = LINKS.WCA.PROFILE;
 
 export const UserShow = () => (
   <Show>
@@ -100,7 +98,7 @@ const WcaProfileUrlField = ({ source }: { source: string }) => {
   const record = useRecordContext();
   return record ? (
     <Link
-      href={WCA_PROFILE_URL + record[source]}
+      href={formatLink(LINKS.WCA.PROFILE, { wcaId: record[source] })}
       sx={{ textDecoration: "none" }}
     >
       {record[source]}

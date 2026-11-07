@@ -26,7 +26,7 @@ import { useResponsiveQuery } from "../components/useResponsiveQuery";
 import { getLocaleOrFallback } from "../locale";
 import { dataGridLocaleText } from "../helpers/dataGridLocale";
 import { useCurrentUser } from "../helpers/useCurrentUser";
-import { LINKS } from "./links";
+import { formatLink, LINKS } from "./links";
 
 interface ChampionshipSummary {
   id: string;
@@ -202,7 +202,9 @@ export const ChampionshipEligibility = () => {
       minWidth: 160,
       renderCell: (params) => (
         <Link
-          href={`${LINKS.WCA.PROFILE}${params.row.wca_id}`}
+          href={formatLink(LINKS.WCA.PROFILE, {
+            wcaId: params.row.wca_id,
+          })}
           target="_blank"
           rel="noopener noreferrer"
         >

@@ -3,7 +3,7 @@ import { AccountCircle } from "@mui/icons-material";
 import { useQuery } from "@tanstack/react-query";
 import { ReactNode } from "react";
 import { fetchWcaPerson } from "../helpers/fetchWcaPerson";
-import { LINKS } from "../pages/links";
+import { formatLink, LINKS } from "../pages/links";
 
 interface PersonCardProps {
   // Omit for people with no WCA profile (e.g. some team members).
@@ -44,7 +44,7 @@ export const PersonCard = ({
 
   const linkProps = wcaId
     ? {
-        href: LINKS.WCA.PROFILE + wcaId,
+        href: formatLink(LINKS.WCA.PROFILE, { wcaId }),
         target: "_blank",
         rel: "noopener noreferrer",
       }

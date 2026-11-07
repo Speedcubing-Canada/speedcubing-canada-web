@@ -5,7 +5,7 @@ import { Ranking } from "../types";
 import { useTranslation } from "react-i18next";
 import { getLocaleOrFallback } from "../locale";
 import { dataGridLocaleText } from "../helpers/dataGridLocale";
-import { LINKS } from "../pages/links";
+import { formatLink, LINKS } from "../pages/links";
 import { useResponsiveQuery } from "./useResponsiveQuery";
 
 export const RankList: React.FC<{ data: Ranking[] }> = ({ data }) => {
@@ -21,7 +21,9 @@ export const RankList: React.FC<{ data: Ranking[] }> = ({ data }) => {
       width: isSmall ? 210 : 300,
       renderCell: (params) => (
         <Link
-          href={`${LINKS.WCA.PROFILE}${params.row.wca_id}`}
+          href={formatLink(LINKS.WCA.PROFILE, {
+            wcaId: params.row.wca_id,
+          })}
           target="_blank"
           rel="noopener noreferrer"
         >
