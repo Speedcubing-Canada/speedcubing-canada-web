@@ -100,6 +100,9 @@ def test_get_users_filters_by_any_name_word(as_user, make_user):
 
     assert _names(client.get("/api/admin/get_users?q=ond")) == ["Alexandre Ondet"]
     assert _names(client.get("/api/admin/get_users?q=Alex")) == ["Alexandre Ondet"]
+    assert _names(client.get("/api/admin/get_users?q=alexandre+on")) == ["Alexandre Ondet"]
+    assert _names(client.get("/api/admin/get_users?q=ondet+alex")) == ["Alexandre Ondet"]
+    assert _names(client.get("/api/admin/get_users?q=alexandre+zz")) == []
     # Two matching tokens on one entity must not produce a duplicate row.
     response = client.get("/api/admin/get_users?q=an")
     assert _names(response) == ["Anna Ann"]

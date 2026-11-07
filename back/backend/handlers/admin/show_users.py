@@ -12,30 +12,38 @@ bp = Blueprint("show_users", __name__)
 client = ndb.Client()
 
 WCA_ID = re.compile(r"^\d{4}[A-Z]{4}\d{2}$")
-SORT_FIELDS = ("key", "name", "wca_person", "roles", "province")
+# Datastore drops entities lacking a sort property, so sparse ones (roles, wca_person) are not sortable.
+SORT_FIELDS = ("key", "name")
+
+
+def _search(q):
+    """All users matching an exact WCA ID or a word prefix for each word of q, sorted by name."""
+    if WCA_ID.match(q.upper()):
+        return User.query(User.wca_person == ndb.Key(Person, q.upper())).fetch()
+    words = q.lower().split()
+    # Datastore can prefix-match a single token; the remaining words are checked in Python.
+    query = User.query(User.name_tokens >= words[0], User.name_tokens < words[0] + "\ufffd")
+    users = [u for u in query.fetch() if all(any(t.startswith(w) for t in u.name_tokens) for w in words[1:])]
+    return sorted(users, key=lambda u: u.name)
 
 
 @bp.route("/get_users")
 @require_roles(*Roles.AdminRoles())
 def get_users():
     page, per_page, sort_field, sort_order, q = parse_list_params("name")
+    start = (page - 1) * per_page
 
-    query = User.query()
-    if WCA_ID.match(q.upper()):
-        query = query.filter(User.wca_person == ndb.Key(Person, q.upper()))
-        order = []
-    elif q:
-        text = q.lower()
-        query = query.filter(User.name_tokens >= text, User.name_tokens < text + "\ufffd")
-        # Datastore requires the inequality property to sort first.
-        order = [User.name_tokens, User.name]
+    if q:
+        users = _search(q)
+        total = len(users)
+        users = users[start : start + per_page]
     else:
-        sort_field = {"id": "key", "wca_id": "wca_person"}.get(sort_field, sort_field)
+        sort_field = {"id": "key"}.get(sort_field, sort_field)
         prop = getattr(User, sort_field if sort_field in SORT_FIELDS else "name")
-        order = [-prop if sort_order == "desc" else prop]
+        query = User.query()
+        total = query.count()
+        users = query.order(-prop if sort_order == "desc" else prop).fetch(per_page, offset=start)
 
-    total = query.count()
-    users = query.order(*order).fetch(per_page, offset=(page - 1) * per_page)
     return jsonify(list_envelope([user.to_json() for user in users], total, page, per_page))
 
 
