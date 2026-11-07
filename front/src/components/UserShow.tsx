@@ -108,7 +108,13 @@ const WcaProfileUrlField = ({ source }: { source: string }) => {
   ) : null;
 };
 
-export const ProvinceField = ({ source }: { source: string }) => {
+// Datagrid reads sortable from the column props.
+export const ProvinceField = ({
+  source,
+}: {
+  source: string;
+  sortable?: boolean;
+}) => {
   const t = useTranslate();
   const record = useRecordContext();
   if (!record) {
