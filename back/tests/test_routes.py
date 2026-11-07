@@ -125,10 +125,10 @@ def test_get_users_filtered_pages_have_totals(as_user, make_user):
 
 def test_get_users_filters_by_wca_id_case_insensitively(as_user, make_user):
     admin = make_user(1, name="Admin User", roles=[Roles.GLOBAL_ADMIN])
-    make_user(2, name="Alexandre Ondet", wca_id="2015ONDE01")
+    make_user(2, name="Alexandre Ondet", wca_id="2017ONDE01")
     client = as_user(admin)
 
-    response = client.get("/api/admin/get_users?q=2015onde01")
+    response = client.get("/api/admin/get_users?q=2017onde01")
     assert _names(response) == ["Alexandre Ondet"]
     assert response.json["total"] == 1
 
