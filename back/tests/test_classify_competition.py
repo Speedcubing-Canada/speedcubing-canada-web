@@ -38,25 +38,30 @@ def test_national_championships(name):
 
 
 @pytest.mark.parametrize(
-    ("name", "expected_area"),
+    ("name", "expected_area", "expected_pbq"),
     [
         # Single-province regions
-        ("BC Championship 2024", "British Columbia"),
-        ("BC Championship 2026", "British Columbia"),
-        ("Ontario Championship 2024", "Ontario"),
-        ("Championnat Québécois 2024", "Quebec"),
-        ("Championnat Québécois 2026", "Quebec"),
+        ("BC Championship 2024", "British Columbia", False),
+        ("BC Championship 2026", "British Columbia", False),
+        ("Ontario Championship 2024", "Ontario", False),
+        ("Championnat Québécois 2024", "Quebec", False),
+        ("Championnat Québécois 2026", "Quebec", False),
         # Multi-province regions
-        ("Canadian Prairie Championship 2024", "Prairies"),
-        ("Canadian Atlantic Championship 2026", "Atlantic"),
-        ("Canadian Territories Championship 2024", "Territories"),
+        ("Canadian Prairie Championship 2024", "Prairies", False),
+        ("Canadian Atlantic Championship 2026", "Atlantic", False),
+        ("Canadian Territories Championship 2024", "Territories", False),
+        # Quiet / PBQ
+        ("Ontario Quiet Championship 2026", "Ontario", True),
+        ("BC PBQ Championship 2026", "British Columbia", True),
+        ("Championnat Québécois Silencieux 2026", "Quebec", True),
+        ("Championnat Québécois PBQ 2026", "Quebec", True),
     ],
 )
-def test_regional_championships(name, expected_area):
+def test_regional_championships(name, expected_area, expected_pbq):
     is_national, area, is_pbq = classify_competition(name)
     assert not is_national, f"Should not be national: {name}"
     assert area == expected_area, f"Wrong area for {name}: got {area}"
-    assert not is_pbq
+    assert is_pbq == expected_pbq
 
 
 # ---------------------------------------------------------------------------
