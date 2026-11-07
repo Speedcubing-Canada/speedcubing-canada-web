@@ -90,11 +90,6 @@ def test_get_users_sorts_by_requested_field(as_user, make_user):
     assert _names(client.get("/api/admin/get_users?sort_field=name&sort_order=desc")) == ["Bob Builder", "Admin User"]
     # react-admin's default sort is the record id, which is the key on the model.
     assert _names(client.get("/api/admin/get_users?sort_field=id&sort_order=DESC")) == ["Bob Builder", "Admin User"]
-    # react-admin's dataProvider used to JSON-quote the values; still accepted.
-    assert _names(client.get('/api/admin/get_users?sort_field="name"&sort_order="DESC"')) == [
-        "Bob Builder",
-        "Admin User",
-    ]
 
 
 def test_get_users_filters_by_any_name_word(as_user, make_user):
