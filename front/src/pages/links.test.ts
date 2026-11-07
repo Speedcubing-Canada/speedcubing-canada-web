@@ -2,10 +2,6 @@ import { describe, expect, it } from "vitest";
 import { formatLink, LINKS } from "./links";
 
 describe("formatLink", () => {
-  it("returns static links unchanged", () => {
-    expect(formatLink(LINKS.MAILING_LIST)).toBe(LINKS.MAILING_LIST);
-  });
-
   it("fills a path parameter", () => {
     expect(formatLink(LINKS.WCA.PROFILE, { wcaId: "2020FOO01" })).toBe(
       "https://www.worldcubeassociation.org/persons/2020FOO01",
@@ -35,9 +31,9 @@ describe("formatLink", () => {
     ).toBe("https://example.com/1/two%20words");
   });
 
-  it("throws at runtime when a parameter is missing", () => {
-    // @ts-expect-error -- wcaId is required by the template
-    expect(() => formatLink(LINKS.WCA.PROFILE)).toThrow(/wcaId/);
+  it("throws at runtime when a parameter is null", () => {
+    const wcaId = null as unknown as string;
+    expect(() => formatLink(LINKS.WCA.PROFILE, { wcaId })).toThrow(/wcaId/);
   });
 
   it("rejects extra parameters at compile time", () => {

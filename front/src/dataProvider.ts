@@ -1,8 +1,6 @@
 import { fetchUtils, DataProvider } from "react-admin";
 import { API_BASE_URL } from "./components/api";
 
-// Equivalent to query-string's stringify defaults: sorted keys, undefined
-// values omitted, null rendered as a bare key, encodeURIComponent escaping.
 type QueryValue = string | number | boolean | null | undefined;
 
 // Serialise query params, dropping absent values (e.g. cursor on page 1) and

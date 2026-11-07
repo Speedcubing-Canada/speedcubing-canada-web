@@ -95,13 +95,13 @@ export const UserRoleChip = () => {
 };
 
 const WcaProfileUrlField = ({ source }: { source: string }) => {
-  const record = useRecordContext();
-  return record ? (
+  const wcaId: string | null | undefined = useRecordContext()?.[source];
+  return wcaId ? (
     <Link
-      href={formatLink(LINKS.WCA.PROFILE, { wcaId: record[source] })}
+      href={formatLink(LINKS.WCA.PROFILE, { wcaId })}
       sx={{ textDecoration: "none" }}
     >
-      {record[source]}
+      {wcaId}
     </Link>
   ) : null;
 };
