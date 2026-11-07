@@ -1,4 +1,4 @@
-from json import loads
+import re
 
 from flask import Blueprint, jsonify, request
 from google.cloud import ndb
@@ -10,65 +10,60 @@ from backend.models.wca.person import Person
 bp = Blueprint("show_users", __name__)
 client = ndb.Client()
 
+WCA_ID = re.compile(r"^\d{4}[A-Z]{4}\d{2}$")
+SORT_FIELDS = ("key", "name", "wca_person", "roles", "province")
+
 
 @bp.route("/get_users")
 @require_roles(*Roles.AdminRoles())
 def get_users():
-    # Pagination
-    page = request.args.get("page", 1, type=int)
-    per_page = request.args.get("per_page", 30, type=int)
-    cursor = request.args.get("cursor", None, type=str)
-    if cursor:
-        cursor = ndb.Cursor(urlsafe=cursor)
-    page = max(page, 1)
-    if per_page not in (5, 10, 25, 50):
+    page = max(request.args.get("page", 1, type=int), 1)
+    per_page = request.args.get("per_page", 25, type=int)
+    if per_page < 1:
         per_page = 25
+    sort_field = request.args.get("sort_field", "name").strip('"')
+    sort_order = request.args.get("sort_order", "asc").strip('"').lower()
+    q = request.args.get("q", "", type=str).strip('"').strip()
 
-    # Sort
-    sort_field = request.args.get("sort_field", "name")
-    sort_order = request.args.get("sort_order", "asc")
-    # Map JSON field names to model property names
-    field_mapping = {"wca_id": "wca_person"}
-    sort_field = field_mapping.get(sort_field, sort_field)
-    if sort_field not in ("id", "name", "wca_person", "roles", "province"):
+    sort_field = {"id": "key", "wca_id": "wca_person"}.get(sort_field, sort_field)
+    if sort_field not in SORT_FIELDS:
         sort_field = "name"
-    if sort_order.lower() not in ("asc", "desc"):
-        sort_order = "asc"
+    prop = getattr(User, sort_field)
+    order = [prop if sort_order == "asc" else -prop]
 
-    # Filter
-    filter_text = loads(request.args.get("filter", "{}")).get("q")
+    query = User.query()
+    if WCA_ID.match(q.upper()):
+        query = query.filter(User.wca_person == ndb.Key(Person, q.upper()))
+        order = []
+    elif q:
+        text = q.lower()
+        query = query.filter(User.name_tokens >= text, User.name_tokens < text + "�")
+        # Datastore requires the inequality property to sort first.
+        order = [User.name_tokens, User.name]
 
-    # Query
-    order_field = getattr(User, sort_field) if sort_order == "asc" else -getattr(User, sort_field)
-    if filter_text:
-        text = filter_text.lower()
-        limit = text[:-1] + chr(ord(text[-1]) + 1)
-        users_to_show = (
-            User.query(
-                ndb.OR(
-                    ndb.AND(
-                        User.name_lower >= text,
-                        User.name_lower < limit,
-                    ),
-                    User.wca_person == ndb.Key(Person, filter_text),
-                ),
-            )
-            .order("name_lower", order_field)
-            .fetch(per_page)
-        )
-        has_more = False
-    else:
-        users_to_show, cursor, has_more = User.query(order_by=[order_field]).fetch_page(per_page, start_cursor=cursor)
+    total = query.count()
+    users = query.order(*order).fetch(per_page, offset=(page - 1) * per_page)
     return jsonify(
         {
-            "data": [user.to_json() for user in users_to_show],
-            "cursor": cursor.urlsafe().decode() if cursor else "",
-            "pageInfo": {
-                "hasPreviousPage": page > 1,
-                "hasNextPage": has_more,
-            },
+            "data": [user.to_json() for user in users],
+            "total": total,
+            "pageInfo": {"hasPreviousPage": page > 1, "hasNextPage": page * per_page < total},
         },
     )
+
+
+@bp.route("/reindex_users", methods=["POST"])
+@require_roles(*Roles.AdminRoles())
+def reindex_users():
+    """Re-put every user so computed properties added after signup get indexed."""
+    count = 0
+    query = User.query().order(User.key)
+    users = query.fetch(200)
+    while users:
+        ndb.put_multi(users)
+        count += len(users)
+        users = query.filter(User.key > users[-1].key).fetch(200)
+    return jsonify({"data": {"users": count}})
 
 
 @bp.route("/get_users_by_id")
