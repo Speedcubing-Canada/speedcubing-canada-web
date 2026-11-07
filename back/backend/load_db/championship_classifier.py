@@ -19,6 +19,7 @@ _NATIONAL_RE = re.compile(r"(Canadian\s+(Championship|Open)\b|Championnat\s+Cana
 # FMC national championship are only held on championship years, so it requires context
 _FMC_CANADA_RE = re.compile(r"^FMC Canada (\d{4})$", re.IGNORECASE)
 _PBQ_RE = re.compile(r"(.*?)\s+(PBQ|Quiet|FMC)\s+Championship\s+(\d{4})", re.IGNORECASE)
+_FRENCH_PBQ_RE = re.compile(r"Championnat\s+(.+?)\s+(PBQ|Silencieux|FMC)\s+(\d{4})", re.IGNORECASE)
 _FRENCH_RE = re.compile(r"Championnat\s+(.+?)\s+(\d{4})", re.IGNORECASE)
 _ENGLISH_RE = re.compile(r"(.+?)\s+Championship\s+(\d{4})", re.IGNORECASE)
 
@@ -39,7 +40,7 @@ def classify_competition(name: str, national_years: set[int] | None = None) -> t
         if fmc_match and int(fmc_match.group(1)) in national_years:
             return True, "fmc", False
 
-    pbq_match = _PBQ_RE.match(name)
+    pbq_match = _PBQ_RE.match(name) or _FRENCH_PBQ_RE.match(name)
     if pbq_match:
         raw = pbq_match.group(1).strip()
         return False, AREA_NAME_MAP.get(raw.lower(), raw), True

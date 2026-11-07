@@ -59,6 +59,22 @@ def test_regional_championships(name, expected_area):
     assert not is_pbq
 
 
+@pytest.mark.parametrize(
+    ("name", "expected_area"),
+    [
+        ("Ontario Quiet Championship 2026", "Ontario"),
+        ("BC PBQ Championship 2026", "British Columbia"),
+        ("Championnat Québécois Silencieux 2026", "Quebec"),
+        ("Championnat Québécois PBQ 2026", "Quebec"),
+    ],
+)
+def test_quiet_regional_championships(name, expected_area):
+    is_national, area, is_pbq = classify_competition(name)
+    assert not is_national, f"Should not be national: {name}"
+    assert area == expected_area, f"Wrong area for {name}: got {area}"
+    assert is_pbq
+
+
 # ---------------------------------------------------------------------------
 # "Canadian X" regional names must NOT be misclassified as national
 # ---------------------------------------------------------------------------
