@@ -128,9 +128,12 @@ def make_province(seed, make_region):
 
 @pytest.fixture
 def make_user(seed, make_province):
-    from backend.models.user import User
+    from google.cloud import ndb
 
-    def _make(user_id, name="Test User", roles=None, province=None, email=None):
+    from backend.models.user import User
+    from backend.models.wca.person import Person
+
+    def _make(user_id, name="Test User", roles=None, province=None, email=None, wca_id=None):
         province_key = (province or make_province()).key
         # Production keys users by str(wca_account_number) -- see handlers/auth.py.
         user_id = str(user_id)
@@ -143,6 +146,7 @@ def make_user(seed, make_province):
                 province=province_key,
                 dob=datetime.date(2000, 1, 1),
                 last_login=datetime.datetime(2026, 1, 1),
+                wca_person=ndb.Key(Person, wca_id) if wca_id else None,
             ),
         )
 

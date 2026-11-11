@@ -44,7 +44,8 @@ class UserLocationUpdate(ndb.Model):
 class User(ndb.Model):
     wca_person = ndb.KeyProperty(kind=Person)
     name = ndb.StringProperty()
-    name_lower = ndb.ComputedProperty(lambda self: self.name.lower())
+    # Datastore cannot substring-match; the admin search prefix-matches each word instead.
+    name_tokens = ndb.ComputedProperty(lambda self: (self.name or "").lower().split(), repeated=True)
     email = ndb.StringProperty()
     dob = ndb.DateProperty()
     roles = ndb.StringProperty(repeated=True)

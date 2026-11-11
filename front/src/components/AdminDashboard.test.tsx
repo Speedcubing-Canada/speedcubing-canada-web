@@ -43,6 +43,18 @@ describe("AdminDashboard maintenance section", () => {
     );
   });
 
+  it("reindexes users once confirmed", async () => {
+    post.mockResolvedValue({ ok: true, data: { data: { users: 42 } } });
+    renderDashboard(user("DIRECTOR"));
+
+    fireEvent.click(screen.getByRole("button", { name: "Reindex users" }));
+    fireEvent.click(await screen.findByRole("button", { name: "Confirm" }));
+
+    await waitFor(() =>
+      expect(post).toHaveBeenCalledWith(API_BASE_URL + "/admin/reindex_users"),
+    );
+  });
+
   it("does not call the endpoint until confirmed", async () => {
     renderDashboard(user("GLOBAL_ADMIN"));
 

@@ -31,16 +31,6 @@ const ADMIN_RESOURCES: Record<string, { singular: string; plural: string }> = {
 // `if (adminResource)` branches below key off of.
 const getAdminResource = (resource: string) => ADMIN_RESOURCES[resource];
 
-const convertResponseToDataProviderFormat = (response: any) => {
-  return {
-    data: response.data,
-    pageInfo: {
-      hasPreviousPage: response.pageInfo.hasPreviousPage,
-      hasNextPage: response.pageInfo.hasNextPage,
-    },
-  };
-};
-
 const dataProvider: DataProvider = {
   getList: (resource, params) => {
     // react-admin 5 made both optional; these defaults mirror
@@ -48,38 +38,19 @@ const dataProvider: DataProvider = {
     const { page, perPage } = params.pagination ?? { page: 1, perPage: 25 };
     const { field, order } = params.sort ?? { field: "id", order: "ASC" };
 
-    const adminResource = getAdminResource(resource);
-    if (adminResource) {
-      const query = {
-        page,
-        per_page: perPage,
-        sort_field: field,
-        sort_order: order,
-        q: params.filter?.q ?? "",
-      };
-      const url = `${apiUrl}/admin/get_${adminResource.plural}?${stringify(
-        query,
-      )}`;
-      return httpClient(url).then(({ json }) => ({
-        data: json.data,
-        total: json.total,
-      }));
-    }
-
+    const plural = getAdminResource(resource)?.plural ?? "users";
     const query = {
-      sort_field: JSON.stringify(field),
-      sort_order: JSON.stringify(order),
-      page: JSON.stringify(page),
-      per_page: JSON.stringify(perPage),
-      filter: JSON.stringify(params.filter),
-      cursor: page === 1 ? null : localStorage.getItem("cursor"),
+      page,
+      per_page: perPage,
+      sort_field: field,
+      sort_order: order,
+      q: params.filter?.q ?? "",
     };
-    const url = `${apiUrl}/admin/get_users?${stringify(query)}`;
-
-    return httpClient(url).then(({ json }) => {
-      localStorage.setItem("cursor", json.cursor);
-      return convertResponseToDataProviderFormat(json);
-    });
+    const url = `${apiUrl}/admin/get_${plural}?${stringify(query)}`;
+    return httpClient(url).then(({ json }) => ({
+      data: json.data,
+      total: json.total,
+    }));
   },
 
   getOne: (resource, params) => {
@@ -125,9 +96,10 @@ const dataProvider: DataProvider = {
     };
     const url = `${apiUrl}/${resource}?${stringify(query)}`;
 
-    return httpClient(url).then(({ json }) =>
-      convertResponseToDataProviderFormat(json),
-    );
+    return httpClient(url).then(({ json }) => ({
+      data: json.data,
+      total: json.total,
+    }));
   },
 
   create: (resource, params) => {
