@@ -484,7 +484,7 @@ export const resources = {
         users: {
           label: "Reindex users",
           confirm:
-            "Rewrites every user so the search index covers accounts created before the last deploy. Harmless to run twice.",
+            "Rewrites every user so the search index covers accounts created before the last deploy. Safe to rerun.",
           success: "Reindexed %{count} users.",
         },
       },
@@ -967,7 +967,7 @@ export const resources = {
         users: {
           label: "Réindexer les utilisateurs",
           confirm:
-            "Réécrit tous les utilisateurs pour que la recherche couvre les comptes créés avant le dernier déploiement. Sans danger si lancé deux fois.",
+            "Réécrit tous les utilisateurs pour que la recherche couvre les comptes créés avant le dernier déploiement. Peut être relancé sans risque.",
           success: "%{count} utilisateurs réindexés.",
         },
       },
