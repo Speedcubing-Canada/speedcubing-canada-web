@@ -10,7 +10,7 @@ Two kinds live side by side:
 ## Running the emulator
 
 ```sh
-gcloud beta emulators datastore start --project=test --host-port=localhost:8081 --no-store-on-disk
+gcloud beta emulators datastore start --project=test --host-port=localhost:8081 --no-store-on-disk --consistency=1.0
 ```
 
 or, with the compose stack:
