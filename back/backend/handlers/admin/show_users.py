@@ -1,9 +1,9 @@
 import re
 
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, jsonify
 from google.cloud import ndb
 
-from backend.handlers.admin._list_utils import list_envelope, parse_list_params
+from backend.handlers.admin._list_utils import list_envelope, parse_ids, parse_list_params
 from backend.lib.permissions import require_roles
 from backend.models.user import Roles, User
 from backend.models.wca.person import Person
@@ -28,7 +28,7 @@ def _search(q):
 
 
 @bp.route("/get_users")
-@require_roles(*Roles.UserAdminRoles())
+@require_roles(*Roles.SiteAdminRoles())
 def get_users():
     page, per_page, sort_field, sort_order, q = parse_list_params("name")
     start = (page - 1) * per_page
@@ -48,7 +48,7 @@ def get_users():
 
 
 @bp.route("/reindex_users", methods=["POST"])
-@require_roles(*Roles.UserAdminRoles())
+@require_roles(*Roles.SiteAdminRoles())
 def reindex_users():
     """Re-put every user so computed properties added after signup get indexed."""
     users = User.query().fetch()
@@ -57,9 +57,8 @@ def reindex_users():
 
 
 @bp.route("/get_users_by_id")
-@require_roles(*Roles.UserAdminRoles())
+@require_roles(*Roles.SiteAdminRoles())
 def get_users_by_id():
-    raw_ids = request.args.get("ids", "[]", type=str).strip("[]").split(",")
-    ids = [i.strip().strip('"') for i in raw_ids if i.strip()]
+    ids = parse_ids()
     users = [u for u in ndb.get_multi([ndb.Key(User, i) for i in ids]) if u]
     return jsonify({"data": [u.to_json() for u in users]})

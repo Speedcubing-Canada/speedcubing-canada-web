@@ -13,7 +13,7 @@ import { Confirm, useNotify, useTranslate } from "react-admin";
 
 import { API_BASE_URL } from "./api";
 import httpClient from "../httpClient";
-import { canManageUsers } from "./roles";
+import { isSiteAdmin } from "./roles";
 import { User } from "../types";
 
 interface Action {
@@ -62,7 +62,7 @@ export const AdminDashboard = ({ user }: { user: User | null }) => {
     }
   };
 
-  const allowed = canManageUsers(user);
+  const allowed = isSiteAdmin(user);
 
   return (
     <Card>
@@ -74,6 +74,11 @@ export const AdminDashboard = ({ user }: { user: User | null }) => {
         <Alert severity="warning" sx={{ mb: 2 }}>
           {t("admin.maintenance.warning")}
         </Alert>
+        {!allowed && (
+          <Typography variant="caption" color="warning.main">
+            {t("admin.maintenance.forbidden")}
+          </Typography>
+        )}
         {ACTIONS.map((action) => (
           <Box key={action.key} sx={{ mb: 2 }}>
             <Button
@@ -86,15 +91,6 @@ export const AdminDashboard = ({ user }: { user: User | null }) => {
                 ? t("admin.maintenance.running")
                 : t(`admin.maintenance.${action.key}.label`)}
             </Button>
-            {!allowed && (
-              <Typography
-                variant="caption"
-                display="block"
-                color="warning.main"
-              >
-                {t("admin.maintenance.forbidden")}
-              </Typography>
-            )}
           </Box>
         ))}
       </CardContent>

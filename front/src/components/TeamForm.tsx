@@ -10,7 +10,7 @@ import {
 } from "react-admin";
 import { WcaPersonSearchInput } from "./WcaPersonSearchInput";
 import { AdminUserContext } from "./AdminUserContext";
-import { canManageUsers } from "./roles";
+import { isSiteAdmin } from "./roles";
 
 // Shared input set for TeamCreate / TeamEdit. Labels resolve from the active resource's
 // react-admin field i18n (resources.TeamsAdmin.fields.*). The `id` slug is the stable key
@@ -18,7 +18,7 @@ import { canManageUsers } from "./roles";
 // Team leaders edit the roster only; every other field is locked for them.
 export const TeamInputs = ({ create }: { create?: boolean }) => {
   const t = useTranslate();
-  const full = canManageUsers(useContext(AdminUserContext));
+  const full = isSiteAdmin(useContext(AdminUserContext));
   return (
     <>
       <TextInput

@@ -6,6 +6,8 @@ rather than calling handler helpers directly. Adding a route here is now just a
 new function; the harness lives in conftest.py.
 """
 
+import pytest
+
 from backend.models.user import Roles
 from tests.conftest import requires_emulator
 
@@ -183,6 +185,22 @@ def test_webmaster_grants_any_role_except_global_admin(as_user, make_user):
     assert response.json["province"] == "qc"
 
 
+def test_role_grant_accepts_the_null_province_react_admin_posts_back(as_user, make_user):
+    make_user(3)
+    client = as_user(make_user(2, roles=[Roles.WEBMASTER]))
+    response = client.post("/api/edit/3", json={"province": None, "roles": [Roles.COMMS]})
+    assert response.status_code == 200
+    assert response.json["roles"] == [Roles.COMMS]
+    assert response.json["province"] == "qc"
+
+
+def test_plain_user_cannot_grant_themselves_a_role(as_user, make_user):
+    for user_id, roles in ((2, []), (3, [Roles.DIRECTOR]), (4, [Roles.COMMS]), (5, [Roles.SENIOR_DELEGATE])):
+        response = as_user(make_user(user_id, roles=roles)).post("/api/edit", json={"roles": Roles.AllRoles()})
+        assert response.status_code == 200
+        assert response.json["roles"] == roles, roles
+
+
 def test_global_admin_grants_global_admin(as_user, make_user):
     make_user(3)
     client = as_user(make_user(2, roles=[Roles.GLOBAL_ADMIN]))
@@ -242,6 +260,16 @@ def test_team_leader_edits_the_roster_but_not_leadership(as_user, make_user, mak
     ]
 
 
+def test_team_leader_cannot_remove_or_replace_the_leader(as_user, make_user, make_team):
+    make_team("software", leader_wca_id="2017ONDE01")
+    client = as_user(make_user(2, wca_id="2017ONDE01"))
+    for members in ([], [{"name": "Lead", "wca_id": "2020NEWB01"}]):
+        response = client.post("/api/admin/teams/software", json={"members": members})
+        assert response.status_code == 400, members
+    team = client.get("/api/admin/team/software").json
+    assert [(m["wca_id"], m["is_leader"]) for m in team["members"]] == [("2017ONDE01", True)]
+
+
 def test_users_without_a_led_team_cannot_list_teams(as_user, make_user, make_team):
     make_team("software", leader_wca_id="2017ONDE01")
     assert as_user(make_user(2, wca_id="2020NEWB01")).get("/api/admin/get_teams").status_code == 403
@@ -255,3 +283,53 @@ def test_user_admin_edits_every_team_field(as_user, make_user, make_team):
     response = client.post("/api/admin/teams/software", json={"name_en": "Renamed", "members": []})
     assert response.json["name_en"] == "Renamed"
     assert response.json["members"] == []
+
+
+# --- login ---
+
+
+def _roles(ndb_client, user_id="2"):
+    from backend.models.user import User
+
+    with ndb_client.context():
+        return User.get_by_id(user_id).roles
+
+
+@pytest.mark.parametrize(
+    ("status", "role"),
+    [
+        ("senior_delegate", Roles.SENIOR_DELEGATE),
+        ("regional_delegate", Roles.SENIOR_DELEGATE),
+        ("delegate", Roles.DELEGATE),
+        ("junior_delegate", Roles.DELEGATE),
+        ("trainee_delegate", Roles.TRAINEE_DELEGATE),
+    ],
+)
+def test_login_maps_canadian_delegate_status_to_role(wca_login, make_delegate, ndb_client, status, role):
+    make_delegate("2017ONDE01", status=status)
+    assert wca_login().status_code == 302
+    assert _roles(ndb_client) == [role]
+
+
+def test_login_gives_no_role_to_a_delegate_outside_the_canadian_roster(wca_login, make_delegate, ndb_client):
+    make_delegate("2000AAAA01")
+    wca_login(delegate_status="senior_delegate")
+    assert _roles(ndb_client) == []
+
+
+def test_login_drops_delegate_roles_once_off_the_roster_and_keeps_the_rest(wca_login, make_user, ndb_client):
+    make_user(2, roles=[Roles.WEBMASTER, Roles.SENIOR_DELEGATE], wca_id="2017ONDE01")
+    wca_login()
+    assert _roles(ndb_client) == [Roles.WEBMASTER]
+
+
+def test_login_without_a_wca_id_gets_no_role(wca_login, make_delegate, ndb_client):
+    make_delegate("2017ONDE01")
+    wca_login(wca_id=None, delegate_status="delegate")
+    assert _roles(ndb_client) == []
+
+
+def test_session_cookie_is_lax_and_http_only(wca_login):
+    cookie = wca_login().headers["Set-Cookie"]
+    assert "SameSite=Lax" in cookie
+    assert "HttpOnly" in cookie

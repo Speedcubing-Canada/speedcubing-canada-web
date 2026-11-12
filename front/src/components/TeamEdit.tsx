@@ -2,7 +2,7 @@ import { useContext } from "react";
 import { Edit, SaveButton, SimpleForm, Toolbar } from "react-admin";
 import { TeamInputs } from "./TeamForm";
 import { AdminUserContext } from "./AdminUserContext";
-import { canManageUsers } from "./roles";
+import { isSiteAdmin } from "./roles";
 
 const SaveOnlyToolbar = () => (
   <Toolbar>
@@ -11,7 +11,7 @@ const SaveOnlyToolbar = () => (
 );
 
 export const TeamEdit = () => {
-  const full = canManageUsers(useContext(AdminUserContext));
+  const full = isSiteAdmin(useContext(AdminUserContext));
   return (
     <Edit>
       <SimpleForm toolbar={full ? undefined : <SaveOnlyToolbar />}>

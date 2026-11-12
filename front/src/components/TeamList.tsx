@@ -1,4 +1,3 @@
-import { useContext } from "react";
 import {
   Datagrid,
   EditButton,
@@ -9,12 +8,9 @@ import {
   TextField,
 } from "react-admin";
 import { useResponsiveQuery } from "./useResponsiveQuery";
-import { AdminUserContext } from "./AdminUserContext";
-import { canManageUsers } from "./roles";
 
 export const TeamList = () => {
   const isSmall = useResponsiveQuery("sm");
-  const full = canManageUsers(useContext(AdminUserContext));
   const filters = [<SearchInput key="q" source="q" alwaysOn />];
 
   return (
@@ -26,7 +22,7 @@ export const TeamList = () => {
           tertiaryText={(record) => `${record.members?.length ?? 0}`}
         />
       ) : (
-        <Datagrid rowClick="show" bulkActionButtons={full ? undefined : false}>
+        <Datagrid rowClick="show" bulkActionButtons={false}>
           <TextField source="id" />
           <TextField source="name_en" />
           <TextField source="name_fr" />
