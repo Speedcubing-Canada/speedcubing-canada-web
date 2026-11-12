@@ -4,7 +4,7 @@ from google.cloud import ndb
 from backend.handlers.admin._list_utils import filter_and_sort as _filter_and_sort
 from backend.handlers.admin._list_utils import paginate_records, parse_ids
 from backend.lib import auth
-from backend.lib.permissions import led_team_ids, require_auth, require_roles
+from backend.lib.permissions import can_edit_team, require_auth, require_roles
 from backend.models.team import Team, TeamMember
 from backend.models.user import Roles
 
@@ -51,45 +51,49 @@ def _apply_fields(team, data):
     team.members = parse_members(data.get("members"))
 
 
-def _team_scope():
-    """None = every team; otherwise the ids of the teams the caller leads (may be empty)."""
-    me = auth.user()
-    return None if me.has_any_of_given_roles(Roles.SiteAdminRoles()) else set(led_team_ids(me))
+def _apply_roster(team, data):
+    """Replace a team's members while keeping its leaders; returns an error message or None."""
+    leaders = {m.wca_id or m.name for m in team.members if m.is_leader}
+    members = parse_members(data.get("members"))
+    for member in members:
+        member.is_leader = (member.wca_id or member.name) in leaders
+    if {m.wca_id or m.name for m in members if m.is_leader} != leaders:
+        return "Only a site admin can remove or change the team leader"
+    team.members = members
+    return None
 
 
-def _forbidden():
-    return jsonify({"error": "Forbidden"}), 403
+def _editable_team(team_id):
+    """The team if the caller may edit it, else an error response."""
+    team = Team.get_by_id(team_id)
+    if not team:
+        return None, (jsonify({"error": "Team not found"}), 404)
+    if not can_edit_team(auth.user(), team):
+        return None, (jsonify({"error": "Forbidden"}), 403)
+    return team, None
 
 
 @bp.route("/get_teams")
 @require_auth
 def get_teams():
-    scope = _team_scope()
-    if scope == set():
-        return _forbidden()
-    records = [t.to_json() for t in Team.query().iter() if scope is None or t.key.id() in scope]
+    me = auth.user()
+    records = [t.to_json() for t in Team.query().iter() if can_edit_team(me, t)]
     return jsonify(paginate_records(records, filter_and_sort, default_sort_field="position"))
 
 
 @bp.route("/get_teams_by_id")
 @require_auth
 def get_teams_by_id():
-    scope = _team_scope()
-    ids = parse_ids()
-    teams = [t for t in ndb.get_multi([ndb.Key(Team, i) for i in ids]) if t and (scope is None or t.key.id() in scope)]
-    return jsonify({"data": [t.to_json() for t in teams]})
+    me = auth.user()
+    teams = ndb.get_multi([ndb.Key(Team, i) for i in parse_ids()])
+    return jsonify({"data": [t.to_json() for t in teams if t and can_edit_team(me, t)]})
 
 
 @bp.route("/team/<team_id>")
 @require_auth
 def get_team(team_id):
-    scope = _team_scope()
-    if scope is not None and team_id not in scope:
-        return _forbidden()
-    team = Team.get_by_id(team_id)
-    if not team:
-        return jsonify({"error": "Team not found"}), 404
-    return jsonify(team.to_json())
+    team, error = _editable_team(team_id)
+    return error or jsonify(team.to_json())
 
 
 @bp.route("/teams", methods=["POST"])
@@ -110,24 +114,14 @@ def create_team():
 @bp.route("/teams/<team_id>", methods=["POST"])
 @require_auth
 def update_team(team_id):
-    scope = _team_scope()
-    if scope is not None and team_id not in scope:
-        return _forbidden()
-    team = Team.get_by_id(team_id)
-    if not team:
-        return jsonify({"error": "Team not found"}), 404
+    team, error = _editable_team(team_id)
+    if error:
+        return error
     data = request.get_json() or {}
-    if scope is None:
+    if auth.user().has_any_of_given_roles(Roles.SiteAdminRoles()):
         _apply_fields(team, data)
-    else:
-        # A leader edits the roster only; leadership itself is decided by site admins.
-        leaders = {m.wca_id or m.name for m in team.members if m.is_leader}
-        members = parse_members(data.get("members"))
-        for member in members:
-            member.is_leader = (member.wca_id or member.name) in leaders
-        if {m.wca_id or m.name for m in members if m.is_leader} != leaders:
-            return jsonify({"error": "Only a site admin can remove or change the team leader"}), 400
-        team.members = members
+    elif message := _apply_roster(team, data):
+        return jsonify({"error": message}), 400
     team.put()
     return jsonify(team.to_json())
 
