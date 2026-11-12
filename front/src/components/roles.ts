@@ -24,6 +24,11 @@ export const leadsTeams = (user: User | null) =>
 export const canAccessAdmin = (user: User | null) =>
   canManageContent(user) || leadsTeams(user);
 
+export const DELEGATE_ROLES = [
+  "SENIOR_DELEGATE",
+  "DELEGATE",
+  "TRAINEE_DELEGATE",
+];
+
 export const hasDelegateOrAdminRole = (user: User | null) =>
-  isSiteAdmin(user) ||
-  hasRole(user, "DIRECTOR", "SENIOR_DELEGATE", "DELEGATE", "TRAINEE_DELEGATE");
+  isSiteAdmin(user) || hasRole(user, "DIRECTOR", ...DELEGATE_ROLES);

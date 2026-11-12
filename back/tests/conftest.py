@@ -25,6 +25,8 @@ os.environ.setdefault("WCA_HOST", "https://www.worldcubeassociation.org")
 os.environ.setdefault("WCA_CLIENT_ID", "test-client-id")
 os.environ.setdefault("WCA_CLIENT_SECRET", "test-client-secret")
 
+ME_WCA_ID = "2017ONDE01"
+
 
 def _emulator_running():
     try:
@@ -188,7 +190,7 @@ def wca_login(app, client, monkeypatch):
     monkeypatch.delenv("ADMIN_WCA_ID", raising=False)
 
     def _login(**me):
-        me = {"id": 2, "wca_id": "2017ONDE01", "name": "Test User", **me}
+        me = {"id": 2, "wca_id": ME_WCA_ID, "name": "Test User", **me}
         monkeypatch.setattr(wca, "authorize_access_token", lambda: None)
         monkeypatch.setattr(wca, "get", lambda _path: MagicMock(json=lambda: {"me": me}))
         return client.get("/api/oauth_callback")

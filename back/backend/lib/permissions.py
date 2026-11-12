@@ -68,14 +68,20 @@ def editable_roles(editor):
     if not editor:
         return []
     if editor.has_any_of_given_roles([Roles.GLOBAL_ADMIN]):
-        return Roles.AllRoles()
+        return [Roles.GLOBAL_ADMIN] + Roles.GrantableRoles()
     if editor.has_any_of_given_roles([Roles.WEBMASTER]):
-        return [role for role in Roles.AllRoles() if role != Roles.GLOBAL_ADMIN]
+        return Roles.GrantableRoles()
     return []
 
 
+def _wca_id(user):
+    return user.wca_person.id() if user.wca_person else None
+
+
+def can_edit_team(user, team):
+    return user.has_any_of_given_roles(Roles.SiteAdminRoles()) or team.is_led_by(_wca_id(user))
+
+
 def led_team_ids(user):
-    wca_id = user.wca_person.id() if user.wca_person else None
-    if not wca_id:
-        return []
-    return [t.key.id() for t in Team.query() if any(m.is_leader and m.wca_id == wca_id for m in t.members)]
+    wca_id = _wca_id(user)
+    return [t.key.id() for t in Team.query() if t.is_led_by(wca_id)] if wca_id else []

@@ -23,6 +23,11 @@ class Roles:
         return [Roles.SENIOR_DELEGATE, Roles.DELEGATE, Roles.TRAINEE_DELEGATE]
 
     @staticmethod
+    def GrantableRoles():
+        """Hand-grantable roles below GLOBAL_ADMIN; delegate roles are synced from the roster at login."""
+        return [Roles.WEBMASTER, Roles.DIRECTOR, Roles.COMMS]
+
+    @staticmethod
     def SiteAdminRoles():
         return [Roles.GLOBAL_ADMIN, Roles.WEBMASTER]
 

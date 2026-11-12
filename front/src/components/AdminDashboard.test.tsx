@@ -66,13 +66,10 @@ describe("AdminDashboard maintenance section", () => {
     expect(post).not.toHaveBeenCalled();
   });
 
-  it("disables every action for content-only roles", () => {
-    for (const role of ["DIRECTOR", "COMMS"]) {
-      const { unmount } = renderDashboard(user(role));
-      for (const button of screen.getAllByRole("button")) {
-        expect(button).toBeDisabled();
-      }
-      unmount();
+  it.each(["DIRECTOR", "COMMS"])("disables every action for %s", (role) => {
+    renderDashboard(user(role));
+    for (const button of screen.getAllByRole("button")) {
+      expect(button).toBeDisabled();
     }
   });
 });

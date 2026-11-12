@@ -9,7 +9,7 @@ new function; the harness lives in conftest.py.
 import pytest
 
 from backend.models.user import Roles
-from tests.conftest import requires_emulator
+from tests.conftest import ME_WCA_ID, requires_emulator
 
 pytestmark = requires_emulator
 
@@ -48,9 +48,9 @@ def test_user_info_lets_a_webmaster_see_another_user(as_user, make_user):
 
 
 def test_user_info_lists_led_teams(as_user, make_user, make_team):
-    make_team("software", leader_wca_id="2017ONDE01")
+    make_team("software", leader_wca_id=ME_WCA_ID)
     make_team("comms", leader_wca_id="2000AAAA01")
-    response = as_user(make_user(2, wca_id="2017ONDE01")).get("/api/user_info")
+    response = as_user(make_user(2, wca_id=ME_WCA_ID)).get("/api/user_info")
     assert response.json["led_teams"] == ["software"]
 
 
@@ -137,7 +137,7 @@ def test_get_users_filtered_pages_have_totals(as_user, make_user):
 
 def test_get_users_filters_by_wca_id_case_insensitively(as_user, make_user):
     admin = make_user(1, name="Admin User", roles=[Roles.GLOBAL_ADMIN])
-    make_user(2, name="Alexandre Ondet", wca_id="2017ONDE01")
+    make_user(2, name="Alexandre Ondet", wca_id=ME_WCA_ID)
     client = as_user(admin)
 
     response = client.get("/api/admin/get_users?q=2017onde01")
@@ -158,15 +158,17 @@ def test_reindex_users_requires_admin_and_reports_count(client, as_user, make_us
 # --- role matrix ---
 
 
-def test_content_roles_edit_people_but_nothing_private(as_user, make_user):
-    for user_id, role in ((2, Roles.COMMS), (3, Roles.DIRECTOR)):
-        client = as_user(make_user(user_id, roles=[role]))
-        assert client.get("/api/admin/get_directors").status_code == 200
-        assert client.get("/api/admin/get_featured_members").status_code == 200
-        for path in ("get_users", "get_championships", "get_teams"):
-            assert client.get(f"/api/admin/{path}").status_code == 403, (role, path)
-        assert client.post("/api/admin/reindex_users").status_code == 403
-        assert client.post("/api/admin/recompute_championships").status_code == 403
+@pytest.mark.parametrize("role", [Roles.COMMS, Roles.DIRECTOR])
+def test_content_roles_edit_people_but_nothing_private(as_user, make_user, make_team, role):
+    make_team("software", leader_wca_id=ME_WCA_ID)
+    client = as_user(make_user(2, roles=[role]))
+    assert client.get("/api/admin/get_directors").status_code == 200
+    assert client.get("/api/admin/get_featured_members").status_code == 200
+    for path in ("get_users", "get_championships"):
+        assert client.get(f"/api/admin/{path}").status_code == 403, path
+    assert client.get("/api/admin/get_teams").json["data"] == []
+    assert client.post("/api/admin/reindex_users").status_code == 403
+    assert client.post("/api/admin/recompute_championships").status_code == 403
 
 
 def test_delegate_cannot_edit_another_user(as_user, make_user):
@@ -175,12 +177,12 @@ def test_delegate_cannot_edit_another_user(as_user, make_user):
     assert response.status_code == 403
 
 
-def test_webmaster_grants_any_role_except_global_admin(as_user, make_user):
-    make_user(3)
+def test_webmaster_grants_neither_global_admin_nor_synced_delegate_roles(as_user, make_user):
+    make_user(3, roles=[Roles.DELEGATE])
     client = as_user(make_user(2, roles=[Roles.WEBMASTER]))
-    response = client.post("/api/edit/3", json={"roles": [Roles.GLOBAL_ADMIN, Roles.COMMS]})
+    response = client.post("/api/edit/3", json={"roles": [Roles.GLOBAL_ADMIN, Roles.COMMS, Roles.SENIOR_DELEGATE]})
     assert response.status_code == 200
-    assert response.json["roles"] == [Roles.COMMS]
+    assert response.json["roles"] == [Roles.DELEGATE, Roles.COMMS]
     # A roles-only body leaves the province alone.
     assert response.json["province"] == "qc"
 
@@ -194,17 +196,17 @@ def test_role_grant_accepts_the_null_province_react_admin_posts_back(as_user, ma
     assert response.json["province"] == "qc"
 
 
-def test_plain_user_cannot_grant_themselves_a_role(as_user, make_user):
-    for user_id, roles in ((2, []), (3, [Roles.DIRECTOR]), (4, [Roles.COMMS]), (5, [Roles.SENIOR_DELEGATE])):
-        response = as_user(make_user(user_id, roles=roles)).post("/api/edit", json={"roles": Roles.AllRoles()})
-        assert response.status_code == 200
-        assert response.json["roles"] == roles, roles
+@pytest.mark.parametrize("roles", [[], [Roles.DIRECTOR], [Roles.COMMS], [Roles.SENIOR_DELEGATE]])
+def test_plain_user_cannot_grant_themselves_a_role(as_user, make_user, roles):
+    response = as_user(make_user(2, roles=roles)).post("/api/edit", json={"roles": Roles.AllRoles()})
+    assert response.status_code == 200
+    assert response.json["roles"] == roles
 
 
 def test_global_admin_grants_global_admin(as_user, make_user):
     make_user(3)
     client = as_user(make_user(2, roles=[Roles.GLOBAL_ADMIN]))
-    response = client.post("/api/edit/3", json={"province": "on", "roles": [Roles.GLOBAL_ADMIN]})
+    response = client.post("/api/edit/3", json={"province": "on", "roles": [Roles.GLOBAL_ADMIN, Roles.DELEGATE]})
     assert response.status_code == 200
     assert response.json["roles"] == [Roles.GLOBAL_ADMIN]
     assert response.json["province"] == "on"
@@ -223,9 +225,9 @@ def test_get_users_by_id_returns_the_requested_users(as_user, make_user):
 
 
 def test_team_leader_sees_only_led_teams(as_user, make_user, make_team):
-    make_team("software", leader_wca_id="2017ONDE01")
+    make_team("software", leader_wca_id=ME_WCA_ID)
     make_team("comms", leader_wca_id="2000AAAA01")
-    client = as_user(make_user(2, wca_id="2017ONDE01"))
+    client = as_user(make_user(2, wca_id=ME_WCA_ID))
 
     assert [t["id"] for t in client.get("/api/admin/get_teams").json["data"]] == ["software"]
     by_id = client.get('/api/admin/get_teams_by_id?ids=["software","comms"]')
@@ -238,14 +240,14 @@ def test_team_leader_sees_only_led_teams(as_user, make_user, make_team):
 
 
 def test_team_leader_edits_the_roster_but_not_leadership(as_user, make_user, make_team):
-    make_team("software", leader_wca_id="2017ONDE01")
-    client = as_user(make_user(2, wca_id="2017ONDE01"))
+    make_team("software", leader_wca_id=ME_WCA_ID)
+    client = as_user(make_user(2, wca_id=ME_WCA_ID))
     response = client.post(
         "/api/admin/teams/software",
         json={
             "name_en": "Renamed",
             "members": [
-                {"name": "Lead", "wca_id": "2017ONDE01", "is_leader": False},
+                {"name": "Lead", "wca_id": ME_WCA_ID, "is_leader": False},
                 {"name": "New", "wca_id": "2020NEWB01", "is_leader": True},
                 {"name": "Anon", "is_leader": True},
             ],
@@ -260,24 +262,26 @@ def test_team_leader_edits_the_roster_but_not_leadership(as_user, make_user, mak
     ]
 
 
-def test_team_leader_cannot_remove_or_replace_the_leader(as_user, make_user, make_team):
-    make_team("software", leader_wca_id="2017ONDE01")
-    client = as_user(make_user(2, wca_id="2017ONDE01"))
-    for members in ([], [{"name": "Lead", "wca_id": "2020NEWB01"}]):
-        response = client.post("/api/admin/teams/software", json={"members": members})
-        assert response.status_code == 400, members
+@pytest.mark.parametrize("members", [[], [{"name": "Lead", "wca_id": "2020NEWB01"}]])
+def test_team_leader_cannot_remove_or_replace_the_leader(as_user, make_user, make_team, members):
+    make_team("software", leader_wca_id=ME_WCA_ID)
+    client = as_user(make_user(2, wca_id=ME_WCA_ID))
+    assert client.post("/api/admin/teams/software", json={"members": members}).status_code == 400
     team = client.get("/api/admin/team/software").json
-    assert [(m["wca_id"], m["is_leader"]) for m in team["members"]] == [("2017ONDE01", True)]
+    assert [(m["wca_id"], m["is_leader"]) for m in team["members"]] == [(ME_WCA_ID, True)]
 
 
-def test_users_without_a_led_team_cannot_list_teams(as_user, make_user, make_team):
-    make_team("software", leader_wca_id="2017ONDE01")
-    assert as_user(make_user(2, wca_id="2020NEWB01")).get("/api/admin/get_teams").status_code == 403
-    assert as_user(make_user(3)).get("/api/admin/get_teams").status_code == 403
+@pytest.mark.parametrize("wca_id", ["2020NEWB01", None])
+def test_users_without_a_led_team_see_no_teams(as_user, make_user, make_team, wca_id):
+    make_team("software", leader_wca_id=ME_WCA_ID)
+    client = as_user(make_user(2, wca_id=wca_id))
+    assert client.get("/api/admin/get_teams").json["data"] == []
+    assert client.get('/api/admin/get_teams_by_id?ids=["software"]').json["data"] == []
+    assert client.get("/api/admin/team/software").status_code == 403
 
 
 def test_user_admin_edits_every_team_field(as_user, make_user, make_team):
-    make_team("software", leader_wca_id="2017ONDE01")
+    make_team("software", leader_wca_id=ME_WCA_ID)
     client = as_user(make_user(2, roles=[Roles.WEBMASTER]))
     assert [t["id"] for t in client.get("/api/admin/get_teams").json["data"]] == ["software"]
     response = client.post("/api/admin/teams/software", json={"name_en": "Renamed", "members": []})
@@ -306,7 +310,7 @@ def _roles(ndb_client, user_id="2"):
     ],
 )
 def test_login_maps_canadian_delegate_status_to_role(wca_login, make_delegate, ndb_client, status, role):
-    make_delegate("2017ONDE01", status=status)
+    make_delegate(ME_WCA_ID, status=status)
     assert wca_login().status_code == 302
     assert _roles(ndb_client) == [role]
 
@@ -318,13 +322,13 @@ def test_login_gives_no_role_to_a_delegate_outside_the_canadian_roster(wca_login
 
 
 def test_login_drops_delegate_roles_once_off_the_roster_and_keeps_the_rest(wca_login, make_user, ndb_client):
-    make_user(2, roles=[Roles.WEBMASTER, Roles.SENIOR_DELEGATE], wca_id="2017ONDE01")
+    make_user(2, roles=[Roles.WEBMASTER, Roles.SENIOR_DELEGATE], wca_id=ME_WCA_ID)
     wca_login()
     assert _roles(ndb_client) == [Roles.WEBMASTER]
 
 
 def test_login_without_a_wca_id_gets_no_role(wca_login, make_delegate, ndb_client):
-    make_delegate("2017ONDE01")
+    make_delegate(ME_WCA_ID)
     wca_login(wca_id=None, delegate_status="delegate")
     assert _roles(ndb_client) == []
 

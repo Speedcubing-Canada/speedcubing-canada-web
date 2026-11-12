@@ -9,16 +9,20 @@ import {
 } from "react-admin";
 import { Province, ProvinceID } from "../types";
 import { getProvincesWithNA } from "./provinces";
-import { roles } from "./roles";
+import { DELEGATE_ROLES, roles } from "./roles";
 import { AdminUserContext } from "./AdminUserContext";
 
 export const UserEdit = () => {
   const t = useTranslate();
   const me = useContext(AdminUserContext);
-  // Only a global admin may grant GLOBAL_ADMIN; the backend ignores it otherwise.
-  const grantable = roles.filter(
-    (role) => role.id !== "GLOBAL_ADMIN" || me?.roles.includes("GLOBAL_ADMIN"),
-  );
+  // Mirrors permissions.editable_roles; delegate roles are synced at login.
+  const grantable = roles.map(({ id, name }) => ({
+    id,
+    name,
+    disabled:
+      DELEGATE_ROLES.includes(id) ||
+      (id === "GLOBAL_ADMIN" && !me?.roles.includes("GLOBAL_ADMIN")),
+  }));
 
   return (
     <Edit>
