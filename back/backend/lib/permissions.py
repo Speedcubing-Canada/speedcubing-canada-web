@@ -58,10 +58,10 @@ def require_auth(f):
     return decorated_function
 
 
-def can_view_user(user, viewer):
+def can_access_user(user, viewer):
     if not viewer:
         return False
-    return user == viewer or viewer.has_any_of_given_roles(Roles.UserAdminRoles())
+    return user == viewer or viewer.has_any_of_given_roles(Roles.SiteAdminRoles())
 
 
 def editable_roles(editor):

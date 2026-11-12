@@ -1,7 +1,7 @@
 import {
   canAccessAdmin,
   canManageContent,
-  canManageUsers,
+  isSiteAdmin,
   hasDelegateOrAdminRole,
   leadsTeams,
 } from "./roles";
@@ -12,7 +12,7 @@ const leader = { roles: [], led_teams: ["software"] } as unknown as User;
 
 describe("role predicates", () => {
   it("treats a missing user as having no rights", () => {
-    expect(canManageUsers(null)).toBe(false);
+    expect(isSiteAdmin(null)).toBe(false);
     expect(canManageContent(null)).toBe(false);
     expect(leadsTeams(null)).toBe(false);
     expect(canAccessAdmin(null)).toBe(false);
@@ -20,11 +20,11 @@ describe("role predicates", () => {
   });
 
   it("limits private user data to global admins and webmasters", () => {
-    expect(canManageUsers(user("GLOBAL_ADMIN"))).toBe(true);
-    expect(canManageUsers(user("WEBMASTER"))).toBe(true);
-    expect(canManageUsers(user("DIRECTOR"))).toBe(false);
-    expect(canManageUsers(user("COMMS"))).toBe(false);
-    expect(canManageUsers(leader)).toBe(false);
+    expect(isSiteAdmin(user("GLOBAL_ADMIN"))).toBe(true);
+    expect(isSiteAdmin(user("WEBMASTER"))).toBe(true);
+    expect(isSiteAdmin(user("DIRECTOR"))).toBe(false);
+    expect(isSiteAdmin(user("COMMS"))).toBe(false);
+    expect(isSiteAdmin(leader)).toBe(false);
   });
 
   it("opens organization content to directors and comms as well", () => {

@@ -5,13 +5,14 @@ from flask import Blueprint, redirect, session, url_for
 from google.cloud import ndb
 
 from backend.lib.secrets import get_secret
+from backend.models.delegate import Delegate
 from backend.models.user import Roles, User
 from backend.models.wca.person import Person
 from backend.models.wca.rank import RankAverage, RankSingle
 
 client = ndb.Client()
 
-_WCA_DELEGATE_STATUS_ROLE = {
+_DELEGATE_STATUS_ROLE = {
     "senior_delegate": Roles.SENIOR_DELEGATE,
     "regional_delegate": Roles.SENIOR_DELEGATE,
     "delegate": Roles.DELEGATE,
@@ -69,9 +70,10 @@ def create_bp(oauth):
             else:
                 del user.dob
 
-            # CANDIDATE_DELEGATE is the pre-rename value; drop the literal once no stored user carries it.
-            user.roles = [role for role in user.roles if role not in Roles.DelegateRoles() + ["CANDIDATE_DELEGATE"]]
-            delegate_role = _WCA_DELEGATE_STATUS_ROLE.get(wca_info.get("delegate_status"))
+            user.roles = [role for role in user.roles if role not in Roles.DelegateRoles()]
+            # Only delegates on the synced Canada roster get a role, not every WCA delegate.
+            delegate = Delegate.get_by_id(wca_info["wca_id"]) if wca_info.get("wca_id") else None
+            delegate_role = _DELEGATE_STATUS_ROLE.get(delegate.status) if delegate else None
             if delegate_role:
                 user.roles.append(delegate_role)
 

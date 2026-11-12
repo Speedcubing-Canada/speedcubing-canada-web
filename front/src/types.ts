@@ -56,7 +56,7 @@ export interface User {
   dob: string;
   email: string;
   updates?: LocationUpdate[];
-  // Ids of teams this user leads (only on the caller's own /user_info).
+  // Ids of teams this user leads; absent from /edit responses.
   led_teams?: string[];
 }
 

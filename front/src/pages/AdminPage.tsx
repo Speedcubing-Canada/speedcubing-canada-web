@@ -42,7 +42,7 @@ import { i18nProvider } from "../i18nProvider";
 import {
   canAccessAdmin,
   canManageContent,
-  canManageUsers,
+  isSiteAdmin,
   leadsTeams,
 } from "../components/roles";
 import { AdminUserContext } from "../components/AdminUserContext";
@@ -61,7 +61,7 @@ export const AdminPage = () => {
     })();
   }, []);
 
-  const users = canManageUsers(user);
+  const users = isSiteAdmin(user);
   const content = canManageContent(user);
 
   return (

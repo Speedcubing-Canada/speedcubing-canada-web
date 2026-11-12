@@ -21,7 +21,11 @@ import { API_BASE_URL, signIn, signOut } from "../components/api";
 import { AlertAction, ChipColor, Province, AlertState, User } from "../types";
 import httpClient from "../httpClient";
 import { getProvincesWithNA, getNAProvince } from "../components/provinces";
-import { canAccessAdmin, hasDelegateOrAdminRole } from "../components/roles";
+import {
+  CONTENT_ROLES,
+  canAccessAdmin,
+  hasDelegateOrAdminRole,
+} from "../components/roles";
 import UseResponsiveQuery from "../components/UseResponsiveQuery";
 import {
   isValidProvinceId,
@@ -311,12 +315,7 @@ export const Account = () => {
               component="ul"
             >
               {chipData.map((data) => {
-                const color: ChipColor = [
-                  "GLOBAL_ADMIN",
-                  "WEBMASTER",
-                  "DIRECTOR",
-                  "COMMS",
-                ].includes(data.label)
+                const color: ChipColor = CONTENT_ROLES.includes(data.label)
                   ? "primary"
                   : "default";
 

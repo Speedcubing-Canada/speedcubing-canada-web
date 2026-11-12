@@ -8,6 +8,7 @@ pure helpers need none and keep using plain MagicMock.
 
 import datetime
 import os
+from unittest.mock import MagicMock
 
 import pytest
 import requests
@@ -157,14 +158,39 @@ def make_user(seed, make_province):
 def make_team(seed):
     from backend.models.team import Team, TeamMember
 
-    def _make(team_id, leader_wca_id=None, name_en="Software Team"):
+    def _make(team_id, leader_wca_id=None):
         return seed(
             lambda: Team(
                 id=team_id,
-                name_en=name_en,
-                name_fr=name_en,
+                name_en="Software Team",
+                name_fr="Software Team",
                 members=[TeamMember(name="Lead", wca_id=leader_wca_id, is_leader=True)] if leader_wca_id else [],
             )
         )
 
     return _make
+
+
+@pytest.fixture
+def make_delegate(seed):
+    from backend.models.delegate import Delegate
+
+    def _make(wca_id, status="delegate"):
+        return seed(lambda: Delegate(id=wca_id, name="Delegate", status=status))
+
+    return _make
+
+
+@pytest.fixture
+def wca_login(app, client, monkeypatch):
+    """Run the OAuth callback as if the WCA had returned ``me``; returns the response."""
+    wca = app.extensions["authlib.integrations.flask_client"].wca
+    monkeypatch.delenv("ADMIN_WCA_ID", raising=False)
+
+    def _login(**me):
+        me = {"id": 2, "wca_id": "2017ONDE01", "name": "Test User", **me}
+        monkeypatch.setattr(wca, "authorize_access_token", lambda: None)
+        monkeypatch.setattr(wca, "get", lambda _path: MagicMock(json=lambda: {"me": me}))
+        return client.get("/api/oauth_callback")
+
+    return _login

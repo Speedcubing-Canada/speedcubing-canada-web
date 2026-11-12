@@ -16,21 +16,19 @@ class Roles:
 
     @staticmethod
     def AllRoles():
-        return Roles.ContentRoles() + Roles.DelegateRoles()
+        return [Roles.GLOBAL_ADMIN, Roles.WEBMASTER, Roles.DIRECTOR, Roles.COMMS] + Roles.DelegateRoles()
 
     @staticmethod
     def DelegateRoles():
         return [Roles.SENIOR_DELEGATE, Roles.DELEGATE, Roles.TRAINEE_DELEGATE]
 
     @staticmethod
-    def UserAdminRoles():
-        """May see private user data, edit championships, run maintenance, and manage every team."""
+    def SiteAdminRoles():
         return [Roles.GLOBAL_ADMIN, Roles.WEBMASTER]
 
     @staticmethod
     def ContentRoles():
-        """May edit the public organization page (directors, featured members)."""
-        return Roles.UserAdminRoles() + [Roles.DIRECTOR, Roles.COMMS]
+        return Roles.SiteAdminRoles() + [Roles.DIRECTOR, Roles.COMMS]
 
 
 class UserLocationUpdate(ndb.Model):

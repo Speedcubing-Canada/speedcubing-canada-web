@@ -40,7 +40,7 @@ def user_info(user_id=-1):
     user = me if user_id == -1 else User.get_by_id(user_id)
     if not user:
         return jsonify({"error": f"Unrecognized user ID {user_id}"}), 404
-    if not permissions.can_view_user(user, me):
+    if not permissions.can_access_user(user, me):
         return jsonify({"error": "You're not authorized to view this user."}), 403
     return {**user.to_json(), "led_teams": permissions.led_team_ids(user)}
 
@@ -62,11 +62,13 @@ def edit(user_id=-1):
     user = me if user_id == -1 else User.get_by_id(user_id)
     if not user:
         return jsonify({"error": f"Unrecognized user ID {user_id}"}), 404
-    if not permissions.can_view_user(user, me):
-        return jsonify({"error": "You're not authorized to view this user. So you can't edit their location either."}), 403
+    if not permissions.can_access_user(user, me):
+        return jsonify({"error": "You're not authorized to edit this user."}), 403
 
     old_province_id = user.province.id() if user.province else ""
-    province_id = request.json.get("province", old_province_id)
+    province_id = request.json.get("province")
+    if province_id is None:
+        province_id = old_province_id
     if province_id == "na":
         province_id = ""
 

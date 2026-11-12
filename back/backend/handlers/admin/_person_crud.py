@@ -4,7 +4,7 @@ from flask import Blueprint, jsonify, request
 from google.cloud import ndb
 
 from backend.handlers.admin._list_utils import filter_and_sort as _filter_and_sort
-from backend.handlers.admin._list_utils import paginate_records
+from backend.handlers.admin._list_utils import paginate_records, parse_ids
 from backend.lib.permissions import require_roles
 from backend.models.user import Roles
 
@@ -40,8 +40,7 @@ def make_person_blueprint(name, singular, plural, model):
     @bp.route(f"/get_{plural}_by_id")
     @require_roles(*Roles.ContentRoles())
     def get_records_by_id():
-        raw_ids = request.args.get("ids", "[]", type=str).strip("[]").split(",")
-        ids = [i.strip().strip('"') for i in raw_ids if i.strip()]
+        ids = parse_ids()
         records = [r for r in ndb.get_multi([ndb.Key(model, i) for i in ids]) if r]
         return jsonify({"data": [r.to_json() for r in records]})
 
