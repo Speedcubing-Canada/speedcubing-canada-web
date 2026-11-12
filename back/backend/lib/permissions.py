@@ -3,6 +3,7 @@ from functools import wraps
 from flask import jsonify
 from google.cloud import ndb
 
+from backend.models.team import Team
 from backend.models.user import Roles
 
 client = ndb.Client()
@@ -57,33 +58,30 @@ def require_auth(f):
     return decorated_function
 
 
-def can_edit_location(user, editor):
-    if not editor:
-        return False
-    return editor.has_any_of_given_roles(Roles.AdminRoles()) or user == editor
-
-
-def can_view_user(user, viewer):
+def can_access_user(user, viewer):
     if not viewer:
         return False
-    return (
-        user == viewer
-        or viewer.has_any_of_given_roles(Roles.DelegateRoles())
-        or viewer.has_any_of_given_roles(Roles.AdminRoles())
-    )
+    return user == viewer or viewer.has_any_of_given_roles(Roles.SiteAdminRoles())
 
 
-def can_view_roles(user, viewer):
-    if not viewer:
-        return False
-    return viewer.has_any_of_given_roles(Roles.DelegateRoles()) or viewer.has_any_of_given_roles(Roles.AdminRoles())
-
-
-def editable_roles(user, editor):
+def editable_roles(editor):
     if not editor:
         return []
     if editor.has_any_of_given_roles([Roles.GLOBAL_ADMIN]):
-        return Roles.AllRoles()
-    if editor.has_any_of_given_roles([Roles.WEBMASTER, Roles.DIRECTOR]):
-        return [Roles.WEBMASTER, Roles.DIRECTOR]
+        return [Roles.GLOBAL_ADMIN] + Roles.GrantableRoles()
+    if editor.has_any_of_given_roles([Roles.WEBMASTER]):
+        return Roles.GrantableRoles()
     return []
+
+
+def _wca_id(user):
+    return user.wca_person.id() if user.wca_person else None
+
+
+def can_edit_team(user, team):
+    return user.has_any_of_given_roles(Roles.SiteAdminRoles()) or team.is_led_by(_wca_id(user))
+
+
+def led_team_ids(user):
+    wca_id = _wca_id(user)
+    return [t.key.id() for t in Team.query() if t.is_led_by(wca_id)] if wca_id else []

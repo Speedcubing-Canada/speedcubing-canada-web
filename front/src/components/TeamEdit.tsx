@@ -1,10 +1,22 @@
-import { Edit, SimpleForm } from "react-admin";
+import { useContext } from "react";
+import { Edit, SaveButton, SimpleForm, Toolbar } from "react-admin";
 import { TeamInputs } from "./TeamForm";
+import { AdminUserContext } from "./AdminUserContext";
+import { isSiteAdmin } from "./roles";
 
-export const TeamEdit = () => (
-  <Edit>
-    <SimpleForm>
-      <TeamInputs />
-    </SimpleForm>
-  </Edit>
+const SaveOnlyToolbar = () => (
+  <Toolbar>
+    <SaveButton />
+  </Toolbar>
 );
+
+export const TeamEdit = () => {
+  const full = isSiteAdmin(useContext(AdminUserContext));
+  return (
+    <Edit>
+      <SimpleForm toolbar={full ? undefined : <SaveOnlyToolbar />}>
+        <TeamInputs />
+      </SimpleForm>
+    </Edit>
+  );
+};

@@ -5,11 +5,20 @@ from flask import Blueprint, redirect, session, url_for
 from google.cloud import ndb
 
 from backend.lib.secrets import get_secret
+from backend.models.delegate import Delegate
 from backend.models.user import Roles, User
 from backend.models.wca.person import Person
 from backend.models.wca.rank import RankAverage, RankSingle
 
 client = ndb.Client()
+
+_DELEGATE_STATUS_ROLE = {
+    "senior_delegate": Roles.SENIOR_DELEGATE,
+    "regional_delegate": Roles.SENIOR_DELEGATE,
+    "delegate": Roles.DELEGATE,
+    "junior_delegate": Roles.DELEGATE,
+    "trainee_delegate": Roles.TRAINEE_DELEGATE,
+}
 
 
 def create_bp(oauth):
@@ -62,16 +71,16 @@ def create_bp(oauth):
                 del user.dob
 
             user.roles = [role for role in user.roles if role not in Roles.DelegateRoles()]
-            if "delegate_status" in wca_info:
-                if wca_info["delegate_status"] == "senior_delegate":
-                    user.roles.append(Roles.SENIOR_DELEGATE)
-                elif wca_info["delegate_status"] in ("delegate", "candidate_delegate"):
-                    user.roles.append(Roles.DELEGATE)
+            # Only delegates on the synced Canada roster get a role, not every WCA delegate.
+            delegate = Delegate.get_by_id(wca_info["wca_id"]) if wca_info.get("wca_id") else None
+            delegate_role = _DELEGATE_STATUS_ROLE.get(delegate.status) if delegate else None
+            if delegate_role:
+                user.roles.append(delegate_role)
 
             # For local development, make it easier to make a user a global admin.
             if os.environ.get("ADMIN_WCA_ID"):
                 user.roles = [role for role in user.roles if role != Roles.GLOBAL_ADMIN]
-                if wca_info["wca_id"] and wca_info["wca_id"] in os.environ.get("ADMIN_WCA_ID"):
+                if wca_info.get("wca_id") in os.environ["ADMIN_WCA_ID"].split(","):
                     user.roles.append(Roles.GLOBAL_ADMIN)
 
             wca_id_user = User.get_by_id(wca_info["wca_id"]) if wca_info["wca_id"] else None

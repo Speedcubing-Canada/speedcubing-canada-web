@@ -45,7 +45,7 @@ describe("AdminDashboard maintenance section", () => {
 
   it("reindexes users once confirmed", async () => {
     post.mockResolvedValue({ ok: true, data: { data: { users: 42 } } });
-    renderDashboard(user("DIRECTOR"));
+    renderDashboard(user("WEBMASTER"));
 
     fireEvent.click(screen.getByRole("button", { name: "Reindex users" }));
     fireEvent.click(await screen.findByRole("button", { name: "Confirm" }));
@@ -66,14 +66,10 @@ describe("AdminDashboard maintenance section", () => {
     expect(post).not.toHaveBeenCalled();
   });
 
-  it("disables the provinces action for directors", () => {
-    renderDashboard(user("DIRECTOR"));
-
-    expect(
-      screen.getByRole("button", { name: "Reload provinces and regions" }),
-    ).toBeDisabled();
-    expect(
-      screen.getByRole("button", { name: "Recompute championships" }),
-    ).toBeEnabled();
+  it.each(["DIRECTOR", "COMMS"])("disables every action for %s", (role) => {
+    renderDashboard(user(role));
+    for (const button of screen.getAllByRole("button")) {
+      expect(button).toBeDisabled();
+    }
   });
 });

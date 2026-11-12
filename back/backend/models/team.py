@@ -34,6 +34,9 @@ class Team(ndb.Model):
     position = ndb.IntegerProperty(default=0)
     members = ndb.StructuredProperty(TeamMember, repeated=True)
 
+    def is_led_by(self, wca_id):
+        return bool(wca_id) and any(m.is_leader and m.wca_id == wca_id for m in self.members)
+
     def to_json(self):
         return {
             "id": self.key.id(),

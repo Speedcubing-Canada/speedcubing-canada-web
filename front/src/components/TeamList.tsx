@@ -22,7 +22,7 @@ export const TeamList = () => {
           tertiaryText={(record) => `${record.members?.length ?? 0}`}
         />
       ) : (
-        <Datagrid rowClick="show">
+        <Datagrid rowClick="show" bulkActionButtons={false}>
           <TextField source="id" />
           <TextField source="name_en" />
           <TextField source="name_fr" />

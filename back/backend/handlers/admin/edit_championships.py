@@ -4,7 +4,7 @@ from flask import Blueprint, jsonify, request
 from google.cloud import ndb
 
 from backend.handlers.admin._list_utils import filter_and_sort as _filter_and_sort
-from backend.handlers.admin._list_utils import paginate_records
+from backend.handlers.admin._list_utils import paginate_records, parse_ids
 from backend.lib.permissions import require_roles
 from backend.load_db.setup_geography import setup_regions_and_provinces
 from backend.load_db.update_champions import update_champions
@@ -48,23 +48,22 @@ def filter_and_sort(records, q, sort_field, sort_order):
 
 
 @bp.route("/get_championships")
-@require_roles(*Roles.AdminRoles())
+@require_roles(*Roles.SiteAdminRoles())
 def get_championships():
     records = _serialize_all(list(Championship.query().iter()))
     return jsonify(paginate_records(records, filter_and_sort, default_sort_field="year", default_sort_order="desc"))
 
 
 @bp.route("/get_championships_by_id")
-@require_roles(*Roles.AdminRoles())
+@require_roles(*Roles.SiteAdminRoles())
 def get_championships_by_id():
-    raw_ids = request.args.get("ids", "[]", type=str).strip("[]").split(",")
-    ids = [i.strip().strip('"') for i in raw_ids if i.strip()]
+    ids = parse_ids()
     championships = [c for c in ndb.get_multi([ndb.Key(Championship, i) for i in ids]) if c]
     return jsonify({"data": _serialize_all(championships)})
 
 
 @bp.route("/championship/<championship_id>")
-@require_roles(*Roles.AdminRoles())
+@require_roles(*Roles.SiteAdminRoles())
 def get_championship(championship_id):
     championship = Championship.get_by_id(championship_id)
     if not championship:
@@ -113,7 +112,7 @@ def _derive_id(data, competition):
 
 
 @bp.route("/championships", methods=["POST"])
-@require_roles(*Roles.AdminRoles())
+@require_roles(*Roles.SiteAdminRoles())
 def create_championship():
     data = request.get_json() or {}
     if data.get("type") not in _VALID_TYPES:
@@ -136,7 +135,7 @@ def create_championship():
 
 
 @bp.route("/championships/<championship_id>", methods=["POST"])
-@require_roles(*Roles.AdminRoles())
+@require_roles(*Roles.SiteAdminRoles())
 def update_championship(championship_id):
     championship = Championship.get_by_id(championship_id)
     if not championship:
@@ -166,7 +165,7 @@ def update_championship(championship_id):
 
 
 @bp.route("/championships/<championship_id>", methods=["DELETE"])
-@require_roles(*Roles.AdminRoles())
+@require_roles(*Roles.SiteAdminRoles())
 def delete_championship(championship_id):
     championship = Championship.get_by_id(championship_id)
     if not championship:
@@ -177,7 +176,7 @@ def delete_championship(championship_id):
 
 
 @bp.route("/recompute_championships", methods=["POST"])
-@require_roles(*Roles.AdminRoles())
+@require_roles(*Roles.SiteAdminRoles())
 def recompute_championships():
     """Re-run the geography setup + championship/champion classification on demand.
 

@@ -39,7 +39,13 @@ import { AdminDashboard } from "../components/AdminDashboard";
 import { UserEdit } from "../components/UserEdit";
 import { UserShow } from "../components/UserShow";
 import { i18nProvider } from "../i18nProvider";
-import { isAdmin } from "../components/roles";
+import {
+  canAccessAdmin,
+  canManageContent,
+  isSiteAdmin,
+  leadsTeams,
+} from "../components/roles";
+import { AdminUserContext } from "../components/AdminUserContext";
 
 export const AdminPage = () => {
   const [user, setUser] = useState<User | null>(null);
@@ -55,7 +61,8 @@ export const AdminPage = () => {
     })();
   }, []);
 
-  const userIsAdmin = isAdmin(user);
+  const users = isSiteAdmin(user);
+  const content = canManageContent(user);
 
   return (
     <div>
@@ -71,23 +78,26 @@ export const AdminPage = () => {
             <CircularProgress />
           </Box>
         </Container>
-      ) : userIsAdmin ? (
-        <Admin
-          basename="/admin"
-          dataProvider={dataProvider}
-          i18nProvider={i18nProvider}
-          dashboard={() => <AdminDashboard user={user} />}
-          layout={MyLayout}
-        >
-          <Resource
-            name="Users"
-            list={UserList}
-            show={UserShow}
-            edit={UserEdit}
-            icon={UserIcon}
-            recordRepresentation="name"
-          />
-          {/*
+      ) : canAccessAdmin(user) ? (
+        <AdminUserContext.Provider value={user}>
+          <Admin
+            basename="/admin"
+            dataProvider={dataProvider}
+            i18nProvider={i18nProvider}
+            dashboard={() => <AdminDashboard user={user} />}
+            layout={MyLayout}
+          >
+            {users && (
+              <Resource
+                name="Users"
+                list={UserList}
+                show={UserShow}
+                edit={UserEdit}
+                icon={UserIcon}
+                recordRepresentation="name"
+              />
+            )}
+            {/*
             Resource name is "ChampionshipsAdmin", not "Championships", on purpose:
             react-admin derives the URL from the name (/admin/Championships), and
             react-router would match that case-insensitively against the public
@@ -96,45 +106,54 @@ export const AdminPage = () => {
             token keeps the admin URL out of that collision. The menu label still
             reads "Championships" via the resources.ChampionshipsAdmin i18n key.
           */}
-          <Resource
-            name="ChampionshipsAdmin"
-            list={ChampionshipList}
-            show={ChampionshipShow}
-            edit={ChampionshipEdit}
-            create={ChampionshipCreate}
-            icon={EmojiEventsIcon}
-            recordRepresentation="competition_name"
-          />
-          {/* "…Admin" suffix on every resource name for the same route-collision reason
-              documented above (TeamsAdmin, DirectorsAdmin, FeaturedMembersAdmin). */}
-          <Resource
-            name="TeamsAdmin"
-            list={TeamList}
-            show={TeamShow}
-            edit={TeamEdit}
-            create={TeamCreate}
-            icon={GroupsIcon}
-            recordRepresentation="name_en"
-          />
-          <Resource
-            name="DirectorsAdmin"
-            list={PersonList}
-            show={PersonShow}
-            edit={PersonEdit}
-            create={PersonCreate}
-            icon={GavelIcon}
-            recordRepresentation="name"
-          />
-          <Resource
-            name="FeaturedMembersAdmin"
-            list={PersonList}
-            show={PersonShow}
-            edit={PersonEdit}
-            create={PersonCreate}
-            icon={StarIcon}
-            recordRepresentation="name"
-          />
-        </Admin>
+            {users && (
+              <Resource
+                name="ChampionshipsAdmin"
+                list={ChampionshipList}
+                show={ChampionshipShow}
+                edit={ChampionshipEdit}
+                create={ChampionshipCreate}
+                icon={EmojiEventsIcon}
+                recordRepresentation="competition_name"
+              />
+            )}
+            {/* "…Admin" suffix on every resource name for the same route-collision reason
+                documented above (TeamsAdmin, DirectorsAdmin, FeaturedMembersAdmin). */}
+            {(users || leadsTeams(user)) && (
+              <Resource
+                name="TeamsAdmin"
+                list={TeamList}
+                show={TeamShow}
+                edit={TeamEdit}
+                create={users ? TeamCreate : undefined}
+                icon={GroupsIcon}
+                recordRepresentation="name_en"
+              />
+            )}
+            {content && (
+              <Resource
+                name="DirectorsAdmin"
+                list={PersonList}
+                show={PersonShow}
+                edit={PersonEdit}
+                create={PersonCreate}
+                icon={GavelIcon}
+                recordRepresentation="name"
+              />
+            )}
+            {content && (
+              <Resource
+                name="FeaturedMembersAdmin"
+                list={PersonList}
+                show={PersonShow}
+                edit={PersonEdit}
+                create={PersonCreate}
+                icon={StarIcon}
+                recordRepresentation="name"
+              />
+            )}
+          </Admin>
+        </AdminUserContext.Provider>
       ) : (
         <Container sx={{ py: 8 }} maxWidth="md">
           <Box

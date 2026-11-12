@@ -15,14 +15,7 @@ logger = logging.getLogger(__name__)
 bp = Blueprint("championship_eligibility", __name__)
 client = ndb.Client()
 
-_DELEGATE_AND_ADMIN_ROLES = (
-    Roles.GLOBAL_ADMIN,
-    Roles.DIRECTOR,
-    Roles.WEBMASTER,
-    Roles.SENIOR_DELEGATE,
-    Roles.DELEGATE,
-    Roles.CANDIDATE_DELEGATE,
-)
+_DELEGATE_AND_ADMIN_ROLES = (*Roles.SiteAdminRoles(), Roles.DIRECTOR, *Roles.DelegateRoles())
 
 
 @bp.route("/championships")
