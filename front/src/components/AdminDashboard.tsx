@@ -13,7 +13,7 @@ import { Confirm, useNotify, useTranslate } from "react-admin";
 
 import { API_BASE_URL } from "./api";
 import httpClient from "../httpClient";
-import { canUpdateProvinces } from "./roles";
+import { canManageUsers } from "./roles";
 import { User } from "../types";
 
 interface Action {
@@ -62,8 +62,7 @@ export const AdminDashboard = ({ user }: { user: User | null }) => {
     }
   };
 
-  const allowed = (action: Action) =>
-    action.key !== "provinces" || canUpdateProvinces(user);
+  const allowed = canManageUsers(user);
 
   return (
     <Card>
@@ -80,14 +79,14 @@ export const AdminDashboard = ({ user }: { user: User | null }) => {
             <Button
               variant="outlined"
               color="warning"
-              disabled={running !== null || !allowed(action)}
+              disabled={running !== null || !allowed}
               onClick={() => setConfirming(action)}
             >
               {running === action.key
                 ? t("admin.maintenance.running")
                 : t(`admin.maintenance.${action.key}.label`)}
             </Button>
-            {!allowed(action) && (
+            {!allowed && (
               <Typography
                 variant="caption"
                 display="block"

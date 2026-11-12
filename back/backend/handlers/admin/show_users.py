@@ -28,7 +28,7 @@ def _search(q):
 
 
 @bp.route("/get_users")
-@require_roles(*Roles.AdminRoles())
+@require_roles(*Roles.UserAdminRoles())
 def get_users():
     page, per_page, sort_field, sort_order, q = parse_list_params("name")
     start = (page - 1) * per_page
@@ -48,7 +48,7 @@ def get_users():
 
 
 @bp.route("/reindex_users", methods=["POST"])
-@require_roles(*Roles.AdminRoles())
+@require_roles(*Roles.UserAdminRoles())
 def reindex_users():
     """Re-put every user so computed properties added after signup get indexed."""
     users = User.query().fetch()
@@ -57,18 +57,9 @@ def reindex_users():
 
 
 @bp.route("/get_users_by_id")
-@require_roles(*Roles.AdminRoles())
+@require_roles(*Roles.UserAdminRoles())
 def get_users_by_id():
     raw_ids = request.args.get("ids", "[]", type=str).strip("[]").split(",")
-
-    clean_ids = []
-    for raw_uid in raw_ids:
-        uid = raw_uid.strip()
-        if not uid.isdigit():
-            return jsonify({"error": f"Invalid user id: {uid}"}), 400
-        clean_ids.append(int(uid))
-
-    users = User.query(User.key.IN([ndb.Key(User, i) for i in clean_ids])).fetch()
-
-    data = [user.to_json() for user in users]
-    return jsonify({"data": data})
+    ids = [i.strip().strip('"') for i in raw_ids if i.strip()]
+    users = [u for u in ndb.get_multi([ndb.Key(User, i) for i in ids]) if u]
+    return jsonify({"data": [u.to_json() for u in users]})

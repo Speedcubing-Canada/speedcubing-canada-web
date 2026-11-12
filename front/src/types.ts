@@ -56,6 +56,8 @@ export interface User {
   dob: string;
   email: string;
   updates?: LocationUpdate[];
+  // Ids of teams this user leads (only on the caller's own /user_info).
+  led_teams?: string[];
 }
 
 export interface ProfileEditData {
@@ -179,11 +181,12 @@ export type ProvinceID = Province["id"];
 
 export const ROLES_DATA = [
   { id: "GLOBAL_ADMIN", name: "Global Admin" },
-  { id: "DIRECTOR", name: "Director" },
   { id: "WEBMASTER", name: "Webmaster" },
+  { id: "DIRECTOR", name: "Director" },
+  { id: "COMMS", name: "Communications" },
   { id: "SENIOR_DELEGATE", name: "Senior Delegate" },
   { id: "DELEGATE", name: "Delegate" },
-  { id: "CANDIDATE_DELEGATE", name: "Junior Delegate" },
+  { id: "TRAINEE_DELEGATE", name: "Trainee Delegate" },
 ] as const;
 
 export type Role = (typeof ROLES_DATA)[number];

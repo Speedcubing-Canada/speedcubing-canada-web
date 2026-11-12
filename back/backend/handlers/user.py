@@ -42,7 +42,7 @@ def user_info(user_id=-1):
         return jsonify({"error": f"Unrecognized user ID {user_id}"}), 404
     if not permissions.can_view_user(user, me):
         return jsonify({"error": "You're not authorized to view this user."}), 403
-    return user.to_json()
+    return {**user.to_json(), "led_teams": permissions.led_team_ids(user)}
 
 
 # After updating the user's province, write the RankSingle and RankAverage to the
@@ -65,19 +65,16 @@ def edit(user_id=-1):
     if not permissions.can_view_user(user, me):
         return jsonify({"error": "You're not authorized to view this user. So you can't edit their location either."}), 403
 
-    province_id = request.json["province"]
+    old_province_id = user.province.id() if user.province else ""
+    province_id = request.json.get("province", old_province_id)
     if province_id == "na":
         province_id = ""
 
     if province_id not in _VALID_PROVINCE_IDS:
         return jsonify({"error": f"Invalid province ID {province_id}"}), 400
 
-    old_province_id = user.province.id() if user.province else ""
     changed_location = old_province_id != province_id
     user_modified = False
-
-    if changed_location and not permissions.can_edit_location(user, me):
-        return jsonify({"error": "You're not authorized to edit this user's location."}), 403
 
     # A member may only change their own province once per rolling year (to stop
     # gaming eligibility for more than one region's title). Admins editing another
@@ -118,7 +115,7 @@ def edit(user_id=-1):
         user_modified = True
 
     if "roles" in request.json:
-        for role in permissions.editable_roles(user, me):
+        for role in permissions.editable_roles(me):
             if role in request.json["roles"] and role not in user.roles:
                 user.roles.append(role)
                 user_modified = True

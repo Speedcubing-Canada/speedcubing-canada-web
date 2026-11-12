@@ -10,7 +10,7 @@ client = ndb.Client()
 
 
 @bp.route("/update_provinces", methods=["POST"])
-@require_roles(Roles.GLOBAL_ADMIN, Roles.WEBMASTER)
+@require_roles(*Roles.UserAdminRoles())
 def update_provinces():
     # require_roles already opens an ndb context.
     setup_regions_and_provinces()

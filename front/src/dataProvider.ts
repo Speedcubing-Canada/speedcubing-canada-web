@@ -68,19 +68,10 @@ const dataProvider: DataProvider = {
   },
 
   getMany: (resource, params) => {
-    const adminResource = getAdminResource(resource);
-    if (adminResource) {
-      const query = { ids: JSON.stringify(params.ids) };
-      const url = `${apiUrl}/admin/get_${
-        adminResource.plural
-      }_by_id?${stringify(query)}`;
-      return httpClient(url).then(({ json }) => ({ data: json.data }));
-    }
-    const query = {
-      filter: JSON.stringify({ ids: params.ids }),
-    };
-    const url = `${apiUrl}/admin/get_users_by_id?${stringify(query)}`;
-    return httpClient(url).then(({ json }) => ({ data: json }));
+    const plural = getAdminResource(resource)?.plural ?? "users";
+    const query = { ids: JSON.stringify(params.ids) };
+    const url = `${apiUrl}/admin/get_${plural}_by_id?${stringify(query)}`;
+    return httpClient(url).then(({ json }) => ({ data: json.data }));
   },
 
   getManyReference: (resource, params) => {

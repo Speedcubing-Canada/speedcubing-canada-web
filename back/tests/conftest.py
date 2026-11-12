@@ -151,3 +151,20 @@ def make_user(seed, make_province):
         )
 
     return _make
+
+
+@pytest.fixture
+def make_team(seed):
+    from backend.models.team import Team, TeamMember
+
+    def _make(team_id, leader_wca_id=None, name_en="Software Team"):
+        return seed(
+            lambda: Team(
+                id=team_id,
+                name_en=name_en,
+                name_fr=name_en,
+                members=[TeamMember(name="Lead", wca_id=leader_wca_id, is_leader=True)] if leader_wca_id else [],
+            )
+        )
+
+    return _make

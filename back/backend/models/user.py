@@ -7,30 +7,30 @@ from backend.models.wca.person import Person
 
 class Roles:
     GLOBAL_ADMIN = "GLOBAL_ADMIN"
-    DIRECTOR = "DIRECTOR"
     WEBMASTER = "WEBMASTER"
+    DIRECTOR = "DIRECTOR"
+    COMMS = "COMMS"
     SENIOR_DELEGATE = "SENIOR_DELEGATE"
     DELEGATE = "DELEGATE"
-    CANDIDATE_DELEGATE = "CANDIDATE_DELEGATE"
+    TRAINEE_DELEGATE = "TRAINEE_DELEGATE"
 
     @staticmethod
     def AllRoles():
-        return [
-            Roles.GLOBAL_ADMIN,
-            Roles.DIRECTOR,
-            Roles.WEBMASTER,
-            Roles.SENIOR_DELEGATE,
-            Roles.DELEGATE,
-            Roles.CANDIDATE_DELEGATE,
-        ]
+        return Roles.ContentRoles() + Roles.DelegateRoles()
 
     @staticmethod
     def DelegateRoles():
-        return [Roles.SENIOR_DELEGATE, Roles.DELEGATE, Roles.CANDIDATE_DELEGATE]
+        return [Roles.SENIOR_DELEGATE, Roles.DELEGATE, Roles.TRAINEE_DELEGATE]
 
     @staticmethod
-    def AdminRoles():
-        return [Roles.GLOBAL_ADMIN, Roles.DIRECTOR, Roles.WEBMASTER]
+    def UserAdminRoles():
+        """May see private user data, edit championships, run maintenance, and manage every team."""
+        return [Roles.GLOBAL_ADMIN, Roles.WEBMASTER]
+
+    @staticmethod
+    def ContentRoles():
+        """May edit the public organization page (directors, featured members)."""
+        return Roles.UserAdminRoles() + [Roles.DIRECTOR, Roles.COMMS]
 
 
 class UserLocationUpdate(ndb.Model):

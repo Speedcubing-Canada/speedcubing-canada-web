@@ -21,7 +21,7 @@ import { API_BASE_URL, signIn, signOut } from "../components/api";
 import { AlertAction, ChipColor, Province, AlertState, User } from "../types";
 import httpClient from "../httpClient";
 import { getProvincesWithNA, getNAProvince } from "../components/provinces";
-import { isAdmin, hasDelegateOrAdminRole } from "../components/roles";
+import { canAccessAdmin, hasDelegateOrAdminRole } from "../components/roles";
 import UseResponsiveQuery from "../components/UseResponsiveQuery";
 import {
   isValidProvinceId,
@@ -171,7 +171,7 @@ export const Account = () => {
     );
   };
 
-  const admin = isAdmin(user);
+  const admin = canAccessAdmin(user);
   const delegate = hasDelegateOrAdminRole(user);
 
   return (
@@ -311,12 +311,14 @@ export const Account = () => {
               component="ul"
             >
               {chipData.map((data) => {
-                const color: ChipColor =
-                  data.label === "GLOBAL_ADMIN" ||
-                  data.label === "DIRECTOR" ||
-                  data.label === "WEBMASTER"
-                    ? "primary"
-                    : "default";
+                const color: ChipColor = [
+                  "GLOBAL_ADMIN",
+                  "WEBMASTER",
+                  "DIRECTOR",
+                  "COMMS",
+                ].includes(data.label)
+                  ? "primary"
+                  : "default";
 
                 return (
                   <ListItem key={data.key}>

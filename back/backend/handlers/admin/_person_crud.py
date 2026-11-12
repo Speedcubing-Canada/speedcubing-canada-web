@@ -32,13 +32,13 @@ def make_person_blueprint(name, singular, plural, model):
     bp = Blueprint(name, __name__)
 
     @bp.route(f"/get_{plural}")
-    @require_roles(*Roles.AdminRoles())
+    @require_roles(*Roles.ContentRoles())
     def list_records():
         records = [r.to_json() for r in model.query().iter()]
         return jsonify(paginate_records(records, filter_and_sort, default_sort_field="position"))
 
     @bp.route(f"/get_{plural}_by_id")
-    @require_roles(*Roles.AdminRoles())
+    @require_roles(*Roles.ContentRoles())
     def get_records_by_id():
         raw_ids = request.args.get("ids", "[]", type=str).strip("[]").split(",")
         ids = [i.strip().strip('"') for i in raw_ids if i.strip()]
@@ -46,7 +46,7 @@ def make_person_blueprint(name, singular, plural, model):
         return jsonify({"data": [r.to_json() for r in records]})
 
     @bp.route(f"/{singular}/<record_id>")
-    @require_roles(*Roles.AdminRoles())
+    @require_roles(*Roles.ContentRoles())
     def get_record(record_id):
         record = model.get_by_id(record_id)
         if not record:
@@ -54,7 +54,7 @@ def make_person_blueprint(name, singular, plural, model):
         return jsonify(record.to_json())
 
     @bp.route(f"/{plural}", methods=["POST"])
-    @require_roles(*Roles.AdminRoles())
+    @require_roles(*Roles.ContentRoles())
     def create_record():
         data = request.get_json() or {}
         record_id = (data.get("id") or "").strip()
@@ -68,7 +68,7 @@ def make_person_blueprint(name, singular, plural, model):
         return jsonify(record.to_json())
 
     @bp.route(f"/{plural}/<record_id>", methods=["POST"])
-    @require_roles(*Roles.AdminRoles())
+    @require_roles(*Roles.ContentRoles())
     def update_record(record_id):
         record = model.get_by_id(record_id)
         if not record:
@@ -78,7 +78,7 @@ def make_person_blueprint(name, singular, plural, model):
         return jsonify(record.to_json())
 
     @bp.route(f"/{plural}/<record_id>", methods=["DELETE"])
-    @require_roles(*Roles.AdminRoles())
+    @require_roles(*Roles.ContentRoles())
     def delete_record(record_id):
         record = model.get_by_id(record_id)
         if not record:
