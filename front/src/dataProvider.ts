@@ -1,6 +1,10 @@
 import { fetchUtils, DataProvider } from "react-admin";
-import { stringify } from "query-string";
 import { API_BASE_URL } from "./components/api";
+
+const qs = (query: Record<string, string | number>) =>
+  new URLSearchParams(
+    Object.entries(query).map(([key, value]) => [key, String(value)]),
+  ).toString();
 
 const apiUrl = API_BASE_URL;
 const httpClient = (url: string, options: RequestInit = {}) => {
@@ -46,7 +50,7 @@ const dataProvider: DataProvider = {
       sort_order: order,
       q: params.filter?.q ?? "",
     };
-    const url = `${apiUrl}/admin/get_${plural}?${stringify(query)}`;
+    const url = `${apiUrl}/admin/get_${plural}?${qs(query)}`;
     return httpClient(url).then(({ json }) => ({
       data: json.data,
       total: json.total,
@@ -70,7 +74,7 @@ const dataProvider: DataProvider = {
   getMany: (resource, params) => {
     const plural = getAdminResource(resource)?.plural ?? "users";
     const query = { ids: JSON.stringify(params.ids) };
-    const url = `${apiUrl}/admin/get_${plural}_by_id?${stringify(query)}`;
+    const url = `${apiUrl}/admin/get_${plural}_by_id?${qs(query)}`;
     return httpClient(url).then(({ json }) => ({ data: json.data }));
   },
 
@@ -85,7 +89,7 @@ const dataProvider: DataProvider = {
         [params.target]: params.id,
       }),
     };
-    const url = `${apiUrl}/${resource}?${stringify(query)}`;
+    const url = `${apiUrl}/${resource}?${qs(query)}`;
 
     return httpClient(url).then(({ json }) => ({
       data: json.data,
@@ -130,7 +134,7 @@ const dataProvider: DataProvider = {
     const query = {
       filter: JSON.stringify({ id: params.ids }),
     };
-    return httpClient(`${apiUrl}/${resource}?${stringify(query)}`, {
+    return httpClient(`${apiUrl}/${resource}?${qs(query)}`, {
       method: "PUT",
       body: JSON.stringify(params.data),
     }).then(({ json }) => ({ data: json }));
@@ -155,7 +159,7 @@ const dataProvider: DataProvider = {
     const query = {
       filter: JSON.stringify({ id: params.ids }),
     };
-    return httpClient(`${apiUrl}/${resource}?${stringify(query)}`, {
+    return httpClient(`${apiUrl}/${resource}?${qs(query)}`, {
       method: "DELETE",
       body: JSON.stringify(params),
     }).then(({ json }) => ({ data: json }));
