@@ -11,6 +11,14 @@ from backend.models.wca.rank import RankAverage, RankSingle
 
 client = ndb.Client()
 
+_WCA_DELEGATE_STATUS_ROLE = {
+    "senior_delegate": Roles.SENIOR_DELEGATE,
+    "regional_delegate": Roles.SENIOR_DELEGATE,
+    "delegate": Roles.DELEGATE,
+    "junior_delegate": Roles.DELEGATE,
+    "trainee_delegate": Roles.TRAINEE_DELEGATE,
+}
+
 
 def create_bp(oauth):
     bp = Blueprint("auth", __name__)
@@ -61,17 +69,16 @@ def create_bp(oauth):
             else:
                 del user.dob
 
-            user.roles = [role for role in user.roles if role not in Roles.DelegateRoles()]
-            if "delegate_status" in wca_info:
-                if wca_info["delegate_status"] == "senior_delegate":
-                    user.roles.append(Roles.SENIOR_DELEGATE)
-                elif wca_info["delegate_status"] in ("delegate", "candidate_delegate"):
-                    user.roles.append(Roles.DELEGATE)
+            # CANDIDATE_DELEGATE is the pre-rename value; drop the literal once no stored user carries it.
+            user.roles = [role for role in user.roles if role not in Roles.DelegateRoles() + ["CANDIDATE_DELEGATE"]]
+            delegate_role = _WCA_DELEGATE_STATUS_ROLE.get(wca_info.get("delegate_status"))
+            if delegate_role:
+                user.roles.append(delegate_role)
 
             # For local development, make it easier to make a user a global admin.
             if os.environ.get("ADMIN_WCA_ID"):
                 user.roles = [role for role in user.roles if role != Roles.GLOBAL_ADMIN]
-                if wca_info["wca_id"] and wca_info["wca_id"] in os.environ.get("ADMIN_WCA_ID"):
+                if wca_info.get("wca_id") in os.environ["ADMIN_WCA_ID"].split(","):
                     user.roles.append(Roles.GLOBAL_ADMIN)
 
             wca_id_user = User.get_by_id(wca_info["wca_id"]) if wca_info["wca_id"] else None

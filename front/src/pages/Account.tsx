@@ -22,7 +22,7 @@ import { API_BASE_URL, signIn, signOut } from "../components/api";
 import { AlertAction, Province, AlertState, User } from "../types";
 import httpClient from "../httpClient";
 import { getProvincesWithNA, getNAProvince } from "../components/provinces";
-import { isAdmin, hasDelegateOrAdminRole } from "../components/roles";
+import { canAccessAdmin, hasDelegateOrAdminRole } from "../components/roles";
 import { useResponsiveQuery } from "../components/useResponsiveQuery";
 import {
   isValidProvinceId,
@@ -33,7 +33,12 @@ import { CURRENT_USER_KEY, useCurrentUser } from "../helpers/useCurrentUser";
 import { getLocaleOrFallback, SAVED_LOCALE_KEY } from "../locale";
 import { useNavigate } from "react-router";
 
-const PRIMARY_ROLES = new Set(["GLOBAL_ADMIN", "DIRECTOR", "WEBMASTER"]);
+const PRIMARY_ROLES = new Set([
+  "GLOBAL_ADMIN",
+  "WEBMASTER",
+  "DIRECTOR",
+  "COMMS",
+]);
 
 const initialState: AlertState = {
   alert: false,
@@ -158,7 +163,7 @@ export const Account = () => {
     void navigate(`/${locale}/championship-eligibility`);
   };
 
-  const admin = isAdmin(user);
+  const admin = canAccessAdmin(user);
   const delegate = hasDelegateOrAdminRole(user);
 
   return (

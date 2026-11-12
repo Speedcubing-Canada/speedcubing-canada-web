@@ -33,11 +33,23 @@ def test_user_info_hides_other_users_from_a_plain_user(as_user, make_user):
     assert response.status_code == 403
 
 
-def test_user_info_lets_a_delegate_see_another_user(as_user, make_user):
+def test_user_info_hides_other_users_from_a_delegate(as_user, make_user):
     make_user(3, name="Someone Else")
-    response = as_user(make_user(2, roles=[Roles.DELEGATE])).get("/api/user_info/3")
+    assert as_user(make_user(2, roles=[Roles.DELEGATE])).get("/api/user_info/3").status_code == 403
+
+
+def test_user_info_lets_a_webmaster_see_another_user(as_user, make_user):
+    make_user(3, name="Someone Else")
+    response = as_user(make_user(2, roles=[Roles.WEBMASTER])).get("/api/user_info/3")
     assert response.status_code == 200
     assert response.json["name"] == "Someone Else"
+
+
+def test_user_info_lists_led_teams(as_user, make_user, make_team):
+    make_team("software", leader_wca_id="2017ONDE01")
+    make_team("comms", leader_wca_id="2000AAAA01")
+    response = as_user(make_user(2, wca_id="2017ONDE01")).get("/api/user_info")
+    assert response.json["led_teams"] == ["software"]
 
 
 def test_get_users_forbidden_without_an_admin_role(client, as_user, make_user):
@@ -139,3 +151,107 @@ def test_reindex_users_requires_admin_and_reports_count(client, as_user, make_us
     response = as_user(admin).post("/api/admin/reindex_users")
     assert response.status_code == 200
     assert response.json == {"data": {"users": 2}}
+
+
+# --- role matrix ---
+
+
+def test_content_roles_edit_people_but_nothing_private(as_user, make_user):
+    for user_id, role in ((2, Roles.COMMS), (3, Roles.DIRECTOR)):
+        client = as_user(make_user(user_id, roles=[role]))
+        assert client.get("/api/admin/get_directors").status_code == 200
+        assert client.get("/api/admin/get_featured_members").status_code == 200
+        for path in ("get_users", "get_championships", "get_teams"):
+            assert client.get(f"/api/admin/{path}").status_code == 403, (role, path)
+        assert client.post("/api/admin/reindex_users").status_code == 403
+        assert client.post("/api/admin/recompute_championships").status_code == 403
+
+
+def test_delegate_cannot_edit_another_user(as_user, make_user):
+    make_user(3)
+    response = as_user(make_user(2, roles=[Roles.DELEGATE])).post("/api/edit/3", json={"province": "on"})
+    assert response.status_code == 403
+
+
+def test_webmaster_grants_any_role_except_global_admin(as_user, make_user):
+    make_user(3)
+    client = as_user(make_user(2, roles=[Roles.WEBMASTER]))
+    response = client.post("/api/edit/3", json={"roles": [Roles.GLOBAL_ADMIN, Roles.COMMS]})
+    assert response.status_code == 200
+    assert response.json["roles"] == [Roles.COMMS]
+    # A roles-only body leaves the province alone.
+    assert response.json["province"] == "qc"
+
+
+def test_global_admin_grants_global_admin(as_user, make_user):
+    make_user(3)
+    client = as_user(make_user(2, roles=[Roles.GLOBAL_ADMIN]))
+    response = client.post("/api/edit/3", json={"province": "on", "roles": [Roles.GLOBAL_ADMIN]})
+    assert response.status_code == 200
+    assert response.json["roles"] == [Roles.GLOBAL_ADMIN]
+    assert response.json["province"] == "on"
+
+
+def test_get_users_by_id_returns_the_requested_users(as_user, make_user):
+    admin = make_user(1, roles=[Roles.GLOBAL_ADMIN])
+    make_user(2, name="Bob Builder")
+    make_user(3, name="Carol Cubes")
+    response = as_user(admin).get('/api/admin/get_users_by_id?ids=["2","3","404"]')
+    assert response.status_code == 200
+    assert sorted(u["name"] for u in response.json["data"]) == ["Bob Builder", "Carol Cubes"]
+
+
+# --- team leaders ---
+
+
+def test_team_leader_sees_only_led_teams(as_user, make_user, make_team):
+    make_team("software", leader_wca_id="2017ONDE01")
+    make_team("comms", leader_wca_id="2000AAAA01")
+    client = as_user(make_user(2, wca_id="2017ONDE01"))
+
+    assert [t["id"] for t in client.get("/api/admin/get_teams").json["data"]] == ["software"]
+    by_id = client.get('/api/admin/get_teams_by_id?ids=["software","comms"]')
+    assert [t["id"] for t in by_id.json["data"]] == ["software"]
+    assert client.get("/api/admin/team/software").status_code == 200
+    assert client.get("/api/admin/team/comms").status_code == 403
+    assert client.post("/api/admin/teams/comms", json={"members": []}).status_code == 403
+    assert client.delete("/api/admin/teams/software").status_code == 403
+    assert client.post("/api/admin/teams", json={"id": "new"}).status_code == 403
+
+
+def test_team_leader_edits_the_roster_but_not_leadership(as_user, make_user, make_team):
+    make_team("software", leader_wca_id="2017ONDE01")
+    client = as_user(make_user(2, wca_id="2017ONDE01"))
+    response = client.post(
+        "/api/admin/teams/software",
+        json={
+            "name_en": "Renamed",
+            "members": [
+                {"name": "Lead", "wca_id": "2017ONDE01", "is_leader": False},
+                {"name": "New", "wca_id": "2020NEWB01", "is_leader": True},
+                {"name": "Anon", "is_leader": True},
+            ],
+        },
+    )
+    assert response.status_code == 200
+    assert response.json["name_en"] == "Software Team"
+    assert [(m["name"], m["is_leader"]) for m in response.json["members"]] == [
+        ("Lead", True),
+        ("New", False),
+        ("Anon", False),
+    ]
+
+
+def test_users_without_a_led_team_cannot_list_teams(as_user, make_user, make_team):
+    make_team("software", leader_wca_id="2017ONDE01")
+    assert as_user(make_user(2, wca_id="2020NEWB01")).get("/api/admin/get_teams").status_code == 403
+    assert as_user(make_user(3)).get("/api/admin/get_teams").status_code == 403
+
+
+def test_user_admin_edits_every_team_field(as_user, make_user, make_team):
+    make_team("software", leader_wca_id="2017ONDE01")
+    client = as_user(make_user(2, roles=[Roles.WEBMASTER]))
+    assert [t["id"] for t in client.get("/api/admin/get_teams").json["data"]] == ["software"]
+    response = client.post("/api/admin/teams/software", json={"name_en": "Renamed", "members": []})
+    assert response.json["name_en"] == "Renamed"
+    assert response.json["members"] == []

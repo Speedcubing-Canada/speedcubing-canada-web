@@ -1,3 +1,4 @@
+import { useContext } from "react";
 import {
   AutocompleteArrayInput,
   choices,
@@ -9,9 +10,15 @@ import {
 import { Province, ProvinceID } from "../types";
 import { getProvincesWithNA } from "./provinces";
 import { roles } from "./roles";
+import { AdminUserContext } from "./AdminUserContext";
 
 export const UserEdit = () => {
   const t = useTranslate();
+  const me = useContext(AdminUserContext);
+  // Only a global admin may grant GLOBAL_ADMIN; the backend ignores it otherwise.
+  const grantable = roles.filter(
+    (role) => role.id !== "GLOBAL_ADMIN" || me?.roles.includes("GLOBAL_ADMIN"),
+  );
 
   return (
     <Edit>
@@ -26,7 +33,7 @@ export const UserEdit = () => {
 
         <AutocompleteArrayInput
           source="roles"
-          choices={roles}
+          choices={grantable}
           optionValue="id"
           optionText={(option) => t(`translation.account.role.${option.id}`)}
         />

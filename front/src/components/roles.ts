@@ -10,12 +10,20 @@ const hasRole = (user: User | null, ...checkRoles: string[]): boolean => {
   return user.roles.some((role) => checkRoles.includes(role));
 };
 
-export const isAdmin = (user: User | null) =>
-  hasRole(user, "GLOBAL_ADMIN", "DIRECTOR", "WEBMASTER");
-
-export const canUpdateProvinces = (user: User | null) =>
+// Private user data, championships, maintenance actions and every team.
+export const canManageUsers = (user: User | null) =>
   hasRole(user, "GLOBAL_ADMIN", "WEBMASTER");
 
+// The public organization page: directors and featured members.
+export const canManageContent = (user: User | null) =>
+  canManageUsers(user) || hasRole(user, "DIRECTOR", "COMMS");
+
+export const leadsTeams = (user: User | null) =>
+  (user?.led_teams?.length ?? 0) > 0;
+
+export const canAccessAdmin = (user: User | null) =>
+  canManageContent(user) || leadsTeams(user);
+
 export const hasDelegateOrAdminRole = (user: User | null) =>
-  isAdmin(user) ||
-  hasRole(user, "SENIOR_DELEGATE", "DELEGATE", "CANDIDATE_DELEGATE");
+  canManageUsers(user) ||
+  hasRole(user, "DIRECTOR", "SENIOR_DELEGATE", "DELEGATE", "TRAINEE_DELEGATE");

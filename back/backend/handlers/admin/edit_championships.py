@@ -48,14 +48,14 @@ def filter_and_sort(records, q, sort_field, sort_order):
 
 
 @bp.route("/get_championships")
-@require_roles(*Roles.AdminRoles())
+@require_roles(*Roles.UserAdminRoles())
 def get_championships():
     records = _serialize_all(list(Championship.query().iter()))
     return jsonify(paginate_records(records, filter_and_sort, default_sort_field="year", default_sort_order="desc"))
 
 
 @bp.route("/get_championships_by_id")
-@require_roles(*Roles.AdminRoles())
+@require_roles(*Roles.UserAdminRoles())
 def get_championships_by_id():
     raw_ids = request.args.get("ids", "[]", type=str).strip("[]").split(",")
     ids = [i.strip().strip('"') for i in raw_ids if i.strip()]
@@ -64,7 +64,7 @@ def get_championships_by_id():
 
 
 @bp.route("/championship/<championship_id>")
-@require_roles(*Roles.AdminRoles())
+@require_roles(*Roles.UserAdminRoles())
 def get_championship(championship_id):
     championship = Championship.get_by_id(championship_id)
     if not championship:
@@ -113,7 +113,7 @@ def _derive_id(data, competition):
 
 
 @bp.route("/championships", methods=["POST"])
-@require_roles(*Roles.AdminRoles())
+@require_roles(*Roles.UserAdminRoles())
 def create_championship():
     data = request.get_json() or {}
     if data.get("type") not in _VALID_TYPES:
@@ -136,7 +136,7 @@ def create_championship():
 
 
 @bp.route("/championships/<championship_id>", methods=["POST"])
-@require_roles(*Roles.AdminRoles())
+@require_roles(*Roles.UserAdminRoles())
 def update_championship(championship_id):
     championship = Championship.get_by_id(championship_id)
     if not championship:
@@ -166,7 +166,7 @@ def update_championship(championship_id):
 
 
 @bp.route("/championships/<championship_id>", methods=["DELETE"])
-@require_roles(*Roles.AdminRoles())
+@require_roles(*Roles.UserAdminRoles())
 def delete_championship(championship_id):
     championship = Championship.get_by_id(championship_id)
     if not championship:
@@ -177,7 +177,7 @@ def delete_championship(championship_id):
 
 
 @bp.route("/recompute_championships", methods=["POST"])
-@require_roles(*Roles.AdminRoles())
+@require_roles(*Roles.UserAdminRoles())
 def recompute_championships():
     """Re-run the geography setup + championship/champion classification on demand.
 

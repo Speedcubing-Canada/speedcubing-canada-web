@@ -3,7 +3,8 @@ from google.cloud import ndb
 
 from backend.handlers.admin._list_utils import filter_and_sort as _filter_and_sort
 from backend.handlers.admin._list_utils import paginate_records
-from backend.lib.permissions import require_roles
+from backend.lib import auth
+from backend.lib.permissions import led_team_ids, require_auth, require_roles
 from backend.models.team import Team, TeamMember
 from backend.models.user import Roles
 
@@ -50,25 +51,42 @@ def _apply_fields(team, data):
     team.members = parse_members(data.get("members"))
 
 
+def _team_scope():
+    """None = every team; otherwise the ids of the teams the caller leads (may be empty)."""
+    me = auth.user()
+    return None if me.has_any_of_given_roles(Roles.UserAdminRoles()) else set(led_team_ids(me))
+
+
+def _forbidden():
+    return jsonify({"error": "Forbidden"}), 403
+
+
 @bp.route("/get_teams")
-@require_roles(*Roles.AdminRoles())
+@require_auth
 def get_teams():
-    records = [t.to_json() for t in Team.query().iter()]
+    scope = _team_scope()
+    if scope == set():
+        return _forbidden()
+    records = [t.to_json() for t in Team.query().iter() if scope is None or t.key.id() in scope]
     return jsonify(paginate_records(records, filter_and_sort, default_sort_field="position"))
 
 
 @bp.route("/get_teams_by_id")
-@require_roles(*Roles.AdminRoles())
+@require_auth
 def get_teams_by_id():
+    scope = _team_scope()
     raw_ids = request.args.get("ids", "[]", type=str).strip("[]").split(",")
     ids = [i.strip().strip('"') for i in raw_ids if i.strip()]
-    teams = [t for t in ndb.get_multi([ndb.Key(Team, i) for i in ids]) if t]
+    teams = [t for t in ndb.get_multi([ndb.Key(Team, i) for i in ids]) if t and (scope is None or t.key.id() in scope)]
     return jsonify({"data": [t.to_json() for t in teams]})
 
 
 @bp.route("/team/<team_id>")
-@require_roles(*Roles.AdminRoles())
+@require_auth
 def get_team(team_id):
+    scope = _team_scope()
+    if scope is not None and team_id not in scope:
+        return _forbidden()
     team = Team.get_by_id(team_id)
     if not team:
         return jsonify({"error": "Team not found"}), 404
@@ -76,7 +94,7 @@ def get_team(team_id):
 
 
 @bp.route("/teams", methods=["POST"])
-@require_roles(*Roles.AdminRoles())
+@require_roles(*Roles.UserAdminRoles())
 def create_team():
     data = request.get_json() or {}
     team_id = (data.get("id") or "").strip()
@@ -91,18 +109,29 @@ def create_team():
 
 
 @bp.route("/teams/<team_id>", methods=["POST"])
-@require_roles(*Roles.AdminRoles())
+@require_auth
 def update_team(team_id):
+    scope = _team_scope()
+    if scope is not None and team_id not in scope:
+        return _forbidden()
     team = Team.get_by_id(team_id)
     if not team:
         return jsonify({"error": "Team not found"}), 404
-    _apply_fields(team, request.get_json() or {})
+    data = request.get_json() or {}
+    if scope is None:
+        _apply_fields(team, data)
+    else:
+        # A leader edits the roster only; leadership itself is decided by user admins.
+        leaders = {m.wca_id for m in team.members if m.is_leader and m.wca_id}
+        team.members = parse_members(data.get("members"))
+        for member in team.members:
+            member.is_leader = member.wca_id in leaders
     team.put()
     return jsonify(team.to_json())
 
 
 @bp.route("/teams/<team_id>", methods=["DELETE"])
-@require_roles(*Roles.AdminRoles())
+@require_roles(*Roles.UserAdminRoles())
 def delete_team(team_id):
     team = Team.get_by_id(team_id)
     if not team:
