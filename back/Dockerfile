@@ -1,4 +1,4 @@
-FROM python:3.12 AS builder
+FROM python:3.13 AS builder
 
 ENV FLASK_APP=backend.app
 ENV FLASK_DEBUG=1
