@@ -68,7 +68,7 @@ jobs:
         run: |
           docker run -d --name datastore -p 8081:8081 google/cloud-sdk:emulators \
             gcloud beta emulators datastore start \
-            --project=test --host-port=0.0.0.0:8081 --no-store-on-disk
+            --project=test --host-port=0.0.0.0:8081 --no-store-on-disk --consistency=1.0
 
           for attempt in $(seq 1 30); do
             if curl -sf --max-time 2 http://localhost:8081/ >/dev/null; then

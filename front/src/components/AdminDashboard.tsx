@@ -17,7 +17,7 @@ import { canUpdateProvinces } from "./roles";
 import { User } from "../types";
 
 interface Action {
-  key: "champions" | "provinces";
+  key: "champions" | "provinces" | "users";
   endpoint: string;
   // Reads the response body for the success message. Undefined = use the plain message.
   count?: (data: unknown) => number;
@@ -32,6 +32,11 @@ const ACTIONS: Action[] = [
   },
   // Returns the bare string "ok", so there is nothing to count.
   { key: "provinces", endpoint: "/admin/update_provinces" },
+  {
+    key: "users",
+    endpoint: "/admin/reindex_users",
+    count: (data) => (data as { data: { users: number } }).data.users,
+  },
 ];
 
 export const AdminDashboard = ({ user }: { user: User | null }) => {

@@ -27,11 +27,11 @@ export const UserList = () => {
         <Datagrid rowClick="show">
           <TextField source="id" />
           <TextField source="name" />
-          <ProvinceField source="province" />
-          <ArrayField source="roles">
+          <ProvinceField source="province" sortable={false} />
+          <ArrayField source="roles" sortable={false}>
             <UserRoleChip />
           </ArrayField>
-          <TextField source="wca_id" />
+          <TextField source="wca_id" sortable={false} />
           <EditButton />
         </Datagrid>
       )}
