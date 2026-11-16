@@ -6,6 +6,7 @@ const respond = (
 ) =>
   vi.fn().mockResolvedValue({
     ok,
+    status: ok ? 200 : 403,
     headers: new Headers({ "Content-Type": contentType }),
     json: () => Promise.resolve(body),
     text: () => Promise.resolve(body),
@@ -26,7 +27,12 @@ describe("httpClient", () => {
 
     const res = await httpClient.get<{ id: number }>("/user_info");
 
-    expect(res).toEqual({ ok: true, error: undefined, data: { id: 7 } });
+    expect(res).toEqual({
+      ok: true,
+      status: 200,
+      error: undefined,
+      data: { id: 7 },
+    });
   });
 
   it("falls back to text when the response is not JSON", async () => {
@@ -44,6 +50,7 @@ describe("httpClient", () => {
 
     expect(res).toEqual({
       ok: false,
+      status: 403,
       data: undefined,
       error: { message: "forbidden" },
     });
@@ -54,7 +61,12 @@ describe("httpClient", () => {
 
     const res = await httpClient.get("/user_info");
 
-    expect(res).toEqual({ ok: false, data: undefined, error: "offline" });
+    expect(res).toEqual({
+      ok: false,
+      status: 0,
+      data: undefined,
+      error: "offline",
+    });
   });
 
   it("sends credentials and a JSON content type by default", async () => {

@@ -5,26 +5,15 @@
 
 import { API_BASE_URL } from "../api";
 import httpClient from "../../httpClient";
-import { ACTIVE_EVENTS } from "../../types";
+import { ACTIVE_EVENTS, PROVINCES_DATA } from "../../types";
 
 export type RegionId = "bc" | "pr" | "on" | "qc" | "at" | "te";
 
-// Province (2-letter id, matching PROVINCES_DATA in src/types.ts) -> SCC region.
-export const PROVINCE_REGION: Record<string, RegionId> = {
-  ab: "pr",
-  bc: "bc",
-  mb: "pr",
-  nb: "at",
-  nl: "at",
-  nt: "te",
-  ns: "at",
-  nu: "te",
-  on: "on",
-  pe: "at",
-  qc: "qc",
-  sk: "pr",
-  yt: "te",
-};
+// Province (2-letter id) -> SCC region, derived from the canonical province list
+// so the two can't drift apart.
+export const PROVINCE_REGION: Record<string, RegionId> = Object.fromEntries(
+  PROVINCES_DATA.map((province) => [province.id, province.region_id] as const),
+);
 
 export const REGION_ORDER: RegionId[] = ["bc", "pr", "on", "qc", "at", "te"];
 

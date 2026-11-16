@@ -1,74 +1,45 @@
 import { useEffect, useMemo, useState } from "react";
-import { Province, User } from "../types";
-import { API_BASE_URL } from "../components/api";
+import { Province } from "../types";
 import { getProvinces } from "../components/provinces";
-import httpClient from "../httpClient";
 import {
   getCachedRankingsPreferredProvinceId,
-  removeCachedRankingsPreferredProvinceId,
   setCachedRankingsPreferredProvinceId,
 } from "./rankingsProvinceCache";
+import { useCurrentUser } from "./useCurrentUser";
 
 const getProvinceById = (
-  provinceId: string | null,
+  provinceId: string | null | undefined,
   provinces: Province[],
-): Province | null => {
-  if (!provinceId) {
-    return null;
-  }
-  return provinces.find(({ id }) => id === provinceId) || null;
-};
+): Province | null =>
+  provinces.find((province) => province.id === provinceId) ?? null;
 
 export const useProvincePreference = () => {
-  const provinces: Province[] = useMemo(() => getProvinces(), []);
-  const [province, setProvince] = useState<Province | null>(null);
-  const [provinceInitialized, setProvinceInitialized] = useState(false);
+  const provinces = useMemo(() => getProvinces(), []);
+  // undefined: untouched on this page; null: the user cleared it.
+  const [selected, setSelected] = useState<Province | null | undefined>();
+  const storedProvince = getProvinceById(
+    getCachedRankingsPreferredProvinceId(),
+    provinces,
+  );
+  // Only ask who the user is when nothing else decides the province.
+  const { user, loading } = useCurrentUser({
+    enabled: selected === undefined && !storedProvince,
+  });
+  const userProvince = getProvinceById(user?.province, provinces);
 
   useEffect(() => {
-    let mounted = true;
+    if (userProvince) setCachedRankingsPreferredProvinceId(userProvince.id);
+  }, [userProvince]);
 
-    const initializeProvince = async () => {
-      let defaultProvince: Province | null = provinces[0] || null;
+  const province =
+    selected === undefined
+      ? (storedProvince ?? userProvince ?? provinces[0] ?? null)
+      : selected;
 
-      const storedProvinceId = getCachedRankingsPreferredProvinceId();
-      const storedProvince = getProvinceById(storedProvinceId, provinces);
-
-      if (storedProvinceId && !storedProvince) {
-        removeCachedRankingsPreferredProvinceId();
-      }
-
-      if (storedProvince) {
-        if (!mounted) {
-          return;
-        }
-        setProvince(storedProvince);
-        setProvinceInitialized(true);
-        return;
-      }
-
-      const response = await httpClient.get<User>(API_BASE_URL + "/user_info");
-      if (response.ok && response.data?.province) {
-        const userProvince = getProvinceById(response.data.province, provinces);
-        if (userProvince) {
-          defaultProvince = userProvince;
-          setCachedRankingsPreferredProvinceId(userProvince.id);
-        }
-      }
-
-      if (!mounted) {
-        return;
-      }
-
-      setProvince(defaultProvince);
-      setProvinceInitialized(true);
-    };
-
-    void initializeProvince();
-
-    return () => {
-      mounted = false;
-    };
-  }, [provinces]);
-
-  return { provinces, province, setProvince, provinceInitialized };
+  return {
+    provinces,
+    province,
+    setProvince: setSelected,
+    provinceInitialized: !loading,
+  };
 };

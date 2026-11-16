@@ -20,10 +20,8 @@ import {
   TableRow,
   Typography,
 } from "@mui/material";
-import { LINKS } from "../pages/links";
+import { formatLink, LINKS } from "../pages/links";
 import { LocationUpdate } from "../types";
-
-const WCA_PROFILE_URL = LINKS.WCA.PROFILE;
 
 export const UserShow = () => (
   <Show>
@@ -97,13 +95,13 @@ export const UserRoleChip = () => {
 };
 
 const WcaProfileUrlField = ({ source }: { source: string }) => {
-  const record = useRecordContext();
-  return record ? (
+  const wcaId: string | null | undefined = useRecordContext()?.[source];
+  return wcaId ? (
     <Link
-      href={WCA_PROFILE_URL + record[source]}
+      href={formatLink(LINKS.WCA.PROFILE, { wcaId })}
       sx={{ textDecoration: "none" }}
     >
-      {record[source]}
+      {wcaId}
     </Link>
   ) : null;
 };

@@ -1,4 +1,3 @@
-import { useMediaQuery, Theme } from "@mui/material";
 import {
   BooleanField,
   Datagrid,
@@ -12,9 +11,10 @@ import {
   useTranslate,
 } from "react-admin";
 import { useCallback } from "react";
+import { useResponsiveQuery } from "./useResponsiveQuery";
 
 export const ChampionshipList = () => {
-  const isSmall = useMediaQuery<Theme>((theme) => theme.breakpoints.down("sm"));
+  const isSmall = useResponsiveQuery("sm");
   const translate = useTranslate();
   const typeLabel = useCallback(
     (type: string) =>

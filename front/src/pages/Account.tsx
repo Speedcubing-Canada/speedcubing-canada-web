@@ -16,19 +16,24 @@ import Stack from "@mui/material/Stack";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import dayjs from "dayjs";
+import { useQueryClient } from "@tanstack/react-query";
 
 import { API_BASE_URL, signIn, signOut } from "../components/api";
-import { AlertAction, ChipColor, Province, AlertState, User } from "../types";
+import { AlertAction, Province, AlertState, User } from "../types";
 import httpClient from "../httpClient";
 import { getProvincesWithNA, getNAProvince } from "../components/provinces";
 import { isAdmin, hasDelegateOrAdminRole } from "../components/roles";
-import UseResponsiveQuery from "../components/UseResponsiveQuery";
+import { useResponsiveQuery } from "../components/useResponsiveQuery";
 import {
   isValidProvinceId,
   removeCachedRankingsPreferredProvinceId,
   setCachedRankingsPreferredProvinceId,
 } from "../helpers/rankingsProvinceCache";
+import { CURRENT_USER_KEY, useCurrentUser } from "../helpers/useCurrentUser";
+import { getLocaleOrFallback, SAVED_LOCALE_KEY } from "../locale";
 import { useNavigate } from "react-router";
+
+const PRIMARY_ROLES = new Set(["GLOBAL_ADMIN", "DIRECTOR", "WEBMASTER"]);
 
 const initialState: AlertState = {
   alert: false,
@@ -55,7 +60,7 @@ const reducer = (state: AlertState, action: AlertAction) => {
 export const Account = () => {
   const navigate = useNavigate();
   const { t } = useTranslation();
-  const isSmall = UseResponsiveQuery("sm");
+  const isSmall = useResponsiveQuery("sm");
 
   const [province, setProvince] = useState<Province | null>(null);
 
@@ -63,8 +68,9 @@ export const Account = () => {
 
   const provinces: Province[] = getProvincesWithNA();
 
-  const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
+  const { user, loading } = useCurrentUser();
+  const queryClient = useQueryClient();
+  const [signingIn, setSigningIn] = useState(false);
 
   const defaultProvince: Province =
     provinces.find(({ id }) => id === user?.province) || getNAProvince();
@@ -86,25 +92,10 @@ export const Account = () => {
   };
 
   useEffect(() => {
-    void (async () => {
-      const response = await httpClient.get<User>(API_BASE_URL + "/user_info");
-      if (response.ok && response.data) {
-        const userData = response.data;
-        setUser(userData);
-
-        if (isValidProvinceId(userData.province)) {
-          setCachedRankingsPreferredProvinceId(userData.province);
-        }
-      } // the else case is expected when user is not logged in (401)
-      setLoading(false);
-    })();
-  }, []);
-
-  const chipData =
-    user?.roles?.map((role, index) => ({
-      key: index,
-      label: role,
-    })) || [];
+    if (user && isValidProvinceId(user.province)) {
+      setCachedRankingsPreferredProvinceId(user.province);
+    }
+  }, [user]);
 
   const ListItem = styled("li")(({ theme }) => ({
     margin: theme.spacing(0.5),
@@ -129,7 +120,7 @@ export const Account = () => {
         removeCachedRankingsPreferredProvinceId();
       }
 
-      setUser((previousUser) =>
+      queryClient.setQueryData<User | null>(CURRENT_USER_KEY, (previousUser) =>
         previousUser
           ? {
               ...previousUser,
@@ -138,24 +129,21 @@ export const Account = () => {
           : previousUser,
       );
       showAlert("success", t("account.success"));
+    } else if (response.error?.code === "province_change_rate_limited") {
+      const nextAllowed = response.error.next_allowed;
+      showAlert(
+        "error",
+        t("account.provinceChangeLimited", {
+          date: nextAllowed ? dayjs(nextAllowed).format("DD-MM-YYYY") : "",
+        }),
+      );
     } else {
-      console.log(response.error);
-      if (response.error?.code === "province_change_rate_limited") {
-        const nextAllowed = response.error.next_allowed;
-        showAlert(
-          "error",
-          t("account.provinceChangeLimited", {
-            date: nextAllowed ? dayjs(nextAllowed).format("DD-MM-YYYY") : "",
-          }),
-        );
-      } else {
-        showAlert("error", t("account.error"));
-      }
+      showAlert("error", t("account.error"));
     }
   };
 
   const handleSignIn = () => {
-    setLoading(true);
+    setSigningIn(true);
     signIn();
   };
 
@@ -164,11 +152,10 @@ export const Account = () => {
   };
 
   const handleEligibility = () => {
-    void navigate(
-      `/${
-        localStorage.getItem("savedLocale") ?? "en"
-      }/championship-eligibility`,
+    const locale = getLocaleOrFallback(
+      localStorage.getItem(SAVED_LOCALE_KEY) ?? "",
     );
+    void navigate(`/${locale}/championship-eligibility`);
   };
 
   const admin = isAdmin(user);
@@ -181,7 +168,7 @@ export const Account = () => {
           {t("account.title")}
         </Typography>
       </Box>
-      {loading ? (
+      {loading || signingIn ? (
         <CircularProgress />
       ) : user == null ? (
         <div>
@@ -224,9 +211,6 @@ export const Account = () => {
                 defaultValue={defaultProvince}
                 onChange={(_event, newValue) => {
                   setProvince(newValue);
-                  if (newValue?.id === "qc") {
-                    console.log("Vive le Québec libre!");
-                  }
                 }}
                 renderInput={(params) => (
                   <TextField {...params} label="Province" />
@@ -310,23 +294,14 @@ export const Account = () => {
               }}
               component="ul"
             >
-              {chipData.map((data) => {
-                const color: ChipColor =
-                  data.label === "GLOBAL_ADMIN" ||
-                  data.label === "DIRECTOR" ||
-                  data.label === "WEBMASTER"
-                    ? "primary"
-                    : "default";
-
-                return (
-                  <ListItem key={data.key}>
-                    <Chip
-                      color={color}
-                      label={t("account.role." + data.label) || data.label}
-                    />
-                  </ListItem>
-                );
-              })}
+              {user.roles?.map((role) => (
+                <ListItem key={role}>
+                  <Chip
+                    color={PRIMARY_ROLES.has(role) ? "primary" : "default"}
+                    label={t(`account.role.${role}`) || role}
+                  />
+                </ListItem>
+              ))}
             </Paper>
           </Box>
 

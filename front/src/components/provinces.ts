@@ -1,12 +1,4 @@
-import {
-  Province,
-  RegionID,
-  REGIONS,
-  PROVINCES_DATA,
-  NA_PROVINCE_DATA,
-} from "../types";
-
-export const getRegionName = (regionId: RegionID): string => REGIONS[regionId];
+import { Province, PROVINCES_DATA, NA_PROVINCE_DATA } from "../types";
 
 export const getProvincesWithNA = (): Province[] => {
   return [...PROVINCES_DATA, NA_PROVINCE_DATA];

@@ -1,5 +1,4 @@
-import { API_BASE_URL } from "../components/api";
-import httpClient from "../httpClient";
+import { fetchCollection } from "./fetchCollection";
 
 // Shape returned by the backend /delegates endpoint (handlers/delegates.py).
 export interface Delegate {
@@ -12,12 +11,5 @@ export interface Delegate {
   avatar_thumb_url: string | null;
 }
 
-export const fetchDelegates = async (): Promise<Delegate[]> => {
-  const res = await httpClient.get<Delegate[]>(`${API_BASE_URL}/delegates`);
-  if (!res.ok) {
-    throw new Error(
-      typeof res.error === "string" ? res.error : "Failed to load delegates",
-    );
-  }
-  return res.data ?? [];
-};
+export const fetchDelegates = (): Promise<Delegate[]> =>
+  fetchCollection<Delegate>("/delegates", "delegates");

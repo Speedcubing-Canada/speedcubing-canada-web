@@ -2,15 +2,13 @@ import { ProvinceID, PROVINCES_DATA, NA_PROVINCE_DATA } from "../types";
 
 const PREFERRED_PROVINCE_STORAGE_KEY = "rankings_preferred_province";
 
-export const isValidProvinceId = (value: unknown): value is ProvinceID => {
-  if (typeof value !== "string") return false;
+const VALID_PROVINCE_IDS = new Set<string>([
+  ...PROVINCES_DATA.map((p) => p.id),
+  NA_PROVINCE_DATA.id,
+]);
 
-  const validIds = [
-    ...PROVINCES_DATA.map((p) => p.id),
-    NA_PROVINCE_DATA.id,
-  ] as const;
-  return validIds.includes(value as ProvinceID);
-};
+export const isValidProvinceId = (value: unknown): value is ProvinceID =>
+  typeof value === "string" && VALID_PROVINCE_IDS.has(value);
 
 export const getCachedRankingsPreferredProvinceId = (): ProvinceID | null => {
   const cached = window.localStorage.getItem(PREFERRED_PROVINCE_STORAGE_KEY);

@@ -58,15 +58,6 @@ export interface User {
   updates?: LocationUpdate[];
 }
 
-export interface ProfileEditData {
-  province: string;
-}
-
-export interface ChipData {
-  key: number;
-  label: string;
-}
-
 export interface Ranking {
   name: string;
   rank: number;

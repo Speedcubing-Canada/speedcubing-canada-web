@@ -1,4 +1,4 @@
-import { LINKS } from "../pages/links";
+import { formatLink, LINKS } from "../pages/links";
 
 export interface WcaPerson {
   avatarThumbUrl: string;
@@ -14,7 +14,7 @@ export const fetchWcaPerson = async (wcaId: string): Promise<WcaPerson> => {
   // API serves this endpoint "cache-control: public", so without this a returning
   // visitor can keep seeing the old avatar URL. (Legacy avatars use permanent file
   // paths and are unaffected.)
-  const { person } = await fetch(`${LINKS.WCA.API.PERSON}${wcaId}`, {
+  const { person } = await fetch(formatLink(LINKS.WCA.API.PERSON, { wcaId }), {
     cache: "no-cache",
   }).then((response) => response.json());
 

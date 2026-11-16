@@ -1,4 +1,3 @@
-import { useMediaQuery, Theme } from "@mui/material";
 import {
   Datagrid,
   EditButton,
@@ -8,10 +7,11 @@ import {
   SimpleList,
   TextField,
 } from "react-admin";
+import { useResponsiveQuery } from "./useResponsiveQuery";
 
 // Shared list for DirectorsAdmin / FeaturedMembersAdmin.
 export const PersonList = () => {
-  const isSmall = useMediaQuery<Theme>((theme) => theme.breakpoints.down("sm"));
+  const isSmall = useResponsiveQuery("sm");
   const filters = [<SearchInput key="q" source="q" alwaysOn />];
 
   return (

@@ -9,11 +9,11 @@ export const SAVED_LOCALE_KEY = "savedLocale";
 
 const SUPPORTED_LOCALES = new Set<string>(Object.values(LOCALES));
 
-export function getLocaleOrFallback(givenLocale: string): "en" | "fr" {
-  return SUPPORTED_LOCALES.has(givenLocale)
-    ? (givenLocale as "en" | "fr")
-    : DEFAULT_LOCALE;
-}
+export const isSupportedLocale = (value: string): value is "en" | "fr" =>
+  SUPPORTED_LOCALES.has(value);
+
+export const getLocaleOrFallback = (givenLocale: string): "en" | "fr" =>
+  isSupportedLocale(givenLocale) ? givenLocale : DEFAULT_LOCALE;
 
 export const resources = {
   [LOCALES.en]: {

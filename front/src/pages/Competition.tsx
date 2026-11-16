@@ -1,6 +1,6 @@
 import { Box, Container, Typography } from "@mui/material";
 import { Trans, useTranslation } from "react-i18next";
-import { Link, useNavigate, useParams } from "react-router";
+import { Link, Navigate, useParams } from "react-router";
 import { CompetitionCard } from "../components/CompetitionCard";
 import { CompetitionHeader } from "../components/CompetitionHeader";
 import { LoadingPageLinear } from "../components/LoadingPageLinear";
@@ -11,7 +11,6 @@ import { fetchCompetitionData } from "../helpers/fetchCompetitionData";
 export const Competition = () => {
   const { t } = useTranslation();
   const { compid } = useParams();
-  const navigate = useNavigate();
 
   const { isLoading, isError, data } = useQuery({
     queryKey: ["competition", compid],
@@ -24,8 +23,7 @@ export const Competition = () => {
   }
 
   if (isError || !data || !isSpeedcubingCanadaCompetition(data.compData)) {
-    void navigate("/", { replace: true });
-    return null;
+    return <Navigate to="/" replace />;
   }
 
   const { compData, wcif } = data;

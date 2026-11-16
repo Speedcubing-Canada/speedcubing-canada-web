@@ -1,17 +1,16 @@
 import { Box, Container, Typography } from "@mui/material";
-import { useNavigate, useParams } from "react-router";
+import { Navigate, useParams } from "react-router";
 import { CompetitionCard } from "../components/CompetitionCard";
 import { CompetitionHeader } from "../components/CompetitionHeader";
 import { LoadingPageLinear } from "../components/LoadingPageLinear";
 import { useTranslation } from "react-i18next";
 import { isSpeedcubingCanadaCompetition } from "../helpers/competitionValidator";
 import { useQuery } from "@tanstack/react-query";
-import { fetchSeriesData } from "../helpers/fetchSeriesdata";
+import { fetchSeriesData } from "../helpers/fetchSeriesData";
 
 export const Series = () => {
   const { t } = useTranslation();
   const { seriesid } = useParams();
-  const navigate = useNavigate();
 
   const { isLoading, isError, data } = useQuery({
     queryKey: ["series", seriesid],
@@ -28,8 +27,7 @@ export const Series = () => {
   );
 
   if (isError || !data || !hasSCCOrganizer) {
-    void navigate("/", { replace: true });
-    return null;
+    return <Navigate to="/" replace />;
   }
 
   const registrationDates = data.map((competition) => ({

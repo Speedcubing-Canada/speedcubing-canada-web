@@ -4,7 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { fetchWcaPerson } from "../helpers/fetchWcaPerson";
 import { localized } from "../helpers/localized";
 import { FeaturedMember } from "../helpers/fetchPeople";
-import { LINKS } from "../pages/links";
+import { formatLink, LINKS } from "../pages/links";
 
 // A richer card than PersonCard: avatar + name (+ WCA link when present) alongside a
 // localized role ("what they do/did for SCC") and an optional bio paragraph. Used for the
@@ -58,7 +58,7 @@ export const FeaturedMemberCard = ({ member }: { member: FeaturedMember }) => {
         <Typography fontWeight="bold">
           {wcaId ? (
             <Link
-              href={LINKS.WCA.PROFILE + wcaId}
+              href={formatLink(LINKS.WCA.PROFILE, { wcaId })}
               target="_blank"
               rel="noopener noreferrer"
               underline="hover"

@@ -1,6 +1,18 @@
 import { fetchUtils, DataProvider } from "react-admin";
 import { API_BASE_URL } from "./components/api";
 
+type QueryValue = string | number | boolean | null | undefined;
+
+// Serialise query params, dropping absent values (e.g. cursor on page 1) and
+// letting URLSearchParams handle escaping.
+const buildQuery = (params: Record<string, QueryValue>): string => {
+  const search = new URLSearchParams();
+  Object.entries(params)
+    .filter(([, value]) => value != null)
+    .forEach(([key, value]) => search.set(key, String(value)));
+  return search.toString();
+};
+
 const apiUrl = API_BASE_URL;
 const httpClient = (url: string, options: RequestInit = {}) => {
   if (!options.headers) {
@@ -37,15 +49,17 @@ const dataProvider: DataProvider = {
     const { page, perPage } = params.pagination ?? { page: 1, perPage: 25 };
     const { field, order } = params.sort ?? { field: "id", order: "ASC" };
 
+    // Users share the same list contract as the curated admin resources, so they
+    // fall back to the "users" plural instead of getting a cursor-based branch.
     const plural = getAdminResource(resource)?.plural ?? "users";
     const query = {
-      page: String(page),
-      per_page: String(perPage),
+      page,
+      per_page: perPage,
       sort_field: field,
       sort_order: order,
       q: params.filter?.q ?? "",
     };
-    const url = `${apiUrl}/admin/get_${plural}?${new URLSearchParams(query)}`;
+    const url = `${apiUrl}/admin/get_${plural}?${buildQuery(query)}`;
     return httpClient(url).then(({ json }) => ({
       data: json.data,
       total: json.total,
@@ -72,13 +86,13 @@ const dataProvider: DataProvider = {
       const query = { ids: JSON.stringify(params.ids) };
       const url = `${apiUrl}/admin/get_${
         adminResource.plural
-      }_by_id?${new URLSearchParams(query)}`;
+      }_by_id?${buildQuery(query)}`;
       return httpClient(url).then(({ json }) => ({ data: json.data }));
     }
     const query = {
       filter: JSON.stringify({ ids: params.ids }),
     };
-    const url = `${apiUrl}/admin/get_users_by_id?${new URLSearchParams(query)}`;
+    const url = `${apiUrl}/admin/get_users_by_id?${buildQuery(query)}`;
     return httpClient(url).then(({ json }) => ({ data: json }));
   },
 
@@ -93,7 +107,7 @@ const dataProvider: DataProvider = {
         [params.target]: params.id,
       }),
     };
-    const url = `${apiUrl}/${resource}?${new URLSearchParams(query)}`;
+    const url = `${apiUrl}/${resource}?${buildQuery(query)}`;
 
     return httpClient(url).then(({ json }) => ({
       data: json.data,
@@ -138,7 +152,7 @@ const dataProvider: DataProvider = {
     const query = {
       filter: JSON.stringify({ id: params.ids }),
     };
-    return httpClient(`${apiUrl}/${resource}?${new URLSearchParams(query)}`, {
+    return httpClient(`${apiUrl}/${resource}?${buildQuery(query)}`, {
       method: "PUT",
       body: JSON.stringify(params.data),
     }).then(({ json }) => ({ data: json }));
@@ -163,7 +177,7 @@ const dataProvider: DataProvider = {
     const query = {
       filter: JSON.stringify({ id: params.ids }),
     };
-    return httpClient(`${apiUrl}/${resource}?${new URLSearchParams(query)}`, {
+    return httpClient(`${apiUrl}/${resource}?${buildQuery(query)}`, {
       method: "DELETE",
       body: JSON.stringify(params),
     }).then(({ json }) => ({ data: json }));

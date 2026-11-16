@@ -1,5 +1,4 @@
-import { API_BASE_URL } from "../components/api";
-import httpClient from "../httpClient";
+import { fetchCollection } from "./fetchCollection";
 
 // Shared shape returned by /directors and /featured_members (handlers/people.py).
 export interface PersonRecord {
@@ -18,21 +17,8 @@ export interface PersonRecord {
 export type Director = PersonRecord;
 export type FeaturedMember = PersonRecord;
 
-const fetchPeople = async (
-  path: string,
-  label: string,
-): Promise<PersonRecord[]> => {
-  const res = await httpClient.get<PersonRecord[]>(`${API_BASE_URL}${path}`);
-  if (!res.ok) {
-    throw new Error(
-      typeof res.error === "string" ? res.error : `Failed to load ${label}`,
-    );
-  }
-  return res.data ?? [];
-};
-
 export const fetchDirectors = (): Promise<Director[]> =>
-  fetchPeople("/directors", "directors");
+  fetchCollection<PersonRecord>("/directors", "directors");
 
 export const fetchFeaturedMembers = (): Promise<FeaturedMember[]> =>
-  fetchPeople("/featured_members", "featured members");
+  fetchCollection<PersonRecord>("/featured_members", "featured members");

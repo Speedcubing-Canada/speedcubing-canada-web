@@ -1,4 +1,3 @@
-import { useMediaQuery, Theme } from "@mui/material";
 import {
   Datagrid,
   List,
@@ -9,9 +8,10 @@ import {
   ArrayField,
 } from "react-admin";
 import { ProvinceField, UserRoleChip } from "./UserShow";
+import { useResponsiveQuery } from "./useResponsiveQuery";
 
 export const UserList = () => {
-  const isSmall = useMediaQuery<Theme>((theme) => theme.breakpoints.down("sm"));
+  const isSmall = useResponsiveQuery("sm");
 
   const userFilters = [<SearchInput source="q" alwaysOn />];
 
