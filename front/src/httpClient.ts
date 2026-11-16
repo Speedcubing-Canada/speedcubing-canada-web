@@ -1,5 +1,7 @@
 export interface HttpResponse<D = undefined, E = undefined> {
   ok: boolean;
+  // 0 when the request never reached the server.
+  status: number;
   data?: D;
   error?: E;
 }
@@ -38,18 +40,21 @@ const request = async <R, D, E = unknown>(
     if (!response.ok) {
       return {
         ok: false,
+        status: response.status,
         error: payload as E,
         data: undefined,
       };
     }
     return {
       ok: true,
+      status: response.status,
       error: undefined,
       data: payload as D,
     };
   } catch (error) {
     return {
       ok: false,
+      status: 0,
       data: undefined,
       error: (error as Error).message as E,
     };

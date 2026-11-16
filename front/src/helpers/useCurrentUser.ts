@@ -3,19 +3,24 @@ import { API_BASE_URL } from "../components/api";
 import httpClient from "../httpClient";
 import { User } from "../types";
 
-// Cached current-user lookup shared by the account, admin and eligibility pages.
-// A failed request (e.g. 401 when signed out) resolves to null instead of throwing.
+export const CURRENT_USER_KEY = ["current-user"] as const;
+
+// Shared by the account, admin and eligibility pages. Signed out (401) is
+// null; any other failure throws so react-query retries and keeps the last
+// known user instead of flipping the page to signed out.
 export const useCurrentUser = ({
   enabled = true,
 }: { enabled?: boolean } = {}) => {
-  const { data, isPending } = useQuery({
-    queryKey: ["current-user"],
+  const { data, isLoading } = useQuery({
+    queryKey: CURRENT_USER_KEY,
     queryFn: async (): Promise<User | null> => {
       const response = await httpClient.get<User>(`${API_BASE_URL}/user_info`);
-      return response.ok ? (response.data ?? null) : null;
+      if (response.ok) return response.data ?? null;
+      if (response.status === 401) return null;
+      throw new Error(`user_info failed with status ${response.status}`);
     },
     enabled,
   });
 
-  return { user: data ?? null, loading: isPending };
+  return { user: data ?? null, loading: isLoading };
 };

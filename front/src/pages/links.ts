@@ -43,32 +43,21 @@ type PlaceholderKeys<T extends string> =
     : never;
 
 /** The parameter object required to fill a link template. */
-export type LinkParams<T extends string> = {
+type LinkParams<T extends string> = {
   [K in PlaceholderKeys<T>]: string | number | boolean;
 };
 
-/**
- * Fills `{placeholder}`s in a `LINKS` template and URL-encodes each value.
- *
- * The placeholder names are read from the template at the type level, so
- * missing or unknown parameters are compile-time errors. Static links (no
- * placeholders) need no parameter object.
- *
- * @example
- * formatLink(LINKS.WCA.PROFILE, { wcaId: "2020FOO01" });
- * formatLink(LINKS.WCA.API.SEARCH_USERS, { query: "Émile" });
- * formatLink(LINKS.WCA.HOME);
- */
+/** Fills `{placeholder}`s in a `LINKS` template and URL-encodes each value. */
 export function formatLink<T extends string>(
   template: T,
-  ...args: [PlaceholderKeys<T>] extends [never] ? [] : [params: LinkParams<T>]
+  params: LinkParams<T>,
 ): string {
-  const params = args[0] as
-    Record<string, string | number | boolean> | undefined;
+  const values: Record<string, string | number | boolean | null | undefined> =
+    params;
 
   return template.replaceAll(/\{([^{}]+)\}/g, (_, key: string) => {
-    const value = params?.[key];
-    if (value === undefined) {
+    const value = values[key];
+    if (value == null) {
       throw new Error(
         `Missing link parameter "${key}" for template "${template}"`,
       );

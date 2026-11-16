@@ -8,49 +8,38 @@ import {
 import { useCurrentUser } from "./useCurrentUser";
 
 const getProvinceById = (
-  provinceId: string | null,
+  provinceId: string | null | undefined,
   provinces: Province[],
-): Province | null => {
-  if (!provinceId) {
-    return null;
-  }
-  return provinces.find(({ id }) => id === provinceId) || null;
-};
+): Province | null =>
+  provinces.find((province) => province.id === provinceId) ?? null;
 
 export const useProvincePreference = () => {
   const provinces = useMemo(() => getProvinces(), []);
+  // undefined: untouched on this page; null: the user cleared it.
+  const [selected, setSelected] = useState<Province | null | undefined>();
   const storedProvince = getProvinceById(
     getCachedRankingsPreferredProvinceId(),
     provinces,
   );
-  // Only ask who the user is when we don't already have a stored preference.
-  const { user, loading } = useCurrentUser({ enabled: !storedProvince });
-  const [province, setProvince] = useState<Province | null>(null);
-  const [provinceInitialized, setProvinceInitialized] = useState(false);
+  // Only ask who the user is when nothing else decides the province.
+  const { user, loading } = useCurrentUser({
+    enabled: selected === undefined && !storedProvince,
+  });
+  const userProvince = getProvinceById(user?.province, provinces);
 
   useEffect(() => {
-    if (provinceInitialized) return;
+    if (userProvince) setCachedRankingsPreferredProvinceId(userProvince.id);
+  }, [userProvince]);
 
-    if (storedProvince) {
-      setProvince(storedProvince);
-      setProvinceInitialized(true);
-      return;
-    }
+  const province =
+    selected === undefined
+      ? (storedProvince ?? userProvince ?? provinces[0] ?? null)
+      : selected;
 
-    if (loading) return;
-
-    let defaultProvince: Province | null = provinces[0] ?? null;
-    if (user?.province) {
-      const userProvince = getProvinceById(user.province, provinces);
-      if (userProvince) {
-        defaultProvince = userProvince;
-        setCachedRankingsPreferredProvinceId(userProvince.id);
-      }
-    }
-
-    setProvince(defaultProvince);
-    setProvinceInitialized(true);
-  }, [provinceInitialized, storedProvince, loading, user, provinces]);
-
-  return { provinces, province, setProvince, provinceInitialized };
+  return {
+    provinces,
+    province,
+    setProvince: setSelected,
+    provinceInitialized: !loading,
+  };
 };
