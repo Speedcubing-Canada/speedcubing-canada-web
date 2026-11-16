@@ -1,5 +1,4 @@
 import { fetchUtils, DataProvider } from "react-admin";
-import { stringify } from "query-string";
 import { API_BASE_URL } from "./components/api";
 
 const apiUrl = API_BASE_URL;
@@ -40,13 +39,13 @@ const dataProvider: DataProvider = {
 
     const plural = getAdminResource(resource)?.plural ?? "users";
     const query = {
-      page,
-      per_page: perPage,
+      page: String(page),
+      per_page: String(perPage),
       sort_field: field,
       sort_order: order,
       q: params.filter?.q ?? "",
     };
-    const url = `${apiUrl}/admin/get_${plural}?${stringify(query)}`;
+    const url = `${apiUrl}/admin/get_${plural}?${new URLSearchParams(query)}`;
     return httpClient(url).then(({ json }) => ({
       data: json.data,
       total: json.total,
@@ -73,13 +72,13 @@ const dataProvider: DataProvider = {
       const query = { ids: JSON.stringify(params.ids) };
       const url = `${apiUrl}/admin/get_${
         adminResource.plural
-      }_by_id?${stringify(query)}`;
+      }_by_id?${new URLSearchParams(query)}`;
       return httpClient(url).then(({ json }) => ({ data: json.data }));
     }
     const query = {
       filter: JSON.stringify({ ids: params.ids }),
     };
-    const url = `${apiUrl}/admin/get_users_by_id?${stringify(query)}`;
+    const url = `${apiUrl}/admin/get_users_by_id?${new URLSearchParams(query)}`;
     return httpClient(url).then(({ json }) => ({ data: json }));
   },
 
@@ -94,7 +93,7 @@ const dataProvider: DataProvider = {
         [params.target]: params.id,
       }),
     };
-    const url = `${apiUrl}/${resource}?${stringify(query)}`;
+    const url = `${apiUrl}/${resource}?${new URLSearchParams(query)}`;
 
     return httpClient(url).then(({ json }) => ({
       data: json.data,
@@ -139,7 +138,7 @@ const dataProvider: DataProvider = {
     const query = {
       filter: JSON.stringify({ id: params.ids }),
     };
-    return httpClient(`${apiUrl}/${resource}?${stringify(query)}`, {
+    return httpClient(`${apiUrl}/${resource}?${new URLSearchParams(query)}`, {
       method: "PUT",
       body: JSON.stringify(params.data),
     }).then(({ json }) => ({ data: json }));
@@ -164,7 +163,7 @@ const dataProvider: DataProvider = {
     const query = {
       filter: JSON.stringify({ id: params.ids }),
     };
-    return httpClient(`${apiUrl}/${resource}?${stringify(query)}`, {
+    return httpClient(`${apiUrl}/${resource}?${new URLSearchParams(query)}`, {
       method: "DELETE",
       body: JSON.stringify(params),
     }).then(({ json }) => ({ data: json }));
