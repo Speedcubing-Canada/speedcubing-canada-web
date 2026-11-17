@@ -250,6 +250,7 @@ def test_team_leader_edits_the_roster_but_not_leadership(as_user, make_user, mak
                 {"name": "Lead", "wca_id": ME_WCA_ID, "is_leader": False},
                 {"name": "New", "wca_id": "2020NEWB01", "is_leader": True},
                 {"name": "Anon", "is_leader": True},
+                {"name": "Impostor", "wca_id": ME_WCA_ID, "is_leader": True},
             ],
         },
     )
@@ -259,10 +260,19 @@ def test_team_leader_edits_the_roster_but_not_leadership(as_user, make_user, mak
         ("Lead", True),
         ("New", False),
         ("Anon", False),
+        ("Impostor", False),
     ]
 
 
-@pytest.mark.parametrize("members", [[], [{"name": "Lead", "wca_id": "2020NEWB01"}]])
+@pytest.mark.parametrize(
+    "members",
+    [
+        [],
+        [{"name": "Lead", "wca_id": "2020NEWB01"}],
+        [{"name": "Renamed", "wca_id": ME_WCA_ID}],
+        [{"name": "Lead", "wca_id": ME_WCA_ID}, {"name": "Lead", "wca_id": ME_WCA_ID}],
+    ],
+)
 def test_team_leader_cannot_remove_or_replace_the_leader(as_user, make_user, make_team, members):
     make_team("software", leader_wca_id=ME_WCA_ID)
     client = as_user(make_user(2, wca_id=ME_WCA_ID))

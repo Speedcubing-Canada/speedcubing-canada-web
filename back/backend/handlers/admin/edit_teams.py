@@ -1,3 +1,5 @@
+from collections import Counter
+
 from flask import Blueprint, jsonify, request
 from google.cloud import ndb
 
@@ -52,12 +54,15 @@ def _apply_fields(team, data):
 
 
 def _apply_roster(team, data):
-    """Replace a team's members while keeping its leaders; returns an error message or None."""
-    leaders = {m.wca_id or m.name for m in team.members if m.is_leader}
+    """Replace a team's members; each leader must stay, once, under the same name and WCA ID.
+
+    Returns an error message or None.
+    """
+    leaders = Counter((m.name, m.wca_id) for m in team.members if m.is_leader)
     members = parse_members(data.get("members"))
     for member in members:
-        member.is_leader = (member.wca_id or member.name) in leaders
-    if {m.wca_id or m.name for m in members if m.is_leader} != leaders:
+        member.is_leader = (member.name, member.wca_id) in leaders
+    if Counter((m.name, m.wca_id) for m in members if m.is_leader) != leaders:
         return "You are not allowed to edit the team leaders"
     team.members = members
     return None
