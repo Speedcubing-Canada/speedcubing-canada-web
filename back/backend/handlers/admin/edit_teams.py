@@ -58,7 +58,7 @@ def _apply_roster(team, data):
     for member in members:
         member.is_leader = (member.wca_id or member.name) in leaders
     if {m.wca_id or m.name for m in members if m.is_leader} != leaders:
-        return "Only a site admin can remove or change the team leader"
+        return "You are not allowed to edit the team leaders"
     team.members = members
     return None
 
