@@ -221,6 +221,24 @@ def test_get_users_by_id_returns_the_requested_users(as_user, make_user):
     assert sorted(u["name"] for u in response.json["data"]) == ["Bob Builder", "Carol Cubes"]
 
 
+@pytest.mark.parametrize(
+    ("roles", "allowed"),
+    [
+        ([], False),
+        ([Roles.COMMUNICATIONS], False),
+        ([Roles.TRAINEE_DELEGATE], True),
+        ([Roles.DELEGATE], True),
+        ([Roles.DIRECTOR], True),
+        ([Roles.WEBMASTER], True),
+    ],
+)
+def test_championship_eligibility_access(as_user, make_user, roles, allowed):
+    client = as_user(make_user(2, roles=roles))
+    assert client.get("/api/championships").status_code == (200 if allowed else 403)
+    # 404 = past the role check, no such championship.
+    assert client.get("/api/championship_eligibility/none").status_code == (404 if allowed else 403)
+
+
 # --- team leaders ---
 
 
