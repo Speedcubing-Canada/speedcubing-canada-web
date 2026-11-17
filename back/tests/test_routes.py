@@ -158,7 +158,7 @@ def test_reindex_users_requires_admin_and_reports_count(client, as_user, make_us
 # --- role matrix ---
 
 
-@pytest.mark.parametrize("role", [Roles.COMMS, Roles.DIRECTOR])
+@pytest.mark.parametrize("role", [Roles.COMMUNICATIONS, Roles.DIRECTOR])
 def test_content_roles_edit_people_but_nothing_private(as_user, make_user, make_team, role):
     make_team("software", leader_wca_id=ME_WCA_ID)
     client = as_user(make_user(2, roles=[role]))
@@ -180,9 +180,9 @@ def test_delegate_cannot_edit_another_user(as_user, make_user):
 def test_webmaster_grants_neither_global_admin_nor_synced_delegate_roles(as_user, make_user):
     make_user(3, roles=[Roles.DELEGATE])
     client = as_user(make_user(2, roles=[Roles.WEBMASTER]))
-    response = client.post("/api/edit/3", json={"roles": [Roles.GLOBAL_ADMIN, Roles.COMMS, Roles.SENIOR_DELEGATE]})
+    response = client.post("/api/edit/3", json={"roles": [Roles.GLOBAL_ADMIN, Roles.COMMUNICATIONS, Roles.SENIOR_DELEGATE]})
     assert response.status_code == 200
-    assert response.json["roles"] == [Roles.DELEGATE, Roles.COMMS]
+    assert response.json["roles"] == [Roles.DELEGATE, Roles.COMMUNICATIONS]
     # A roles-only body leaves the province alone.
     assert response.json["province"] == "qc"
 
@@ -190,13 +190,13 @@ def test_webmaster_grants_neither_global_admin_nor_synced_delegate_roles(as_user
 def test_role_grant_accepts_the_null_province_react_admin_posts_back(as_user, make_user):
     make_user(3)
     client = as_user(make_user(2, roles=[Roles.WEBMASTER]))
-    response = client.post("/api/edit/3", json={"province": None, "roles": [Roles.COMMS]})
+    response = client.post("/api/edit/3", json={"province": None, "roles": [Roles.COMMUNICATIONS]})
     assert response.status_code == 200
-    assert response.json["roles"] == [Roles.COMMS]
+    assert response.json["roles"] == [Roles.COMMUNICATIONS]
     assert response.json["province"] == "qc"
 
 
-@pytest.mark.parametrize("roles", [[], [Roles.DIRECTOR], [Roles.COMMS], [Roles.SENIOR_DELEGATE]])
+@pytest.mark.parametrize("roles", [[], [Roles.DIRECTOR], [Roles.COMMUNICATIONS], [Roles.SENIOR_DELEGATE]])
 def test_plain_user_cannot_grant_themselves_a_role(as_user, make_user, roles):
     response = as_user(make_user(2, roles=roles)).post("/api/edit", json={"roles": Roles.AllRoles()})
     assert response.status_code == 200

@@ -174,7 +174,7 @@ export const ROLES_DATA = [
   { id: "GLOBAL_ADMIN", name: "Global Admin" },
   { id: "WEBMASTER", name: "Webmaster" },
   { id: "DIRECTOR", name: "Director" },
-  { id: "COMMS", name: "Communications" },
+  { id: "COMMUNICATIONS", name: "Communications" },
   { id: "SENIOR_DELEGATE", name: "Senior Delegate" },
   { id: "DELEGATE", name: "Delegate" },
   { id: "TRAINEE_DELEGATE", name: "Trainee Delegate" },

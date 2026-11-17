@@ -66,10 +66,13 @@ describe("AdminDashboard maintenance section", () => {
     expect(post).not.toHaveBeenCalled();
   });
 
-  it.each(["DIRECTOR", "COMMS"])("disables every action for %s", (role) => {
-    renderDashboard(user(role));
-    for (const button of screen.getAllByRole("button")) {
-      expect(button).toBeDisabled();
-    }
-  });
+  it.each(["DIRECTOR", "COMMUNICATIONS"])(
+    "disables every action for %s",
+    (role) => {
+      renderDashboard(user(role));
+      for (const button of screen.getAllByRole("button")) {
+        expect(button).toBeDisabled();
+      }
+    },
+  );
 });

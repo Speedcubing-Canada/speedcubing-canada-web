@@ -23,13 +23,13 @@ describe("role predicates", () => {
     expect(isSiteAdmin(user("GLOBAL_ADMIN"))).toBe(true);
     expect(isSiteAdmin(user("WEBMASTER"))).toBe(true);
     expect(isSiteAdmin(user("DIRECTOR"))).toBe(false);
-    expect(isSiteAdmin(user("COMMS"))).toBe(false);
+    expect(isSiteAdmin(user("COMMUNICATIONS"))).toBe(false);
     expect(isSiteAdmin(leader)).toBe(false);
   });
 
   it("opens organization content to directors and comms as well", () => {
     expect(canManageContent(user("DIRECTOR"))).toBe(true);
-    expect(canManageContent(user("COMMS"))).toBe(true);
+    expect(canManageContent(user("COMMUNICATIONS"))).toBe(true);
     expect(canManageContent(user("WEBMASTER"))).toBe(true);
     expect(canManageContent(user("SENIOR_DELEGATE"))).toBe(false);
     expect(canManageContent(leader)).toBe(false);
@@ -39,7 +39,7 @@ describe("role predicates", () => {
     expect(leadsTeams(leader)).toBe(true);
     expect(leadsTeams(user())).toBe(false);
     expect(canAccessAdmin(leader)).toBe(true);
-    expect(canAccessAdmin(user("COMMS"))).toBe(true);
+    expect(canAccessAdmin(user("COMMUNICATIONS"))).toBe(true);
     expect(canAccessAdmin(user("DELEGATE"))).toBe(false);
   });
 
@@ -48,7 +48,7 @@ describe("role predicates", () => {
       expect(hasDelegateOrAdminRole(user(role))).toBe(true);
     }
     expect(hasDelegateOrAdminRole(user("DIRECTOR"))).toBe(true);
-    expect(hasDelegateOrAdminRole(user("COMMS"))).toBe(false);
+    expect(hasDelegateOrAdminRole(user("COMMUNICATIONS"))).toBe(false);
     expect(hasDelegateOrAdminRole(user())).toBe(false);
   });
 });

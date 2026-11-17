@@ -10,7 +10,12 @@ const hasRole = (user: User | null, ...checkRoles: string[]): boolean => {
   return user.roles.some((role) => checkRoles.includes(role));
 };
 
-export const CONTENT_ROLES = ["GLOBAL_ADMIN", "WEBMASTER", "DIRECTOR", "COMMS"];
+export const CONTENT_ROLES = [
+  "GLOBAL_ADMIN",
+  "WEBMASTER",
+  "DIRECTOR",
+  "COMMUNICATIONS",
+];
 
 export const isSiteAdmin = (user: User | null) =>
   hasRole(user, "GLOBAL_ADMIN", "WEBMASTER");

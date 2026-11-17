@@ -9,14 +9,14 @@ class Roles:
     GLOBAL_ADMIN = "GLOBAL_ADMIN"
     WEBMASTER = "WEBMASTER"
     DIRECTOR = "DIRECTOR"
-    COMMS = "COMMS"
+    COMMUNICATIONS = "COMMUNICATIONS"
     SENIOR_DELEGATE = "SENIOR_DELEGATE"
     DELEGATE = "DELEGATE"
     TRAINEE_DELEGATE = "TRAINEE_DELEGATE"
 
     @staticmethod
     def AllRoles():
-        return [Roles.GLOBAL_ADMIN, Roles.WEBMASTER, Roles.DIRECTOR, Roles.COMMS] + Roles.DelegateRoles()
+        return [Roles.GLOBAL_ADMIN, Roles.WEBMASTER, Roles.DIRECTOR, Roles.COMMUNICATIONS] + Roles.DelegateRoles()
 
     @staticmethod
     def DelegateRoles():
@@ -25,7 +25,7 @@ class Roles:
     @staticmethod
     def GrantableRoles():
         """Hand-grantable roles below GLOBAL_ADMIN; delegate roles are synced from the roster at login."""
-        return [Roles.WEBMASTER, Roles.DIRECTOR, Roles.COMMS]
+        return [Roles.WEBMASTER, Roles.DIRECTOR, Roles.COMMUNICATIONS]
 
     @staticmethod
     def SiteAdminRoles():
@@ -33,7 +33,7 @@ class Roles:
 
     @staticmethod
     def ContentRoles():
-        return Roles.SiteAdminRoles() + [Roles.DIRECTOR, Roles.COMMS]
+        return Roles.SiteAdminRoles() + [Roles.DIRECTOR, Roles.COMMUNICATIONS]
 
 
 class UserLocationUpdate(ndb.Model):
