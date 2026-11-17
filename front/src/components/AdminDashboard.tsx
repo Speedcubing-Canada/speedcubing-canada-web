@@ -13,7 +13,7 @@ import { Confirm, useNotify, useTranslate } from "react-admin";
 
 import { API_BASE_URL } from "./api";
 import httpClient from "../httpClient";
-import { canUpdateProvinces } from "./roles";
+import { isSiteAdmin } from "./roles";
 import { User } from "../types";
 
 interface Action {
@@ -62,8 +62,7 @@ export const AdminDashboard = ({ user }: { user: User | null }) => {
     }
   };
 
-  const allowed = (action: Action) =>
-    action.key !== "provinces" || canUpdateProvinces(user);
+  const allowed = isSiteAdmin(user);
 
   return (
     <Card>
@@ -75,27 +74,23 @@ export const AdminDashboard = ({ user }: { user: User | null }) => {
         <Alert severity="warning" sx={{ mb: 2 }}>
           {t("admin.maintenance.warning")}
         </Alert>
+        {!allowed && (
+          <Typography variant="caption" color="warning.main">
+            {t("admin.maintenance.forbidden")}
+          </Typography>
+        )}
         {ACTIONS.map((action) => (
           <Box key={action.key} sx={{ mb: 2 }}>
             <Button
               variant="outlined"
               color="warning"
-              disabled={running !== null || !allowed(action)}
+              disabled={running !== null || !allowed}
               onClick={() => setConfirming(action)}
             >
               {running === action.key
                 ? t("admin.maintenance.running")
                 : t(`admin.maintenance.${action.key}.label`)}
             </Button>
-            {!allowed(action) && (
-              <Typography
-                variant="caption"
-                display="block"
-                color="warning.main"
-              >
-                {t("admin.maintenance.forbidden")}
-              </Typography>
-            )}
           </Box>
         ))}
       </CardContent>

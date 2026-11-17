@@ -22,7 +22,11 @@ import { API_BASE_URL, signIn, signOut } from "../components/api";
 import { AlertAction, Province, AlertState, User } from "../types";
 import httpClient from "../httpClient";
 import { getProvincesWithNA, getNAProvince } from "../components/provinces";
-import { isAdmin, hasDelegateOrAdminRole } from "../components/roles";
+import {
+  CONTENT_ROLES,
+  canAccessAdmin,
+  hasDelegateOrAdminRole,
+} from "../components/roles";
 import { useResponsiveQuery } from "../components/useResponsiveQuery";
 import {
   isValidProvinceId,
@@ -32,8 +36,6 @@ import {
 import { CURRENT_USER_KEY, useCurrentUser } from "../helpers/useCurrentUser";
 import { getLocaleOrFallback, SAVED_LOCALE_KEY } from "../locale";
 import { useNavigate } from "react-router";
-
-const PRIMARY_ROLES = new Set(["GLOBAL_ADMIN", "DIRECTOR", "WEBMASTER"]);
 
 const initialState: AlertState = {
   alert: false,
@@ -158,7 +160,7 @@ export const Account = () => {
     void navigate(`/${locale}/championship-eligibility`);
   };
 
-  const admin = isAdmin(user);
+  const admin = canAccessAdmin(user);
   const delegate = hasDelegateOrAdminRole(user);
 
   return (
@@ -297,7 +299,7 @@ export const Account = () => {
               {user.roles?.map((role) => (
                 <ListItem key={role}>
                   <Chip
-                    color={PRIMARY_ROLES.has(role) ? "primary" : "default"}
+                    color={CONTENT_ROLES.includes(role) ? "primary" : "default"}
                     label={t(`account.role.${role}`) || role}
                   />
                 </ListItem>

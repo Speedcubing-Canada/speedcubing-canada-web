@@ -31,6 +31,15 @@ const { SAMPLE } = vi.hoisted(() => ({
       region_group: "Canada (East)",
       avatar_thumb_url: null,
     },
+    {
+      wca_id: "2019TRAI01",
+      name: "Taylor Trainee",
+      gender: "f",
+      status: "trainee_delegate",
+      province: "on",
+      region_group: "Canada (East)",
+      avatar_thumb_url: null,
+    },
   ],
 }));
 
@@ -80,5 +89,17 @@ describe("Delegates page", () => {
     expect(
       screen.getByText(i18n.t("delegates.status.junior")),
     ).toBeInTheDocument();
+  });
+
+  it("labels trainee delegates as apprentices in French", async () => {
+    // The harness pins English; Base.tsx (not rendered here) is what switches language.
+    await i18n.changeLanguage("fr");
+    try {
+      renderWithProviders(<Delegates />, { route: "/fr" });
+      expect(await screen.findByText("Taylor Trainee")).toBeInTheDocument();
+      expect(screen.getByText("Apprentie déléguée")).toBeInTheDocument();
+    } finally {
+      await i18n.changeLanguage("en");
+    }
   });
 });

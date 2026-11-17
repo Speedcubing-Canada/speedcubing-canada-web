@@ -34,6 +34,12 @@ def parse_list_params(default_sort_field, default_sort_order="asc"):
     return page, per_page, sort_field, sort_order, q
 
 
+def parse_ids():
+    """Parse react-admin's ``ids=["a","b"]`` query param."""
+    raw_ids = request.args.get("ids", "[]", type=str).strip("[]").split(",")
+    return [i.strip().strip('"') for i in raw_ids if i.strip()]
+
+
 def list_envelope(data, total, page, per_page):
     return {
         "data": data,

@@ -49,6 +49,7 @@ def create_app():
 
     app.secret_key = get_secret("SESSION_SECRET_KEY")
     app.permanent_session_lifetime = datetime.timedelta(days=7)
+    app.config["SESSION_COOKIE_SAMESITE"] = "Lax"
 
     # Prod is same-origin via dispatch; only local dev calls the API cross-origin.
     if os.environ.get("ENV") == "DEV":
