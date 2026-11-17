@@ -40,6 +40,7 @@ export const UserEdit = () => {
           choices={grantable}
           optionValue="id"
           optionText={(option) => t(`translation.account.role.${option.id}`)}
+          getOptionDisabled={(option) => option.disabled}
         />
       </SimpleForm>
     </Edit>
