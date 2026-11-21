@@ -71,6 +71,10 @@ export const DOCUMENTS = {
   ],
   policies: [
     {
+      name: "Canadian Championship Bidding Policy",
+      id: "canadian-championship-bidding-policy",
+    },
+    {
       name: "Speedcubing Canada Privacy Policy",
       id: "privacy-policy",
     },
@@ -145,6 +149,10 @@ export const DOCUMENTS = {
     {
       name: "Speedcubing Canada Membership Policy (v1.0)",
       id: "membership-policy-v1.0",
+    },
+    {
+      name: "Canadian Championship Bidding Policy (v1.1)",
+      id: "canadian-championship-bidding-policy-v1.1",
     },
   ],
   corporate: [
