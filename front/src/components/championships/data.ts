@@ -43,6 +43,8 @@ export interface UpcomingChampionship {
   start_date: string | null;
   end_date: string | null;
   city: string | null;
+  latitude: number | null; // degrees
+  longitude: number | null; // degrees
   events: string[];
   wca_url: string;
   registration_open: string | null;

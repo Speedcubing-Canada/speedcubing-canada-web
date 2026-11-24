@@ -11,6 +11,7 @@ import {
   fetchOverview,
   RegionId,
   RegionInfo,
+  UpcomingChampionship,
 } from "../components/championships/data";
 import { useResponsiveQuery } from "../components/useResponsiveQuery";
 
@@ -67,9 +68,10 @@ export const Championships: React.FC = () => {
     };
   }, []);
 
-  const announcedRegions: Partial<Record<RegionId, boolean>> = {};
+  const upcoming: Partial<Record<RegionId, UpcomingChampionship>> = {};
   (Object.keys(regions) as RegionId[]).forEach((id) => {
-    announcedRegions[id] = Boolean(regions[id]?.announced);
+    const championship = regions[id]?.upcoming;
+    if (championship) upcoming[id] = championship;
   });
 
   return (
@@ -133,7 +135,7 @@ export const Championships: React.FC = () => {
         <CanadaRegionMap
           selectedRegion={selected}
           onSelect={setSelected}
-          announcedRegions={announcedRegions}
+          upcoming={upcoming}
         />
       </Box>
 

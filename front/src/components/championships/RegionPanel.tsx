@@ -48,16 +48,20 @@ function formatDateRange(
 ): string {
   if (!start) return "";
   const startDate = new Date(start);
+  // `start` and `end` are date-only ISO strings, which `Date` reads as UTC midnight.
+  // Formatting in UTC keeps the day; a Canadian time zone would show the day before.
   const long: Intl.DateTimeFormatOptions = {
     year: "numeric",
     month: "long",
     day: "numeric",
+    timeZone: "UTC",
   };
   if (!end || start === end) return startDate.toLocaleDateString(locale, long);
   const endDate = new Date(end);
   const startShort = startDate.toLocaleDateString(locale, {
     month: "long",
     day: "numeric",
+    timeZone: "UTC",
   });
   return `${startShort} - ${endDate.toLocaleDateString(locale, long)}`;
 }
@@ -483,9 +487,14 @@ export const RegionPanel: React.FC<RegionPanelProps> = ({
       </Stack>
 
       <Box sx={{ mt: 1.5, mb: 3 }}>
-        {region.announced ? (
+        {upcoming ? (
           <Chip
-            label={t("championships.statusAnnounced", { year })}
+            label={t("championships.statusAnnounced", {
+              // The upcoming championship can be next year's, so the chip shows
+              // the year of its ISO start date. The current year is only the
+              // fallback for a championship without a start date.
+              year: upcoming.start_date?.slice(0, 4) ?? year,
+            })}
             color="primary"
             size="small"
             sx={{ fontWeight: 700 }}
@@ -497,16 +506,14 @@ export const RegionPanel: React.FC<RegionPanelProps> = ({
             sx={{ fontWeight: 700 }}
           />
         ) : (
-          <Chip
-            label={
-              hasPast
-                ? t("championships.statusPending", { year })
-                : t("championships.statusNone")
-            }
-            size="small"
-            variant="outlined"
-            sx={{ fontWeight: 700 }}
-          />
+          !hasPast && (
+            <Chip
+              label={t("championships.statusNone")}
+              size="small"
+              variant="outlined"
+              sx={{ fontWeight: 700 }}
+            />
+          )
         )}
       </Box>
 

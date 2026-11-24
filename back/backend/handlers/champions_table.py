@@ -80,18 +80,19 @@ def serialize_champions(champions):
 
 
 def region_championships(region, year_int):
-    """Return the (non-PBQ, non-national) championships that represent ``region`` in ``year_int``.
+    """Return the championships that crown ``region``'s champions in ``year_int``.
 
-    For a single-province region (BC/ON/QC) the championship is stored as provincial
-    (its name matches the province name), so match by that province; otherwise match the
-    regional championships for the region.
+    These are the region's regular and quiet (PBQ) championships; national
+    championships are excluded. The championship of a single-province region
+    (BC/ON/QC) is stored with ``province`` set and no ``region``, so it is matched on
+    the region's only province; any other championship is matched on ``region``.
     """
     province_keys = Province.query(Province.region == region.key).fetch(keys_only=True)
     single_province = province_keys[0] if len(province_keys) == 1 else None
 
     championships = []
     for championship in Championship.query().iter():
-        if championship.national_championship or championship.is_pbq:
+        if championship.national_championship:
             continue
         if championship.year != year_int:
             continue
@@ -101,6 +102,19 @@ def region_championships(region, year_int):
         elif championship.region == region.key:
             championships.append(championship)
     return championships
+
+
+def one_champion_per_event(champions, quiet_championship_keys):
+    """Keep one ``Champion`` per event, preferring a regular championship over a quiet one.
+
+    A region's regular and quiet championships of the same year can both hold an
+    event, and the champions table shows a single title per event.
+    ``quiet_championship_keys`` is the set of keys of the quiet championships.
+    """
+    by_event = {}
+    for champion in sorted(champions, key=lambda c: c.championship in quiet_championship_keys):
+        by_event.setdefault(champion.event, champion)
+    return list(by_event.values())
 
 
 @bp.route("/champions_by_region/<region_id>/<year>")
@@ -115,6 +129,8 @@ def champions_by_region(region_id, year):
         if not region:
             return jsonify({"error": f"Unrecognized region id {region_id}"}), 404
 
-        championship_keys = [c.key for c in region_championships(region, year_int)]
+        championships = region_championships(region, year_int)
+        championship_keys = [c.key for c in championships]
         champions = Champion.query(Champion.championship.IN(championship_keys)).fetch() if championship_keys else []
-        return jsonify(serialize_champions(champions))
+        quiet_keys = {c.key for c in championships if c.is_pbq}
+        return jsonify(serialize_champions(one_champion_per_event(champions, quiet_keys)))

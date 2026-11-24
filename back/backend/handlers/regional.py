@@ -64,16 +64,26 @@ def fetch_registration(competition_id, now=None):
     }
 
 
-def display_region_key(championship, province_region, region_province_count):
+def _degrees(microdegrees):
+    return None if microdegrees is None else microdegrees / 1_000_000
+
+
+def display_region_key(championship, competition, province_region, region_province_count):
     """Return the region key a championship represents on the map, or ``None`` to skip.
 
     Regional championships map to their region. A provincial championship maps to its
     province's region only when that region has a single province (BC/ON/QC) - otherwise
     it is a sub-provincial championship within a multi-province region and is not the
-    region's headline championship. National and PBQ championships never appear.
+    region's headline championship. Quiet (PBQ) championships map like regular ones.
+
+    A national championship maps to the region of the province that hosts it, or to
+    ``None`` when its competition or host province is unknown. The national FMC
+    championship never appears: it is held in several cities at once.
     """
-    if championship.national_championship or championship.is_pbq:
-        return None
+    if championship.national_championship:
+        if championship.is_fmc or competition is None:
+            return None
+        return province_region.get(competition.province)
     if championship.region:
         return championship.region
     if championship.province:
@@ -107,7 +117,7 @@ def championships_overview():
         competitions = ndb.get_multi([c.competition for c in championships])
         entries_by_region = {}
         for championship, competition in zip(championships, competitions, strict=False):
-            region_key = display_region_key(championship, province_region, region_province_count)
+            region_key = display_region_key(championship, competition, province_region, region_province_count)
             if region_key is not None:
                 entries_by_region.setdefault(region_key, []).append((championship, competition))
 
@@ -115,9 +125,14 @@ def championships_overview():
         output = []
         for region in regions:
             entries = entries_by_region.get(region.key, [])
-            # Past editions only - a championship that has not happened yet is surfaced
-            # via ``upcoming``, not as a past edition to browse champions for.
-            editions = sorted({comp.year for _, comp in entries if comp and comp.end_date < today}, reverse=True)
+            # The frontend offers each year in ``editions`` as a past edition and loads
+            # that year's regional champions. A championship that has not ended yet has
+            # no champions, and a national championship crowns no regional ones, so both
+            # are left out: either would show as an edition with an empty champions list.
+            editions = sorted(
+                {comp.year for champ, comp in entries if comp and comp.end_date < today and not champ.national_championship},
+                reverse=True,
+            )
 
             upcoming = _upcoming_championship(entries, today)
             upcoming_json = None
@@ -130,6 +145,8 @@ def championships_overview():
                     "start_date": competition.start_date.isoformat() if competition.start_date else None,
                     "end_date": competition.end_date.isoformat() if competition.end_date else None,
                     "city": competition.city_name,
+                    "latitude": _degrees(competition.latitude),
+                    "longitude": _degrees(competition.longitude),
                     "events": [e.id() for e in competition.events],
                     "wca_url": competition.get_wca_link(),
                     "registration_open": None,
