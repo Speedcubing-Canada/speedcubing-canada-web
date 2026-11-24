@@ -1,5 +1,6 @@
 import datetime
 import logging
+from concurrent.futures import ThreadPoolExecutor
 
 import requests
 from flask import Blueprint, jsonify
@@ -15,6 +16,10 @@ bp = Blueprint("regional", __name__)
 client = ndb.Client()
 
 _WCA_COMPETITION_BASE_URL = "https://www.worldcubeassociation.org/api/v0/competitions"
+# Timeout of the WCA API request that reads a competition's registration window.
+# The championships overview does not respond until that request ends, and the
+# registration window is only a detail of the page, so a slow WCA API is given up on.
+_WCA_TIMEOUT_SECONDS = 3
 
 
 def _parse_iso(value):
@@ -46,7 +51,7 @@ def fetch_registration(competition_id, now=None):
     """
     now = now or datetime.datetime.now(datetime.UTC)
     try:
-        resp = requests.get(f"{_WCA_COMPETITION_BASE_URL}/{competition_id}", timeout=10)
+        resp = requests.get(f"{_WCA_COMPETITION_BASE_URL}/{competition_id}", timeout=_WCA_TIMEOUT_SECONDS)
         if resp.status_code != 200:
             logger.warning("WCA competition fetch failed for %s: %s", competition_id, resp.status_code)
             return None
@@ -62,6 +67,22 @@ def fetch_registration(competition_id, now=None):
         "registration_close": reg_close,
         "registration_status": registration_status(_parse_iso(reg_open), _parse_iso(reg_close), now),
     }
+
+
+def add_registrations(upcoming_championships):
+    """Fill in the registration window of each upcoming championship payload, in place.
+
+    Each window costs one WCA API request. The requests run at the same time, so the
+    caller waits for the slowest request and not for the sum of them. A payload for
+    which ``fetch_registration`` returns ``None`` keeps its registration fields unchanged.
+    """
+    if not upcoming_championships:
+        return
+    with ThreadPoolExecutor(max_workers=len(upcoming_championships)) as pool:
+        registrations = pool.map(fetch_registration, [u["competition_id"] for u in upcoming_championships])
+        for upcoming, registration in zip(upcoming_championships, registrations, strict=True):
+            if registration:
+                upcoming.update(registration)
 
 
 def _degrees(microdegrees):
@@ -94,7 +115,7 @@ def display_region_key(championship, competition, province_region, region_provin
 
 
 def _upcoming_championship(entries, today):
-    """Pick the nearest non-past regional championship from ``[(championship, competition)]``."""
+    """Pick the nearest championship that has not ended from ``[(championship, competition)]``."""
     future = [(c, comp) for c, comp in entries if comp and comp.end_date >= today]
     if not future:
         return None
@@ -127,8 +148,9 @@ def championships_overview():
             entries = entries_by_region.get(region.key, [])
             # The frontend offers each year in ``editions`` as a past edition and loads
             # that year's regional champions. A championship that has not ended yet has
-            # no champions, and a national championship crowns no regional ones, so both
-            # are left out: either would show as an edition with an empty champions list.
+            # no champions. National champions are listed on the WCA website and are not
+            # repeated on this page. Both kinds are left out, because either would show
+            # as an edition with an empty champions list.
             editions = sorted(
                 {comp.year for champ, comp in entries if comp and comp.end_date < today and not champ.national_championship},
                 reverse=True,
@@ -153,9 +175,6 @@ def championships_overview():
                     "registration_close": None,
                     "registration_status": None,
                 }
-                registration = fetch_registration(competition.key.id())
-                if registration:
-                    upcoming_json.update(registration)
 
             output.append(
                 {
@@ -169,4 +188,5 @@ def championships_overview():
                 },
             )
 
+        add_registrations([region_json["upcoming"] for region_json in output if region_json["upcoming"]])
         return jsonify(output)

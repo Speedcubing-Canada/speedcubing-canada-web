@@ -17,7 +17,13 @@ from backend.handlers.champions_table import (
     region_championships,
     serialize_champions,
 )
-from backend.handlers.regional import _upcoming_championship, display_region_key, fetch_registration, registration_status
+from backend.handlers.regional import (
+    _upcoming_championship,
+    add_registrations,
+    display_region_key,
+    fetch_registration,
+    registration_status,
+)
 from backend.lib.residency import resolve_residency
 from backend.models.championship import Championship
 
@@ -134,7 +140,7 @@ def test_upcoming_none_when_all_past():
 
 
 # ---------------------------------------------------------------------------
-# regional.display_region_key (single-province mapping + PBQ/national exclusion)
+# regional.display_region_key (single-province mapping, quiet and national championships)
 # ---------------------------------------------------------------------------
 
 BC_REGION = object()
@@ -486,3 +492,22 @@ def test_serialize_champions_orders_by_event_rank(mock_ndb, mock_fmt):
     assert [c["event_id"] for c in out] == ["333", "444"]
     assert out[0]["event_name"] == "3x3x3"
     assert len(out[0]["champions"]) == 1
+
+
+@patch("backend.handlers.regional.fetch_registration")
+def test_add_registrations_fills_each_championship_and_skips_failures(mock_fetch):
+    windows = {"QcQuiet2026": {"registration_status": "open"}, "Nationals2027": None}
+    mock_fetch.side_effect = windows.get
+    quiet = {"competition_id": "QcQuiet2026", "registration_status": None}
+    nationals = {"competition_id": "Nationals2027", "registration_status": None}
+
+    add_registrations([quiet, nationals])
+
+    assert quiet["registration_status"] == "open"
+    assert nationals["registration_status"] is None
+
+
+@patch("backend.handlers.regional.fetch_registration")
+def test_add_registrations_without_upcoming_championship_makes_no_request(mock_fetch):
+    add_registrations([])
+    mock_fetch.assert_not_called()

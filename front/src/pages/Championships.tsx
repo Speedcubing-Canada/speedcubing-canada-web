@@ -6,7 +6,9 @@ import {
   COLORS,
 } from "../components/championships/CanadaRegionMap";
 import { RegionPanel } from "../components/championships/RegionPanel";
+import { ZamboniLoader } from "../components/championships/ZamboniLoader";
 import {
+  cachedOverview,
   fallbackRegion,
   fetchOverview,
   RegionId,
@@ -45,28 +47,36 @@ function LegendSwatch({
   );
 }
 
+const byRegionId = (list: RegionInfo[]) => {
+  const byId: Partial<Record<RegionId, RegionInfo>> = {};
+  list.forEach((r) => {
+    byId[r.id] = r;
+  });
+  return byId;
+};
+
 export const Championships: React.FC = () => {
   const { t } = useTranslation();
   const isSmall = useResponsiveQuery("md");
   const [selected, setSelected] = useState<RegionId | null>(null);
-  const [regions, setRegions] = useState<Partial<Record<RegionId, RegionInfo>>>(
-    {},
-  );
+  const [regions, setRegions] = useState(() => byRegionId(cachedOverview()));
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     let active = true;
     void fetchOverview().then((list) => {
       if (!active) return;
-      const byId: Partial<Record<RegionId, RegionInfo>> = {};
-      list.forEach((r) => {
-        byId[r.id] = r;
-      });
-      setRegions(byId);
+      setRegions(byRegionId(list));
+      setLoading(false);
     });
     return () => {
       active = false;
     };
   }, []);
+
+  // `waiting` is true while the first overview request is pending and no
+  // overview is stored from an earlier visit.
+  const waiting = loading && Object.keys(regions).length === 0;
 
   const upcoming: Partial<Record<RegionId, UpcomingChampionship>> = {};
   (Object.keys(regions) as RegionId[]).forEach((id) => {
@@ -132,11 +142,40 @@ export const Championships: React.FC = () => {
           pb: 2,
         }}
       >
-        <CanadaRegionMap
-          selectedRegion={selected}
-          onSelect={setSelected}
-          upcoming={upcoming}
-        />
+        {/* While `waiting`, every region is drawn as not announced. The map
+            is blurred and unclickable during that time, so that nobody reads
+            it as "no championship anywhere". */}
+        <Box
+          sx={{
+            width: "100%",
+            height: "100%",
+            transition: "filter .5s ease, opacity .5s ease",
+            ...(waiting && {
+              filter: "blur(6px)",
+              opacity: 0.55,
+              pointerEvents: "none",
+            }),
+          }}
+        >
+          <CanadaRegionMap
+            selectedRegion={selected}
+            onSelect={setSelected}
+            upcoming={upcoming}
+          />
+        </Box>
+        {waiting && (
+          <Box
+            sx={{
+              position: "absolute",
+              inset: 0,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <ZamboniLoader />
+          </Box>
+        )}
       </Box>
 
       <Drawer

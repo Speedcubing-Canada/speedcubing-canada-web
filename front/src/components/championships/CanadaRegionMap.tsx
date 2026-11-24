@@ -124,8 +124,8 @@ export interface CanadaRegionMapProps {
   selectedRegion: RegionId | null;
   onSelect: (region: RegionId) => void;
   // The upcoming championship of each region that has one, from the backend
-  // overview. It decides which regions the map shows as announced and where
-  // their pins go.
+  // overview. This prop decides which regions the map shows as announced and
+  // where their pins go.
   upcoming: Partial<Record<RegionId, UpcomingChampionship>>;
 }
 

@@ -107,8 +107,9 @@ def region_championships(region, year_int):
 def one_champion_per_event(champions, quiet_championship_keys):
     """Keep one ``Champion`` per event, preferring a regular championship over a quiet one.
 
-    A region's regular and quiet championships of the same year can both hold an
-    event, and the champions table shows a single title per event.
+    A region's regular and quiet championships of the same year should never hold
+    the same event. If they ever do, this keeps the result predictable, because the
+    champions table shows a single title per event.
     ``quiet_championship_keys`` is the set of keys of the quiet championships.
     """
     by_event = {}

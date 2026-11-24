@@ -97,11 +97,34 @@ export interface EventChampions {
   champions: ChampionResult[];
 }
 
+const OVERVIEW_STORAGE_KEY = "championshipsOverview";
+
+// The overview this browser last received, or an empty list. The API
+// can take several seconds to answer after it has been idle, so the page draws the
+// map from this copy first and replaces it when fetchOverview resolves.
+export function cachedOverview(): RegionInfo[] {
+  try {
+    return JSON.parse(
+      window.localStorage.getItem(OVERVIEW_STORAGE_KEY) ?? "[]",
+    ) as RegionInfo[];
+  } catch {
+    return [];
+  }
+}
+
+// Resolves to the cached overview, which may be empty, when the request fails.
+// A failed refresh then leaves a map drawn from the cached overview as it is.
 export async function fetchOverview(): Promise<RegionInfo[]> {
   const res = await httpClient.get<RegionInfo[]>(
     `${API_BASE_URL}/championships_overview`,
   );
-  return res.ok && res.data ? res.data : [];
+  if (!res.ok || !res.data) return cachedOverview();
+  try {
+    window.localStorage.setItem(OVERVIEW_STORAGE_KEY, JSON.stringify(res.data));
+  } catch {
+    // Storage can be full or disabled. The page works without the cached copy.
+  }
+  return res.data;
 }
 
 export async function fetchChampions(
