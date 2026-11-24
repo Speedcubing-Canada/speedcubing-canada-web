@@ -43,9 +43,7 @@ services:
     restart: always
     env_file: ./.env
     environment:
-      - DATASTORE_EMULATOR_HOST=host.docker.internal:8081
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
+      - DATASTORE_EMULATOR_HOST=datastore:8081
     depends_on:
       - datastore
     networks:
