@@ -123,6 +123,10 @@ export const DOCUMENTS = {
       id: "reimbursement-policy-v1.5",
     },
     {
+      name: "Speedcubing Canada Reimbursement Policy (v1.5.1)",
+      id: "reimbursement-policy-v1.5.1",
+    },
+    {
       name: "Speedcubing Canada Supported Events Policy (v1.0)",
       id: "supported-events-policy-v1.0",
     },
