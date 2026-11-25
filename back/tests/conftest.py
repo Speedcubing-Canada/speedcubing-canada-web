@@ -174,6 +174,85 @@ def make_team(seed):
 
 
 @pytest.fixture
+def make_championship(seed):
+    from backend.models.championship import Championship
+    from backend.models.wca.competition import Competition
+
+    def _make(
+        championship_id,
+        start_date,
+        region=None,
+        province=None,
+        national=False,
+        pbq=False,
+        host_province=None,
+        latitude=0.0,
+        longitude=0.0,
+    ):
+        """A one-day competition on ``start_date`` and the championship held at it.
+
+        ``province`` and ``region`` say whose championship it is. ``host_province`` is
+        where the competition takes place.
+        """
+        competition = seed(
+            lambda: Competition(
+                id=f"{championship_id}_competition",
+                name=championship_id,
+                start_date=start_date,
+                end_date=start_date,
+                year=start_date.year,
+                province=host_province.key if host_province else None,
+                latitude=round(latitude * 1_000_000),
+                longitude=round(longitude * 1_000_000),
+            ),
+        )
+        return seed(
+            lambda: Championship(
+                id=championship_id,
+                competition=competition.key,
+                national_championship=national,
+                is_pbq=pbq,
+                region=region.key if region else None,
+                province=province.key if province else None,
+            ),
+        )
+
+    return _make
+
+
+@pytest.fixture
+def make_champion(seed):
+    from google.cloud import ndb
+
+    from backend.models.champion import Champion
+    from backend.models.wca.event import Event
+    from backend.models.wca.result import Result
+
+    def _make(championship, event_id, winner_name):
+        result = seed(
+            lambda: Result(
+                id=f"{championship.key.id()}_{event_id}",
+                competition=championship.competition,
+                event=ndb.Key(Event, event_id),
+                person_name=winner_name,
+                pos=1,
+                best=1000,
+                average=0,
+            ),
+        )
+        return seed(
+            lambda: Champion(
+                id=Champion.id(championship.key.id(), event_id),
+                championship=championship.key,
+                event=result.event,
+                champions=[result.key],
+            ),
+        )
+
+    return _make
+
+
+@pytest.fixture
 def make_delegate(seed):
     from backend.models.delegate import Delegate
 

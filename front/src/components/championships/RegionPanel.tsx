@@ -458,6 +458,42 @@ export const RegionPanel: React.FC<RegionPanelProps> = ({
   const year = new Date().getFullYear();
   const heldThisYear = region.editions.includes(year);
 
+  // A region with past editions, none of them this year, and nothing upcoming
+  // gets no chip: the card below already says the next edition is not announced.
+  let statusChip: React.ReactNode = null;
+  if (upcoming) {
+    statusChip = (
+      <Chip
+        label={t("championships.statusAnnounced", {
+          // The upcoming championship can be next year's, so the chip shows
+          // the year of its ISO start date. The current year is only the
+          // fallback for a championship without a start date.
+          year: upcoming.start_date?.slice(0, 4) ?? year,
+        })}
+        color="primary"
+        size="small"
+        sx={{ fontWeight: 700 }}
+      />
+    );
+  } else if (heldThisYear) {
+    statusChip = (
+      <Chip
+        label={t("championships.statusHeld", { year })}
+        size="small"
+        sx={{ fontWeight: 700 }}
+      />
+    );
+  } else if (!hasPast) {
+    statusChip = (
+      <Chip
+        label={t("championships.statusNone")}
+        size="small"
+        variant="outlined"
+        sx={{ fontWeight: 700 }}
+      />
+    );
+  }
+
   return (
     <Box sx={{ p: { xs: 2.5, md: 3.5 }, pb: 6 }}>
       <Stack
@@ -486,38 +522,11 @@ export const RegionPanel: React.FC<RegionPanelProps> = ({
         </IconButton>
       </Stack>
 
-      <Box sx={{ mt: 1.5, mb: 3 }}>
-        {upcoming ? (
-          <Chip
-            label={t("championships.statusAnnounced", {
-              // The upcoming championship can be next year's, so the chip shows
-              // the year of its ISO start date. The current year is only the
-              // fallback for a championship without a start date.
-              year: upcoming.start_date?.slice(0, 4) ?? year,
-            })}
-            color="primary"
-            size="small"
-            sx={{ fontWeight: 700 }}
-          />
-        ) : heldThisYear ? (
-          <Chip
-            label={t("championships.statusHeld", { year })}
-            size="small"
-            sx={{ fontWeight: 700 }}
-          />
-        ) : (
-          !hasPast && (
-            <Chip
-              label={t("championships.statusNone")}
-              size="small"
-              variant="outlined"
-              sx={{ fontWeight: 700 }}
-            />
-          )
-        )}
-      </Box>
+      {statusChip && <Box sx={{ mt: 1.5 }}>{statusChip}</Box>}
 
-      <NextChampionshipSection upcoming={upcoming} hasPast={hasPast} />
+      <Box sx={{ mt: 3 }}>
+        <NextChampionshipSection upcoming={upcoming} hasPast={hasPast} />
+      </Box>
 
       <PastChampionsSection
         region={region}

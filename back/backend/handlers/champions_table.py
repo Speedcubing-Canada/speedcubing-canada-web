@@ -1,6 +1,7 @@
 from flask import Blueprint, jsonify
 from google.cloud import ndb
 
+from backend.handlers.regional import display_region_key
 from backend.lib import formatters
 from backend.models.champion import Champion
 from backend.models.championship import Championship
@@ -82,38 +83,31 @@ def serialize_champions(champions):
 def region_championships(region, year_int):
     """Return the championships that crown ``region``'s champions in ``year_int``.
 
-    These are the region's regular and quiet (PBQ) championships; national
-    championships are excluded. The championship of a single-province region
-    (BC/ON/QC) is stored with ``province`` set and no ``region``, so it is matched on
-    the region's only province; any other championship is matched on ``region``.
+    These are the region's regular and quiet (PBQ) championships of that year, matched
+    by the rule the championships overview uses (``display_region_key``). Passing
+    ``None`` as the competition to that rule leaves national championships out.
     """
     province_keys = Province.query(Province.region == region.key).fetch(keys_only=True)
-    single_province = province_keys[0] if len(province_keys) == 1 else None
-
-    championships = []
-    for championship in Championship.query().iter():
-        if championship.national_championship:
-            continue
-        if championship.year != year_int:
-            continue
-        if single_province is not None:
-            if championship.province == single_province:
-                championships.append(championship)
-        elif championship.region == region.key:
-            championships.append(championship)
-    return championships
+    province_region = dict.fromkeys(province_keys, region.key)
+    region_province_count = {region.key: len(province_keys)}
+    return [
+        championship
+        for championship in Championship.query().iter()
+        if championship.year == year_int
+        and display_region_key(championship, None, province_region, region_province_count) == region.key
+    ]
 
 
-def one_champion_per_event(champions, quiet_championship_keys):
+def one_champion_per_event(champions, pbq_championship_keys):
     """Keep one ``Champion`` per event, preferring a regular championship over a quiet one.
 
     A region's regular and quiet championships of the same year should never hold
     the same event. If they ever do, this keeps the result predictable, because the
     champions table shows a single title per event.
-    ``quiet_championship_keys`` is the set of keys of the quiet championships.
+    ``pbq_championship_keys`` is the set of keys of the quiet championships.
     """
     by_event = {}
-    for champion in sorted(champions, key=lambda c: c.championship in quiet_championship_keys):
+    for champion in sorted(champions, key=lambda c: c.championship in pbq_championship_keys):
         by_event.setdefault(champion.event, champion)
     return list(by_event.values())
 
@@ -133,5 +127,5 @@ def champions_by_region(region_id, year):
         championships = region_championships(region, year_int)
         championship_keys = [c.key for c in championships]
         champions = Champion.query(Champion.championship.IN(championship_keys)).fetch() if championship_keys else []
-        quiet_keys = {c.key for c in championships if c.is_pbq}
-        return jsonify(serialize_champions(one_champion_per_event(champions, quiet_keys)))
+        pbq_keys = {c.key for c in championships if c.is_pbq}
+        return jsonify(serialize_champions(one_champion_per_event(champions, pbq_keys)))

@@ -58,7 +58,6 @@ export interface RegionInfo {
   championship_name: string | null;
   provinces: string[]; // lowercase province ids
   editions: number[]; // descending
-  announced: boolean;
   upcoming: UpcomingChampionship | null;
 }
 
@@ -73,7 +72,6 @@ export function fallbackRegion(id: RegionId): RegionInfo {
     championship_name: null,
     provinces: REGION_PROVINCES[id] ?? [],
     editions: [],
-    announced: false,
     upcoming: null,
   };
 }
@@ -104,27 +102,28 @@ const OVERVIEW_STORAGE_KEY = "championshipsOverview";
 // map from this copy first and replaces it when fetchOverview resolves.
 export function cachedOverview(): RegionInfo[] {
   try {
-    return JSON.parse(
+    const stored: unknown = JSON.parse(
       window.localStorage.getItem(OVERVIEW_STORAGE_KEY) ?? "[]",
-    ) as RegionInfo[];
+    );
+    return Array.isArray(stored) ? (stored as RegionInfo[]) : [];
   } catch {
     return [];
   }
 }
 
-// Resolves to the cached overview, which may be empty, when the request fails.
-// A failed refresh then leaves a map drawn from the cached overview as it is.
-export async function fetchOverview(): Promise<RegionInfo[]> {
-  const res = await httpClient.get<RegionInfo[]>(
+// Resolves to null when the request fails or the response is not a list, for
+// example an HTML error page served with status 200. Only a list is stored.
+export async function fetchOverview(): Promise<RegionInfo[] | null> {
+  const res = await httpClient.get<unknown>(
     `${API_BASE_URL}/championships_overview`,
   );
-  if (!res.ok || !res.data) return cachedOverview();
+  if (!res.ok || !Array.isArray(res.data)) return null;
   try {
     window.localStorage.setItem(OVERVIEW_STORAGE_KEY, JSON.stringify(res.data));
   } catch {
     // Storage can be full or disabled. The page works without the cached copy.
   }
-  return res.data;
+  return res.data as RegionInfo[];
 }
 
 export async function fetchChampions(

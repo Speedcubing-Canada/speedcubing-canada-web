@@ -19,7 +19,7 @@ _WCA_COMPETITION_BASE_URL = "https://www.worldcubeassociation.org/api/v0/competi
 # Timeout of the WCA API request that reads a competition's registration window.
 # The championships overview does not respond until that request ends, and the
 # registration window is only a detail of the page, so a slow WCA API is given up on.
-_WCA_TIMEOUT_SECONDS = 3
+_WCA_TIMEOUT_SECONDS = 8
 
 
 def _parse_iso(value):
@@ -75,6 +75,9 @@ def add_registrations(upcoming_championships):
     Each window costs one WCA API request. The requests run at the same time, so the
     caller waits for the slowest request and not for the sum of them. A payload for
     which ``fetch_registration`` returns ``None`` keeps its registration fields unchanged.
+
+    ``fetch_registration`` runs in worker threads, which have no ndb context, so it
+    must not read the datastore.
     """
     if not upcoming_championships:
         return
@@ -183,6 +186,9 @@ def championships_overview():
                     "championship_name": region.championship_name,
                     "provinces": sorted(provinces_by_region.get(region.key, [])),
                     "editions": editions,
+                    # ``announced`` repeats ``upcoming is not None``. The frontend no longer
+                    # reads it. It stays for browser tabs still running an older frontend
+                    # and can be removed after the next release.
                     "announced": upcoming_json is not None,
                     "upcoming": upcoming_json,
                 },

@@ -1,6 +1,7 @@
 import { Box, Stack, Typography } from "@mui/material";
-import { keyframes } from "@mui/material/styles";
+import { alpha, keyframes } from "@mui/material/styles";
 import { useTranslation } from "react-i18next";
+import { COLORS } from "./CanadaRegionMap";
 
 const ZAMBONI_WIDTH = 80;
 const LAP = "2.8s linear infinite";
@@ -47,11 +48,10 @@ export function ZamboniLoader() {
           width: { xs: "min(300px, 80vw)", sm: 420 },
           height: 68,
           borderRadius: "34px",
-          border: "3px solid #cdbdb7",
-          boxShadow: "0 10px 30px rgba(90,72,68,.18)",
+          border: `3px solid ${COLORS.quietBorder}`,
+          boxShadow: `0 10px 30px ${alpha(COLORS.label, 0.18)}`,
           bgcolor: "#eef3f6",
-          backgroundImage:
-            "repeating-linear-gradient(115deg, transparent 0 13px, rgba(90,72,68,.08) 13px 15px)",
+          backgroundImage: `repeating-linear-gradient(115deg, transparent 0 13px, ${alpha(COLORS.label, 0.08)} 13px 15px)`,
         }}
       >
         <Box
@@ -68,7 +68,7 @@ export function ZamboniLoader() {
           }}
         />
         <Box sx={line("30%", "#3b6fb6")} />
-        <Box sx={line("calc(50% - 1.5px)", "primary.main")} />
+        <Box sx={line("calc(50% - 1.5px)", COLORS.selected)} />
         <Box sx={line("70%", "#3b6fb6")} />
         <Box
           sx={{
@@ -88,29 +88,50 @@ export function ZamboniLoader() {
             style={{ position: "absolute", left: 0, bottom: 4 }}
           >
             <rect x="1" y="18" width="7" height="4" rx="1" fill="#8c7b76" />
-            <rect x="4" y="11" width="33" height="10" rx="2.5" fill="#d32f2f" />
-            <rect x="19" y="5" width="18" height="13" rx="2.5" fill="#d32f2f" />
+            <rect
+              x="4"
+              y="11"
+              width="33"
+              height="10"
+              rx="2.5"
+              fill={COLORS.selected}
+            />
+            <rect
+              x="19"
+              y="5"
+              width="18"
+              height="13"
+              rx="2.5"
+              fill={COLORS.selected}
+            />
             <rect x="23" y="7.5" width="10" height="8.5" rx="1" fill="#fff" />
             <polygon
-              fill="#d32f2f"
+              fill={COLORS.selected}
               transform="translate(25 8.8) scale(0.6)"
               points="5,0 6,2.5 8,1.8 7.5,4.5 10,4.2 8.6,6 9.4,7 6,7.4 6.3,10 5,8 3.7,10 4,7.4 0.6,7 1.4,6 0,4.2 2.5,4.5 2,1.8 4,2.5"
             />
-            <rect x="9" y="6.5" width="6" height="6" rx="2" fill="#5a4844" />
+            <rect
+              x="9"
+              y="6.5"
+              width="6"
+              height="6"
+              rx="2"
+              fill={COLORS.label}
+            />
             <circle cx="12" cy="5" r="2.4" fill="#f1c9a5" />
-            <path d="M9.3 4.4a2.7 2.7 0 0 1 5.4 0z" fill="#d32f2f" />
+            <path d="M9.3 4.4a2.7 2.7 0 0 1 5.4 0z" fill={COLORS.selected} />
             <circle
               cx="12"
               cy="1.5"
               r="1"
               fill="#fff"
-              stroke="#cdbdb7"
+              stroke={COLORS.quietBorder}
               strokeWidth="0.4"
             />
             <circle cx="11" cy="21.5" r="3.6" fill="#3b302d" />
             <circle cx="30" cy="21.5" r="3.6" fill="#3b302d" />
-            <circle cx="11" cy="21.5" r="1.3" fill="#cdbdb7" />
-            <circle cx="30" cy="21.5" r="1.3" fill="#cdbdb7" />
+            <circle cx="11" cy="21.5" r="1.3" fill={COLORS.quietBorder} />
+            <circle cx="30" cy="21.5" r="1.3" fill={COLORS.quietBorder} />
           </svg>
         </Box>
       </Box>

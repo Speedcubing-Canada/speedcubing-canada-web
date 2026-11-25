@@ -10,7 +10,6 @@ const OVERVIEW = [
     championship_name: "Quebec",
     provinces: ["qc"],
     editions: [2026],
-    announced: true,
     upcoming: {
       championship_id: "qc_2026_pbq",
       competition_id: "ChampionnatQCSilencieux2026",
@@ -91,5 +90,31 @@ describe("Championships page", () => {
     await waitFor(() => expect(failed).toHaveBeenCalled());
 
     expect(pin()).toBeInTheDocument();
+  });
+
+  it("neither draws nor stores a response that is not a list", async () => {
+    vi.spyOn(httpClient, "get").mockResolvedValue({
+      ok: true,
+      status: 200,
+      data: "<!doctype html>",
+    });
+    renderWithProviders(<Championships />);
+
+    await waitFor(() =>
+      expect(screen.queryByRole("progressbar")).not.toBeInTheDocument(),
+    );
+    expect(window.localStorage.getItem("championshipsOverview")).toBeNull();
+  });
+
+  it("treats a stored value that is not a list as nothing stored", () => {
+    window.localStorage.setItem(
+      "championshipsOverview",
+      JSON.stringify("<!doctype html>"),
+    );
+    vi.spyOn(httpClient, "get").mockReturnValue(new Promise(() => {}));
+
+    renderWithProviders(<Championships />);
+
+    expect(screen.getByRole("progressbar")).toBeInTheDocument();
   });
 });

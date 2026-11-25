@@ -59,28 +59,31 @@ export const Championships: React.FC = () => {
   const { t } = useTranslation();
   const isSmall = useResponsiveQuery("md");
   const [selected, setSelected] = useState<RegionId | null>(null);
-  const [regions, setRegions] = useState(() => byRegionId(cachedOverview()));
-  const [loading, setLoading] = useState(true);
+  // `regions` is null until the overview request has ended, unless an overview
+  // stored on an earlier visit can be drawn right away.
+  const [regions, setRegions] = useState(() => {
+    const cached = cachedOverview();
+    return cached.length > 0 ? byRegionId(cached) : null;
+  });
 
   useEffect(() => {
     let active = true;
     void fetchOverview().then((list) => {
       if (!active) return;
-      setRegions(byRegionId(list));
-      setLoading(false);
+      // A failed request keeps the map that is already drawn. When none is
+      // drawn yet, it leaves a map with no championship.
+      setRegions((current) => (list ? byRegionId(list) : (current ?? {})));
     });
     return () => {
       active = false;
     };
   }, []);
 
-  // `waiting` is true while the first overview request is pending and no
-  // overview is stored from an earlier visit.
-  const waiting = loading && Object.keys(regions).length === 0;
+  const waiting = regions === null;
 
   const upcoming: Partial<Record<RegionId, UpcomingChampionship>> = {};
-  (Object.keys(regions) as RegionId[]).forEach((id) => {
-    const championship = regions[id]?.upcoming;
+  (Object.keys(regions ?? {}) as RegionId[]).forEach((id) => {
+    const championship = regions?.[id]?.upcoming;
     if (championship) upcoming[id] = championship;
   });
 
@@ -196,7 +199,7 @@ export const Championships: React.FC = () => {
         {selected && (
           <RegionPanel
             key={selected}
-            region={regions[selected] ?? fallbackRegion(selected)}
+            region={regions?.[selected] ?? fallbackRegion(selected)}
             onClose={() => setSelected(null)}
           />
         )}

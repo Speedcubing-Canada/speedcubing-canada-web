@@ -181,9 +181,9 @@ def test_display_region_multi_province_provincial_skipped():
     assert display_region_key(_champ(province=AB_PROVINCE), None, PROVINCE_REGION, REGION_PROVINCE_COUNT) is None
 
 
-def test_display_region_quiet_maps_like_regular():
-    quiet = _champ(province=BC_PROVINCE, pbq=True)
-    assert display_region_key(quiet, None, PROVINCE_REGION, REGION_PROVINCE_COUNT) is BC_REGION
+def test_display_region_pbq_maps_like_regular():
+    pbq = _champ(province=BC_PROVINCE, pbq=True)
+    assert display_region_key(pbq, None, PROVINCE_REGION, REGION_PROVINCE_COUNT) is BC_REGION
 
 
 def test_display_region_national_maps_to_host_region():
@@ -247,15 +247,15 @@ def _champion(championship_key, event):
 
 
 def test_one_champion_per_event_prefers_regular_championship():
-    regular_key, quiet_key = "bc_2026", "bc_2026_pbq"
-    quiet_4bld = _champion(quiet_key, "444bf")
-    quiet_fmc = _champion(quiet_key, "333fm")
+    regular_key, pbq_key = "bc_2026", "bc_2026_pbq"
+    pbq_4bld = _champion(pbq_key, "444bf")
+    pbq_fmc = _champion(pbq_key, "333fm")
     regular_4bld = _champion(regular_key, "444bf")
     regular_333 = _champion(regular_key, "333")
 
-    kept = one_champion_per_event([quiet_4bld, quiet_fmc, regular_4bld, regular_333], {quiet_key})
+    kept = one_champion_per_event([pbq_4bld, pbq_fmc, regular_4bld, regular_333], {pbq_key})
 
-    assert {c.event: c for c in kept} == {"444bf": regular_4bld, "333": regular_333, "333fm": quiet_fmc}
+    assert {c.event: c for c in kept} == {"444bf": regular_4bld, "333": regular_333, "333fm": pbq_fmc}
 
 
 # ---------------------------------------------------------------------------
