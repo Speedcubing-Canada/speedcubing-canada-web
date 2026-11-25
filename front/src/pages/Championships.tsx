@@ -6,11 +6,14 @@ import {
   COLORS,
 } from "../components/championships/CanadaRegionMap";
 import { RegionPanel } from "../components/championships/RegionPanel";
+import { ZamboniLoader } from "../components/championships/ZamboniLoader";
 import {
+  cachedOverview,
   fallbackRegion,
   fetchOverview,
   RegionId,
   RegionInfo,
+  UpcomingChampionship,
 } from "../components/championships/data";
 import { useResponsiveQuery } from "../components/useResponsiveQuery";
 
@@ -44,32 +47,44 @@ function LegendSwatch({
   );
 }
 
+const byRegionId = (list: RegionInfo[]) => {
+  const byId: Partial<Record<RegionId, RegionInfo>> = {};
+  list.forEach((r) => {
+    byId[r.id] = r;
+  });
+  return byId;
+};
+
 export const Championships: React.FC = () => {
   const { t } = useTranslation();
   const isSmall = useResponsiveQuery("md");
   const [selected, setSelected] = useState<RegionId | null>(null);
-  const [regions, setRegions] = useState<Partial<Record<RegionId, RegionInfo>>>(
-    {},
-  );
+  // `regions` is null until the overview request has ended, unless an overview
+  // stored on an earlier visit can be drawn right away.
+  const [regions, setRegions] = useState(() => {
+    const cached = cachedOverview();
+    return cached.length > 0 ? byRegionId(cached) : null;
+  });
 
   useEffect(() => {
     let active = true;
     void fetchOverview().then((list) => {
       if (!active) return;
-      const byId: Partial<Record<RegionId, RegionInfo>> = {};
-      list.forEach((r) => {
-        byId[r.id] = r;
-      });
-      setRegions(byId);
+      // A failed request keeps the map that is already drawn. When none is
+      // drawn yet, it leaves a map with no championship.
+      setRegions((current) => (list ? byRegionId(list) : (current ?? {})));
     });
     return () => {
       active = false;
     };
   }, []);
 
-  const announcedRegions: Partial<Record<RegionId, boolean>> = {};
-  (Object.keys(regions) as RegionId[]).forEach((id) => {
-    announcedRegions[id] = Boolean(regions[id]?.announced);
+  const waiting = regions === null;
+
+  const upcoming: Partial<Record<RegionId, UpcomingChampionship>> = {};
+  (Object.keys(regions ?? {}) as RegionId[]).forEach((id) => {
+    const championship = regions?.[id]?.upcoming;
+    if (championship) upcoming[id] = championship;
   });
 
   return (
@@ -130,11 +145,40 @@ export const Championships: React.FC = () => {
           pb: 2,
         }}
       >
-        <CanadaRegionMap
-          selectedRegion={selected}
-          onSelect={setSelected}
-          announcedRegions={announcedRegions}
-        />
+        {/* While `waiting`, every region is drawn as not announced. The map
+            is blurred and unclickable during that time, so that nobody reads
+            it as "no championship anywhere". */}
+        <Box
+          sx={{
+            width: "100%",
+            height: "100%",
+            transition: "filter .5s ease, opacity .5s ease",
+            ...(waiting && {
+              filter: "blur(6px)",
+              opacity: 0.55,
+              pointerEvents: "none",
+            }),
+          }}
+        >
+          <CanadaRegionMap
+            selectedRegion={selected}
+            onSelect={setSelected}
+            upcoming={upcoming}
+          />
+        </Box>
+        {waiting && (
+          <Box
+            sx={{
+              position: "absolute",
+              inset: 0,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <ZamboniLoader />
+          </Box>
+        )}
       </Box>
 
       <Drawer
@@ -155,7 +199,7 @@ export const Championships: React.FC = () => {
         {selected && (
           <RegionPanel
             key={selected}
-            region={regions[selected] ?? fallbackRegion(selected)}
+            region={regions?.[selected] ?? fallbackRegion(selected)}
             onClose={() => setSelected(null)}
           />
         )}

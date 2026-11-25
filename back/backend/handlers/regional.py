@@ -1,5 +1,6 @@
 import datetime
 import logging
+from concurrent.futures import ThreadPoolExecutor
 
 import requests
 from flask import Blueprint, jsonify
@@ -15,6 +16,10 @@ bp = Blueprint("regional", __name__)
 client = ndb.Client()
 
 _WCA_COMPETITION_BASE_URL = "https://www.worldcubeassociation.org/api/v0/competitions"
+# Timeout of the WCA API request that reads a competition's registration window.
+# The championships overview does not respond until that request ends, and the
+# registration window is only a detail of the page, so a slow WCA API is given up on.
+_WCA_TIMEOUT_SECONDS = 8
 
 
 def _parse_iso(value):
@@ -46,7 +51,7 @@ def fetch_registration(competition_id, now=None):
     """
     now = now or datetime.datetime.now(datetime.UTC)
     try:
-        resp = requests.get(f"{_WCA_COMPETITION_BASE_URL}/{competition_id}", timeout=10)
+        resp = requests.get(f"{_WCA_COMPETITION_BASE_URL}/{competition_id}", timeout=_WCA_TIMEOUT_SECONDS)
         if resp.status_code != 200:
             logger.warning("WCA competition fetch failed for %s: %s", competition_id, resp.status_code)
             return None
@@ -64,16 +69,45 @@ def fetch_registration(competition_id, now=None):
     }
 
 
-def display_region_key(championship, province_region, region_province_count):
+def add_registrations(upcoming_championships):
+    """Fill in the registration window of each upcoming championship payload, in place.
+
+    Each window costs one WCA API request. The requests run at the same time, so the
+    caller waits for the slowest request and not for the sum of them. A payload for
+    which ``fetch_registration`` returns ``None`` keeps its registration fields unchanged.
+
+    ``fetch_registration`` runs in worker threads, which have no ndb context, so it
+    must not read the datastore.
+    """
+    if not upcoming_championships:
+        return
+    with ThreadPoolExecutor(max_workers=len(upcoming_championships)) as pool:
+        registrations = pool.map(fetch_registration, [u["competition_id"] for u in upcoming_championships])
+        for upcoming, registration in zip(upcoming_championships, registrations, strict=True):
+            if registration:
+                upcoming.update(registration)
+
+
+def _degrees(microdegrees):
+    return None if microdegrees is None else microdegrees / 1_000_000
+
+
+def display_region_key(championship, competition, province_region, region_province_count):
     """Return the region key a championship represents on the map, or ``None`` to skip.
 
     Regional championships map to their region. A provincial championship maps to its
     province's region only when that region has a single province (BC/ON/QC) - otherwise
     it is a sub-provincial championship within a multi-province region and is not the
-    region's headline championship. National and PBQ championships never appear.
+    region's headline championship. Quiet (PBQ) championships map like regular ones.
+
+    A national championship maps to the region of the province that hosts it, or to
+    ``None`` when its competition or host province is unknown. The national FMC
+    championship never appears: it is held in several cities at once.
     """
-    if championship.national_championship or championship.is_pbq:
-        return None
+    if championship.national_championship:
+        if championship.is_fmc or competition is None:
+            return None
+        return province_region.get(competition.province)
     if championship.region:
         return championship.region
     if championship.province:
@@ -84,7 +118,7 @@ def display_region_key(championship, province_region, region_province_count):
 
 
 def _upcoming_championship(entries, today):
-    """Pick the nearest non-past regional championship from ``[(championship, competition)]``."""
+    """Pick the nearest championship that has not ended from ``[(championship, competition)]``."""
     future = [(c, comp) for c, comp in entries if comp and comp.end_date >= today]
     if not future:
         return None
@@ -107,7 +141,7 @@ def championships_overview():
         competitions = ndb.get_multi([c.competition for c in championships])
         entries_by_region = {}
         for championship, competition in zip(championships, competitions, strict=False):
-            region_key = display_region_key(championship, province_region, region_province_count)
+            region_key = display_region_key(championship, competition, province_region, region_province_count)
             if region_key is not None:
                 entries_by_region.setdefault(region_key, []).append((championship, competition))
 
@@ -115,9 +149,15 @@ def championships_overview():
         output = []
         for region in regions:
             entries = entries_by_region.get(region.key, [])
-            # Past editions only - a championship that has not happened yet is surfaced
-            # via ``upcoming``, not as a past edition to browse champions for.
-            editions = sorted({comp.year for _, comp in entries if comp and comp.end_date < today}, reverse=True)
+            # The frontend offers each year in ``editions`` as a past edition and loads
+            # that year's regional champions. A championship that has not ended yet has
+            # no champions. National champions are listed on the WCA website and are not
+            # repeated on this page. Both kinds are left out, because either would show
+            # as an edition with an empty champions list.
+            editions = sorted(
+                {comp.year for champ, comp in entries if comp and comp.end_date < today and not champ.national_championship},
+                reverse=True,
+            )
 
             upcoming = _upcoming_championship(entries, today)
             upcoming_json = None
@@ -130,15 +170,14 @@ def championships_overview():
                     "start_date": competition.start_date.isoformat() if competition.start_date else None,
                     "end_date": competition.end_date.isoformat() if competition.end_date else None,
                     "city": competition.city_name,
+                    "latitude": _degrees(competition.latitude),
+                    "longitude": _degrees(competition.longitude),
                     "events": [e.id() for e in competition.events],
                     "wca_url": competition.get_wca_link(),
                     "registration_open": None,
                     "registration_close": None,
                     "registration_status": None,
                 }
-                registration = fetch_registration(competition.key.id())
-                if registration:
-                    upcoming_json.update(registration)
 
             output.append(
                 {
@@ -147,9 +186,9 @@ def championships_overview():
                     "championship_name": region.championship_name,
                     "provinces": sorted(provinces_by_region.get(region.key, [])),
                     "editions": editions,
-                    "announced": upcoming_json is not None,
                     "upcoming": upcoming_json,
                 },
             )
 
+        add_registrations([region_json["upcoming"] for region_json in output if region_json["upcoming"]])
         return jsonify(output)

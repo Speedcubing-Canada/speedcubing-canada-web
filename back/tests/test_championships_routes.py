@@ -13,10 +13,17 @@ from backend.handlers.admin.edit_championships import _apply_fields, _derive_id,
 from backend.handlers.champions_table import (
     _format_champion_result,
     _serialize_champion_result,
+    one_champion_per_event,
     region_championships,
     serialize_champions,
 )
-from backend.handlers.regional import _upcoming_championship, display_region_key, fetch_registration, registration_status
+from backend.handlers.regional import (
+    _upcoming_championship,
+    add_registrations,
+    display_region_key,
+    fetch_registration,
+    registration_status,
+)
 from backend.lib.residency import resolve_residency
 from backend.models.championship import Championship
 
@@ -133,7 +140,7 @@ def test_upcoming_none_when_all_past():
 
 
 # ---------------------------------------------------------------------------
-# regional.display_region_key (single-province mapping + PBQ/national exclusion)
+# regional.display_region_key (single-province mapping, quiet and national championships)
 # ---------------------------------------------------------------------------
 
 BC_REGION = object()
@@ -144,32 +151,54 @@ PROVINCE_REGION = {BC_PROVINCE: BC_REGION, AB_PROVINCE: PR_REGION}
 REGION_PROVINCE_COUNT = {BC_REGION: 1, PR_REGION: 3}
 
 
-def _champ(region=None, province=None, national=False, pbq=False):
+def _champ(region=None, province=None, national=False, pbq=False, fmc=False):
     c = MagicMock()
     c.region = region
     c.province = province
     c.national_championship = national
     c.is_pbq = pbq
+    c.is_fmc = fmc
     return c
 
 
+def _hosted_in(province):
+    competition = MagicMock()
+    competition.province = province
+    return competition
+
+
 def test_display_region_regional_maps_to_region():
-    assert display_region_key(_champ(region=PR_REGION), PROVINCE_REGION, REGION_PROVINCE_COUNT) is PR_REGION
+    assert display_region_key(_champ(region=PR_REGION), None, PROVINCE_REGION, REGION_PROVINCE_COUNT) is PR_REGION
 
 
 def test_display_region_single_province_provincial_maps_to_region():
     # BC provincial championship -> BC region (single province).
-    assert display_region_key(_champ(province=BC_PROVINCE), PROVINCE_REGION, REGION_PROVINCE_COUNT) is BC_REGION
+    assert display_region_key(_champ(province=BC_PROVINCE), None, PROVINCE_REGION, REGION_PROVINCE_COUNT) is BC_REGION
 
 
 def test_display_region_multi_province_provincial_skipped():
     # Alberta provincial championship within multi-province Prairies -> not the region's championship.
-    assert display_region_key(_champ(province=AB_PROVINCE), PROVINCE_REGION, REGION_PROVINCE_COUNT) is None
+    assert display_region_key(_champ(province=AB_PROVINCE), None, PROVINCE_REGION, REGION_PROVINCE_COUNT) is None
 
 
-def test_display_region_national_and_pbq_excluded():
-    assert display_region_key(_champ(region=PR_REGION, national=True), PROVINCE_REGION, REGION_PROVINCE_COUNT) is None
-    assert display_region_key(_champ(province=BC_PROVINCE, pbq=True), PROVINCE_REGION, REGION_PROVINCE_COUNT) is None
+def test_display_region_pbq_maps_like_regular():
+    pbq = _champ(province=BC_PROVINCE, pbq=True)
+    assert display_region_key(pbq, None, PROVINCE_REGION, REGION_PROVINCE_COUNT) is BC_REGION
+
+
+def test_display_region_national_maps_to_host_region():
+    # Nationals hosted in Alberta light up the Prairies, even though Alberta is not a single-province region.
+    national = _champ(national=True)
+    edmonton = _hosted_in(AB_PROVINCE)
+    assert display_region_key(national, edmonton, PROVINCE_REGION, REGION_PROVINCE_COUNT) is PR_REGION
+
+
+def test_display_region_national_without_single_host_skipped():
+    fmc = _champ(national=True, fmc=True)
+    assert display_region_key(fmc, _hosted_in(AB_PROVINCE), PROVINCE_REGION, REGION_PROVINCE_COUNT) is None
+    national = _champ(national=True)
+    assert display_region_key(national, None, PROVINCE_REGION, REGION_PROVINCE_COUNT) is None
+    assert display_region_key(national, _hosted_in(None), PROVINCE_REGION, REGION_PROVINCE_COUNT) is None
 
 
 # ---------------------------------------------------------------------------
@@ -192,7 +221,7 @@ def test_region_championships_single_province_matches_provincial(MockProvince, M
     other_year.year = 2024
     MockChampionship.query.return_value.iter.return_value = [main, pbq, other_year]
 
-    assert region_championships(region, 2025) == [main]
+    assert region_championships(region, 2025) == [main, pbq]
 
 
 @patch("backend.handlers.champions_table.Championship")
@@ -208,6 +237,25 @@ def test_region_championships_multi_province_matches_regional(MockProvince, Mock
     MockChampionship.query.return_value.iter.return_value = [regional, provincial]
 
     assert region_championships(region, 2024) == [regional]
+
+
+def _champion(championship_key, event):
+    champion = MagicMock()
+    champion.championship = championship_key
+    champion.event = event
+    return champion
+
+
+def test_one_champion_per_event_prefers_regular_championship():
+    regular_key, pbq_key = "bc_2026", "bc_2026_pbq"
+    pbq_4bld = _champion(pbq_key, "444bf")
+    pbq_fmc = _champion(pbq_key, "333fm")
+    regular_4bld = _champion(regular_key, "444bf")
+    regular_333 = _champion(regular_key, "333")
+
+    kept = one_champion_per_event([pbq_4bld, pbq_fmc, regular_4bld, regular_333], {pbq_key})
+
+    assert {c.event: c for c in kept} == {"444bf": regular_4bld, "333": regular_333, "333fm": pbq_fmc}
 
 
 # ---------------------------------------------------------------------------
@@ -444,3 +492,22 @@ def test_serialize_champions_orders_by_event_rank(mock_ndb, mock_fmt):
     assert [c["event_id"] for c in out] == ["333", "444"]
     assert out[0]["event_name"] == "3x3x3"
     assert len(out[0]["champions"]) == 1
+
+
+@patch("backend.handlers.regional.fetch_registration")
+def test_add_registrations_fills_each_championship_and_skips_failures(mock_fetch):
+    windows = {"QcQuiet2026": {"registration_status": "open"}, "Nationals2027": None}
+    mock_fetch.side_effect = windows.get
+    quiet = {"competition_id": "QcQuiet2026", "registration_status": None}
+    nationals = {"competition_id": "Nationals2027", "registration_status": None}
+
+    add_registrations([quiet, nationals])
+
+    assert quiet["registration_status"] == "open"
+    assert nationals["registration_status"] is None
+
+
+@patch("backend.handlers.regional.fetch_registration")
+def test_add_registrations_without_upcoming_championship_makes_no_request(mock_fetch):
+    add_registrations([])
+    mock_fetch.assert_not_called()

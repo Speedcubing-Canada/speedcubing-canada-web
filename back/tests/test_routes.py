@@ -6,6 +6,8 @@ rather than calling handler helpers directly. Adding a route here is now just a
 new function; the harness lives in conftest.py.
 """
 
+import datetime
+
 import pytest
 
 from backend.models.user import Roles
@@ -365,3 +367,55 @@ def test_session_cookie_is_lax_and_http_only(wca_login):
     cookie = wca_login().headers["Set-Cookie"]
     assert "SameSite=Lax" in cookie
     assert "HttpOnly" in cookie
+
+
+def test_championships_overview_counts_quiet_and_national_championships(
+    client, make_region, make_province, make_championship, monkeypatch
+):
+    monkeypatch.setattr(
+        "backend.handlers.regional.fetch_registration",
+        lambda competition_id: {"registration_status": f"status of {competition_id}"},
+    )
+    bc = make_province("bc", "British Columbia", region=make_region("bc", "British Columbia"))
+    prairies = make_region("pr", "Prairies")
+    alberta = make_province("ab", "Alberta", region=prairies)
+    make_province("sk", "Saskatchewan", region=prairies)
+    today = datetime.date.today()
+    last_bc = today - datetime.timedelta(days=100)
+    make_championship("bc_regular", last_bc, province=bc)
+    make_championship(
+        "bc_pbq", today + datetime.timedelta(days=30), province=bc, pbq=True, latitude=49.2827, longitude=-123.1207
+    )
+    make_championship("nationals_past", today - datetime.timedelta(days=400), national=True, host_province=alberta)
+    make_championship("nationals_next", today + datetime.timedelta(days=200), national=True, host_province=alberta)
+
+    overview = {region["id"]: region for region in client.get("/api/championships_overview").json}
+
+    # The upcoming quiet championship is BC's next championship, at its coordinates in degrees.
+    assert overview["bc"]["editions"] == [last_bc.year]
+    assert overview["bc"]["upcoming"]["championship_id"] == "bc_pbq"
+    assert overview["bc"]["upcoming"]["latitude"] == pytest.approx(49.2827)
+    assert overview["bc"]["upcoming"]["longitude"] == pytest.approx(-123.1207)
+    assert overview["bc"]["upcoming"]["registration_status"] == "status of bc_pbq_competition"
+    # Nationals show up in the region that hosts them, but never as a past edition.
+    assert overview["pr"]["upcoming"]["championship_id"] == "nationals_next"
+    assert overview["pr"]["editions"] == []
+
+
+def test_champions_by_region_merges_regular_and_quiet_championships(
+    client, make_region, make_province, make_championship, make_champion
+):
+    bc = make_province("bc", "British Columbia", region=make_region("bc", "British Columbia"))
+    regular = make_championship("bc_2024", datetime.date(2024, 8, 16), province=bc)
+    pbq = make_championship("bc_2024_pbq", datetime.date(2024, 8, 10), province=bc, pbq=True)
+    nationals = make_championship("2024", datetime.date(2024, 7, 1), national=True, host_province=bc)
+    make_champion(regular, "333", "Regular Winner")
+    make_champion(pbq, "333fm", "Quiet Winner")
+    make_champion(nationals, "333", "National Winner")
+
+    champions = client.get("/api/champions_by_region/bc/2024").json
+
+    assert {event["event_id"]: event["champions"][0]["name"] for event in champions} == {
+        "333": "Regular Winner",
+        "333fm": "Quiet Winner",
+    }

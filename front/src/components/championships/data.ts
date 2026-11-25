@@ -43,6 +43,8 @@ export interface UpcomingChampionship {
   start_date: string | null;
   end_date: string | null;
   city: string | null;
+  latitude: number | null; // degrees
+  longitude: number | null; // degrees
   events: string[];
   wca_url: string;
   registration_open: string | null;
@@ -56,7 +58,6 @@ export interface RegionInfo {
   championship_name: string | null;
   provinces: string[]; // lowercase province ids
   editions: number[]; // descending
-  announced: boolean;
   upcoming: UpcomingChampionship | null;
 }
 
@@ -71,7 +72,6 @@ export function fallbackRegion(id: RegionId): RegionInfo {
     championship_name: null,
     provinces: REGION_PROVINCES[id] ?? [],
     editions: [],
-    announced: false,
     upcoming: null,
   };
 }
@@ -95,11 +95,35 @@ export interface EventChampions {
   champions: ChampionResult[];
 }
 
-export async function fetchOverview(): Promise<RegionInfo[]> {
-  const res = await httpClient.get<RegionInfo[]>(
+const OVERVIEW_STORAGE_KEY = "championshipsOverview";
+
+// The overview this browser last received, or an empty list. The API
+// can take several seconds to answer after it has been idle, so the page draws the
+// map from this copy first and replaces it when fetchOverview resolves.
+export function cachedOverview(): RegionInfo[] {
+  try {
+    const stored: unknown = JSON.parse(
+      window.localStorage.getItem(OVERVIEW_STORAGE_KEY) ?? "[]",
+    );
+    return Array.isArray(stored) ? (stored as RegionInfo[]) : [];
+  } catch {
+    return [];
+  }
+}
+
+// Resolves to null when the request fails or the response is not a list, for
+// example an HTML error page served with status 200. Only a list is stored.
+export async function fetchOverview(): Promise<RegionInfo[] | null> {
+  const res = await httpClient.get<unknown>(
     `${API_BASE_URL}/championships_overview`,
   );
-  return res.ok && res.data ? res.data : [];
+  if (!res.ok || !Array.isArray(res.data)) return null;
+  try {
+    window.localStorage.setItem(OVERVIEW_STORAGE_KEY, JSON.stringify(res.data));
+  } catch {
+    // Storage can be full or disabled. The page works without the cached copy.
+  }
+  return res.data as RegionInfo[];
 }
 
 export async function fetchChampions(

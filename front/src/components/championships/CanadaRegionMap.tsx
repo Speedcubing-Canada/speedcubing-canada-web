@@ -8,7 +8,12 @@ import React, {
   useState,
 } from "react";
 import { useTranslation } from "react-i18next";
-import { PROVINCE_REGION, REGION_ORDER, RegionId } from "./data";
+import {
+  PROVINCE_REGION,
+  REGION_ORDER,
+  RegionId,
+  UpcomingChampionship,
+} from "./data";
 import { useResponsiveQuery } from "../useResponsiveQuery";
 
 interface SvgLocation {
@@ -50,6 +55,27 @@ interface Box4 {
   y: number;
   w: number;
   h: number;
+}
+
+// The @svg-maps/canada paths are drawn in a Mercator projection. These four
+// values were read from straight borders in those paths: the x of the 110°W and
+// 120°W meridians and the y of the 49°N and 60°N parallels. Read them again if
+// the map package changes, otherwise the pins drift away from their cities.
+const X_110W = 278.17;
+const X_120W = 188.53;
+const Y_49N = 938.02;
+const Y_60N = 767.18;
+
+const mercator = (latitude: number) =>
+  Math.log(Math.tan(Math.PI / 4 + (latitude * Math.PI) / 360));
+const X_PER_DEGREE = (X_110W - X_120W) / 10;
+const Y_PER_MERCATOR = (Y_49N - Y_60N) / (mercator(60) - mercator(49));
+
+export function projectToMap(latitude: number, longitude: number) {
+  return {
+    x: X_110W + X_PER_DEGREE * (longitude + 110),
+    y: Y_49N - Y_PER_MERCATOR * (mercator(latitude) - mercator(49)),
+  };
 }
 
 const regionOf = (provinceId: string): RegionId | undefined =>
@@ -97,15 +123,16 @@ function unionBoxes(
 export interface CanadaRegionMapProps {
   selectedRegion: RegionId | null;
   onSelect: (region: RegionId) => void;
-  // Which regions have an announced upcoming championship (drives the map colours
-  // + pulsing pins). Populated from the backend overview.
-  announcedRegions: Partial<Record<RegionId, boolean>>;
+  // The upcoming championship of each region that has one, from the backend
+  // overview. This prop decides which regions the map shows as announced and
+  // where their pins go.
+  upcoming: Partial<Record<RegionId, UpcomingChampionship>>;
 }
 
 export const CanadaRegionMap: React.FC<CanadaRegionMapProps> = ({
   selectedRegion,
   onSelect,
-  announcedRegions,
+  upcoming,
 }) => {
   const { t } = useTranslation();
   const isSmall = useResponsiveQuery("md");
@@ -265,7 +292,7 @@ export const CanadaRegionMap: React.FC<CanadaRegionMapProps> = ({
   const fillFor = (rid: RegionId | undefined): string => {
     if (!rid) return COLORS.quiet;
     if (rid === selectedRegion) return COLORS.selected;
-    const announced = Boolean(announcedRegions[rid]);
+    const announced = Boolean(upcoming[rid]);
     if (rid === hovered)
       return announced ? COLORS.announcedHover : COLORS.quietHover;
     return announced ? COLORS.announced : COLORS.quiet;
@@ -339,7 +366,6 @@ export const CanadaRegionMap: React.FC<CanadaRegionMapProps> = ({
         {showLabels &&
           (Object.keys(boxes) as RegionId[]).map((regionId) => {
             const { cx, cy } = labelPos(regionId, boxes[regionId]!);
-            const announced = Boolean(announcedRegions[regionId]);
             return (
               <g
                 key={`lbl-${regionId}`}
@@ -348,31 +374,6 @@ export const CanadaRegionMap: React.FC<CanadaRegionMapProps> = ({
                 onMouseEnter={() => setHovered(regionId)}
                 onMouseLeave={() => setHovered(null)}
               >
-                {announced && (
-                  <>
-                    <circle
-                      cx={cx}
-                      cy={cy - 22}
-                      r={5}
-                      fill="none"
-                      stroke={COLORS.selected}
-                      strokeWidth={2}
-                      style={{
-                        transformBox: "fill-box",
-                        transformOrigin: "center",
-                        animation: "scc-pin 2.4s ease-out infinite",
-                      }}
-                    />
-                    <circle
-                      cx={cx}
-                      cy={cy - 22}
-                      r={5}
-                      fill={COLORS.selected}
-                      stroke="#fff"
-                      strokeWidth={1.4}
-                    />
-                  </>
-                )}
                 <text
                   x={cx}
                   y={cy}
@@ -390,6 +391,52 @@ export const CanadaRegionMap: React.FC<CanadaRegionMapProps> = ({
                 >
                   {t(`championships.regions.${regionId}`)}
                 </text>
+              </g>
+            );
+          })}
+
+        {showLabels &&
+          REGION_ORDER.map((regionId) => {
+            const championship = upcoming[regionId];
+            if (
+              championship?.latitude == null ||
+              championship.longitude == null
+            )
+              return null;
+            const { x, y } = projectToMap(
+              championship.latitude,
+              championship.longitude,
+            );
+            return (
+              <g
+                key={`pin-${regionId}`}
+                style={{ cursor: "pointer" }}
+                onClick={() => onSelect(regionId)}
+                onMouseEnter={() => setHovered(regionId)}
+                onMouseLeave={() => setHovered(null)}
+              >
+                <title>{championship.name}</title>
+                <circle
+                  cx={x}
+                  cy={y}
+                  r={5}
+                  fill="none"
+                  stroke={COLORS.selected}
+                  strokeWidth={2}
+                  style={{
+                    transformBox: "fill-box",
+                    transformOrigin: "center",
+                    animation: "scc-pin 2.4s ease-out infinite",
+                  }}
+                />
+                <circle
+                  cx={x}
+                  cy={y}
+                  r={5}
+                  fill={COLORS.selected}
+                  stroke="#fff"
+                  strokeWidth={1.4}
+                />
               </g>
             );
           })}
