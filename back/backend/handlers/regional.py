@@ -186,10 +186,6 @@ def championships_overview():
                     "championship_name": region.championship_name,
                     "provinces": sorted(provinces_by_region.get(region.key, [])),
                     "editions": editions,
-                    # ``announced`` repeats ``upcoming is not None``. The frontend no longer
-                    # reads it. It stays for browser tabs still running an older frontend
-                    # and can be removed after the next release.
-                    "announced": upcoming_json is not None,
                     "upcoming": upcoming_json,
                 },
             )
